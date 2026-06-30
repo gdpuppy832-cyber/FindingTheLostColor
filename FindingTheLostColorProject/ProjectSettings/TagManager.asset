@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
+<<<<<<< HEAD
   tags: []
+=======
+  tags:
+  - Platform
+>>>>>>> origin/Monster
   layers:
   - Default
   - TransparentFX
@@ -11,8 +16,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Platform
+  - Player
   - 
   - 
   - 
@@ -41,6 +46,7 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+<<<<<<< HEAD
   - name: Background
     uniqueID: 2832044801
     locked: 0
@@ -56,5 +62,7 @@ TagManager:
   - name: TopEffect
     uniqueID: 3570306233
     locked: 0
+=======
+>>>>>>> origin/Monster
   m_RenderingLayers:
   - Default
