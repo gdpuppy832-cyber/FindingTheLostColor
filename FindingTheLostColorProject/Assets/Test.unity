@@ -265,7 +265,7 @@ MonoBehaviour:
   hotSpot: {x: 16, y: 16}
   mediumDistance: 3.8
   intenseDistance: 6.7
-  trailWidth: 0.14
+  trailWidth: 0.15
 --- !u!4 &61559135
 Transform:
   m_ObjectHideFlags: 0
