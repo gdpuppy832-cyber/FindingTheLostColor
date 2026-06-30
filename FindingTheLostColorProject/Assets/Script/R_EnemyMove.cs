@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
-public class EnemyMove : MonoBehaviour
+public class R_EnemyMove : MonoBehaviour
 {
     public float speed = 1.5f;
     public Transform target;
@@ -10,11 +10,11 @@ public class EnemyMove : MonoBehaviour
     float timer = 0;
     Vector3 prevposition;
     Rigidbody2D rigid;
-    bool isStopped = false; 
+    bool isStopped = false;
     float stopTimer = 0f;
     float ignoreEdgeTimer = 0f;
     Collider2D col;
-    public float chaseRange; 
+    public float chaseRange;
     bool isChasing = false;
     public float attackStopDistance = 1.5f;
 
@@ -36,7 +36,7 @@ public class EnemyMove : MonoBehaviour
         if (isStopped)//절벽 끝에서 멈춘 상태
         {
             stopTimer += Time.deltaTime;
-            if(stopTimer >= 0.5f)
+            if (stopTimer >= 0.5f)
             {
                 isStopped = false;
                 stopTimer = 0f;
@@ -46,9 +46,9 @@ public class EnemyMove : MonoBehaviour
                 else
                     timer = 0f;
 
-                ignoreEdgeTimer = 2f; 
+                ignoreEdgeTimer = 2f;
             }
-            return; 
+            return;
         }
 
         timer += Time.deltaTime;
@@ -65,7 +65,7 @@ public class EnemyMove : MonoBehaviour
         if (isChasing)//추적 모드
         {
             float xDiff = target.position.x - transform.position.x;
-            if (Mathf.Abs(xDiff) > attackStopDistance) 
+            if (Mathf.Abs(xDiff) > attackStopDistance)
             {
                 float xDir = Mathf.Sign(xDiff);
                 transform.Translate(speed * 1.5f * xDir * Time.deltaTime, 0f, 0f);
@@ -96,8 +96,8 @@ public class EnemyMove : MonoBehaviour
     void FixedUpdate()
     {
         //절벽 감지
-        float halfWidth = col.bounds.extents.x; 
-        float oneThird = halfWidth * 2f / 3f;    
+        float halfWidth = col.bounds.extents.x;
+        float oneThird = halfWidth * 2f / 3f;
 
         Vector2 leftPoint = (Vector2)rigid.position + Vector2.left * oneThird;
         Vector2 rightPoint = (Vector2)rigid.position + Vector2.right * oneThird;
