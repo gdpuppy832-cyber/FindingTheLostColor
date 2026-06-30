@@ -9,29 +9,50 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("화면 아래 1/3 지점에 플레이어를 두기 위한 Y축 오프셋 값 (양수)")]
     public float yOffset = 2f;
 
+    [Tooltip("X축(가로) 추적 시간 - 값이 작을수록 빠름")]
+    public float smoothTimeX = 0.25f;
+
+    [Tooltip("Y축(세로) 추적 시간 - 가로보다 좁으므로 더 작게(빠르게) 설정")]
+    public float smoothTimeY = 0.1f;
+
+    [Tooltip("카메라가 플레이어로부터 떨어질 수 있는 최대 거리")]
+    public float maxDistance = 5f;
+
     [Header("맵 경계선 (카메라 이동 한계)")]
-    [Tooltip("카메라가 더 이상 내려가거나 왼쪽으로 가지 못하는 최소 좌표")]
     public Vector2 minCameraPos;
-    [Tooltip("카메라가 더 이상 올라가거나 오른쪽으로 가지 못하는 최대 좌표")]
     public Vector2 maxCameraPos;
+
+    // X, Y축 각각의 관성(가속도)을 개별적으로 기억하기 위한 변수
+    private float velocityX = 0f;
+    private float velocityY = 0f;
 
     void LateUpdate()
     {
         if (target == null) return;
 
-        // 1. 목표 위치 계산 
-        // [규칙 4-1] X축은 플레이어 위치를 그대로 따라감 (화면 중앙)
-        float targetX = target.position.x;
+        // 1. 이상적인 목표 위치 계산
+        Vector3 idealTargetPos = new Vector3(target.position.x, target.position.y + yOffset, transform.position.z);
 
-        // [규칙 4-2] Y축은 플레이어 위치에 오프셋을 더해 화면 하단 1/3에 위치하도록 조정
-        float targetY = target.position.y + yOffset;
+        // 2. X축과 Y축을 분리하여 개별적으로 관성(SmoothDamp) 적용
+        float nextX = Mathf.SmoothDamp(transform.position.x, idealTargetPos.x, ref velocityX, smoothTimeX);
+        float nextY = Mathf.SmoothDamp(transform.position.y, idealTargetPos.y, ref velocityY, smoothTimeY);
 
-        // 2. 맵 경계선 제한 (Clamp)
-        // [규칙 5-1 & 5-2] 카메라가 설정된 min, max 좌표를 절대 벗어나지 못하도록 가둠
-        float clampedX = Mathf.Clamp(targetX, minCameraPos.x, maxCameraPos.x);
-        float clampedY = Mathf.Clamp(targetY, minCameraPos.y, maxCameraPos.y);
+        Vector3 nextPos = new Vector3(nextX, nextY, transform.position.z);
 
-        // 3. 카메라 최종 위치 적용 (Z축은 기존 카메라의 Z값 유지)
+        // 3. 최대 거리 제한 (이전과 동일하게 유지)
+        Vector2 offsetFromTarget = new Vector2(nextPos.x - idealTargetPos.x, nextPos.y - idealTargetPos.y);
+
+        if (offsetFromTarget.magnitude > maxDistance)
+        {
+            offsetFromTarget = Vector2.ClampMagnitude(offsetFromTarget, maxDistance);
+            nextPos = new Vector3(idealTargetPos.x + offsetFromTarget.x, idealTargetPos.y + offsetFromTarget.y, transform.position.z);
+        }
+
+        // 4. 맵 경계선 제한 (Clamp)
+        float clampedX = Mathf.Clamp(nextPos.x, minCameraPos.x, maxCameraPos.x);
+        float clampedY = Mathf.Clamp(nextPos.y, minCameraPos.y, maxCameraPos.y);
+
+        // 5. 카메라 최종 위치 적용
         transform.position = new Vector3(clampedX, clampedY, transform.position.z);
     }
 }
