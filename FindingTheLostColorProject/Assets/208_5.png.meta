@@ -1,14 +1,10 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
-guid: 192b4c19628494a488e330d937e391e2
-=======
-guid: ba9256a30ff57bd4b8d4c20f8ca25add
->>>>>>> origin/Monster
+guid: 9ef1ab1e774a3294d9bae6512df85a24
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5873331033001879359
-    second: 208_4_0
+      213: -6133269192264771671
+    second: 208_5_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 208_4_0
+      name: 208_5_0
       rect:
         serializedVersion: 2
-        x: 16
-        y: 14
-        width: 263
-        height: 321
+        x: 7
+        y: 6
+        width: 233
+        height: 283
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -119,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1c815a13b8cbd7ea0800000000000000
-      internalID: -5873331033001879359
+      spriteID: 9a716334a2042eaa0800000000000000
+      internalID: -6133269192264771671
       vertices: []
       indices: 
       edges: []
@@ -139,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      208_4_0: -5873331033001879359
+      208_5_0: -6133269192264771671
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
