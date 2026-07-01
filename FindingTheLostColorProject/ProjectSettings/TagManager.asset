@@ -47,7 +47,10 @@ TagManager:
   - name: Default
     uniqueID: 2939335
     locked: 0
-  - name: Player,Mob
+  - name: Mob
+    uniqueID: 354283401
+    locked: 0
+  - name: Player
     uniqueID: 3397251325
     locked: 0
   - name: UI

@@ -14,6 +14,8 @@ public class PlayerMove : MonoBehaviour
     private bool isGrounded = false;
     private Vector2 moveDirection;
 
+    private bool canControl = true; // 조작 가능 상태 플래그
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -22,22 +24,27 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         float moveInput = 0f;
-        if (Input.GetKey(KeyCode.A)) moveInput -= 1f;
-        if (Input.GetKey(KeyCode.D)) moveInput += 1f;
 
-        moveDirection = new Vector2(moveInput, 0).normalized;
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        // 조작 가능한 상태일 때만 키보드 입력 허용
+        if (canControl)
         {
-            if (jumpCount < 2 && Time.time - lastJumpTime >= jumpDelay)
+            if (Input.GetKey(KeyCode.A)) moveInput -= 1f;
+            if (Input.GetKey(KeyCode.D)) moveInput += 1f;
+
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                // 점프 시 X축 속도는 유지하여 벽에서 점프 시 튕겨 나가게 함
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                jumpCount++;
-                lastJumpTime = Time.time;
-                isGrounded = false;
+                if (jumpCount < 2 && Time.time - lastJumpTime >= jumpDelay)
+                {
+                    // 점프 시 X축 속도는 유지하여 벽에서 점프 시 튕겨 나가게 함
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                    jumpCount++;
+                    lastJumpTime = Time.time;
+                    isGrounded = false;
+                }
             }
         }
+
+        moveDirection = new Vector2(moveInput, 0).normalized;
     }
 
     void FixedUpdate()
@@ -67,5 +74,23 @@ public class PlayerMove : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
+    }
+
+    /// <summary>
+    /// 외부에서 플레이어의 조작 가능 여부를 제어하는 함수
+    /// </summary>
+    /// <param name="value">true: 조작 가능, false: 조작 불가능</param>
+    public void SetControl(bool value)
+    {
+        canControl = value;
+        if (!canControl)
+        {
+            moveDirection = Vector2.zero;
+            if (rb != null)
+            {
+                // 즉시 좌우 이동 속도를 0으로 만들어 멈추게 함
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+        }
     }
 }
