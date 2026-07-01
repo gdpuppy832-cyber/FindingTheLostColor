@@ -24,6 +24,19 @@ public class CursorController : MonoBehaviour
     [Tooltip("붓질 시 생성할 파티클 시스템 (옵션)")]
     public ParticleSystem paintParticles;
 
+    [Header("Paint Healing Settings")]
+    [Tooltip("붓질(좌클릭)로 몬스터를 정화할 수 있는 반경 (브러시 크기, 기본값: 1.2)")]
+    public float paintRadius = 1.2f;
+
+    [Tooltip("근거리일 때 초당 회복량 (기본값: 1.0)")]
+    public float closeHealRate = 1.0f;
+
+    [Tooltip("중거리일 때 초당 회복량 (기본값: 0.7)")]
+    public float mediumHealRate = 0.7f;
+
+    [Tooltip("원거리일 때 초당 회복량 (기본값: 0.4)")]
+    public float farHealRate = 0.4f;
+
     private int currentCursorIndex = -1;
     private GaugeController gaugeController; // 물감 게이지 스크립트 참조
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
@@ -117,6 +130,32 @@ public class CursorController : MonoBehaviour
             var emission = paintParticles.emission;
             emission.enabled = canDraw;
         }
+
+        // 6. 주변 일반 몬스터(고양이) 정화/치료 처리 (거리에 따른 힐량 차등 적용)
+        if (canDraw)
+        {
+            // 거리 단계에 따른 초당 회복속도 결정
+            float activeHealRate = closeHealRate;
+            if (currentCursorIndex == 1) activeHealRate = mediumHealRate;
+            else if (currentCursorIndex == 2) activeHealRate = farHealRate;
+
+            // 마우스 커서 위치를 기준으로 반경 내의 모든 2D 콜라이더 탐색
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(mouseWorldPos, paintRadius);
+            foreach (var hitCollider in hitColliders)
+            {
+                NormalMonster monster = hitCollider.GetComponent<NormalMonster>();
+                if (monster == null)
+                {
+                    monster = hitCollider.GetComponentInParent<NormalMonster>();
+                }
+
+                if (monster != null)
+                {
+                    // 거리에 따른 초당 회복 속도만큼 몬스터 체력(물감) 회복
+                    monster.Heal(activeHealRate * Time.deltaTime);
+                }
+            }
+        }
     }
 
     void UpdateTrailStyle(int index)
@@ -164,5 +203,12 @@ public class CursorController : MonoBehaviour
         // intensity가 0.75f이면 75% 기존 색상 + 25% 흰색
         // intensity가 0.50f이면 50% 기존 색상 + 50% 흰색
         return Color.Lerp(original, Color.white, 1f - intensity);
+    }
+
+    // 붓질(힐) 반경을 에디터 씬 뷰에 표시해 주는 기즈모 함수
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f); // 반투명 주황색 원
+        Gizmos.DrawWireSphere(transform.position, paintRadius);
     }
 }
