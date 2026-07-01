@@ -7,6 +7,8 @@ public class R_EnemyAttack : MonoBehaviour
     public float projectileSpeed = 8f;   // 투사체 속도
     public float projectileLifetime = 3f;// 투사체 생존 시간 (충돌 안 해도 사라짐)
     public float attackCooldown = 2f;    // 공격 쿨타임
+    [Range(0f, 1f)]
+    public float telegraphAnchorOffset = 0.5f;
 
     public Transform target;
     public LayerMask targetLayer;
@@ -17,21 +19,46 @@ public class R_EnemyAttack : MonoBehaviour
     bool isAttacking = false;
     bool canAttack = true;
 
-    public Transform muzzle; // 총구 (몬스터 자식 오브젝트)
-    public float muzzleOrbitDistance = 1f; // 몬스터로부터 총구가 유지할 거리
+    public Transform muzzle; 
+    public float muzzleOrbitDistance = 1f; // 콜라이더가 없을 때 사용할 기본 거리 
+
+    Collider2D bodyCollider;
 
     public float postDelay = 0.5f; // 공격 후 이동/공격 불가 딜레이
     R_EnemyMove enemyMove;
+
+    public ContactRelay contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
+
     void Start()
     {
         if (telegraphSprite != null)
             telegraphSprite.enabled = false;
         enemyMove = GetComponent<R_EnemyMove>();
+        bodyCollider = GetComponent<Collider2D>();
+
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int monsterLayer = LayerMask.NameToLayer("Monster");
+        if (playerLayer != -1 && monsterLayer != -1)
+            Physics2D.IgnoreLayerCollision(playerLayer, monsterLayer, true);
+
+        if (contactHitbox != null)
+        {
+            contactHitbox.onTriggerEnter += TryContactDamage;
+            contactHitbox.onTriggerStay += TryContactDamage;
+        }
+    }
+
+    void TryContactDamage(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        Debug.Log("플레이어에게 접촉 피해를 입혔다: ");
     }
 
     void Update()
     {
-        UpdateMuzzlePosition();
+        if (!isAttacking)
+            UpdateMuzzlePosition();
 
         if (isAttacking || !canAttack || target == null) return;
 
@@ -47,7 +74,20 @@ public class R_EnemyAttack : MonoBehaviour
         if (muzzle == null || target == null) return;
 
         Vector2 dir = ((Vector2)target.position - (Vector2)transform.position).normalized;
-        muzzle.position = (Vector2)transform.position + dir * muzzleOrbitDistance;
+        muzzle.position = (Vector2)transform.position + dir * GetEdgeDistance(dir);
+    }
+
+    // 몬스터 콜라이더의 경계까지 거리를 방향(dir) 기준으로 계산
+    float GetEdgeDistance(Vector2 dir)
+    {
+        if (bodyCollider == null) return muzzleOrbitDistance;
+
+        Vector2 extents = bodyCollider.bounds.extents; // 콜라이더 절반 크기 (x, y)
+
+        float tx = extents.x / Mathf.Max(Mathf.Abs(dir.x), 0.0001f);
+        float ty = extents.y / Mathf.Max(Mathf.Abs(dir.y), 0.0001f);
+
+        return Mathf.Min(tx, ty); // 더 먼저 닿는 쪽(모서리)까지의 거리
     }
 
     System.Collections.IEnumerator AttackRoutine()
@@ -62,13 +102,16 @@ public class R_EnemyAttack : MonoBehaviour
         Vector2 fireDir = ((Vector2)target.position - (Vector2)transform.position).normalized;
         float angle = Mathf.Atan2(fireDir.y, fireDir.x) * Mathf.Rad2Deg;
 
+        if (muzzle != null)
+            muzzle.position = (Vector2)transform.position + fireDir * muzzleOrbitDistance;
+
+
+        Vector2 startPoint = (Vector2)transform.position + fireDir * GetEdgeDistance(fireDir);
 
         if (telegraphSprite != null)
         {
-            Vector2 startPoint = muzzle != null ? (Vector2)muzzle.position : (Vector2)transform.position;
-
             telegraphSprite.enabled = true;
-            telegraphSprite.transform.position = startPoint;
+            telegraphSprite.transform.position = startPoint + fireDir * (attackRange * telegraphAnchorOffset);
             telegraphSprite.transform.rotation = Quaternion.Euler(0f, 0f, angle);
             telegraphSprite.size = new Vector2(attackRange, telegraphSprite.size.y);
         }
@@ -79,7 +122,7 @@ public class R_EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
 
         // 투사체 생성
-        SpawnProjectile(fireDir, angle);
+        SpawnProjectile(fireDir, angle, startPoint);
 
         // 후딜레이: 이동도 공격도 불가
         yield return new WaitForSeconds(postDelay); // 0.5초 대기
@@ -94,10 +137,8 @@ public class R_EnemyAttack : MonoBehaviour
         canAttack = true;
     }
 
-    void SpawnProjectile(Vector2 fireDir, float angle)
+    void SpawnProjectile(Vector2 fireDir, float angle, Vector2 spawnPos)
     {
-        Vector3 spawnPos = muzzle != null ? muzzle.position : transform.position;
-
         GameObject proj;
         if (projectilePrefab != null)
         {

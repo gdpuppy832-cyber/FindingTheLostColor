@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 public class R_EnemyMove : MonoBehaviour
 {
     public float speed = 1.5f;
-    public Transform target;
+    Transform target;
     public float range;
     float timer = 0;
     Vector3 prevposition;
@@ -23,6 +23,10 @@ public class R_EnemyMove : MonoBehaviour
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            target = player.transform;
     }
 
 
@@ -46,7 +50,7 @@ public class R_EnemyMove : MonoBehaviour
                 else
                     timer = 0f;
 
-                ignoreEdgeTimer = 2f;
+                ignoreEdgeTimer = 1.3f;
             }
             return;
         }
