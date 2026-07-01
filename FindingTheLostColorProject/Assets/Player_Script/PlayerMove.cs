@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMove : MonoBehaviour
+public class PlayerMoveT : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
