@@ -1,12 +1,16 @@
 using UnityEngine;
+using System.Collections.Generic;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMoveT : MonoBehaviour
+public class PlayerMove : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float jumpForce = 10f;
-    public float jumpDelay = 0.2f;
+    public float moveSpeed = 7f;
+    public float jumpForce = 11f;
+    public float jumpDelay = 0.1f;
 
     private Rigidbody2D rb;
     private int jumpCount = 0;
@@ -24,14 +28,28 @@ public class PlayerMoveT : MonoBehaviour
     void Update()
     {
         float moveInput = 0f;
+        bool jumpPressed = false;
+
 
         // 조작 가능한 상태일 때만 키보드 입력 허용
         if (canControl)
         {
+#if ENABLE_INPUT_SYSTEM
+            // New Input System 사용 시
+            if (Keyboard.current != null)
+            {
+                if (Keyboard.current.aKey.isPressed) moveInput -= 1f;
+                if (Keyboard.current.dKey.isPressed) moveInput += 1f;
+                if (Keyboard.current.spaceKey.wasPressedThisFrame) jumpPressed = true;
+            }
+#else
+            // Legacy Input Manager 사용 시
             if (Input.GetKey(KeyCode.A)) moveInput -= 1f;
             if (Input.GetKey(KeyCode.D)) moveInput += 1f;
+            if (Input.GetKeyDown(KeyCode.Space)) jumpPressed = true;
+#endif
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (jumpPressed)
             {
                 if (jumpCount < 2 && Time.time - lastJumpTime >= jumpDelay)
                 {
@@ -83,6 +101,7 @@ public class PlayerMoveT : MonoBehaviour
     public void SetControl(bool value)
     {
         canControl = value;
+
         if (!canControl)
         {
             moveDirection = Vector2.zero;

@@ -31,6 +31,13 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("피격 시 플레이어 조작 차단 시간 (기본값: 0.5초)")]
     public float damageStunDuration = 0.5f;
 
+    [Header("Camera Shake Settings")]
+    [Tooltip("피격 시 카메라 흔들림 세기 (기본값: 0.2)")]
+    public float damageShakeIntensity = 0.2f;
+
+    [Tooltip("피격 시 카메라 흔들림 시간 (기본값: 0.2초)")]
+    public float damageShakeDuration = 0.2f;
+
     [Header("Animator Settings")]
     [Tooltip("플레이어의 Animator (비어있으면 자동으로 검색)")]
     public Animator animator;
@@ -125,6 +132,18 @@ public class PlayerHealth : MonoBehaviour
         {
             isInvincible = false; // 무적 강제 해제
             currentHealth = 0f;
+
+            // 낭떠러지 추락 시에도 카메라 흔들림 효과 트리거
+            CameraFollow camFollow = Camera.main != null ? Camera.main.GetComponent<CameraFollow>() : null;
+            if (camFollow == null)
+            {
+                camFollow = FindFirstObjectByType<CameraFollow>();
+            }
+            if (camFollow != null)
+            {
+                camFollow.TriggerShake(damageShakeIntensity, damageShakeDuration);
+            }
+
             Die(isFalling: true);
         }
 
@@ -168,7 +187,7 @@ public class PlayerHealth : MonoBehaviour
 
             if (damagePressed)
             {
-                TakeDamage(1f);
+                TakeDamage(3f);
             }
 
             if (healPressed)
@@ -195,6 +214,17 @@ public class PlayerHealth : MonoBehaviour
 
         // 피격 시 일정 시간 동안 플레이어 조작 차단 (움직이지 못함)
         StartCoroutine(DamageStunRoutine(damageStunDuration));
+
+        // 카메라 흔들림 효과 트리거
+        CameraFollow camFollow = Camera.main != null ? Camera.main.GetComponent<CameraFollow>() : null;
+        if (camFollow == null)
+        {
+            camFollow = FindFirstObjectByType<CameraFollow>();
+        }
+        if (camFollow != null)
+        {
+            camFollow.TriggerShake(damageShakeIntensity, damageShakeDuration);
+        }
 
         currentHealth -= amount;
         

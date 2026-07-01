@@ -51,7 +51,12 @@ public class CursorController : MonoBehaviour
     void Update()
     {
         // 1. 마우스 위치 이동
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+#if ENABLE_INPUT_SYSTEM
+        Vector3 mouseScreenPos = Mouse.current != null ? (Vector3)Mouse.current.position.ReadValue() : Input.mousePosition;
+#else
+        Vector3 mouseScreenPos = Input.mousePosition;
+#endif
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
         mouseWorldPos.z = 0;
         transform.position = mouseWorldPos;
 

@@ -29,8 +29,14 @@ public class GaugeController : MonoBehaviour
     private Image gaugeImage;
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
     private bool needsReclick = false; // 물감 고갈 시 마우스 재클릭 필요 여부
+    private float baseRegenSpeed;
 
     public bool NeedsReclick => needsReclick;
+
+    public void SetRegenMultiplier(float multiplier)
+    {
+        regenSpeed = baseRegenSpeed * multiplier;
+    }
 
     void Awake()
     {
@@ -41,6 +47,9 @@ public class GaugeController : MonoBehaviour
     {
         // 씬에서 플레이어 체력 컨트롤러 검색
         playerHealth = FindFirstObjectByType<PlayerHealth>();
+        
+        // 원본 재생 속도 저장
+        baseRegenSpeed = regenSpeed;
 
         // 시작 시 즉시 가득 채우기 및 컴포넌트 활성화
         if (gaugeImage != null)
