@@ -15,17 +15,18 @@ public class J_EnemyAttack : MonoBehaviour
     public LayerMask obstacleLayer;
     Transform target;
     public LayerMask targetLayer;
+    public float minJumpDistance = 1f;
 
 
     bool isAttacking = false;
     bool canAttack = true;
 
     J_EnemyMove enemyMove;
-    Rigidbody2D rb;
+
     void Start()
     {
         enemyMove = GetComponent<J_EnemyMove>();
-        rb = GetComponent<Rigidbody2D>();
+
 
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -63,7 +64,7 @@ public class J_EnemyAttack : MonoBehaviour
 
         if (horizontalDist <= lineWidth && verticalDist <= attackRange)
         {
-            
+
             StartCoroutine(JumpAttackRoutine());
         }
     }
@@ -72,14 +73,6 @@ public class J_EnemyAttack : MonoBehaviour
     {
         Collider2D selfColForJump = GetComponent<Collider2D>();
         Vector2 jumpColliderSize = selfColForJump != null ? selfColForJump.bounds.size * 0.95f : Vector2.one * 0.5f;
-
-        float originalGravityScale = 0f;
-        if (rb != null)
-        {
-            originalGravityScale = rb.gravityScale;
-            rb.gravityScale = 0f;      // 점프/낙하 도중엔 물리 중력이 위치를 방해하지 않도록 끔
-            rb.linearVelocity = Vector2.zero;
-        }
 
         isAttacking = true;
         canAttack = false;
@@ -91,11 +84,11 @@ public class J_EnemyAttack : MonoBehaviour
         Vector2 startPos = transform.position;
         Vector2 desiredLandPos = target.position;
         Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos);
-        
 
-        if (Vector2.Distance(startPos, landPos) < 0.1f)
+
+        if (Vector2.Distance(startPos, landPos) < minJumpDistance)
         {
-            
+
             isAttacking = false;
             canAttack = true;
             if (enemyMove != null)
@@ -136,29 +129,21 @@ public class J_EnemyAttack : MonoBehaviour
             }
 
             lastValidPos = desiredPos;
-            if (rb != null) rb.position = desiredPos;
-            else transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
             yield return null;
 
-            if (hitCeiling)   
+            if (hitCeiling)
                 break;
         }
 
         if (hitCeiling)
         {
+            // 착지 지점으로 순간이동하지 않고, 부딪힌 자리에서 자연스럽게 낙하시킴
             yield return StartCoroutine(FallToGround());
         }
         else
         {
-            if (rb != null) rb.position = landPos;
-            else transform.position = landPos; // 정확히 착지 지점에 정렬
-        }
-
-        // 착지 완료 → 중력/속도를 원래대로 복구
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.gravityScale = originalGravityScale;
+            transform.position = landPos; // 정확히 착지 지점에 정렬
         }
 
         yield return new WaitForSeconds(postDelay);
@@ -171,6 +156,7 @@ public class J_EnemyAttack : MonoBehaviour
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
     }
+
     public float fallAcceleration = 20f;   // 낙하 가속도(중력 느낌)
     public float maxFallTime = 3f;         // 바닥을 못 찾았을 때 무한 낙하 방지용 안전장치
 
@@ -192,8 +178,7 @@ public class J_EnemyAttack : MonoBehaviour
 
             bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
 
-            if (rb != null) rb.position = nextPos;
-            else transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
+            transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
 
             if (foundGround)
                 yield break;
@@ -210,21 +195,36 @@ public class J_EnemyAttack : MonoBehaviour
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
-        int steps = 10; // 경로를 몇 단계로 나눠 검사할지
-        for (int i = steps; i >= 0; i--)
+        // 플레이어 위치 바로 위에서 아래로 레이캐스트해서 실제 목표 착지 지점을 구함
+        float rayStartY = desired.y + 1f;
+        Vector2 rayStart = new Vector2(desired.x, rayStartY);
+        RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
+        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
+
+        // 시작점 -> 목표 착지 지점 경로를 따라가며 바닥이 끊기는 낭떠러지가 있는지 검사
+        int steps = 10;
+        Vector2 lastGroundPos = start;
+        for (int i = 0; i <= steps; i++)
         {
             float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, desired, t);
+            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
             Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
 
             bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
-            
 
             if (foundGround)
-                return checkPos;
+            {
+                lastGroundPos = checkPos; // 마지막으로 바닥이 있던 지점 갱신
+            }
+            else
+            {
+                // 바닥이 끊기는 낭떠러지 발견 -> 더 가지 않고 그 앞의 마지막 안전한 땅에 착지
+                return lastGroundPos;
+            }
         }
 
-        return start;
+        // 경로 전체에 낭떠러지 없이 바닥이 이어져 있으면 목표 지점 그대로 착지
+        return targetLandPos;
     }
 
     void OnDrawGizmosSelected()

@@ -207,9 +207,14 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  fallAcceleration: 20
+  maxFallTime: 3
   groundCheckRadius: 0.3
 --- !u!114 &-5272792582670928354
 MonoBehaviour:
