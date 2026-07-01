@@ -50,6 +50,9 @@ TagManager:
   - name: Mob
     uniqueID: 354283401
     locked: 0
+  - name: Item
+    uniqueID: 3809677387
+    locked: 0
   - name: Player
     uniqueID: 3397251325
     locked: 0
