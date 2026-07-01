@@ -28,8 +28,8 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("피격 시 그리기 차단 시간 (기본값: 0.01초)")]
     public float damageDrawBlockDuration = 0.01f;
 
-    [Tooltip("피격 시 플레이어 조작 차단 시간 (기본값: 0.5초)")]
-    public float damageStunDuration = 0.5f;
+    [Tooltip("피격 시 플레이어 조작 차단 시간 (기본값: 0.3초)")]
+    public float damageStunDuration = 0.3f;
 
     [Header("Camera Shake Settings")]
     [Tooltip("피격 시 카메라 흔들림 세기 (기본값: 0.2)")]
@@ -239,7 +239,7 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            // 데미지를 입고 살아있다면 3초간 무적 및 깜빡임 처리
+            // 데미지를 입고 살아있다면 0.5초간 무적 및 깜빡임 처리
             StartCoroutine(InvincibilityRoutine());
         }
     }
@@ -427,14 +427,14 @@ public class PlayerHealth : MonoBehaviour
     }
 
     /// <summary>
-    /// 3초간 무적 및 0.5초 주기로 투명도 깜빡임(0.4 -> 0.7)을 처리하는 코루틴
+    /// 1.2초간 무적 및 0.3초 주기로 투명도 깜빡임(0.4 -> 0.7)을 처리하는 코루틴
     /// </summary>
     private System.Collections.IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
         
-        float duration = 3.0f;
-        float blinkInterval = 0.5f;
+        float duration = 1.2f;
+        float blinkInterval = 0.3f;
         float elapsed = 0f;
         bool isAlphaLow = true; // 투명도 0.4 시작 여부
 
