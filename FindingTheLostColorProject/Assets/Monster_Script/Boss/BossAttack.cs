@@ -13,6 +13,12 @@ public class BossAttack : MonoBehaviour
     public MonoBehaviour moveScript;        // 공격 중 이동을 멈추고 싶다면 연결 (선택 사항, 비워두면 이동 제어 안 함)
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
 
+    [Header("크리스탈 페이즈 (전투 시작 시 보스는 공격 불가, 크리스탈 4개 파괴하면 2페이즈로 전환)")]
+    public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
+    public BossMove flyMove; // 크리스탈 파괴 완료 시 무한대(∞) 이동으로 전환하기 위한 참조 (비워두면 자동 탐색)
+
+    bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
+    int destroyedCrystalCount = 0;
 
     bool isAttacking = false;
     bool canAttack = true;
@@ -82,15 +88,25 @@ public class BossAttack : MonoBehaviour
         {
             col.isTrigger = true;
         }
-    
 
-    // 보스 자신의 콜라이더를 트리거로 만들어서 플레이어와 물리적으로 부딪히지 않고 관통되게 함
-    // (BossMove가 transform.position을 직접 덮어쓰는 방식이라, 트리거가 아니면 물리엔진이
-    //  겹침을 풀려고 플레이어를 밀어내는 현상이 발생함 - 점프해서 아래에서 파고들 때 특히 두드러짐)
-    Collider2D[] bossColliders = GetComponents<Collider2D>();
-        foreach (var col in bossColliders)
+        if (flyMove == null) flyMove = GetComponent<BossMove>();
+        if (flyMove == null) flyMove = GetComponentInChildren<BossMove>();
+
+        // 크리스탈들의 파괴 이벤트를 구독해서 전부 파괴되면 2페이즈로 전환
+        foreach (var crystal in crystals)
         {
-            col.isTrigger = true;
+            if (crystal != null) crystal.OnCrystalDestroyed += HandleCrystalDestroyed;
+        }
+    }
+
+    void HandleCrystalDestroyed()
+    {
+        destroyedCrystalCount++;
+        if (destroyedCrystalCount >= crystals.Count)
+        {
+            phase2Unlocked = true;
+            if (flyMove != null) flyMove.SetInfinityMode(true);
+            Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
     }
 
@@ -109,9 +125,9 @@ public class BossAttack : MonoBehaviour
 
     List<AttackEntry> GetCurrentPhasePool()
     {
-        float ratio = bossHealth.maxHealth > 0f ? bossHealth.currentHealth / bossHealth.maxHealth : 0f;
-        // ratio가 낮으면(체력 채워지기 전 = 초반) 1페이즈, threshold 이상(F_HealthMoveSwitcher와 동일 기준)이면 2페이즈
-        return ratio >= phase2ThresholdRatio ? phase2Attacks : phase1Attacks;
+        // 체력 비율이 아니라 크리스탈 파괴 여부로 페이즈가 결정됨
+        // 크리스탈이 남아있으면 1페이즈 풀, 다 깨지면(phase2Unlocked) 2페이즈 풀
+        return phase2Unlocked ? phase2Attacks : phase1Attacks;
     }
 
     AttackEntry PickRandomAttack(List<AttackEntry> pool)

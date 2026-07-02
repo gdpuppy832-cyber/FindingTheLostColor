@@ -214,7 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 364721ef1300b0145b18e1889d8dc43e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 1
+  amplitude: 4
   speed: 1
   infinityWidthX: 1.5
   infinityHeightY: 1
@@ -239,6 +239,8 @@ MonoBehaviour:
     m_Bits: 64
   moveScript: {fileID: 0}
   attackCooldown: 1
+  crystals: []
+  flyMove: {fileID: 0}
   telegraphMarkerPrefab: {fileID: 3245603565380300184}
   spikePrefab: {fileID: 8704636082181337591}
   spikeTelegraphDuration: 2
