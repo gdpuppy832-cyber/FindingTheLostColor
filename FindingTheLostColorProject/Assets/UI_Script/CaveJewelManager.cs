@@ -231,7 +231,7 @@ public class CaveJewelManager : MonoBehaviour
         Camera.main.transform.position = targetCamPos;
 
         // [Phase 3] O초간 목표지점을 보고있기 (그사이에 타이틀 텍스트를 출력 및 해제)
-        SetTitleText("모든 고양이를 정화했다!");
+        SetTitleText("모든 고양이를\n정화했다!");
         SetTitleActive(true);
         yield return new WaitForSeconds(oSeconds);
         SetTitleActive(false);

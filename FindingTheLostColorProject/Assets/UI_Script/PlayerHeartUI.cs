@@ -6,9 +6,9 @@ using System.Collections;
 [ExecuteAlways]
 public class PlayerHeartUI : MonoBehaviour
 {
-    [Header("하트 이미지 슬롯 (왼쪽부터 순서대로 10개 연결)")]
-    [Tooltip("체력을 표현할 10개의 UI Image 컴포넌트")]
-    public Image[] heartImages = new Image[10];
+    [Header("하트 이미지 슬롯 (왼쪽부터 순서대로 7개 연결)")]
+    [Tooltip("체력을 표현할 7개의 UI Image 컴포넌트")]
+    public Image[] heartImages = new Image[7];
 
     [Header("하트 스프라이트 에셋")]
     [Tooltip("가득 찬 하트 이미지")]
@@ -35,8 +35,8 @@ public class PlayerHeartUI : MonoBehaviour
     public float pulseScale = 0.25f;
 
     // 이전 프레임의 하트 상태 저장용 배열 (0: Empty, 1: Half, 2: Full)
-    private int[] previousStates = new int[10];
-    private Coroutine[] shakeCoroutines = new Coroutine[10];
+    private int[] previousStates;
+    private Coroutine[] shakeCoroutines;
 
     void Start()
     {
@@ -51,9 +51,16 @@ public class PlayerHeartUI : MonoBehaviour
             Debug.LogError("[PlayerHeartUI] 씬에서 PlayerHealth 컴포넌트를 찾지 못했습니다! 치즈(Player) 오브젝트가 씬에 존재하고 활성화되어 있는지 확인해 주세요.");
         }
 
-        if (heartImages.Length != 10)
+        // 동적 배열 공간 할당
+        previousStates = new int[heartImages.Length];
+        shakeCoroutines = new Coroutine[heartImages.Length];
+
+        // 최대 체력에 따른 슬롯 검증
+        float maxHp = (playerHealth != null) ? playerHealth.maxHealth : (float)heartImages.Length;
+        int expectedHearts = Mathf.CeilToInt(maxHp);
+        if (heartImages.Length != expectedHearts)
         {
-            Debug.LogWarning("[PlayerHeartUI] 하트 이미지 슬롯 개수가 10개가 아닙니다. 최대 체력이 10이므로 10개의 슬롯이 연결되어야 합니다.");
+            Debug.LogWarning($"[PlayerHeartUI] 연결된 하트 이미지 개수({heartImages.Length}개)가 플레이어 최대 체력({maxHp}) 기준 필요 개수({expectedHearts}개)와 다릅니다!");
         }
 
         // 스프라이트 에셋 누락 경고
@@ -63,7 +70,7 @@ public class PlayerHeartUI : MonoBehaviour
         }
 
         // 초기 하트 상태 배열 세팅
-        float startHp = (playerHealth != null) ? playerHealth.currentHealth : 10f;
+        float startHp = (playerHealth != null) ? playerHealth.currentHealth : maxHp;
         for (int i = 0; i < previousStates.Length; i++)
         {
             previousStates[i] = GetHeartState(startHp, i);
@@ -78,10 +85,11 @@ public class PlayerHeartUI : MonoBehaviour
             playerHealth = FindFirstObjectByType<PlayerHealth>();
         }
 
-        // 플레이어 체력 컴포넌트가 존재하면 해당 체력을 사용하고, 없으면 기본 프리뷰 체력(10)으로 강제 렌더링하여 흰색 네모 방지
-        float currentHp = (playerHealth != null) ? playerHealth.currentHealth : 10f;
+        // 플레이어 체력 컴포넌트가 존재하면 해당 체력을 사용하고, 없으면 기본 프리뷰 체력(최대치)으로 강제 렌더링하여 흰색 네모 방지
+        float maxHp = (playerHealth != null) ? playerHealth.maxHealth : (float)heartImages.Length;
+        float currentHp = (playerHealth != null) ? playerHealth.currentHealth : maxHp;
 
-        // 10개의 하트 상태를 체력 값에 따라 개별적으로 계산하여 이미지 변경 및 흔들림 트리거
+        // 7개의 하트 상태를 체력 값에 따라 개별적으로 계산하여 이미지 변경 및 흔들림 트리거
         for (int i = 0; i < heartImages.Length; i++)
         {
             if (heartImages[i] == null) continue;
@@ -89,8 +97,8 @@ public class PlayerHeartUI : MonoBehaviour
             int currentState = GetHeartState(currentHp, i);
             int prevState = previousStates[i];
 
-            // 피격으로 인해 체력이 깎여 하트 상태 수치가 작아진 경우
-            if (currentState < prevState && Application.isPlaying)
+            // 체력이 깎이거나 회복되어서 하트 상태 수치가 변한 경우 (화면 흔들림 없음)
+            if (currentState != prevState && Application.isPlaying)
             {
                 // 해당 하트 흔들림 연출 개별 트리거
                 if (shakeCoroutines[i] != null)

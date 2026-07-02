@@ -21,6 +21,10 @@ public class NormalMonster : MonoBehaviour
     [Tooltip("정화 완료 시 재생할 Animator Trigger 이름 (기본값: Purified)")]
     public string purifiedTriggerName = "Purified";
 
+    [Header("HIT! 폰트 설정")]
+    [Tooltip("체력 회복 시 뜨는 HIT! 텍스트의 폰트 (비워두면 PlayerInteraction에 연결된 폰트를 자동 상속합니다)")]
+    public Font hitTextFont;
+
     [Header("Color Fade Settings (물감 칠해지는 색상 연출)")]
     [Tooltip("시작 시 (체력이 0일 때) 몬스터의 색상 (어둡거나 색이 빠진 톤)")]
     public Color startColor = new Color(0.35f, 0.35f, 0.35f, 1f);
@@ -188,13 +192,43 @@ public class NormalMonster : MonoBehaviour
         textMesh.color = new Color(1f, 0.7f, 0f); // 선명한 주황/노란색 계열
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.alignment = TextAlignment.Center;
+
+        // 폰트 설정 (몬스터에 명시적 폰트가 지정되지 않은 경우, Player의 폰트 설정을 상속받아 자동 적용)
+        Font appliedFont = hitTextFont;
+        if (appliedFont == null)
+        {
+            PlayerInteraction playerInt = FindFirstObjectByType<PlayerInteraction>();
+            if (playerInt != null && playerInt.customFont != null)
+            {
+                appliedFont = playerInt.customFont;
+            }
+            else
+            {
+                CaveEntrance caveEnt = FindFirstObjectByType<CaveEntrance>();
+                if (caveEnt != null && caveEnt.customFont != null)
+                {
+                    appliedFont = caveEnt.customFont;
+                }
+            }
+        }
+
+        if (appliedFont != null)
+        {
+            textMesh.font = appliedFont;
+        }
         
-        // 3. 렌더 순서 설정 (UI 레이어로 설정하여 화면 최상단 출력)
+        // 3. 렌더 순서 설정 (UI 레이어로 설정하여 화면 최상단 출력) 및 폰트 머티리얼 동기화 (깨짐 방지)
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
             meshRenderer.sortingLayerName = "UI";
             meshRenderer.sortingOrder = 150;
+            
+            // TextMesh는 폰트를 바꿀 때 렌더러의 머티리얼도 해당 폰트의 머티리얼로 매핑해주어야 글씨가 깨지지 않고 선명하게 나옵니다.
+            if (appliedFont != null)
+            {
+                meshRenderer.material = appliedFont.material;
+            }
         }
 
         // 4. 서서히 위로 떠오르며 사라지는 제어용 FloatingText 컴포넌트 장착

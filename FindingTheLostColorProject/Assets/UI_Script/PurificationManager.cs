@@ -162,7 +162,7 @@ public class PurificationManager : MonoBehaviour
     /// </summary>
     private void UpdateUI()
     {
-        string textValue = $"{purifiedCats}/{totalCats}";
+        string textValue = $"고양이 {purifiedCats} / {totalCats}";
 
         // 1. 레거시 UI Text
         if (legacyText != null)
