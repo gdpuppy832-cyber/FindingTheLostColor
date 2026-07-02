@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -11,11 +11,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Platform
+  - Player
+  - Monster
+  - Projectile
+  - Crystal
   - 
   - 
   - 
@@ -41,3 +41,26 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 2832044801
+    locked: 0
+  - name: Default
+    uniqueID: 2939335
+    locked: 0
+  - name: Mob
+    uniqueID: 354283401
+    locked: 0
+  - name: Item
+    uniqueID: 3809677387
+    locked: 0
+  - name: Player
+    uniqueID: 3397251325
+    locked: 0
+  - name: UI
+    uniqueID: 1468585831
+    locked: 0
+  - name: TopEffect
+    uniqueID: 3570306233
+    locked: 0
+  m_RenderingLayers:
+  - Default
