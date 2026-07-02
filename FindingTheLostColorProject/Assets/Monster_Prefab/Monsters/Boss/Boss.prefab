@@ -244,9 +244,11 @@ MonoBehaviour:
   spikeTelegraphDuration: 2
   spikeTelegraphBlinkInterval: 0.5
   spikeLifetime: 3
-  spikeSearchRadius: 8
+  spikeSearchRadius: 15
   spikeGroundRaycastDistance: 20
   spikeMaxSearchAttempts: 20
+  spikeMinDistance: 1.7
+  spikeMaxHeightAboveBoss: 10
 --- !u!1 &4047836205825665637
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,17 +466,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5525985110957521975}
     m_Modifications:
+    - target: {fileID: 1731859776043976880, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731859776043976880, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 354283401
+      objectReference: {fileID: 0}
     - target: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
       propertyPath: m_Name
       value: Spike
       objectReference: {fileID: 0}
     - target: {fileID: 7184749598055297410, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.0949507
+      value: -2.43
       objectReference: {fileID: 0}
     - target: {fileID: 7184749598055297410, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.72074986
+      value: 2.94
       objectReference: {fileID: 0}
     - target: {fileID: 7184749598055297410, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -531,17 +541,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5525985110957521975}
     m_Modifications:
+    - target: {fileID: 2138132884049188889, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2138132884049188889, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 354283401
+      objectReference: {fileID: 0}
     - target: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
       propertyPath: m_Name
       value: SpikeTelegraph
       objectReference: {fileID: 0}
     - target: {fileID: 8719342195653963176, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.0949507
+      value: 0.69
       objectReference: {fileID: 0}
     - target: {fileID: 8719342195653963176, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.72074986
+      value: 3.32
       objectReference: {fileID: 0}
     - target: {fileID: 8719342195653963176, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
       propertyPath: m_LocalPosition.z

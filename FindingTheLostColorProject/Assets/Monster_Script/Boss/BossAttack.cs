@@ -13,6 +13,7 @@ public class BossAttack : MonoBehaviour
     public MonoBehaviour moveScript;        // 공격 중 이동을 멈추고 싶다면 연결 (선택 사항, 비워두면 이동 제어 안 함)
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
 
+
     bool isAttacking = false;
     bool canAttack = true;
 
@@ -73,6 +74,23 @@ public class BossAttack : MonoBehaviour
             telegraphMarkerTemplate.transform.SetParent(null);
             telegraphMarkerTemplate.SetActive(false);
             telegraphMarkerPrefab.SetActive(false); // 원본은 그냥 숨겨만 두고 다시는 건드리지 않음
+        }
+
+        // 보스 본체(자기 자신)의 콜라이더만 트리거로 설정 (자식의 ContactRelay용 콜라이더는 건드리지 않음)
+        // Rigidbody2D는 Dynamic 유지 - 트리거 콜라이더끼리는 어차피 물리적으로 밀리지 않음
+        foreach (var col in GetComponents<Collider2D>())
+        {
+            col.isTrigger = true;
+        }
+    
+
+    // 보스 자신의 콜라이더를 트리거로 만들어서 플레이어와 물리적으로 부딪히지 않고 관통되게 함
+    // (BossMove가 transform.position을 직접 덮어쓰는 방식이라, 트리거가 아니면 물리엔진이
+    //  겹침을 풀려고 플레이어를 밀어내는 현상이 발생함 - 점프해서 아래에서 파고들 때 특히 두드러짐)
+    Collider2D[] bossColliders = GetComponents<Collider2D>();
+        foreach (var col in bossColliders)
+        {
+            col.isTrigger = true;
         }
     }
 
@@ -136,6 +154,8 @@ public class BossAttack : MonoBehaviour
     public float spikeSearchRadius = 8f;           // 보스 주변 랜덤 위치 탐색 반경
     public float spikeGroundRaycastDistance = 20f; // 바닥 탐색용 레이캐스트 최대 거리
     public int spikeMaxSearchAttempts = 20;        // 유효 바닥 못 찾을 때 재시도 최대 횟수
+    public float spikeMinDistance = 1.5f;           // 가시끼리 최소 간격 (겹침 방지)
+    public float spikeMaxHeightAboveBoss = 3f;      // 보스 기준 이 값보다 높은 땅에는 가시 생성 안 함 (여유 허용치)
 
     IEnumerator SpikeTrapAttackRoutine()
     {
@@ -152,7 +172,7 @@ public class BossAttack : MonoBehaviour
             attempts++;
             Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
             Vector2? groundPos = TryFindGroundPosition(randomPoint);
-            if (groundPos.HasValue)
+            if (groundPos.HasValue && IsFarEnough(groundPos.Value, spawnPositions))
             {
                 spawnPositions.Add(groundPos.Value);
                 found++;
@@ -206,16 +226,35 @@ public class BossAttack : MonoBehaviour
         return hit.collider != null ? hit.point : fromPos;
     }
 
-    // 랜덤 지점 위쪽에서 아래로 레이캐스트를 쏴서 바닥/발판을 찾음
     Vector2? TryFindGroundPosition(Vector2 randomPoint)
     {
+        // 보스는 항상 바닥과 천장 사이(빈 공간)에 떠 있다고 가정하고,
+        // 보스 자신의 y좌표에서 바로 아래로 쏨 (천장을 뚫고 지나갈 일이 없음)
+        Vector2 origin = new Vector2(randomPoint.x, transform.position.y);
         RaycastHit2D hit = Physics2D.Raycast(
-            randomPoint + Vector2.up * (spikeGroundRaycastDistance * 0.5f),
+            origin,
             Vector2.down,
             spikeGroundRaycastDistance,
             groundLayer
         );
-        return hit.collider != null ? hit.point : (Vector2?)null;
+
+        if (hit.collider == null) return null;
+
+        // 보스보다 spikeMaxHeightAboveBoss 이상 높은 위치의 땅(발판)에는 가시를 생성하지 않음
+        if (hit.point.y > transform.position.y + spikeMaxHeightAboveBoss) return null;
+
+        return hit.point;
+    }
+
+    // spawnPositions에 이미 있는 위치들과 최소 간격 이상 떨어져 있는지 확인
+    bool IsFarEnough(Vector2 pos, List<Vector2> existing)
+    {
+        foreach (var p in existing)
+        {
+            if (Vector2.Distance(pos, p) < spikeMinDistance)
+                return false;
+        }
+        return true;
     }
 
     GameObject SpawnTelegraphMarker(Vector2 pos)
@@ -224,6 +263,7 @@ public class BossAttack : MonoBehaviour
         {
             GameObject marker = Instantiate(telegraphMarkerTemplate, pos, Quaternion.identity);
             marker.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+            AlignBottomToGround(marker, pos); // 마커 바닥이 땅 표면에 닿도록 보정
             return marker;
         }
 
@@ -234,6 +274,7 @@ public class BossAttack : MonoBehaviour
         sr.color = new Color(1f, 0.9f, 0f, 0.6f);
         sr.sprite = CreateTempSquareSprite();
         tempMarker.transform.localScale = Vector3.one * 0.8f;
+        AlignBottomToGround(tempMarker, pos); // 마커 바닥이 땅 표면에 닿도록 보정
         return tempMarker;
     }
 
@@ -259,9 +300,46 @@ public class BossAttack : MonoBehaviour
             col.isTrigger = true;
         }
 
+        // 프리팹을 쓰는 경우에도 플레이어와 물리적으로 부딪히지 않도록
+        // (본체 + 자식 오브젝트 포함) 모든 콜라이더를 트리거로 강제 설정
+        ForceAllCollidersToTrigger(spike);
+
+        AlignBottomToGround(spike, pos); // 가시 바닥이 땅 표면에 닿도록 보정
+
         SpikeHazard hazard = spike.GetComponent<SpikeHazard>();
         if (hazard == null) hazard = spike.AddComponent<SpikeHazard>();
         hazard.lifetime = spikeLifetime;
+    }
+
+    // spike의 실제 바닥(월드 기준 min.y)이 groundPos.y에 오도록 위로 밀어올림
+    void AlignBottomToGround(GameObject spike, Vector2 groundPos)
+    {
+        Bounds bounds;
+        Collider2D col = spike.GetComponent<Collider2D>();
+        if (col != null)
+        {
+            bounds = col.bounds;
+        }
+        else
+        {
+            SpriteRenderer sr = spike.GetComponent<SpriteRenderer>();
+            if (sr == null) return; // 기준 삼을 게 없으면 보정하지 않음
+            bounds = sr.bounds;
+        }
+
+        float bottomOffset = spike.transform.position.y - bounds.min.y; // 피벗이 바닥보다 얼마나 위에 있는지
+        spike.transform.position = new Vector3(groundPos.x, groundPos.y + bottomOffset, spike.transform.position.z);
+    }
+
+    // spike 본체와 모든 자식 오브젝트의 콜라이더를 트리거로 강제 설정
+    // (플레이어가 가시를 물리적으로 밀어내거나 막히지 않고 그대로 통과하게 하기 위함)
+    void ForceAllCollidersToTrigger(GameObject spike)
+    {
+        Collider2D[] colliders = spike.GetComponentsInChildren<Collider2D>(true);
+        foreach (var c in colliders)
+        {
+            c.isTrigger = true;
+        }
     }
 
     Sprite CreateTempSquareSprite()
