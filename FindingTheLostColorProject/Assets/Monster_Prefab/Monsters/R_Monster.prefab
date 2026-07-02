@@ -164,7 +164,7 @@ Transform:
   m_GameObject: {fileID: 2725098250140607223}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.75, y: 4.2, z: 0}
+  m_LocalPosition: {x: -0.02, y: 2.74, z: 0}
   m_LocalScale: {x: 1.41, y: 0.17, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 6
-  telegraphTime: 0.5
+  telegraphTime: 1
   projectileSpeed: 4
   projectileLifetime: 3
   attackCooldown: 4
@@ -476,11 +476,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5976961479642515257, guid: 23317ca43e4c13e418116cd5d1546e64, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.59515
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5976961479642515257, guid: 23317ca43e4c13e418116cd5d1546e64, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.4461203
+      value: 1.77
       objectReference: {fileID: 0}
     - target: {fileID: 5976961479642515257, guid: 23317ca43e4c13e418116cd5d1546e64, type: 3}
       propertyPath: m_LocalPosition.z
