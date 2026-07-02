@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 2
-  lineWidth: 5
+  lineWidth: 4
   telegraphTime: 2
   jumpDuration: 0.6
   jumpHeight: 2
