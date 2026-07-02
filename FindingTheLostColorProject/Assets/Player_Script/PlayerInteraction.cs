@@ -24,6 +24,10 @@ public class PlayerInteraction : MonoBehaviour
     [Tooltip("상호작용 안내 UI 오브젝트")]
     public GameObject promptUIObj;
 
+    [Header("임시 UI 글꼴 설정 (비워둘 시 기본 글꼴 적용)")]
+    [Tooltip("상호작용 안내창이 자동 생성될 때 사용할 폰트 에셋")]
+    public Font customFont;
+
     private bool isInteractionLocked = false;
     private bool isDynamicUI = false;
 
@@ -169,7 +173,7 @@ public class PlayerInteraction : MonoBehaviour
         textRect.sizeDelta = Vector2.zero;
 
         promptText = textObj.AddComponent<Text>();
-        promptText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        promptText.font = customFont != null ? customFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         promptText.fontSize = 18;
         promptText.fontStyle = FontStyle.Bold;
         promptText.alignment = TextAnchor.MiddleCenter;

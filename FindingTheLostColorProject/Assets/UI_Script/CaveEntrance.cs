@@ -52,6 +52,10 @@ public class CaveEntrance : InteractableObject
     [Tooltip("에디터에서 미리 배치해 둔 전체 화면 검정 이미지 (비워둘 시 검은색 이미지를 런타임에 자동 생성하여 페이드 진행)")]
     public Image customFadeImage;
 
+    [Header("임시 UI 글꼴 설정 (비워둘 시 기본 글꼴 적용)")]
+    [Tooltip("임시 경고창 및 선택지 팝업 자동 생성 시 사용할 폰트 에셋")]
+    public Font customFont;
+
     private GameObject activeSelectionUI;
     private Coroutine warningCoroutine;
     private bool isTransitioning = false;
@@ -326,8 +330,10 @@ public class CaveEntrance : InteractableObject
         titleRect.anchoredPosition = Vector2.zero;
         titleRect.sizeDelta = new Vector2(300f, 40f);
 
+        Font appliedFont = customFont != null ? customFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
         Text titleText = titleObj.AddComponent<Text>();
-        titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        titleText.font = appliedFont;
         titleText.fontSize = 18;
         titleText.fontStyle = FontStyle.Bold;
         titleText.alignment = TextAnchor.MiddleCenter;
@@ -351,7 +357,7 @@ public class CaveEntrance : InteractableObject
         GameObject yesTextObj = new GameObject("Text");
         yesTextObj.transform.SetParent(yesBtnObj.transform, false);
         Text yesText = yesTextObj.AddComponent<Text>();
-        yesText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        yesText.font = appliedFont;
         yesText.fontSize = 15;
         yesText.fontStyle = FontStyle.Bold;
         yesText.alignment = TextAnchor.MiddleCenter;
@@ -380,7 +386,7 @@ public class CaveEntrance : InteractableObject
         GameObject noTextObj = new GameObject("Text");
         noTextObj.transform.SetParent(noBtnObj.transform, false);
         Text noText = noTextObj.AddComponent<Text>();
-        noText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        noText.font = appliedFont;
         noText.fontSize = 15;
         noText.fontStyle = FontStyle.Bold;
         noText.alignment = TextAnchor.MiddleCenter;
@@ -429,7 +435,7 @@ public class CaveEntrance : InteractableObject
         textRect.sizeDelta = Vector2.zero;
 
         Text text = textObj.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.font = customFont != null ? customFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.fontSize = 15;
         text.fontStyle = FontStyle.Bold;
         text.alignment = TextAnchor.MiddleCenter;
