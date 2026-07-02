@@ -213,6 +213,12 @@ public class NormalMonster : MonoBehaviour
 
         Debug.Log($"[NormalMonster] {gameObject.name} 정화 완료!");
 
+        // 정화 카운트 매니저가 존재하면 카운트 증가 알림 (즉시 UI에 반영)
+        if (PurificationManager.Instance != null)
+        {
+            PurificationManager.Instance.OnCatPurified(this);
+        }
+
         // 1. 정화 애니메이션 트리거 재생
         if (animator != null)
         {
