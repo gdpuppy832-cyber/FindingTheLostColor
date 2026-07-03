@@ -184,6 +184,17 @@ public class CursorController : MonoBehaviour
                             {
                                 trampoline.Heal(activeHealRate * Time.deltaTime);
                             }
+                            else
+                            {
+                                // 4. 퍼즐 등불(PuzzleLamp) 치료/정화 처리
+                                PuzzleLamp lamp = hitCollider.GetComponent<PuzzleLamp>();
+                                if (lamp == null) lamp = hitCollider.GetComponentInParent<PuzzleLamp>();
+
+                                if (lamp != null)
+                                {
+                                    lamp.Heal(activeHealRate * Time.deltaTime);
+                                }
+                            }
                         }
                     }
                 }
