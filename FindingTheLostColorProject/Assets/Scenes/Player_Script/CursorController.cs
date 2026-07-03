@@ -154,6 +154,39 @@ public class CursorController : MonoBehaviour
                     // 거리에 따른 초당 회복 속도만큼 몬스터 체력(물감) 회복
                     monster.Heal(activeHealRate * Time.deltaTime);
                 }
+                else
+                {
+                    // 1. 장미덤불(RoseBush) 치료/정화 처리
+                    RoseBush roseBush = hitCollider.GetComponent<RoseBush>();
+                    if (roseBush == null) roseBush = hitCollider.GetComponentInParent<RoseBush>();
+
+                    if (roseBush != null)
+                    {
+                        roseBush.Heal(activeHealRate * Time.deltaTime);
+                    }
+                    else
+                    {
+                        // 2. 채색다리(ColoringBridge) 치료/정화 처리
+                        ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
+                        if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
+
+                        if (bridge != null)
+                        {
+                            bridge.Heal(activeHealRate * Time.deltaTime);
+                        }
+                        else
+                        {
+                            // 3. 트램펄린(Trampoline) 치료/정화 처리
+                            Trampoline trampoline = hitCollider.GetComponent<Trampoline>();
+                            if (trampoline == null) trampoline = hitCollider.GetComponentInParent<Trampoline>();
+
+                            if (trampoline != null)
+                            {
+                                trampoline.Heal(activeHealRate * Time.deltaTime);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
