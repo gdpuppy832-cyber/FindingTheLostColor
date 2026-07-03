@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   side: 0
-  spawnDistanceX: 22
+  spawnDistanceX: 32
   travelDuration: 10
   pushBackSpeed: 4
   damagePerSecond: 1

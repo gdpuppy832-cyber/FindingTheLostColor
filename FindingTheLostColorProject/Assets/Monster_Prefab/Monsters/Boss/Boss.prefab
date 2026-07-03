@@ -253,6 +253,9 @@ MonoBehaviour:
   colorOrbPrefab: {fileID: 0}
   colorOrbHealth: 15
   colorOrbSpawnOffsetY: -5
+  blackFogs:
+  - {fileID: 0}
+  - {fileID: 0}
   telegraphMarkerPrefab: {fileID: 3245603565380300184}
   spikePrefab: {fileID: 8704636082181337591}
   spikeTelegraphDuration: 2
