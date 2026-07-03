@@ -218,6 +218,7 @@ MonoBehaviour:
   attackDamage: 0.5
   attackCooldown: 1
   purifiedTriggerName: Purified
+  hitTextFont: {fileID: 0}
   startColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2065791623047267445
@@ -337,7 +338,7 @@ Transform:
   m_GameObject: {fileID: 2967901885094795587}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.54, y: 2.42, z: 0}
+  m_LocalPosition: {x: -0.01, y: 2.81, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

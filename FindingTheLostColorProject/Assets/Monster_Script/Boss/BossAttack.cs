@@ -13,7 +13,7 @@ public class BossAttack : MonoBehaviour
     public MonoBehaviour moveScript;        // 공격 중 이동을 멈추고 싶다면 연결 (선택 사항, 비워두면 이동 제어 안 함)
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
 
-    [Header("크리스탈 페이즈 (전투 시작 시 보스는 공격 불가, 크리스탈 4개 파괴하면 2페이즈로 전환)")]
+    
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
     public BossMove flyMove; // 크리스탈 파괴 완료 시 무한대(∞) 이동으로 전환하기 위한 참조 (비워두면 자동 탐색)
 
@@ -22,7 +22,10 @@ public class BossAttack : MonoBehaviour
     Collider2D[] bossOwnColliders; // 크리스탈 페이즈 동안 붓질(OverlapCircleAll) 감지를 막기 위해 비활성화할 보스 콜라이더
 
     bool isAttacking = false;
-    bool canAttack = true;
+    float nextAttackAllowedTime = 0f;
+
+    List<GameObject> activeTelegraphMarkers = new List<GameObject>();
+    List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
 
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
@@ -44,13 +47,14 @@ public class BossAttack : MonoBehaviour
         phase1Attacks = new List<AttackEntry>
         {
             new AttackEntry("SpikeTrap", SpikeTrapAttackRoutine),
-            // 1페이즈 공격을 더 추가하려면 여기에 계속 등록
+            new AttackEntry("Laser", LaserAttackRoutine),
+            new AttackEntry("FrostRain", FrostRainAttackRoutine),
         };
 
         // ===== 2페이즈 공격 풀 =====
         phase2Attacks = new List<AttackEntry>
         {
-            // 2페이즈 공격은 아직 없음 - 추가되면 여기에 등록
+
         };
     }
 
@@ -80,7 +84,47 @@ public class BossAttack : MonoBehaviour
             telegraphMarkerTemplate = Instantiate(telegraphMarkerPrefab, telegraphMarkerPrefab.transform.position, telegraphMarkerPrefab.transform.rotation);
             telegraphMarkerTemplate.transform.SetParent(null);
             telegraphMarkerTemplate.SetActive(false);
-            telegraphMarkerPrefab.SetActive(false); // 원본은 그냥 숨겨만 두고 다시는 건드리지 않음
+            telegraphMarkerPrefab.SetActive(false);
+        }
+
+        if (laserPrefab != null)
+        {
+            laserTemplate = Instantiate(laserPrefab, laserPrefab.transform.position, laserPrefab.transform.rotation);
+            laserTemplate.transform.SetParent(null);
+            laserTemplate.SetActive(false);
+            laserPrefab.SetActive(false);
+        }
+
+        if (laserTelegraphPrefab != null)
+        {
+            laserTelegraphTemplate = Instantiate(laserTelegraphPrefab, laserTelegraphPrefab.transform.position, laserTelegraphPrefab.transform.rotation);
+            laserTelegraphTemplate.transform.SetParent(null);
+            laserTelegraphTemplate.SetActive(false);
+            laserTelegraphPrefab.SetActive(false);
+        }
+
+        if (frostCrystalPrefab != null)
+        {
+            frostCrystalTemplate = Instantiate(frostCrystalPrefab, frostCrystalPrefab.transform.position, frostCrystalPrefab.transform.rotation);
+            frostCrystalTemplate.transform.SetParent(null);
+            frostCrystalTemplate.SetActive(false);
+            frostCrystalPrefab.SetActive(false);
+        }
+
+        if (frostCrystalHitboxPrefab != null)
+        {
+            frostCrystalHitboxTemplate = Instantiate(frostCrystalHitboxPrefab, frostCrystalHitboxPrefab.transform.position, frostCrystalHitboxPrefab.transform.rotation);
+            frostCrystalHitboxTemplate.transform.SetParent(null);
+            frostCrystalHitboxTemplate.SetActive(false);
+            frostCrystalHitboxPrefab.SetActive(false);
+        }
+
+        if (frostTelegraphMarkerPrefab != null)
+        {
+            frostTelegraphMarkerTemplate = Instantiate(frostTelegraphMarkerPrefab, frostTelegraphMarkerPrefab.transform.position, frostTelegraphMarkerPrefab.transform.rotation);
+            frostTelegraphMarkerTemplate.transform.SetParent(null);
+            frostTelegraphMarkerTemplate.SetActive(false);
+            frostTelegraphMarkerPrefab.SetActive(false);
         }
 
         // 보스 본체(자기 자신)의 콜라이더만 트리거로 설정 (자식의 ContactRelay용 콜라이더는 건드리지 않음)
@@ -108,29 +152,34 @@ public class BossAttack : MonoBehaviour
     void HandleCrystalDestroyed()
     {
         destroyedCrystalCount++;
-        Debug.Log($"[BossAttack] 크리스탈 파괴됨: {destroyedCrystalCount}/{crystals.Count}");
+        Debug.Log($"[BossAttack] 크리스탈 파괴됨: {destroyedCrystalCount}/{crystals.Count}, isAttacking={isAttacking}, enabled={enabled}");
 
-        // 크리스탈이 보스의 자식 오브젝트로 배치된 경우, NormalMonster.Purify()가
-        // "부모 계층의 모든 스크립트"를 꺼버리면서(script.enabled = false, StopAllCoroutines)
-        // BossAttack 자신과 moveScript/flyMove까지 함께 비활성화될 수 있음.
-        // NormalMonster는 수정하지 않는 전제이므로, 여기서 방어적으로 재활성화 + 상태 복구
         if (!enabled) enabled = true;
         if (moveScript != null && !moveScript.enabled) moveScript.enabled = true;
         if (flyMove != null && !flyMove.enabled) flyMove.enabled = true;
 
-        // 진행 중이던 공격 코루틴이 StopAllCoroutines로 중간에 끊겼을 수 있으므로
-        // 공격 상태 플래그를 안전하게 초기화 (다음 프레임부터 정상적으로 공격 재개)
+        bool wasInterrupted = isAttacking;
         isAttacking = false;
-        canAttack = true;
+
+        if (wasInterrupted)
+        {
+            if (moveScript != null) moveScript.enabled = true;
+            nextAttackAllowedTime = Time.time + attackCooldown;
+        }
 
         if (destroyedCrystalCount >= crystals.Count)
         {
             phase2Unlocked = true;
-            SetBossColliderState(true); // 2페이즈부터는 다시 붓질 가능
+            SetBossColliderState(true);
             if (flyMove != null) flyMove.SetInfinityMode(true);
             Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
+
+        // 추가: 복구 완료 후 최종 상태 확인
+        Debug.Log($"[BossAttack] 복구 완료 -> isAttacking={isAttacking}, enabled={enabled}, nextAttackAllowedTime={nextAttackAllowedTime}, currentTime={Time.time}, poolCount={GetCurrentPhasePool()?.Count}");
     }
+
+
 
     void SetBossColliderState(bool enabled)
     {
@@ -143,10 +192,13 @@ public class BossAttack : MonoBehaviour
 
     void Update()
     {
-        if (isAttacking || !canAttack || target == null || bossHealth == null) return;
+        if (isAttacking || Time.time < nextAttackAllowedTime || target == null || bossHealth == null)
+            return;
+        
+        
 
         List<AttackEntry> pool = GetCurrentPhasePool();
-        if (pool == null || pool.Count == 0) return; // 해당 페이즈에 등록된 공격이 없으면 대기
+        if (pool == null || pool.Count == 0) return;
 
         AttackEntry chosen = PickRandomAttack(pool);
         if (chosen == null) return;
@@ -158,7 +210,9 @@ public class BossAttack : MonoBehaviour
     {
         // 체력 비율이 아니라 크리스탈 파괴 여부로 페이즈가 결정됨
         // 크리스탈이 남아있으면 1페이즈 풀, 다 깨지면(phase2Unlocked) 2페이즈 풀
-        return phase2Unlocked ? phase2Attacks : phase1Attacks;
+        // 단, 2페이즈 공격이 아직 등록되지 않았다면(개발 중) 보스가 멈추지 않도록 1페이즈 풀을 계속 사용
+        if (phase2Unlocked && phase2Attacks.Count > 0) return phase2Attacks;
+        return phase1Attacks;
     }
 
     AttackEntry PickRandomAttack(List<AttackEntry> pool)
@@ -175,7 +229,6 @@ public class BossAttack : MonoBehaviour
     IEnumerator RunAttack(AttackEntry attack)
     {
         isAttacking = true;
-        canAttack = false;
         lastUsedAttack = attack;
 
         if (moveScript != null) moveScript.enabled = false;
@@ -184,9 +237,7 @@ public class BossAttack : MonoBehaviour
 
         if (moveScript != null) moveScript.enabled = true;
         isAttacking = false;
-
-        yield return new WaitForSeconds(attackCooldown);
-        canAttack = true;
+        nextAttackAllowedTime = Time.time + attackCooldown; // 코루틴 WaitForSeconds 대신 시간 값으로 쿨다운 관리 (중단되어도 안전)
     }
 
     // ================= 가시 함정 공격 (1페이즈) =================
@@ -227,11 +278,11 @@ public class BossAttack : MonoBehaviour
         }
 
         // 2. 각 위치에 텔레그래프 마커 생성
-        List<GameObject> markers = new List<GameObject>();
+        activeTelegraphMarkers.Clear();
         foreach (var pos in spawnPositions)
         {
             GameObject marker = SpawnTelegraphMarker(pos);
-            if (marker != null) markers.Add(marker);
+            if (marker != null) activeTelegraphMarkers.Add(marker);
         }
 
         // 3. 2초 동안 0.5초 간격으로 투명해졌다 돌아오는 깜빡임
@@ -242,7 +293,7 @@ public class BossAttack : MonoBehaviour
             yield return new WaitForSeconds(spikeTelegraphBlinkInterval);
             elapsed += spikeTelegraphBlinkInterval;
             visible = !visible;
-            foreach (var marker in markers)
+            foreach (var marker in activeTelegraphMarkers)
             {
                 if (marker == null) continue;
                 SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
@@ -251,10 +302,11 @@ public class BossAttack : MonoBehaviour
         }
 
         // 4. 텔레그래프 제거
-        foreach (var marker in markers)
+        foreach (var marker in activeTelegraphMarkers)
         {
             if (marker != null) Destroy(marker);
         }
+        activeTelegraphMarkers.Clear();
 
         // 5. 가시 생성 (각 위치마다)
         foreach (var pos in spawnPositions)
@@ -264,6 +316,298 @@ public class BossAttack : MonoBehaviour
 
         // 6. 가시가 살아있는 3초 대기 (가시 자체는 SpikeHazard가 스스로 lifetime 관리)
         yield return new WaitForSeconds(spikeLifetime);
+    }
+
+    // ================= 레이저 공격 (1페이즈) =================
+    [Header("레이저 공격 설정")]
+    public GameObject laserTelegraphPrefab;   // 가로로 긴 경고 라인 프리팹 (비워두면 임시 마커 생성)
+    public GameObject laserPrefab;            // 레이저 몸체 프리팹 (비워두면 임시 레이저 생성)
+    GameObject laserTelegraphTemplate;        // laserTelegraphPrefab의 런타임 복제 템플릿 (원본 보호용)
+    GameObject laserTemplate;                 // laserPrefab의 런타임 복제 템플릿 (원본 보호용)
+    public float laserTelegraphDuration = 2f;       // 텔레그래프 지속 시간
+    public float laserTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
+    public float laserActiveDuration = 5f;          // 레이저 발동 유지 시간
+    public float laserDamage = 1f;                  // 레이저 접촉 시 틱당 피해량
+
+    [Header("레이저 임시 대체용 크기 (Laser Prefab을 비워뒀을 때만 사용됨)")]
+    public float fallbackLaserWidth = 20f;           // 프리팹 없을 때 임시 레이저 가로 길이
+    public float fallbackLaserThickness = 0.6f;      // 프리팹 없을 때 임시 레이저 두께
+
+
+    IEnumerator LaserAttackRoutine()
+    {
+        // 공격 시작 시점의 플레이어 y좌표를 스냅샷으로 고정 (레이저 라인의 높이가 도중에 바뀌지 않도록)
+        float laserY = target != null ? target.position.y : transform.position.y;
+        Vector2 laserPos = new Vector2(transform.position.x, laserY);
+
+        // 1. 텔레그래프 라인 생성
+        GameObject marker = SpawnLaserTelegraph(laserPos);
+        if (marker != null) activeTelegraphMarkers.Add(marker);
+
+        // 2. 2초 동안 0.5초 간격으로 투명해졌다 돌아오는 깜빡임
+        float elapsed = 0f;
+        bool visible = true;
+        while (elapsed < laserTelegraphDuration)
+        {
+            yield return new WaitForSeconds(laserTelegraphBlinkInterval);
+            elapsed += laserTelegraphBlinkInterval;
+            visible = !visible;
+            if (marker != null)
+            {
+                SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.enabled = visible;
+            }
+        }
+
+        // 3. 텔레그래프 제거
+        if (marker != null) Destroy(marker);
+        activeTelegraphMarkers.Remove(marker);
+
+        // 4. 레이저 발사 후 5초 유지
+        GameObject laser = SpawnLaser(laserPos);
+        if (laser != null) activeLaserObjects.Add(laser);
+
+        yield return new WaitForSeconds(laserActiveDuration);
+
+        // 5. 레이저 제거 (LaserHazard 자체도 lifetime으로 스스로 파괴되지만, 안전하게 이중 처리)
+        if (laser != null) Destroy(laser);
+        activeLaserObjects.Remove(laser);
+    }
+
+    GameObject SpawnLaserTelegraph(Vector2 pos)
+    {
+        if (laserTelegraphTemplate != null)
+        {
+            GameObject marker = Instantiate(laserTelegraphTemplate, pos, Quaternion.identity);
+            marker.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+            return marker;
+        }
+
+        // 프리팹이 없으면 임시 경고 라인 생성 (반투명 빨간 가로 막대)
+        GameObject tempMarker = new GameObject("LaserTelegraph_Temp");
+        tempMarker.transform.position = pos;
+        SpriteRenderer sr = tempMarker.AddComponent<SpriteRenderer>();
+        sr.color = new Color(1f, 0.2f, 0.2f, 0.5f);
+        sr.sprite = CreateTempSquareSprite();
+        tempMarker.transform.localScale = new Vector3(fallbackLaserWidth, fallbackLaserThickness, 1f);
+        return tempMarker;
+    }
+
+    GameObject SpawnLaser(Vector2 pos)
+    {
+        GameObject laser;
+        if (laserTemplate != null)
+        {
+            laser = Instantiate(laserTemplate, pos, Quaternion.identity);
+            laser.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 레이저 생성 (붉은 가로 막대 + 트리거 콜라이더)
+            laser = new GameObject("Laser_Temp");
+            laser.transform.position = pos;
+            SpriteRenderer sr = laser.AddComponent<SpriteRenderer>();
+            sr.color = new Color(1f, 0f, 0f, 0.85f);
+            sr.sprite = CreateTempSquareSprite();
+            laser.transform.localScale = new Vector3(fallbackLaserWidth, fallbackLaserThickness, 1f);
+
+            BoxCollider2D col = laser.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+        }
+
+        // 플레이어와 물리적으로 부딪히지 않도록 모든 콜라이더를 트리거로 강제 설정
+        ForceAllCollidersToTrigger(laser);
+
+        LaserHazard hazard = laser.GetComponent<LaserHazard>();
+        if (hazard == null) hazard = laser.AddComponent<LaserHazard>();
+        hazard.lifetime = laserActiveDuration;
+        hazard.damage = laserDamage;
+
+
+        return laser;
+    }
+
+    // ================= 서리비 공격 (1페이즈) =================
+    [Header("서리비 공격 설정")]
+    public GameObject frostCrystalPrefab;            // 서리 수정 프리팹 (비워두면 임시 생성)
+    public GameObject frostCrystalHitboxPrefab;       // 피격 반경을 결정할 별도 히트박스 오브젝트 (ContactRelay + Collider2D 필요, 비워두면 수정 자체 콜라이더로 판정)
+    GameObject frostCrystalTemplate;                  // frostCrystalPrefab의 런타임 복제 템플릿 (원본 보호용)
+    GameObject frostCrystalHitboxTemplate;            // frostCrystalHitboxPrefab의 런타임 복제 템플릿 (원본 보호용)
+    public float frostSpawnYAboveBoss = 6f;      // 보스보다 이만큼 높은 Y좌표에서 생성
+    public float frostRainDuration = 4f;              // 비가 내리는 총 시간
+    public float frostSpawnInterval = 0.3f;           // 생성 주기
+    public int frostSpawnCountPerTick = 5;            // 주기마다 생성되는 개수
+    public float frostRangeX = 12f;                // 보스 X좌표 기준 좌우로 퍼지는 폭 (예: 12면 보스 기준 -6 ~ +6 범위)
+    public float frostFallInitialSpeed = 0f;          // 낙하 시작 속도
+    public float frostFallAcceleration = 15f;         // 낙하 가속도
+    public float frostDamage = 1f;                    // 서리 수정 접촉 시 피해량
+    public float frostMaxLifetime = 6f;               // 바닥에 못 닿았을 때 안전장치용 최대 생존 시간
+
+    [Header("서리비 텔레그래프 설정")]
+    public GameObject frostTelegraphMarkerPrefab;      // 세로 경고선 프리팹 (비워두면 임시 마커 생성)
+    GameObject frostTelegraphMarkerTemplate;           // frostTelegraphMarkerPrefab의 런타임 복제 템플릿 (원본 보호용)
+
+    [Header("서리비 텔레그래프 (씬에 미리 배치된 오브젝트 사용 시)")]
+    public List<GameObject> frostTelegraphMarkers = new List<GameObject>(); // 보스의 자식으로 미리 배치해둔 텔레그래프들 (Inspector에서 연결). 비워두면 기존 동적 생성 방식 사용
+    public float frostTelegraphDuration = 2f;          // 텔레그래프 지속 시간
+    public float frostTelegraphBlinkInterval = 0.5f;   // 깜빡임 간격
+    public int frostTelegraphColumnCount = 10;         // frostRangeX 범위를 몇 개의 세로 열로 나눠서 검사할지
+    public float frostTelegraphCheckDistance = 30f;    // 스폰 지점에서 땅이 있는지 확인하는 레이캐스트 거리
+    public float frostTelegraphLineLength = 15f;       // 프리팹이 없을 때 임시 경고선의 세로 길이
+    public float frostTelegraphLineThickness = 0.3f;   // 프리팹이 없을 때 임시 경고선의 두께
+
+    IEnumerator FrostRainAttackRoutine()
+    {
+        // 1. frostRangeX 범위를 frostTelegraphColumnCount개의 세로 열로 나누고,
+        //    각 열의 스폰 지점에서 아래로 레이캐스트를 쏴서 땅이 있는 열은 제외함
+        float half = frostRangeX * 0.5f;
+        float spawnY = transform.position.y + frostSpawnYAboveBoss;
+
+        // 각 열 위치에 텔레그래프 프리팹을 그대로 생성 (프리팹이 이미 맵 모양에 맞게 잘려있으므로 별도 스케일/길이 계산 없음)
+        List<GameObject> frostMarkers = new List<GameObject>();
+        for (int i = 0; i < frostTelegraphColumnCount; i++)
+        {
+            float t = frostTelegraphColumnCount <= 1 ? 0.5f : (float)i / (frostTelegraphColumnCount - 1);
+            float x = transform.position.x - half + frostRangeX * t;
+
+            GameObject marker = SpawnFrostTelegraph(new Vector2(x, spawnY));
+            if (marker != null) frostMarkers.Add(marker);
+        }
+
+        // 3. 2초 동안 0.5초 간격으로 깜빡임
+        float telegraphElapsed = 0f;
+        bool visible = true;
+        while (telegraphElapsed < frostTelegraphDuration)
+        {
+            yield return new WaitForSeconds(frostTelegraphBlinkInterval);
+            telegraphElapsed += frostTelegraphBlinkInterval;
+            visible = !visible;
+            foreach (var marker in frostMarkers)
+            {
+                if (marker == null) continue;
+                SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.enabled = visible;
+            }
+        }
+
+        // 4. 텔레그래프 제거
+        foreach (var marker in frostMarkers)
+        {
+            if (marker != null) Destroy(marker);
+        }
+
+        // 5. 서리비 시작 (기존 로직 그대로)
+        float elapsed = 0f;
+        while (elapsed < frostRainDuration)
+        {
+            yield return StartCoroutine(SpawnFrostTick());
+            elapsed += frostSpawnInterval;
+        }
+    }
+
+    // frostSpawnInterval 구간 안에서 무작위 시점 여러 개를 뽑아, 그 시점마다 하나씩 서리 수정을 생성
+    // (한 번에 다 쏟아지지 않고 진짜 비처럼 흩어져서 떨어지게 하기 위함)
+    IEnumerator SpawnFrostTick()
+    {
+        // 0 ~ frostSpawnInterval 사이의 무작위 시점을 개수만큼 뽑아서 오름차순 정렬
+        List<float> spawnTimes = new List<float>();
+        for (int i = 0; i < frostSpawnCountPerTick; i++)
+        {
+            spawnTimes.Add(Random.Range(0f, frostSpawnInterval));
+        }
+        spawnTimes.Sort();
+
+        float prevTime = 0f;
+        foreach (var t in spawnTimes)
+        {
+            float wait = t - prevTime;
+            if (wait > 0f) yield return new WaitForSeconds(wait);
+
+            float x = transform.position.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
+            float y = transform.position.y + frostSpawnYAboveBoss;
+            SpawnFrostCrystal(new Vector2(x, y));
+
+            prevTime = t;
+        }
+
+        // 구간의 나머지 시간을 채워서 다음 tick과 정확히 frostSpawnInterval 간격을 유지
+        float remaining = frostSpawnInterval - prevTime;
+        if (remaining > 0f) yield return new WaitForSeconds(remaining);
+    }
+
+    // 서리비 범위 표시용 경고 마커 생성 (프리팹이 이미 원하는 모양/크기로 잘려있으므로 그대로 생성만 함)
+    GameObject SpawnFrostTelegraph(Vector2 spawnPos)
+    {
+        if (frostTelegraphMarkerTemplate != null)
+        {
+            GameObject marker = Instantiate(frostTelegraphMarkerTemplate, spawnPos, Quaternion.identity);
+            marker.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+            return marker;
+        }
+
+        // 프리팹이 없으면 임시 마커 생성 (반투명 하늘색 사각형)
+        GameObject tempMarker = new GameObject("FrostTelegraph_Temp");
+        tempMarker.transform.position = spawnPos;
+        SpriteRenderer sr = tempMarker.AddComponent<SpriteRenderer>();
+        sr.color = new Color(0.6f, 0.85f, 1f, 0.5f);
+        sr.sprite = CreateTempSquareSprite();
+        tempMarker.transform.localScale = Vector3.one;
+        return tempMarker;
+    }
+
+    void SpawnFrostCrystal(Vector2 pos)
+    {
+        GameObject crystal;
+        if (frostCrystalTemplate != null)
+        {
+            // 프리팹 원본을 그대로 복제 (위치, 회전, 크기, 자식 구조 등 모든 게 원본과 동일하게 유지됨)
+            // 이후 위치만 원하는 스폰 지점으로 옮김
+            crystal = Instantiate(frostCrystalTemplate);
+            crystal.transform.position = pos;
+            crystal.SetActive(true);
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 서리 수정 생성 (하늘색 사각형 + 트리거 콜라이더)
+            crystal = new GameObject("FrostCrystal_Temp");
+            crystal.transform.position = pos;
+            SpriteRenderer sr = crystal.AddComponent<SpriteRenderer>();
+            sr.color = new Color(0.7f, 0.9f, 1f, 1f);
+            sr.sprite = CreateTempSquareSprite();
+            crystal.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+
+            CircleCollider2D col = crystal.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ForceAllCollidersToTrigger(crystal);
+
+        Rigidbody2D rb = crystal.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = crystal.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Kinematic; // 물리 충돌엔 안 밀리고 트리거 이벤트만 받기 위함
+        rb.gravityScale = 0f; // 실제 낙하는 FrostCrystalHazard가 직접 이동시킴
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // 물리 연산으로 인한 의도치 않은 회전만 막음 (디자인된 회전은 유지)
+
+        FrostCrystalHazard hazard = crystal.GetComponent<FrostCrystalHazard>();
+        if (hazard == null) hazard = crystal.AddComponent<FrostCrystalHazard>();
+        hazard.initialSpeed = frostFallInitialSpeed;
+        hazard.acceleration = frostFallAcceleration;
+        hazard.damage = frostDamage;
+        hazard.maxLifetime = frostMaxLifetime;
+        hazard.groundLayer = groundLayer;
+
+        // 피격 반경용 별도 히트박스 오브젝트를 자식으로 붙임 (연결되어 있을 때만)
+        if (frostCrystalHitboxTemplate != null)
+        {
+            GameObject hitboxInstance = Instantiate(frostCrystalHitboxTemplate, crystal.transform);
+            hitboxInstance.SetActive(true);
+            hitboxInstance.transform.localPosition = Vector3.zero;
+
+            ForceAllCollidersToTrigger(hitboxInstance); // 히트박스 콜라이더도 트리거로 강제 설정 (플레이어 밀림 방지)
+
+            ContactRelay relay = hitboxInstance.GetComponent<ContactRelay>();
+            if (relay != null) hazard.SetHitboxRelay(relay);
+        }
     }
 
     // 특정 위치 바로 아래(수직) 바닥을 찾음 (플레이어 위치 기준)
@@ -398,5 +742,20 @@ public class BossAttack : MonoBehaviour
                 tex.SetPixel(x, y, Color.white);
         tex.Apply();
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
+    }
+    void OnDisable()
+    { 
+        foreach (var marker in activeTelegraphMarkers)
+        {
+            if (marker != null) Destroy(marker);
+        }
+        activeTelegraphMarkers.Clear();
+
+        // 발동 중이던 레이저도 코루틴이 강제 중단되면 남을 수 있으므로 함께 정리
+        foreach (var laser in activeLaserObjects)
+        {
+            if (laser != null) Destroy(laser);
+        }
+        activeLaserObjects.Clear();
     }
 }
