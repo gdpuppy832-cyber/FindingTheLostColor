@@ -127,16 +127,23 @@ public class BossAttack : MonoBehaviour
             frostTelegraphMarkerPrefab.SetActive(false);
         }
 
-        // 보스 본체(자기 자신)의 콜라이더만 트리거로 설정 (자식의 ContactRelay용 콜라이더는 건드리지 않음)
-        // Rigidbody2D는 Dynamic 유지 - 트리거 콜라이더끼리는 어차피 물리적으로 밀리지 않음
-        bossOwnColliders = GetComponents<Collider2D>();
-        foreach (var col in bossOwnColliders)
+        // 보스 본체(자기 자신) + 자식의 모든 콜라이더를 트리거로 설정.
+        // 단, 크리스탈 자신의 콜라이더는 1페이즈 내내 붓질 가능해야 하므로 제외함
+        // (자식 히트박스 등을 통해 1페이즈에도 보스가 붓질/공격당하는 걸 막기 위해
+        //  기존의 "자기 자신만" 방식에서 "자식 전체 - 크리스탈 제외" 방식으로 확장)
+        List<Collider2D> ownColliderList = new List<Collider2D>();
+        Collider2D[] allChildColliders = GetComponentsInChildren<Collider2D>(true);
+        foreach (var col in allChildColliders)
         {
+            if (col == null) continue;
+            if (col.GetComponentInParent<BossCrystal>() != null) continue; // 크리스탈 콜라이더는 그대로 둠
+            ownColliderList.Add(col);
             col.isTrigger = true;
         }
+        bossOwnColliders = ownColliderList.ToArray();
 
-        // 크리스탈 페이즈 동안에는 보스 자신의 콜라이더를 꺼서
-        // CursorController의 OverlapCircleAll에 아예 걸리지 않게 함 (붓질로 체력이 차는 것을 원천 차단)
+        // 크리스탈 페이즈(1페이즈) 동안에는 보스 자신 + 자식의 콜라이더를 모두 꺼서
+        // CursorController의 OverlapCircleAll에 아예 걸리지 않게 함 (붓질로 체력이 차거나 공격당하는 것을 원천 차단)
         SetBossColliderState(false);
 
         if (flyMove == null) flyMove = GetComponent<BossMove>();
@@ -147,6 +154,15 @@ public class BossAttack : MonoBehaviour
         {
             if (crystal != null) crystal.OnCrystalDestroyed += HandleCrystalDestroyed;
         }
+
+        // 서리비 텔레그래프: 보스의 자식으로 미리 배치돼 있으면 보스가 움직일 때 같이 움직이므로,
+        // 현재 월드 위치를 유지한 채로 부모에서 분리(SetParent(null, true))하고 평소엔 꺼둠
+        foreach (var marker in frostTelegraphMarkers)
+        {
+            if (marker == null) continue;
+            marker.transform.SetParent(null, true); // worldPositionStays: true → 위치 그대로 유지하며 분리
+            marker.SetActive(false);
+        }
     }
 
     void HandleCrystalDestroyed()
@@ -154,17 +170,35 @@ public class BossAttack : MonoBehaviour
         destroyedCrystalCount++;
         Debug.Log($"[BossAttack] 크리스탈 파괴됨: {destroyedCrystalCount}/{crystals.Count}, isAttacking={isAttacking}, enabled={enabled}");
 
-        if (!enabled) enabled = true;
+        // "실제로 이 컴포넌트가 꺼져서 코루틴이 강제 종료됐었는지"를 재활성화하기 전에 먼저 확인.
+        // 이 값을 나중에 확인하면 이미 enabled = true로 바뀐 뒤라 항상 false로 나와서 구분이 안 됨
+        bool wasDisabled = !enabled;
+
+        if (wasDisabled) enabled = true;
         if (moveScript != null && !moveScript.enabled) moveScript.enabled = true;
         if (flyMove != null && !flyMove.enabled) flyMove.enabled = true;
 
-        bool wasInterrupted = isAttacking;
-        isAttacking = false;
-
-        if (wasInterrupted)
+        // 컴포넌트가 실제로 꺼졌던 경우에만 공격 상태를 복구함.
+        // (컴포넌트가 안 꺼졌다면 진행 중인 공격 코루틴은 여전히 살아있으므로 isAttacking을 건드리면 안 됨 -
+        //  건드리면 Update()가 새 공격을 중복 시작시켜서, 두 코루틴이 activeTelegraphMarkers/activeLaserObjects를
+        //  같이 건드리다가 진행 중이던 텔레그래프가 엉뚱하게 파괴되는 문제가 있었음)
+        if (wasDisabled)
         {
-            if (moveScript != null) moveScript.enabled = true;
+            isAttacking = false;
             nextAttackAllowedTime = Time.time + attackCooldown;
+
+            // 컴포넌트가 꺼지면서 코루틴이 중간에 죽어 정리가 안 됐을 수 있는 잔여 오브젝트 정리
+            foreach (var marker in activeTelegraphMarkers)
+            {
+                if (marker != null) Destroy(marker);
+            }
+            activeTelegraphMarkers.Clear();
+
+            foreach (var laser in activeLaserObjects)
+            {
+                if (laser != null) Destroy(laser);
+            }
+            activeLaserObjects.Clear();
         }
 
         if (destroyedCrystalCount >= crystals.Count)
@@ -175,8 +209,7 @@ public class BossAttack : MonoBehaviour
             Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
 
-        // 추가: 복구 완료 후 최종 상태 확인
-        Debug.Log($"[BossAttack] 복구 완료 -> isAttacking={isAttacking}, enabled={enabled}, nextAttackAllowedTime={nextAttackAllowedTime}, currentTime={Time.time}, poolCount={GetCurrentPhasePool()?.Count}");
+        Debug.Log($"[BossAttack] 복구 완료 -> wasDisabled={wasDisabled}, isAttacking={isAttacking}, enabled={enabled}, nextAttackAllowedTime={nextAttackAllowedTime}, currentTime={Time.time}, poolCount={GetCurrentPhasePool()?.Count}");
     }
 
 
@@ -458,23 +491,17 @@ public class BossAttack : MonoBehaviour
 
     IEnumerator FrostRainAttackRoutine()
     {
-        // 1. frostRangeX 범위를 frostTelegraphColumnCount개의 세로 열로 나누고,
-        //    각 열의 스폰 지점에서 아래로 레이캐스트를 쏴서 땅이 있는 열은 제외함
-        float half = frostRangeX * 0.5f;
-        float spawnY = transform.position.y + frostSpawnYAboveBoss;
-
-        // 각 열 위치에 텔레그래프 프리팹을 그대로 생성 (프리팹이 이미 맵 모양에 맞게 잘려있으므로 별도 스케일/길이 계산 없음)
-        List<GameObject> frostMarkers = new List<GameObject>();
-        for (int i = 0; i < frostTelegraphColumnCount; i++)
+        // 1. 씬에 미리 배치된 텔레그래프 오브젝트들을 활성화 (평소엔 꺼져있던 것을 보이게 함)
+        foreach (var marker in frostTelegraphMarkers)
         {
-            float t = frostTelegraphColumnCount <= 1 ? 0.5f : (float)i / (frostTelegraphColumnCount - 1);
-            float x = transform.position.x - half + frostRangeX * t;
-
-            GameObject marker = SpawnFrostTelegraph(new Vector2(x, spawnY));
-            if (marker != null) frostMarkers.Add(marker);
+            if (marker == null) continue;
+            marker.SetActive(true);
+            // SpriteRenderer가 꺼진 상태로 저장되어 있을 수 있으므로 활성화 시점에 명시적으로 켜줌
+            SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>(true);
+            if (sr != null) sr.enabled = true;
         }
 
-        // 3. 2초 동안 0.5초 간격으로 깜빡임
+        // 2. 2초 동안 0.5초 간격으로 깜빡임
         float telegraphElapsed = 0f;
         bool visible = true;
         while (telegraphElapsed < frostTelegraphDuration)
@@ -482,21 +509,24 @@ public class BossAttack : MonoBehaviour
             yield return new WaitForSeconds(frostTelegraphBlinkInterval);
             telegraphElapsed += frostTelegraphBlinkInterval;
             visible = !visible;
-            foreach (var marker in frostMarkers)
+            foreach (var marker in frostTelegraphMarkers)
             {
                 if (marker == null) continue;
-                SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
+                SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>();
                 if (sr != null) sr.enabled = visible;
             }
         }
 
-        // 4. 텔레그래프 제거
-        foreach (var marker in frostMarkers)
+        // 3. 텔레그래프를 다시 숨김 (Destroy가 아니라 SetActive(false) - 오브젝트는 계속 재사용)
+        foreach (var marker in frostTelegraphMarkers)
         {
-            if (marker != null) Destroy(marker);
+            if (marker == null) continue;
+            SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null) sr.enabled = true; // 다음 공격 때를 위해 깜빡임 상태를 보이는 상태로 초기화
+            marker.SetActive(false);
         }
 
-        // 5. 서리비 시작 (기존 로직 그대로)
+        // 4. 서리비 시작 (기존 로직 그대로)
         float elapsed = 0f;
         while (elapsed < frostRainDuration)
         {
