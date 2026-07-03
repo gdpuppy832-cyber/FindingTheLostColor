@@ -13,9 +13,17 @@ public class BossAttack : MonoBehaviour
     public MonoBehaviour moveScript;        // 공격 중 이동을 멈추고 싶다면 연결 (선택 사항, 비워두면 이동 제어 안 함)
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
 
-    
+
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
     public BossMove flyMove; // 크리스탈 파괴 완료 시 무한대(∞) 이동으로 전환하기 위한 참조 (비워두면 자동 탐색)
+
+    [Header("색채 구슬 (2페이즈 진입 시 보스 아래에 소환)")]
+    public GameObject colorOrbPrefab;          // 색채 구슬 프리팹 (ColorOrb 컴포넌트 자동 부착됨, 비워두면 임시 생성)
+    public float colorOrbHealth = 15f;         // 색채 구슬 체력
+    public float colorOrbSpawnOffsetY = -2f;   // 보스 기준 아래로 얼마나 떨어진 위치에 소환할지
+
+    [Header("검은 안개 (2페이즈 진입 시 함께 움직이기 시작)")]
+    public List<BlackFog> blackFogs = new List<BlackFog>(); // 씬에 미리 배치된 좌/우 안개 오브젝트들을 Inspector에서 연결
 
     bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
     int destroyedCrystalCount = 0;
@@ -23,9 +31,12 @@ public class BossAttack : MonoBehaviour
 
     bool isAttacking = false;
     float nextAttackAllowedTime = 0f;
+    Coroutine currentAttackCoroutine; // 2페이즈 전환 시 진행 중인 공격을 정확히 멈추기 위한 참조
 
     List<GameObject> activeTelegraphMarkers = new List<GameObject>();
     List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
+    List<GameObject> activeSpikes = new List<GameObject>();        // 소환된 가시도 2페이즈 전환 시 강제 정리 대상에 포함
+    List<GameObject> activeFrostCrystals = new List<GameObject>(); // 소환된 서리 수정도 2페이즈 전환 시 강제 정리 대상에 포함
 
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
@@ -204,12 +215,71 @@ public class BossAttack : MonoBehaviour
         if (destroyedCrystalCount >= crystals.Count)
         {
             phase2Unlocked = true;
+
+            // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
+            if (isAttacking && currentAttackCoroutine != null)
+            {
+                StopCoroutine(currentAttackCoroutine);
+                currentAttackCoroutine = null;
+
+                // 코루틴이 중간에 끊기면서 스스로 정리하지 못한 잔여 오브젝트들을 직접 정리
+                foreach (var marker in activeTelegraphMarkers)
+                {
+                    if (marker != null) Destroy(marker);
+                }
+                activeTelegraphMarkers.Clear();
+
+                foreach (var laser in activeLaserObjects)
+                {
+                    if (laser != null) Destroy(laser);
+                }
+                activeLaserObjects.Clear();
+
+                foreach (var spike in activeSpikes)
+                {
+                    if (spike != null) Destroy(spike);
+                }
+                activeSpikes.Clear();
+
+                foreach (var crystal in activeFrostCrystals)
+                {
+                    if (crystal != null) Destroy(crystal);
+                }
+                activeFrostCrystals.Clear();
+
+                // 서리비 공격 중이었다면, 미리 배치된 텔레그래프도 다시 숨겨줌
+                foreach (var marker in frostTelegraphMarkers)
+                {
+                    if (marker == null) continue;
+                    SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>();
+                    if (sr != null) sr.enabled = true; // 다음 공격을 위해 보이는 상태로 초기화
+                    marker.SetActive(false);
+                }
+
+                // 공격 도중 멈춰서 이동이 꺼진 상태였을 수 있으므로 복구
+                if (moveScript != null) moveScript.enabled = true;
+
+                isAttacking = false;
+                nextAttackAllowedTime = Time.time + attackCooldown;
+
+                Debug.Log("[BossAttack] 2페이즈 전환으로 진행 중이던 1페이즈 공격을 강제 중단");
+            }
+
             SetBossColliderState(true);
             if (flyMove != null) flyMove.SetInfinityMode(true);
+            ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
+
+            // 2페이즈 진입과 동시에, 좌/우 검은 안개가 "방금 소환된 이 구슬"을 명시적으로 타겟으로 지정하고 움직이기 시작
+            // (SetTarget을 안 하면 안개가 Start()에서 자동 탐색해뒀던 기존(하이어라키에 미리 있던) 구슬을 계속 쫓아감)
+            foreach (var fog in blackFogs)
+            {
+                if (fog == null) continue;
+                fog.SetTarget(spawnedOrb);
+                fog.StartMoving();
+            }
+
             Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
-
-        Debug.Log($"[BossAttack] 복구 완료 -> wasDisabled={wasDisabled}, isAttacking={isAttacking}, enabled={enabled}, nextAttackAllowedTime={nextAttackAllowedTime}, currentTime={Time.time}, poolCount={GetCurrentPhasePool()?.Count}");
     }
 
 
@@ -236,16 +306,16 @@ public class BossAttack : MonoBehaviour
         AttackEntry chosen = PickRandomAttack(pool);
         if (chosen == null) return;
 
-        StartCoroutine(RunAttack(chosen));
+        currentAttackCoroutine = StartCoroutine(RunAttack(chosen));
     }
 
     List<AttackEntry> GetCurrentPhasePool()
     {
         // 체력 비율이 아니라 크리스탈 파괴 여부로 페이즈가 결정됨
         // 크리스탈이 남아있으면 1페이즈 풀, 다 깨지면(phase2Unlocked) 2페이즈 풀
-        // 단, 2페이즈 공격이 아직 등록되지 않았다면(개발 중) 보스가 멈추지 않도록 1페이즈 풀을 계속 사용
-        if (phase2Unlocked && phase2Attacks.Count > 0) return phase2Attacks;
-        return phase1Attacks;
+        // 2페이즈에서는 1페이즈 공격으로 폴백하지 않음 - 2페이즈 공격이 아직 없다면
+        // (Update()에서 pool.Count == 0으로 처리되어) 보스가 그냥 대기 상태가 됨
+        return phase2Unlocked ? phase2Attacks : phase1Attacks;
     }
 
     AttackEntry PickRandomAttack(List<AttackEntry> pool)
@@ -266,11 +336,15 @@ public class BossAttack : MonoBehaviour
 
         if (moveScript != null) moveScript.enabled = false;
 
-        yield return StartCoroutine(attack.routine());
+        // StartCoroutine으로 한 번 더 감싸면 별도의 독립 코루틴이 되어버려서,
+        // 이 RunAttack 코루틴만 StopCoroutine 해도 안쪽 attack.routine()은 안 멈추는 문제가 있었음
+        // (서리비 등 attack.routine() 내부에서 또 코루틴을 중첩 시작하는 경우 특히 문제)
+        // -> 같은 코루틴 체인으로 직접 실행되도록 변경
+        yield return attack.routine();
 
         if (moveScript != null) moveScript.enabled = true;
         isAttacking = false;
-        nextAttackAllowedTime = Time.time + attackCooldown; // 코루틴 WaitForSeconds 대신 시간 값으로 쿨다운 관리 (중단되어도 안전)
+        nextAttackAllowedTime = Time.time + attackCooldown;
     }
 
     // ================= 가시 함정 공격 (1페이즈) =================
@@ -344,7 +418,8 @@ public class BossAttack : MonoBehaviour
         // 5. 가시 생성 (각 위치마다)
         foreach (var pos in spawnPositions)
         {
-            SpawnSpike(pos);
+            GameObject spike = SpawnSpike(pos);
+            if (spike != null) activeSpikes.Add(spike);
         }
 
         // 6. 가시가 살아있는 3초 대기 (가시 자체는 SpikeHazard가 스스로 lifetime 관리)
@@ -527,10 +602,12 @@ public class BossAttack : MonoBehaviour
         }
 
         // 4. 서리비 시작 (기존 로직 그대로)
+        // SpawnFrostTick도 StartCoroutine으로 중첩시키면 독립 코루틴이 되어
+        // 바깥의 RunAttack을 멈춰도 계속 살아남는 문제가 있으므로 직접 yield
         float elapsed = 0f;
         while (elapsed < frostRainDuration)
         {
-            yield return StartCoroutine(SpawnFrostTick());
+            yield return SpawnFrostTick();
             elapsed += frostSpawnInterval;
         }
     }
@@ -555,7 +632,8 @@ public class BossAttack : MonoBehaviour
 
             float x = transform.position.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
             float y = transform.position.y + frostSpawnYAboveBoss;
-            SpawnFrostCrystal(new Vector2(x, y));
+            GameObject crystal = SpawnFrostCrystal(new Vector2(x, y));
+            if (crystal != null) activeFrostCrystals.Add(crystal);
 
             prevTime = t;
         }
@@ -585,7 +663,39 @@ public class BossAttack : MonoBehaviour
         return tempMarker;
     }
 
-    void SpawnFrostCrystal(Vector2 pos)
+    // ================= 색채 구슬 (2페이즈 진입 시 1회 소환) =================
+    ColorOrb SpawnColorOrb()
+    {
+        Vector3 spawnPos = transform.position + new Vector3(0f, colorOrbSpawnOffsetY, 0f);
+        GameObject orbObj;
+
+        if (colorOrbPrefab != null)
+        {
+            orbObj = Instantiate(colorOrbPrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 색채 구슬 생성 (보라색 원)
+            orbObj = new GameObject("ColorOrb_Temp");
+            orbObj.transform.position = spawnPos;
+            SpriteRenderer sr = orbObj.AddComponent<SpriteRenderer>();
+            sr.color = new Color(0.8f, 0.4f, 1f, 1f);
+            sr.sprite = CreateTempSquareSprite();
+            orbObj.transform.localScale = Vector3.one * 1.2f;
+
+            CircleCollider2D col = orbObj.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ColorOrb orb = orbObj.GetComponent<ColorOrb>();
+        if (orb == null) orb = orbObj.AddComponent<ColorOrb>();
+        orb.maxHealth = colorOrbHealth;
+        orb.currentHealth = colorOrbHealth;
+
+        return orb;
+    }
+
+    GameObject SpawnFrostCrystal(Vector2 pos)
     {
         GameObject crystal;
         if (frostCrystalTemplate != null)
@@ -638,6 +748,7 @@ public class BossAttack : MonoBehaviour
             ContactRelay relay = hitboxInstance.GetComponent<ContactRelay>();
             if (relay != null) hazard.SetHitboxRelay(relay);
         }
+        return crystal;
     }
 
     // 특정 위치 바로 아래(수직) 바닥을 찾음 (플레이어 위치 기준)
@@ -699,7 +810,7 @@ public class BossAttack : MonoBehaviour
         return tempMarker;
     }
 
-    void SpawnSpike(Vector2 pos)
+    GameObject SpawnSpike(Vector2 pos)
     {
         GameObject spike;
         if (spikeTemplate != null)
@@ -730,6 +841,8 @@ public class BossAttack : MonoBehaviour
         SpikeHazard hazard = spike.GetComponent<SpikeHazard>();
         if (hazard == null) hazard = spike.AddComponent<SpikeHazard>();
         hazard.lifetime = spikeLifetime;
+
+        return spike;
     }
 
     // spike의 실제 바닥(월드 기준 min.y)이 groundPos.y에 오도록 위로 밀어올림
