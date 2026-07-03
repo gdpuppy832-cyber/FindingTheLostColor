@@ -43,6 +43,7 @@ public class R_EnemyAttack : MonoBehaviour
 
         if (contactHitbox != null)
         {
+            contactHitbox.gameObject.layer = 0; // Default 레이어로 변경하여 Player/Monster 레이어 무시 상태에서도 피격 감지 보장
             contactHitbox.onTriggerEnter += TryContactDamage;
             contactHitbox.onTriggerStay += TryContactDamage;
         }

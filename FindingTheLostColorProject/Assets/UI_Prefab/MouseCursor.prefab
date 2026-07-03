@@ -56,7 +56,7 @@ MonoBehaviour:
   intenseDistance: 6.7
   trailWidth: 0.15
   paintParticles: {fileID: 0}
-  paintRadius: 1.2
+  paintRadius: 0.1
   closeHealRate: 5
   mediumHealRate: 0.5
   farHealRate: 0.2

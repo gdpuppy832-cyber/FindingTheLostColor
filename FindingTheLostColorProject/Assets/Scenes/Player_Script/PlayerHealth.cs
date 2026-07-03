@@ -410,8 +410,9 @@ public class PlayerHealth : MonoBehaviour
             yield return null;
         }
 
-        // 재시작
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Test");
+        // 현재 활성화된 씬의 이름을 가져와 재시작 (동적 씬 재로딩)
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneName);
     }
 
     /// <summary>
@@ -422,8 +423,9 @@ public class PlayerHealth : MonoBehaviour
         // 애니메이션 재생 대기 시간 (예: 2.5초)
         yield return new WaitForSeconds(2.5f);
 
-        // 재시작
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Test");
+        // 현재 활성화된 씬의 이름을 가져와 재시작 (동적 씬 재로딩)
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneName);
     }
 
     /// <summary>
