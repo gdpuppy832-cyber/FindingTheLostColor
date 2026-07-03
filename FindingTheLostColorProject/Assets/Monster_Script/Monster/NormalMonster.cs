@@ -67,6 +67,11 @@ public class NormalMonster : MonoBehaviour
     {
         if (isPurified) return;
 
+        // H_Monster인 경우 잠복(Ambush) 중이면 정화(피해) 무시 (무적 상태)
+        H_MonsterMove hMove = GetComponent<H_MonsterMove>();
+        if (hMove == null) hMove = GetComponentInParent<H_MonsterMove>();
+        if (hMove != null && hMove.IsAmbushed) return;
+
         // 1만큼 채워지는 구간 감지
         int oldIntHealth = Mathf.FloorToInt(currentHealth);
 
