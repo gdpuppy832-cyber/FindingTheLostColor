@@ -99,26 +99,33 @@ public class CaveJewelManager : MonoBehaviour
         totalMonsters = totalCats;
         if (totalMonsters <= 0) return;
 
-        // 1단계당 필요한 정화 수 계산 (소수점 올림 처리)
-        // ex) 40 / 6 = 6.666 -> 올림하여 7
-        int stepSize = Mathf.CeilToInt(totalMonsters / 6.0f);
+        // 1. 기본 몫과 나머지 분할 계산
+        int baseStep = totalMonsters / 6;
+        int remainder = totalMonsters % 6;
 
-        // 보석별 켜지는 누적 정화 컷 계산
-        // 40마리 기준: [1단계: 7], [2단계: 14], [3단계: 21], [4단계: 28], [5단계: 35], [6단계: 40]
-        for (int i = 0; i < 5; i++)
+        // 2. 단계별 개별 요구량 임시 배열 생성
+        int[] stepRequirements = new int[6];
+        for (int i = 0; i < 6; i++)
         {
-            thresholds[i] = (i + 1) * stepSize;
+            // 나머지가 존재하면 인덱스가 remainder 미만인 앞 단계들에 1마리씩 더 얹어줌
+            stepRequirements[i] = baseStep + (i < remainder ? 1 : 0);
         }
-        // 마지막 6번째 단계는 정확한 최종 누적 몬스터 수로 고정하여 나머지 카운트 감소 구현
-        thresholds[5] = totalMonsters;
+
+        // 3. 누적 컷오프(thresholds) 계산 및 할당
+        int accum = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            accum += stepRequirements[i];
+            thresholds[i] = accum;
+        }
 
         // 디버깅용 컷 출력
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        sb.AppendLine($"[CaveJewelManager] 총 {totalMonsters}마리 기반 보석 컷 설정 완료:");
+        sb.AppendLine($"[CaveJewelManager] 총 {totalMonsters}마리 기반 보석 컷 설정 완료 (나머지 앞단계 분배 방식):");
         string[] colors = { "빨강", "주황", "노랑", "초록", "파랑", "보라" };
         for (int i = 0; i < 6; i++)
         {
-            sb.AppendLine($"- [{colors[i]}] 누적 {thresholds[i]}마리 이상 정화 시 켜짐");
+            sb.AppendLine($"- [{colors[i]}] 누적 {thresholds[i]}마리 이상 정화 시 켜짐 (해당 단계 요구: +{stepRequirements[i]}마리)");
         }
         Debug.Log(sb.ToString());
 
