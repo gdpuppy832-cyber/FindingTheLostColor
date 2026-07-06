@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // TextMeshPro 텍스트 컴포넌트 사용을 위해 추가
+using TMPro;
 
 public class VolumeSettings : MonoBehaviour
 {
@@ -26,27 +26,91 @@ public class VolumeSettings : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float stepSize = 1f; // + , - 버튼을 눌렀을 때 증감할 수치
 
+    private bool isInitialized = false;
+
     private void Start()
     {
-        // 각 볼륨 제어 그룹 초기화
-        InitializeVolumeGroup(masterVolume);
-        InitializeVolumeGroup(bgmVolume);
-        InitializeVolumeGroup(sfxVolume);
+        // 1. 이벤트 리스너 등록은 게임 시작 시 최초 1회만 수행 (중복 등록 방지)
+        InitializeListeners(masterVolume);
+        InitializeListeners(bgmVolume);
+        InitializeListeners(sfxVolume);
+        isInitialized = true;
+
+        // 2. 현재 저장된 볼륨 값으로 슬라이더 위치와 텍스트 갱신
+        RefreshVolumeSliders();
     }
 
-    private void InitializeVolumeGroup(VolumeControlGroup group)
+    private void OnEnable()
+    {
+        // 같은 씬 내에서 설정창이 꺼졌다가 다시 켜질 때마다 최신 볼륨 상태로 슬라이더를 갱신합니다.
+        if (isInitialized)
+        {
+            RefreshVolumeSliders();
+        }
+    }
+
+    // 모든 볼륨 슬라이더 수치를 최신 데이터로 동기화
+    private void RefreshVolumeSliders()
+    {
+        UpdateVolumeSliderValue(masterVolume);
+        UpdateVolumeSliderValue(bgmVolume);
+        UpdateVolumeSliderValue(sfxVolume);
+    }
+
+    // 개별 볼륨 슬라이더 및 텍스트 갱신
+    private void UpdateVolumeSliderValue(VolumeControlGroup group)
     {
         if (group == null || group.volumeSlider == null) return;
 
-        // [수정] 게임 시작 시 슬라이더의 값을 강제로 50%(최대값과 최소값의 정확한 중간값)로 설정합니다.
-        float defaultHalfVolume = (group.volumeSlider.maxValue + group.volumeSlider.minValue) / 2f;
-        group.volumeSlider.value = defaultHalfVolume;
+        float currentVolume = (group.volumeSlider.maxValue + group.volumeSlider.minValue) / 2f;
 
-        // 기본값을 백업 변수에도 저장해 둡니다.
-        group.lastVolumeValue = defaultHalfVolume;
+        // [진단 디버그] SoundManager.Instance 상태 체크
+        if (SoundManager.Instance != null)
+        {
+            float savedRatio = -1f; // 매칭 실패 여부를 확인하기 위해 -1로 시작
 
-        // 시작 시 텍스트 퍼센트(50%) 초기화
-        UpdateVolumeText(group, defaultHalfVolume);
+            if (group.volumeName.Equals("Master", System.StringComparison.OrdinalIgnoreCase))
+            {
+                savedRatio = SoundManager.Instance.GetMasterVolume();
+            }
+            else if (group.volumeName.Equals("BGM", System.StringComparison.OrdinalIgnoreCase))
+            {
+                savedRatio = SoundManager.Instance.GetBGMVolume();
+            }
+            else if (group.volumeName.Equals("SFX", System.StringComparison.OrdinalIgnoreCase))
+            {
+                savedRatio = SoundManager.Instance.GetSFXVolume();
+            }
+
+            // 매칭에 성공한 경우 값 대입
+            if (savedRatio >= 0f)
+            {
+                currentVolume = savedRatio * (group.volumeSlider.maxValue - group.volumeSlider.minValue) + group.volumeSlider.minValue;
+            }
+            else
+            {
+                // [이름 오타 진단]
+                Debug.LogWarning($"<color=yellow>[VolumeSettings - 경고]</color> '{group.volumeName}'과 매칭되는 볼륨을 SoundManager에서 찾을 수 없습니다. 이름이 Master, BGM, SFX 인지 확인하세요. (기본값 50% 적용됨)");
+            }
+        }
+        else
+        {
+            // [싱글톤 null 진단]
+            Debug.LogError($"<color=red>[VolumeSettings - 치명적 오류]</color> SoundManager.Instance가 null 상태입니다! 볼륨 설정을 불러올 수 없어 기본값(50%)으로 리셋되었습니다. 씬에 SoundManager 오브젝트가 없거나 비활성화되어 있습니다.");
+        }
+
+        // 이벤트 호출 없이 값만 안전하게 갱신
+        group.volumeSlider.SetValueWithoutNotify(currentVolume);
+        group.lastVolumeValue = currentVolume;
+
+        // 텍스트 % 수치 반영
+        UpdateVolumeText(group, currentVolume);
+    }
+
+    // 각 UI 버튼 및 슬라이더에 이벤트 리스너를 꽂아주는 함수
+    private void InitializeListeners(VolumeControlGroup group)
+    {
+        if (group == null || group.volumeSlider == null) return;
 
         // 1. 슬라이더 값 변경 리스너 등록
         group.volumeSlider.onValueChanged.AddListener((val) => {
@@ -91,12 +155,12 @@ public class VolumeSettings : MonoBehaviour
             group.isMuted = false;
             if (group.muteToggle != null)
             {
-                group.muteToggle.SetIsOnWithoutNotify(false); // 무한 루프 방지를 위해 이벤트 호출 없이 상태만 변경
+                group.muteToggle.SetIsOnWithoutNotify(false); // 이벤트 무한 호출 방지
             }
         }
 
-        // 실제 소리를 적용하려면 여기에 로직을 연결합니다.
-        ApplyVolume(group.volumeName, value);
+        // 실제 소리를 SoundManager에 적용
+        ApplyVolume(group, value);
     }
 
     // 음소거 토글 상태가 변경될 때 호출
@@ -113,7 +177,6 @@ public class VolumeSettings : MonoBehaviour
         else
         {
             // 음소거 체크 해제 시: 저장해 둔 기존 값으로 슬라이더 복구
-            // 만약 기존 값이 이미 최소값(0) 이하라면 최대/최소값의 중간값으로 복원
             if (group.lastVolumeValue <= group.volumeSlider.minValue)
             {
                 group.lastVolumeValue = (group.volumeSlider.maxValue + group.volumeSlider.minValue) / 2f;
@@ -125,7 +188,6 @@ public class VolumeSettings : MonoBehaviour
     // + , - 버튼으로 볼륨 조절
     private void AdjustVolume(VolumeControlGroup group, float amount)
     {
-        // 만약 음소거 상태에서 증감 버튼을 누르면 음소거를 해제하고 연산 진행
         if (group.isMuted)
         {
             group.isMuted = false;
@@ -139,7 +201,6 @@ public class VolumeSettings : MonoBehaviour
             return;
         }
 
-        // 원래 슬라이더 값 범위(Min ~ Max) 내에서 안전하게 값을 증감
         float newVal = Mathf.Clamp(group.volumeSlider.value + amount, group.volumeSlider.minValue, group.volumeSlider.maxValue);
         group.volumeSlider.value = newVal;
     }
@@ -155,18 +216,33 @@ public class VolumeSettings : MonoBehaviour
 
         if (range <= 0) return;
 
-        // 슬라이더 범위를 0 ~ 100% 비율로 변환
         float percentage = (value - min) / range * 100f;
-        
-        // 소수점 반올림 후 정수형으로 "X%" 형태로 텍스트 갱신
         group.volumeValueText.text = $"{Mathf.RoundToInt(percentage)}%";
     }
 
-    // 실제 오디오 볼륨을 조절하는 함수 (콘솔 확인용 로그 탑재)
-    private void ApplyVolume(string volumeName, float value)
+    // 실제 오디오 볼륨을 SoundManager에 전달하여 조절하는 함수
+    private void ApplyVolume(VolumeControlGroup group, float value)
     {
-        Debug.Log($"[{volumeName}] 볼륨이 {value}로 설정되었습니다.");
+        float min = group.volumeSlider.minValue;
+        float max = group.volumeSlider.maxValue;
+        float range = max - min;
+        
+        float ratio = range > 0f ? (value - min) / range : 0f;
 
-        // TODO: 나중에 사운드를 관리하는 SoundManager가 있다면 이곳에 연동하면 됩니다.
+        if (SoundManager.Instance != null)
+        {
+            if (group.volumeName.Equals("Master", System.StringComparison.OrdinalIgnoreCase))
+            {
+                SoundManager.Instance.SetMasterVolume(ratio);
+            }
+            else if (group.volumeName.Equals("BGM", System.StringComparison.OrdinalIgnoreCase))
+            {
+                SoundManager.Instance.SetBGMVolume(ratio);
+            }
+            else if (group.volumeName.Equals("SFX", System.StringComparison.OrdinalIgnoreCase))
+            {
+                SoundManager.Instance.SetSFXVolume(ratio);
+            }
+        }
     }
 }
