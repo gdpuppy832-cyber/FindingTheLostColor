@@ -31,6 +31,7 @@ public class BossAttack : MonoBehaviour
     Coroutine currentAttackCoroutine; // 2페이즈 전환 시 진행 중인 공격을 정확히 멈추기 위한 참조
     Vector3 initialPosition; // 보스가 처음 배치된 위치 (구역 공격 등 위치 고정이 필요한 공격의 기준점)
     BossMove flyMove; // 2페이즈 진입 시 무한대(∞) 이동으로 전환하기 위해 자동으로 찾아두는 참조
+    NormalMonster bossHealth; // 크리스탈 파괴 시 체력 회복을 위해 자동으로 찾아두는 참조 (보스 자신의 NormalMonster)
 
     List<GameObject> activeTelegraphMarkers = new List<GameObject>();
     List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
@@ -128,14 +129,6 @@ public class BossAttack : MonoBehaviour
             frostCrystalPrefab.SetActive(false);
         }
 
-        if (frostCrystalHitboxPrefab != null)
-        {
-            frostCrystalHitboxTemplate = Instantiate(frostCrystalHitboxPrefab, frostCrystalHitboxPrefab.transform.position, frostCrystalHitboxPrefab.transform.rotation);
-            frostCrystalHitboxTemplate.transform.SetParent(null);
-            frostCrystalHitboxTemplate.SetActive(false);
-            frostCrystalHitboxPrefab.SetActive(false);
-        }
-
         if (frostTelegraphMarkerPrefab != null)
         {
             frostTelegraphMarkerTemplate = Instantiate(frostTelegraphMarkerPrefab, frostTelegraphMarkerPrefab.transform.position, frostTelegraphMarkerPrefab.transform.rotation);
@@ -209,6 +202,8 @@ public class BossAttack : MonoBehaviour
 
         flyMove = GetComponent<BossMove>();
         if (flyMove == null) flyMove = GetComponentInChildren<BossMove>();
+
+        bossHealth = GetComponent<NormalMonster>();
 
         // 크리스탈들의 파괴 이벤트를 구독해서 전부 파괴되면 2페이즈로 전환
         foreach (var crystal in crystals)
@@ -310,10 +305,15 @@ public class BossAttack : MonoBehaviour
 
             SetBossColliderState(true);
             if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
+
+            // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복
+            if (bossHealth != null)
+            {
+                bossHealth.Heal(bossHealth.maxHealth * 0.5f);
+            }
+
             ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
 
-            // 2페이즈 진입과 동시에, 좌/우 검은 안개가 "방금 소환된 이 구슬"을 명시적으로 타겟으로 지정하고 움직이기 시작
-            // (SetTarget을 안 하면 안개가 Start()에서 자동 탐색해뒀던 기존(하이어라키에 미리 있던) 구슬을 계속 쫓아감)
             foreach (var fog in blackFogs)
             {
                 if (fog == null) continue;
@@ -577,9 +577,7 @@ public class BossAttack : MonoBehaviour
     // ================= 서리비 공격 (1페이즈) =================
     [Header("1P FrostCrystal")]
     public GameObject frostCrystalPrefab;            // 서리 수정 프리팹 (비워두면 임시 생성)
-    public GameObject frostCrystalHitboxPrefab;       // 피격 반경을 결정할 별도 히트박스 오브젝트 (ContactRelay + Collider2D 필요, 비워두면 수정 자체 콜라이더로 판정)
     GameObject frostCrystalTemplate;                  // frostCrystalPrefab의 런타임 복제 템플릿 (원본 보호용)
-    GameObject frostCrystalHitboxTemplate;            // frostCrystalHitboxPrefab의 런타임 복제 템플릿 (원본 보호용)
     public float frostSpawnYAboveBoss = 6f;      // 보스보다 이만큼 높은 Y좌표에서 생성
     public float frostRainDuration = 4f;              // 비가 내리는 총 시간
     public float frostSpawnInterval = 0.3f;           // 생성 주기
@@ -808,6 +806,8 @@ public class BossAttack : MonoBehaviour
     public GameObject lightningPrefab;              // 번개 프리팹 (비워두면 임시 생성)
     GameObject lightningTemplate;                   // lightningPrefab의 런타임 복제 템플릿 (원본 보호용)
 
+    public Vector2 darkCloudSpawnOffset = Vector2.zero; // 보스의 처음 배치 위치(initialPosition) 기준으로 이 값만큼 이동해서 생성 (Y값 조절 가능)
+
     public float darkCloudFadeInDuration = 3f;      // 먹구름이 서서히 나타나는 시간
     public float darkCloudHoldDuration = 6f;        // 완전히 나타난 뒤 번개가 치기까지 대기 시간
     public float darkCloudPaintEraseDuration = 3f;  // 누적 붓질 시간이 이 값에 도달하면 먹구름이 지워짐 (공격 취소)
@@ -821,8 +821,9 @@ public class BossAttack : MonoBehaviour
 
     IEnumerator DarkCloudAttackRoutine()
     {
-        // 1. 보스가 처음 배치된 위치에 먹구름 생성
-        GameObject cloud = SpawnDarkCloud(initialPosition);
+        // 1. 보스가 처음 배치된 위치 + 오프셋 지점에 먹구름 생성
+        Vector3 cloudSpawnPos = initialPosition + (Vector3)darkCloudSpawnOffset;
+        GameObject cloud = SpawnDarkCloud(cloudSpawnPos);
         activeDarkCloud = cloud;
         DarkCloudHazard hazard = cloud != null ? cloud.GetComponent<DarkCloudHazard>() : null;
 
@@ -850,8 +851,8 @@ public class BossAttack : MonoBehaviour
         }
 
         // 3. 번개 발동: 먹구름 위치 -> 플레이어 위치를 잇는 형태로 생성
-        Vector3 cloudPos = initialPosition; // 먹구름이 생성됐던 그 위치 (cloud는 곧 파괴되므로 미리 저장)
-        if (cloud != null) Destroy(cloud); // 먹구름은 번개가 치는 순간 사라짐
+        Vector3 cloudPos = cloudSpawnPos; // 먹구름이 생성됐던 그 위치 (오프셋 반영)
+        if (cloud != null) hazard.StartFadeOutAndDestroy(); // 번개가 치는 순간 즉시 사라지지 않고 서서히 페이드아웃
 
         Vector3 strikePos = target != null ? target.position : transform.position;
         GameObject lightning = SpawnLightning(cloudPos, strikePos);
@@ -1187,18 +1188,6 @@ public class BossAttack : MonoBehaviour
         hazard.maxLifetime = frostMaxLifetime;
         hazard.groundLayer = groundLayer;
 
-        // 피격 반경용 별도 히트박스 오브젝트를 자식으로 붙임 (연결되어 있을 때만)
-        if (frostCrystalHitboxTemplate != null)
-        {
-            GameObject hitboxInstance = Instantiate(frostCrystalHitboxTemplate, crystal.transform);
-            hitboxInstance.SetActive(true);
-            hitboxInstance.transform.localPosition = Vector3.zero;
-
-            ForceAllCollidersToTrigger(hitboxInstance); // 히트박스 콜라이더도 트리거로 강제 설정 (플레이어 밀림 방지)
-
-            ContactRelay relay = hitboxInstance.GetComponent<ContactRelay>();
-            if (relay != null) hazard.SetHitboxRelay(relay);
-        }
         return crystal;
     }
 

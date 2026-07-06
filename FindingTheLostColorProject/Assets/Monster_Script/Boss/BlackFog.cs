@@ -27,6 +27,8 @@ public class BlackFog : MonoBehaviour
 
     // CursorController를 수정할 수 없으므로, 안개가 스스로 마우스/붓 위치와 좌클릭 여부를 감지함
     Transform cursorTransform; // 씬의 CursorController 오브젝트 (마우스를 따라다니는 그 오브젝트)
+    GaugeController gaugeController; // 물감 잔량 확인용
+    PlayerHealth playerHealth; // 사망/피격 상태 확인용
     bool isBeingAttacked = false;
 
     // 2페이즈가 시작되기 전까지는 안개가 제자리에서 대기함 (BossAttack이 StartMoving()을 호출하면 true로 전환)
@@ -104,6 +106,9 @@ public class BlackFog : MonoBehaviour
         CursorController cursor = FindFirstObjectByType<CursorController>();
         if (cursor != null) cursorTransform = cursor.transform;
 
+        gaugeController = FindFirstObjectByType<GaugeController>();
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
+
         // 붓질 피격 판정에 사용할 콜라이더를 미리 찾아둠 (본체 우선, 없으면 자식에서 탐색)
         hitCollider = GetComponent<Collider2D>();
         if (hitCollider == null) hitCollider = GetComponentInChildren<Collider2D>();
@@ -123,10 +128,15 @@ public class BlackFog : MonoBehaviour
 
         float dir = (side == FogSide.Left) ? -1f : 1f; // 구슬 기준 안개가 있는 쪽 방향 (Start에서 정한 side와 동일하게 유지)
 
-        // 좌클릭이 눌려있고, 붓(커서)이 이 안개의 콜라이더 모양 안에 들어와 있으면 "공격받는 중"으로 판정
-        // (원형 반경 대신 콜라이더의 실제 모양을 그대로 사용 - 사각형/커스텀 모양도 정확하게 판정됨)
+        // 붓질 판정: CursorController의 canDraw와 동일한 조건 - 실제로 트레일에 색이 나오는 상태일 때만 "공격받는 중"으로 판정
+        bool hasPaint = gaugeController == null || gaugeController.currentPaint >= gaugeController.minPaintToDraw;
+        bool needsReclick = gaugeController != null && gaugeController.NeedsReclick;
+        bool isDead = playerHealth != null && playerHealth.IsDead;
+        bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
+        bool canDraw = Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
+
         isBeingAttacked = false;
-        if (cursorTransform != null && hitCollider != null && Input.GetMouseButton(0))
+        if (cursorTransform != null && hitCollider != null && canDraw)
         {
             if (hitCollider.OverlapPoint(cursorTransform.position))
             {

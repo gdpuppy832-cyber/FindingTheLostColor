@@ -13,6 +13,8 @@ public class DarkCloudHazard : MonoBehaviour
     SpriteRenderer sr;
     Collider2D hitCollider;
     Transform cursorTransform;
+    GaugeController gaugeController; // 물감 잔량 확인용
+    PlayerHealth playerHealth; // 사망/피격 상태 확인용
 
     float elapsed = 0f;
     float cumulativePaintTime = 0f;
@@ -22,29 +24,34 @@ public class DarkCloudHazard : MonoBehaviour
 
     public bool IsErased => erased;
     public bool IsReadyToStrike { get; private set; } = false;
+    bool isFadingOut = false; // 번개 발동 후 페이드아웃 중인지 (중복 호출 방지)
 
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
         if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
-
         hitCollider = GetComponent<Collider2D>();
         if (hitCollider == null) hitCollider = GetComponentInChildren<Collider2D>();
-
         CursorController cursor = FindFirstObjectByType<CursorController>();
         if (cursor != null) cursorTransform = cursor.transform;
-
+        gaugeController = FindFirstObjectByType<GaugeController>();
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
         SetAlpha(0f);
     }
 
     void Update()
     {
-        if (erased || finished) return;
-
+        if (erased || finished || isFadingOut) return;
         elapsed += Time.deltaTime;
 
-        // 붓질 판정: 좌클릭 중이고 커서가 이 먹구름의 콜라이더 모양 안에 들어와 있으면 누적
-        if (cursorTransform != null && hitCollider != null && Input.GetMouseButton(0))
+        // 붓질 판정: CursorController의 canDraw와 동일한 조건 - 실제로 트레일에 색이 나오는 상태일 때만 유효
+        bool hasPaint = gaugeController == null || gaugeController.currentPaint >= gaugeController.minPaintToDraw;
+        bool needsReclick = gaugeController != null && gaugeController.NeedsReclick;
+        bool isDead = playerHealth != null && playerHealth.IsDead;
+        bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
+        bool canDraw = Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
+
+        if (cursorTransform != null && hitCollider != null && canDraw)
         {
             if (hitCollider.OverlapPoint(cursorTransform.position))
             {
@@ -89,5 +96,29 @@ public class DarkCloudHazard : MonoBehaviour
         Color c = sr.color;
         c.a = a;
         sr.color = c;
+    }
+    // 번개 발동 후 호출: 현재 알파값에서 서서히 0으로 페이드아웃한 뒤 스스로 파괴됨
+    public void StartFadeOutAndDestroy()
+    {
+        if (isFadingOut) return;
+        isFadingOut = true;
+        StartCoroutine(FadeOutRoutine());
+    }
+
+    System.Collections.IEnumerator FadeOutRoutine()
+    {
+        float startAlpha = sr != null ? sr.color.a : 0f;
+        float t = 0f;
+
+        while (t < fadeOutDuration)
+        {
+            t += Time.deltaTime;
+            float ratio = fadeOutDuration > 0f ? Mathf.Clamp01(t / fadeOutDuration) : 1f;
+            SetAlpha(Mathf.Lerp(startAlpha, 0f, ratio));
+            yield return null;
+        }
+
+        SetAlpha(0f);
+        Destroy(gameObject);
     }
 }
