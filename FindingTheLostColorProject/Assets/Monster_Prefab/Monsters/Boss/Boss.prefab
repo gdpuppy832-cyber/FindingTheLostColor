@@ -208,9 +208,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amplitude: 1
   speed: 1
+  directionChangePauseDuration: 1
   infinityWidthX: 1.5
   infinityHeightY: 1
   infinitySpeed: 1.5
+  blueArcDuration: 1
+  redArcDuration: 2
+  tipPauseDuration: 1
 --- !u!114 &2369340244454583480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,11 +418,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6875392902439184994, guid: 654f3ec388745e8439ee27c6b32c3469, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.57
+      value: -9.3
       objectReference: {fileID: 0}
     - target: {fileID: 6875392902439184994, guid: 654f3ec388745e8439ee27c6b32c3469, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.43
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6875392902439184994, guid: 654f3ec388745e8439ee27c6b32c3469, type: 3}
       propertyPath: m_LocalPosition.z
@@ -623,11 +627,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5356802190585002291, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.46
+      value: -17.3
       objectReference: {fileID: 0}
     - target: {fileID: 5356802190585002291, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.92
+      value: 13.3
       objectReference: {fileID: 0}
     - target: {fileID: 5356802190585002291, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
       propertyPath: m_LocalPosition.z
