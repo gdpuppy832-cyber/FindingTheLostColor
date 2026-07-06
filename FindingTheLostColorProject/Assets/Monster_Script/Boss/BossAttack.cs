@@ -685,6 +685,7 @@ public class BossAttack : MonoBehaviour
     public float darkOrbOrbitDuration = 2f;        // 궤도 회전 지속 시간 (이 시간 동안 한 바퀴 돎)
     public float darkOrbLaunchInterval = 0.8f;     // 구슬이 하나씩 발사되는 간격
     public float darkOrbTrackDuration = 2f;        // 발사된 구슬이 플레이어를 추적하는 시간
+    public float darkOrbSpeedMultiplier = 1f;      // 플레이어 속도 기준 배율 (1보다 크면 플레이어보다 빠르게, 작으면 느리게
 
     public float fallbackDarkOrbSize = 0.6f;       // 프리팹 없을 때 임시 구슬 크기
 
@@ -722,7 +723,7 @@ public class BossAttack : MonoBehaviour
 
         // 3. 순차 발사 (아직 발사 안 된 구슬은 계속 궤도 회전을 유지)
         Vector3 launchTarget = target != null ? target.position : transform.position;
-        float playerSpeed = GetPlayerMoveSpeed();
+        float playerSpeed = GetPlayerMoveSpeed() * darkOrbSpeedMultiplier;
 
         for (int i = 0; i < darkOrbCount; i++)
         {

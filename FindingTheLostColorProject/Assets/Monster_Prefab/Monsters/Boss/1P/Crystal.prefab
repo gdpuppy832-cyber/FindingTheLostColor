@@ -176,11 +176,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72fbba66a6286e642955a0d311a4fe1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 25
   currentHealth: 0
   attackDamage: 0.5
   attackCooldown: 1
   purifiedTriggerName: Purified
+  hitTextFont: {fileID: 0}
   startColor: {r: 1, g: 0.3915094, b: 0.78431374, a: 1}
   targetColor: {r: 1, g: 0.39215687, b: 0.78431374, a: 1}
 --- !u!1001 &5569276861517661201

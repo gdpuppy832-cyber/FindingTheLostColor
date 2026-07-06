@@ -186,7 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e2fccbcb71d9e43b3ee0684e60978f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 60
   currentHealth: 0
   attackDamage: 0.5
   attackCooldown: 1
@@ -209,10 +209,10 @@ MonoBehaviour:
   amplitude: 1
   speed: 1
   directionChangePauseDuration: 1
-  infinityWidthX: 1.5
-  infinityHeightY: 1
+  infinityWidthX: 3
+  infinityHeightY: 2
   infinitySpeed: 1.5
-  blueArcDuration: 1
+  blueArcDuration: 2
   redArcDuration: 2
   tipPauseDuration: 1
 --- !u!114 &2369340244454583480
