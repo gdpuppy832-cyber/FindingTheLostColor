@@ -5,24 +5,21 @@ using System.Collections.Generic;
 public class BossAttack : MonoBehaviour
 {
     // ===== 공통 =====
-    [Header("공통")]
     public Transform target;               // 비워두면 Player 태그로 자동 탐색
-    public NormalMonster bossHealth;        // 페이즈 판별용 (읽기 전용 참조만, NormalMonster는 수정하지 않음)
     [Range(0f, 1f)] public float phase2ThresholdRatio = 0.5f; // F_HealthMoveSwitcher와 같은 값으로 맞추면 이동 전환과 동시에 페이즈 전환됨
     public LayerMask groundLayer;
-    public MonoBehaviour moveScript;        // 공격 중 이동을 멈추고 싶다면 연결 (선택 사항, 비워두면 이동 제어 안 함)
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
+    public float bossAttackDamage = 1f;     // 모든 보스 공격(가시/레이저/서리/암흑구슬/번개/암영결계)이 공통으로 사용하는 피해량
 
 
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
-    public BossMove flyMove; // 크리스탈 파괴 완료 시 무한대(∞) 이동으로 전환하기 위한 참조 (비워두면 자동 탐색)
 
-    [Header("색채 구슬 (2페이즈 진입 시 보스 아래에 소환)")]
+    [Header("Color Orb")]
     public GameObject colorOrbPrefab;          // 색채 구슬 프리팹 (ColorOrb 컴포넌트 자동 부착됨, 비워두면 임시 생성)
     public float colorOrbHealth = 15f;         // 색채 구슬 체력
     public float colorOrbSpawnOffsetY = -2f;   // 보스 기준 아래로 얼마나 떨어진 위치에 소환할지
 
-    [Header("검은 안개 (2페이즈 진입 시 함께 움직이기 시작)")]
+    [Header("Black Fogs")]
     public List<BlackFog> blackFogs = new List<BlackFog>(); // 씬에 미리 배치된 좌/우 안개 오브젝트들을 Inspector에서 연결
 
     bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
@@ -32,11 +29,16 @@ public class BossAttack : MonoBehaviour
     bool isAttacking = false;
     float nextAttackAllowedTime = 0f;
     Coroutine currentAttackCoroutine; // 2페이즈 전환 시 진행 중인 공격을 정확히 멈추기 위한 참조
+    Vector3 initialPosition; // 보스가 처음 배치된 위치 (구역 공격 등 위치 고정이 필요한 공격의 기준점)
+    BossMove flyMove; // 2페이즈 진입 시 무한대(∞) 이동으로 전환하기 위해 자동으로 찾아두는 참조
 
     List<GameObject> activeTelegraphMarkers = new List<GameObject>();
     List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
     List<GameObject> activeSpikes = new List<GameObject>();        // 소환된 가시도 2페이즈 전환 시 강제 정리 대상에 포함
     List<GameObject> activeFrostCrystals = new List<GameObject>(); // 소환된 서리 수정도 2페이즈 전환 시 강제 정리 대상에 포함
+    List<GameObject> activeDarkOrbs = new List<GameObject>();       // 암흑 구슬도 강제 정리 대상에 포함
+    GameObject activeDarkCloud;                                     // 현재 진행 중인 먹구름 (동시에 하나만 존재)
+    GameObject activeLightning;                                     // 현재 발동 중인 번개
 
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
@@ -65,19 +67,23 @@ public class BossAttack : MonoBehaviour
         // ===== 2페이즈 공격 풀 =====
         phase2Attacks = new List<AttackEntry>
         {
-
+            new AttackEntry("ShadowBarrier", ShadowBarrierAttackRoutine),
+            new AttackEntry("DarkOrb", DarkOrbAttackRoutine),
+            new AttackEntry("DarkCloud", DarkCloudAttackRoutine),
         };
     }
 
     void Start()
     {
+        initialPosition = transform.position; // 보스가 처음 배치된 위치를 기록 (구역 공격 기준점)
+
         if (target == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null) target = player.transform;
         }
 
-        if (bossHealth == null) bossHealth = GetComponent<NormalMonster>();
+
 
         // spikePrefab/telegraphMarkerPrefab이 보스 프리팹 안의 자식 오브젝트를 직접 참조하는 경우,
         // 그 원본을 계속 Instantiate 소스로 쓰면 프리팹이 손상될 수 있어(Missing GameObject 원인)
@@ -138,6 +144,48 @@ public class BossAttack : MonoBehaviour
             frostTelegraphMarkerPrefab.SetActive(false);
         }
 
+        if (shadowBarrierTelegraphPrefab != null)
+        {
+            shadowBarrierTelegraphTemplate = Instantiate(shadowBarrierTelegraphPrefab, shadowBarrierTelegraphPrefab.transform.position, shadowBarrierTelegraphPrefab.transform.rotation);
+            shadowBarrierTelegraphTemplate.transform.SetParent(null);
+            shadowBarrierTelegraphTemplate.SetActive(false);
+            shadowBarrierTelegraphPrefab.SetActive(false); // 원본(보스의 자식)은 그냥 숨겨만 두고 다시는 건드리지 않음
+        }
+
+        if (shadowBarrierHazardPrefab != null)
+        {
+            shadowBarrierHazardTemplate = Instantiate(shadowBarrierHazardPrefab, shadowBarrierHazardPrefab.transform.position, shadowBarrierHazardPrefab.transform.rotation);
+            shadowBarrierHazardTemplate.transform.SetParent(null);
+            shadowBarrierHazardTemplate.SetActive(false);
+            shadowBarrierHazardPrefab.SetActive(false);
+        }
+
+        if (darkOrbPrefab != null)
+        {
+            darkOrbTemplate = Instantiate(darkOrbPrefab, darkOrbPrefab.transform.position, darkOrbPrefab.transform.rotation);
+            darkOrbTemplate.transform.SetParent(null);
+            darkOrbTemplate.SetActive(false);
+            darkOrbPrefab.SetActive(false);
+        }
+
+        if (darkCloudPrefab != null)
+        {
+            darkCloudTemplate = Instantiate(darkCloudPrefab, darkCloudPrefab.transform.position, darkCloudPrefab.transform.rotation);
+            darkCloudTemplate.transform.SetParent(null);
+            darkCloudTemplate.SetActive(false);
+            darkCloudPrefab.SetActive(false);
+        }
+
+        if (lightningPrefab != null)
+        {
+            lightningTemplate = Instantiate(lightningPrefab, lightningPrefab.transform.position, lightningPrefab.transform.rotation);
+            lightningTemplate.transform.SetParent(null);
+            lightningTemplate.SetActive(false);
+            lightningPrefab.SetActive(false);
+        }
+
+        // 보스 본체(자기 자신) + 자식의 모든 콜라이더를 트리거로 설정.
+
         // 보스 본체(자기 자신) + 자식의 모든 콜라이더를 트리거로 설정.
         // 단, 크리스탈 자신의 콜라이더는 1페이즈 내내 붓질 가능해야 하므로 제외함
         // (자식 히트박스 등을 통해 1페이즈에도 보스가 붓질/공격당하는 걸 막기 위해
@@ -157,7 +205,9 @@ public class BossAttack : MonoBehaviour
         // CursorController의 OverlapCircleAll에 아예 걸리지 않게 함 (붓질로 체력이 차거나 공격당하는 것을 원천 차단)
         SetBossColliderState(false);
 
-        if (flyMove == null) flyMove = GetComponent<BossMove>();
+
+
+        flyMove = GetComponent<BossMove>();
         if (flyMove == null) flyMove = GetComponentInChildren<BossMove>();
 
         // 크리스탈들의 파괴 이벤트를 구독해서 전부 파괴되면 2페이즈로 전환
@@ -179,15 +229,13 @@ public class BossAttack : MonoBehaviour
     void HandleCrystalDestroyed()
     {
         destroyedCrystalCount++;
-        Debug.Log($"[BossAttack] 크리스탈 파괴됨: {destroyedCrystalCount}/{crystals.Count}, isAttacking={isAttacking}, enabled={enabled}");
+
 
         // "실제로 이 컴포넌트가 꺼져서 코루틴이 강제 종료됐었는지"를 재활성화하기 전에 먼저 확인.
         // 이 값을 나중에 확인하면 이미 enabled = true로 바뀐 뒤라 항상 false로 나와서 구분이 안 됨
         bool wasDisabled = !enabled;
 
         if (wasDisabled) enabled = true;
-        if (moveScript != null && !moveScript.enabled) moveScript.enabled = true;
-        if (flyMove != null && !flyMove.enabled) flyMove.enabled = true;
 
         // 컴포넌트가 실제로 꺼졌던 경우에만 공격 상태를 복구함.
         // (컴포넌트가 안 꺼졌다면 진행 중인 공격 코루틴은 여전히 살아있으므로 isAttacking을 건드리면 안 됨 -
@@ -256,17 +304,12 @@ public class BossAttack : MonoBehaviour
                     marker.SetActive(false);
                 }
 
-                // 공격 도중 멈춰서 이동이 꺼진 상태였을 수 있으므로 복구
-                if (moveScript != null) moveScript.enabled = true;
-
                 isAttacking = false;
                 nextAttackAllowedTime = Time.time + attackCooldown;
-
-                Debug.Log("[BossAttack] 2페이즈 전환으로 진행 중이던 1페이즈 공격을 강제 중단");
             }
 
             SetBossColliderState(true);
-            if (flyMove != null) flyMove.SetInfinityMode(true);
+            if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
             ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
 
             // 2페이즈 진입과 동시에, 좌/우 검은 안개가 "방금 소환된 이 구슬"을 명시적으로 타겟으로 지정하고 움직이기 시작
@@ -295,10 +338,10 @@ public class BossAttack : MonoBehaviour
 
     void Update()
     {
-        if (isAttacking || Time.time < nextAttackAllowedTime || target == null || bossHealth == null)
+        if (isAttacking || Time.time < nextAttackAllowedTime || target == null)
             return;
-        
-        
+
+
 
         List<AttackEntry> pool = GetCurrentPhasePool();
         if (pool == null || pool.Count == 0) return;
@@ -334,21 +377,18 @@ public class BossAttack : MonoBehaviour
         isAttacking = true;
         lastUsedAttack = attack;
 
-        if (moveScript != null) moveScript.enabled = false;
-
         // StartCoroutine으로 한 번 더 감싸면 별도의 독립 코루틴이 되어버려서,
         // 이 RunAttack 코루틴만 StopCoroutine 해도 안쪽 attack.routine()은 안 멈추는 문제가 있었음
         // (서리비 등 attack.routine() 내부에서 또 코루틴을 중첩 시작하는 경우 특히 문제)
         // -> 같은 코루틴 체인으로 직접 실행되도록 변경
         yield return attack.routine();
 
-        if (moveScript != null) moveScript.enabled = true;
         isAttacking = false;
         nextAttackAllowedTime = Time.time + attackCooldown;
     }
 
     // ================= 가시 함정 공격 (1페이즈) =================
-    [Header("가시 함정 공격 설정")]
+    [Header("1P Spike")]
     public GameObject telegraphMarkerPrefab;      // 경고 표시 프리팹 (SpriteRenderer 포함, 비워두면 임시 마커 생성)
     public GameObject spikePrefab;                // 가시 프리팹 (Collider2D는 Trigger로, 비워두면 임시 가시 생성)
     GameObject telegraphMarkerTemplate;           // telegraphMarkerPrefab의 런타임 복제 템플릿 (원본 보호용)
@@ -427,7 +467,7 @@ public class BossAttack : MonoBehaviour
     }
 
     // ================= 레이저 공격 (1페이즈) =================
-    [Header("레이저 공격 설정")]
+    [Header("1P Laser")]
     public GameObject laserTelegraphPrefab;   // 가로로 긴 경고 라인 프리팹 (비워두면 임시 마커 생성)
     public GameObject laserPrefab;            // 레이저 몸체 프리팹 (비워두면 임시 레이저 생성)
     GameObject laserTelegraphTemplate;        // laserTelegraphPrefab의 런타임 복제 템플릿 (원본 보호용)
@@ -435,9 +475,8 @@ public class BossAttack : MonoBehaviour
     public float laserTelegraphDuration = 2f;       // 텔레그래프 지속 시간
     public float laserTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     public float laserActiveDuration = 5f;          // 레이저 발동 유지 시간
-    public float laserDamage = 1f;                  // 레이저 접촉 시 틱당 피해량
+    
 
-    [Header("레이저 임시 대체용 크기 (Laser Prefab을 비워뒀을 때만 사용됨)")]
     public float fallbackLaserWidth = 20f;           // 프리팹 없을 때 임시 레이저 가로 길이
     public float fallbackLaserThickness = 0.6f;      // 프리팹 없을 때 임시 레이저 두께
 
@@ -529,14 +568,14 @@ public class BossAttack : MonoBehaviour
         LaserHazard hazard = laser.GetComponent<LaserHazard>();
         if (hazard == null) hazard = laser.AddComponent<LaserHazard>();
         hazard.lifetime = laserActiveDuration;
-        hazard.damage = laserDamage;
+        hazard.damage = bossAttackDamage;
 
 
         return laser;
     }
 
     // ================= 서리비 공격 (1페이즈) =================
-    [Header("서리비 공격 설정")]
+    [Header("1P FrostCrystal")]
     public GameObject frostCrystalPrefab;            // 서리 수정 프리팹 (비워두면 임시 생성)
     public GameObject frostCrystalHitboxPrefab;       // 피격 반경을 결정할 별도 히트박스 오브젝트 (ContactRelay + Collider2D 필요, 비워두면 수정 자체 콜라이더로 판정)
     GameObject frostCrystalTemplate;                  // frostCrystalPrefab의 런타임 복제 템플릿 (원본 보호용)
@@ -548,14 +587,11 @@ public class BossAttack : MonoBehaviour
     public float frostRangeX = 12f;                // 보스 X좌표 기준 좌우로 퍼지는 폭 (예: 12면 보스 기준 -6 ~ +6 범위)
     public float frostFallInitialSpeed = 0f;          // 낙하 시작 속도
     public float frostFallAcceleration = 15f;         // 낙하 가속도
-    public float frostDamage = 1f;                    // 서리 수정 접촉 시 피해량
     public float frostMaxLifetime = 6f;               // 바닥에 못 닿았을 때 안전장치용 최대 생존 시간
 
-    [Header("서리비 텔레그래프 설정")]
     public GameObject frostTelegraphMarkerPrefab;      // 세로 경고선 프리팹 (비워두면 임시 마커 생성)
     GameObject frostTelegraphMarkerTemplate;           // frostTelegraphMarkerPrefab의 런타임 복제 템플릿 (원본 보호용)
 
-    [Header("서리비 텔레그래프 (씬에 미리 배치된 오브젝트 사용 시)")]
     public List<GameObject> frostTelegraphMarkers = new List<GameObject>(); // 보스의 자식으로 미리 배치해둔 텔레그래프들 (Inspector에서 연결). 비워두면 기존 동적 생성 방식 사용
     public float frostTelegraphDuration = 2f;          // 텔레그래프 지속 시간
     public float frostTelegraphBlinkInterval = 0.5f;   // 깜빡임 간격
@@ -642,6 +678,259 @@ public class BossAttack : MonoBehaviour
         float remaining = frostSpawnInterval - prevTime;
         if (remaining > 0f) yield return new WaitForSeconds(remaining);
     }
+    // ================= 암흑 구슬 공격 (2페이즈) =================
+    [Header("2P DarkOrb")]
+    public GameObject darkOrbPrefab;              // 암흑 구슬 프리팹 (비워두면 임시 생성)
+    GameObject darkOrbTemplate;                    // darkOrbPrefab의 런타임 복제 템플릿 (원본 보호용)
+    public int darkOrbCount = 3;                   // 구슬 개수
+    public float darkOrbOrbitRadius = 2f;          // 보스 주위를 도는 궤도 반지름
+    public float darkOrbOrbitDuration = 2f;        // 궤도 회전 지속 시간 (이 시간 동안 한 바퀴 돎)
+    public float darkOrbLaunchInterval = 0.8f;     // 구슬이 하나씩 발사되는 간격
+    public float darkOrbTrackDuration = 2f;        // 발사된 구슬이 플레이어를 추적하는 시간
+
+    public float fallbackDarkOrbSize = 0.6f;       // 프리팹 없을 때 임시 구슬 크기
+
+    IEnumerator DarkOrbAttackRoutine()
+    {
+        // 1. 구슬 darkOrbCount개를 보스 주위에 균등한 각도로 배치하며 생성
+        List<GameObject> orbs = new List<GameObject>();
+        List<DarkOrbHazard> hazards = new List<DarkOrbHazard>();
+        float[] initialAngles = new float[darkOrbCount];
+
+        for (int i = 0; i < darkOrbCount; i++)
+        {
+            float angle = (360f / darkOrbCount) * i * Mathf.Deg2Rad;
+            initialAngles[i] = angle;
+
+            Vector2 spawnPos = (Vector2)transform.position + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * darkOrbOrbitRadius;
+            GameObject orb = SpawnDarkOrb(spawnPos);
+            orbs.Add(orb);
+            hazards.Add(orb != null ? orb.GetComponent<DarkOrbHazard>() : null);
+        }
+        activeDarkOrbs.AddRange(orbs);
+
+        bool[] launched = new bool[darkOrbCount];
+        float rotationElapsed = 0f;
+        // 한 바퀴(2π)를 darkOrbOrbitDuration 동안 도는 각속도. 각도가 증가하는 방향 = 반시계방향
+        float angularSpeed = (2f * Mathf.PI) / Mathf.Max(darkOrbOrbitDuration, 0.01f);
+
+        // 2. 궤도 회전만 하는 구간 (darkOrbOrbitDuration 초)
+        while (rotationElapsed < darkOrbOrbitDuration)
+        {
+            rotationElapsed += Time.deltaTime;
+            UpdateOrbitPositions(orbs, initialAngles, launched, rotationElapsed, angularSpeed);
+            yield return null;
+        }
+
+        // 3. 순차 발사 (아직 발사 안 된 구슬은 계속 궤도 회전을 유지)
+        Vector3 launchTarget = target != null ? target.position : transform.position;
+        float playerSpeed = GetPlayerMoveSpeed();
+
+        for (int i = 0; i < darkOrbCount; i++)
+        {
+            if (orbs[i] != null && hazards[i] != null)
+            {
+                hazards[i].Launch(target, darkOrbTrackDuration, playerSpeed);
+                launched[i] = true;
+                activeDarkOrbs.Remove(orbs[i]); // 발사된 순간부터는 스스로 관리하므로 강제 정리 목록에서 제외
+            }
+
+            // 마지막 구슬 발사 후에는 대기할 필요 없음
+            if (i == darkOrbCount - 1) break;
+
+            float waitElapsed = 0f;
+            while (waitElapsed < darkOrbLaunchInterval)
+            {
+                waitElapsed += Time.deltaTime;
+                rotationElapsed += Time.deltaTime;
+                UpdateOrbitPositions(orbs, initialAngles, launched, rotationElapsed, angularSpeed);
+                yield return null;
+            }
+        }
+    }
+
+    // 아직 발사되지 않은 구슬들의 위치를 보스 중심 기준 궤도 위로 갱신
+    void UpdateOrbitPositions(List<GameObject> orbs, float[] initialAngles, bool[] launched, float elapsed, float angularSpeed)
+    {
+        for (int i = 0; i < orbs.Count; i++)
+        {
+            if (launched[i] || orbs[i] == null) continue;
+
+            float angle = initialAngles[i] + elapsed * angularSpeed;
+            Vector2 pos = (Vector2)transform.position + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * darkOrbOrbitRadius;
+            orbs[i].transform.position = pos;
+        }
+    }
+
+    // target(플레이어)에 PlayerMove가 붙어있으면 그 moveSpeed를 그대로 읽어와 구슬 속도로 사용
+    float GetPlayerMoveSpeed()
+    {
+        if (target == null) return 7f; // PlayerMove를 못 찾을 때를 대비한 기본값
+        PlayerMove playerMove = target.GetComponent<PlayerMove>();
+        if (playerMove == null) playerMove = target.GetComponentInParent<PlayerMove>();
+        return playerMove != null ? playerMove.moveSpeed : 7f;
+    }
+
+    GameObject SpawnDarkOrb(Vector2 pos)
+    {
+        GameObject orb;
+        if (darkOrbTemplate != null)
+        {
+            orb = Instantiate(darkOrbTemplate, pos, Quaternion.identity);
+            orb.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 암흑 구슬 생성 (검은 원)
+            orb = new GameObject("DarkOrb_Temp");
+            orb.transform.position = pos;
+            SpriteRenderer sr = orb.AddComponent<SpriteRenderer>();
+            sr.color = new Color(0.1f, 0.05f, 0.15f, 1f);
+            sr.sprite = CreateTempSquareSprite();
+            orb.transform.localScale = Vector3.one * fallbackDarkOrbSize;
+
+            CircleCollider2D col = orb.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ForceAllCollidersToTrigger(orb);
+
+        DarkOrbHazard hazard = orb.GetComponent<DarkOrbHazard>();
+        if (hazard == null) hazard = orb.AddComponent<DarkOrbHazard>();
+        hazard.damage = bossAttackDamage;
+
+        return orb;
+    }
+    // ================= 먹구름 공격 (2페이즈) =================
+    [Header("2P DarkCloud")]
+    public GameObject darkCloudPrefab;             // 먹구름 프리팹 (비워두면 임시 생성)
+    GameObject darkCloudTemplate;                   // darkCloudPrefab의 런타임 복제 템플릿 (원본 보호용)
+    public GameObject lightningPrefab;              // 번개 프리팹 (비워두면 임시 생성)
+    GameObject lightningTemplate;                   // lightningPrefab의 런타임 복제 템플릿 (원본 보호용)
+
+    public float darkCloudFadeInDuration = 3f;      // 먹구름이 서서히 나타나는 시간
+    public float darkCloudHoldDuration = 6f;        // 완전히 나타난 뒤 번개가 치기까지 대기 시간
+    public float darkCloudPaintEraseDuration = 3f;  // 누적 붓질 시간이 이 값에 도달하면 먹구름이 지워짐 (공격 취소)
+    public float lightningLifetime = 0.4f;          // 번개가 유지되는 시간
+    public float lightningLength = 100f;            // 번개가 뻗어나가는 길이 (충분히 크게 잡아 화면 끝까지 이어지도록)
+
+    public float fallbackDarkCloudSize = 4f;        // 프리팹 없을 때 임시 먹구름 크기
+
+    public float fallbackLightningWidth = 0.6f;     // 프리팹 없을 때 임시 번개 가로 크기
+    public float fallbackLightningHeight = 6f;      // 프리팹 없을 때 임시 번개 세로 크기
+
+    IEnumerator DarkCloudAttackRoutine()
+    {
+        // 1. 보스가 처음 배치된 위치에 먹구름 생성
+        GameObject cloud = SpawnDarkCloud(initialPosition);
+        activeDarkCloud = cloud;
+        DarkCloudHazard hazard = cloud != null ? cloud.GetComponent<DarkCloudHazard>() : null;
+
+        if (hazard == null)
+        {
+            // 안전장치: 컴포넌트를 못 붙였다면 그냥 공격을 종료
+            if (cloud != null) Destroy(cloud);
+            activeDarkCloud = null;
+            yield break;
+        }
+
+        // 2. 먹구름이 붓질로 지워지거나(공격 취소), 번개를 쏠 준비가 될 때까지 대기
+        while (!hazard.IsErased && !hazard.IsReadyToStrike)
+        {
+            yield return null;
+        }
+
+        bool wasErased = hazard.IsErased;
+        activeDarkCloud = null; // 어느 쪽이든 이 시점부터는 BossAttack이 직접 관리할 필요 없음 (지워지는 중이면 스스로 파괴, 발동이면 아래에서 즉시 제거)
+
+        if (wasErased)
+        {
+            // 붓질로 지워졌으므로 번개 없이 공격 종료 (먹구름은 스스로 페이드아웃 후 파괴됨)
+            yield break;
+        }
+
+        // 3. 번개 발동: 먹구름 위치 -> 플레이어 위치를 잇는 형태로 생성
+        Vector3 cloudPos = initialPosition; // 먹구름이 생성됐던 그 위치 (cloud는 곧 파괴되므로 미리 저장)
+        if (cloud != null) Destroy(cloud); // 먹구름은 번개가 치는 순간 사라짐
+
+        Vector3 strikePos = target != null ? target.position : transform.position;
+        GameObject lightning = SpawnLightning(cloudPos, strikePos);
+        activeLightning = lightning;
+
+        yield return new WaitForSeconds(lightningLifetime);
+
+        if (lightning != null) Destroy(lightning);
+        activeLightning = null;
+    }
+
+    GameObject SpawnDarkCloud(Vector3 pos)
+    {
+        GameObject cloud;
+        if (darkCloudTemplate != null)
+        {
+            cloud = Instantiate(darkCloudTemplate, pos, Quaternion.identity);
+            cloud.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 먹구름 생성 (짙은 회색 사각형)
+            cloud = new GameObject("DarkCloud_Temp");
+            cloud.transform.position = pos;
+            SpriteRenderer sr = cloud.AddComponent<SpriteRenderer>();
+            sr.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+            sr.sprite = CreateTempSquareSprite();
+            cloud.transform.localScale = Vector3.one * fallbackDarkCloudSize;
+
+            CircleCollider2D col = cloud.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ForceAllCollidersToTrigger(cloud);
+
+        DarkCloudHazard hazard = cloud.GetComponent<DarkCloudHazard>();
+        if (hazard == null) hazard = cloud.AddComponent<DarkCloudHazard>();
+        hazard.fadeInDuration = darkCloudFadeInDuration;
+        hazard.holdDuration = darkCloudHoldDuration;
+        hazard.paintEraseDuration = darkCloudPaintEraseDuration;
+
+        return cloud;
+    }
+
+    // fromPos(먹구름 위치)에서 시작해서, toPos(플레이어) 방향으로 lightningLength만큼
+    // 즉시 완성된 형태로 뻗어나가는 번개를 생성.
+    GameObject SpawnLightning(Vector3 fromPos, Vector3 toPos)
+    {
+        GameObject lightning;
+        if (lightningTemplate != null)
+        {
+            lightning = Instantiate(lightningTemplate, fromPos, Quaternion.identity);
+            lightning.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 번개 생성 (노란 세로 막대)
+            lightning = new GameObject("Lightning_Temp");
+            lightning.transform.position = fromPos;
+
+            SpriteRenderer sr = lightning.AddComponent<SpriteRenderer>();
+            sr.color = new Color(1f, 0.95f, 0.3f, 0.9f);
+            sr.sprite = CreateTempSquareSprite();
+            lightning.transform.localScale = new Vector3(fallbackLightningWidth, 1f, 1f); // 세로 길이는 Init()이 채움
+
+            BoxCollider2D col = lightning.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ForceAllCollidersToTrigger(lightning);
+
+        LightningHazard hazard = lightning.GetComponent<LightningHazard>();
+        if (hazard == null) hazard = lightning.AddComponent<LightningHazard>();
+        hazard.damage = bossAttackDamage;
+        hazard.lifetime = lightningLifetime;
+        hazard.Init(fromPos, toPos, lightningLength); // 시작점 고정, 목표 방향으로 lightningLength만큼 즉시 뻗어나감
+
+        return lightning;
+    }
 
     // 서리비 범위 표시용 경고 마커 생성 (프리팹이 이미 원하는 모양/크기로 잘려있으므로 그대로 생성만 함)
     GameObject SpawnFrostTelegraph(Vector2 spawnPos)
@@ -661,6 +950,168 @@ public class BossAttack : MonoBehaviour
         sr.sprite = CreateTempSquareSprite();
         tempMarker.transform.localScale = Vector3.one;
         return tempMarker;
+    }
+    // ================= 암영 결계 공격 (2페이즈) =================
+    [Header("2P Shadow Barrier")]
+    public GameObject shadowBarrierTelegraphPrefab;           // 경고 표시 프리팹 (비워두면 임시 마커 생성)
+    public GameObject shadowBarrierHazardPrefab;               // 실제 피해 판정 영역 프리팹 (비워두면 임시 생성)
+    GameObject shadowBarrierTelegraphTemplate;                 // shadowBarrierTelegraphPrefab의 런타임 복제 템플릿 (원본 보호용)
+    GameObject shadowBarrierHazardTemplate;                    // shadowBarrierHazardPrefab의 런타임 복제 템플릿 (원본 보호용)
+    public float shadowBarrierTelegraphDuration = 2f;          // 텔레그래프 지속 시간
+    public float shadowBarrierTelegraphBlinkInterval = 0.5f;   // 깜빡임 간격
+    public float shadowBarrierActiveDuration = 1.5f;           // 텔레그래프 종료 후 실제 피해 판정이 유지되는 시간
+
+    public float fallbackShadowBarrierWidth = 3f;              // 프리팹 없을 때 컬럼 하나의 가로 크기
+    public float fallbackShadowBarrierHeight = 10f;            // 프리팹 없을 때 컬럼 하나의 세로 크기
+
+    public Vector2 shadowBarrierSpawnOffset = Vector2.zero;    // 보스의 처음 배치 위치(initialPosition) 기준으로 이 값만큼 이동해서 생성
+
+    IEnumerator ShadowBarrierAttackRoutine()
+    {
+        // 컬럼 하나의 실제 가로 크기를 오브젝트(프리팹) 기준으로 읽어와서,
+        // 5칸을 그 크기 그대로 나란히 배치함 (강제 스케일 조정 없음)
+        float columnWidth = GetShadowBarrierColumnWidth();
+        Vector3 basePos = initialPosition + (Vector3)shadowBarrierSpawnOffset; // 보스 초기 위치 + 인스펙터에서 조절 가능한 오프셋
+        float leftX = basePos.x - (columnWidth * 5f) / 2f;
+        float centerY = basePos.y;
+
+        // 왼쪽부터 1~5번째 컬럼 기준: 짝(2,4) 먼저 -> 홀(1,3,5) 나중
+        int[] evenColumns = { 2, 4 };
+        int[] oddColumns = { 1, 3, 5 };
+
+        yield return RunShadowBarrierGroup(evenColumns, leftX, columnWidth, centerY);
+        yield return RunShadowBarrierGroup(oddColumns, leftX, columnWidth, centerY);
+    }
+    float GetShadowBarrierColumnWidth()
+    {
+        GameObject reference = shadowBarrierHazardTemplate != null ? shadowBarrierHazardTemplate : shadowBarrierTelegraphTemplate;
+        if (reference != null)
+        {
+            BoxCollider2D box = reference.GetComponentInChildren<BoxCollider2D>(true);
+            if (box != null && box.size.x > 0.001f)
+                return box.size.x * box.transform.lossyScale.x;
+
+            Collider2D anyCol = reference.GetComponentInChildren<Collider2D>(true);
+            if (anyCol != null && anyCol.bounds.size.x > 0.001f)
+                return anyCol.bounds.size.x;
+
+            SpriteRenderer sr = reference.GetComponentInChildren<SpriteRenderer>(true);
+            if (sr != null && sr.sprite != null)
+                return sr.sprite.bounds.size.x * sr.transform.lossyScale.x;
+        }
+        return fallbackShadowBarrierWidth;
+    }
+
+    IEnumerator RunShadowBarrierGroup(int[] columns, float leftX, float columnWidth, float centerY)
+    {
+        // 1. 해당 그룹(짝 또는 홀)의 컬럼마다 텔레그래프 생성
+        List<GameObject> markers = new List<GameObject>();
+        List<float> columnCenters = new List<float>();
+        foreach (int col in columns)
+        {
+            float centerX = leftX + columnWidth * (col - 0.5f); // 1-indexed 컬럼의 중심 X좌표
+            columnCenters.Add(centerX);
+
+            GameObject marker = SpawnShadowBarrierTelegraph(new Vector2(centerX, centerY));
+            if (marker != null) markers.Add(marker);
+        }
+        activeTelegraphMarkers.AddRange(markers);
+
+        // 2. 2초 동안 0.5초 간격으로 깜빡임
+        float elapsed = 0f;
+        bool visible = true;
+        while (elapsed < shadowBarrierTelegraphDuration)
+        {
+            yield return new WaitForSeconds(shadowBarrierTelegraphBlinkInterval);
+            elapsed += shadowBarrierTelegraphBlinkInterval;
+            visible = !visible;
+            foreach (var m in markers)
+            {
+                if (m == null) continue;
+                SpriteRenderer sr = m.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.enabled = visible;
+            }
+        }
+
+        // 3. 텔레그래프 제거
+        foreach (var m in markers)
+        {
+            if (m != null) Destroy(m);
+            activeTelegraphMarkers.Remove(m);
+        }
+
+        // 4. 실제 피해 판정 영역 생성 (컬럼마다)
+        List<GameObject> barriers = new List<GameObject>();
+        foreach (var centerX in columnCenters)
+        {
+            GameObject barrier = SpawnShadowBarrierHazard(new Vector2(centerX, centerY));
+            if (barrier != null) barriers.Add(barrier);
+        }
+
+        // 5. 발동 유지 시간만큼 대기 후 제거
+        yield return new WaitForSeconds(shadowBarrierActiveDuration);
+
+        foreach (var barrier in barriers)
+        {
+            if (barrier != null) Destroy(barrier);
+        }
+    }
+
+    GameObject SpawnShadowBarrierTelegraph(Vector2 center)
+    {
+        GameObject marker;
+        if (shadowBarrierTelegraphTemplate != null)
+        {
+            // 프리팹 원본 크기를 그대로 사용 (스케일 강제 조정 없음)
+            marker = Instantiate(shadowBarrierTelegraphTemplate, center, Quaternion.identity);
+            marker.SetActive(true);
+        }
+        else
+        {
+            marker = new GameObject("ShadowBarrierTelegraph_Temp");
+            marker.transform.position = center;
+            SpriteRenderer sr = marker.AddComponent<SpriteRenderer>();
+            sr.color = new Color(1f, 0.3f, 0.3f, 0.4f);
+            sr.sprite = CreateTempSquareSprite();
+            marker.transform.localScale = new Vector3(fallbackShadowBarrierWidth, fallbackShadowBarrierHeight, 1f);
+        }
+
+        return marker;
+    }
+
+    GameObject SpawnShadowBarrierHazard(Vector2 center)
+    {
+        GameObject barrier;
+        if (shadowBarrierHazardTemplate != null)
+        {
+            // 프리팹 원본 크기를 그대로 사용 (스케일 강제 조정 없음)
+            barrier = Instantiate(shadowBarrierHazardTemplate, center, Quaternion.identity);
+            barrier.SetActive(true);
+        }
+        else
+        {
+            barrier = new GameObject("ShadowBarrierHazard_Temp");
+            barrier.transform.position = center;
+            SpriteRenderer sr = barrier.AddComponent<SpriteRenderer>();
+            sr.color = new Color(1f, 0f, 0f, 0.6f);
+            sr.sprite = CreateTempSquareSprite();
+            barrier.transform.localScale = new Vector3(fallbackShadowBarrierWidth, fallbackShadowBarrierHeight, 1f);
+
+            BoxCollider2D col = barrier.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+        }
+
+
+        SetLayerRecursively(barrier, LayerMask.NameToLayer("Default"));
+
+        ForceAllCollidersToTrigger(barrier);
+
+        ShadowBarrierHazard hazard = barrier.GetComponent<ShadowBarrierHazard>();
+        if (hazard == null) hazard = barrier.AddComponent<ShadowBarrierHazard>();
+        hazard.lifetime = shadowBarrierActiveDuration + 0.5f;
+        hazard.damage = bossAttackDamage;
+
+        return barrier;
     }
 
     // ================= 색채 구슬 (2페이즈 진입 시 1회 소환) =================
@@ -732,7 +1183,7 @@ public class BossAttack : MonoBehaviour
         if (hazard == null) hazard = crystal.AddComponent<FrostCrystalHazard>();
         hazard.initialSpeed = frostFallInitialSpeed;
         hazard.acceleration = frostFallAcceleration;
-        hazard.damage = frostDamage;
+        hazard.damage = bossAttackDamage;
         hazard.maxLifetime = frostMaxLifetime;
         hazard.groundLayer = groundLayer;
 
@@ -796,6 +1247,8 @@ public class BossAttack : MonoBehaviour
             GameObject marker = Instantiate(telegraphMarkerTemplate, pos, Quaternion.identity);
             marker.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
             AlignBottomToGround(marker, pos); // 마커 바닥이 땅 표면에 닿도록 보정
+            SetLayerRecursively(marker, LayerMask.NameToLayer("Default"));
+
             return marker;
         }
 
@@ -841,6 +1294,7 @@ public class BossAttack : MonoBehaviour
         SpikeHazard hazard = spike.GetComponent<SpikeHazard>();
         if (hazard == null) hazard = spike.AddComponent<SpikeHazard>();
         hazard.lifetime = spikeLifetime;
+        hazard.damage = bossAttackDamage;
 
         return spike;
     }
@@ -876,6 +1330,16 @@ public class BossAttack : MonoBehaviour
         }
     }
 
+    void SetLayerRecursively(GameObject obj, int layer)
+    {
+        if (layer == -1) return; // 해당 레이어를 못 찾은 경우 안전하게 무시
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, layer);
+        }
+    }
+
     Sprite CreateTempSquareSprite()
     {
         int size = 32;
@@ -887,7 +1351,7 @@ public class BossAttack : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
     }
     void OnDisable()
-    { 
+    {
         foreach (var marker in activeTelegraphMarkers)
         {
             if (marker != null) Destroy(marker);
@@ -900,5 +1364,19 @@ public class BossAttack : MonoBehaviour
             if (laser != null) Destroy(laser);
         }
         activeLaserObjects.Clear();
+
+        // 궤도 회전 중이던(아직 발사되지 않은) 암흑 구슬도 함께 정리
+        foreach (var orb in activeDarkOrbs)
+        {
+            if (orb != null) Destroy(orb);
+        }
+        activeDarkOrbs.Clear();
+
+        // 진행 중이던 먹구름/번개도 코루틴이 강제 중단되면 남을 수 있으므로 함께 정리
+        if (activeDarkCloud != null) Destroy(activeDarkCloud);
+        activeDarkCloud = null;
+
+        if (activeLightning != null) Destroy(activeLightning);
+        activeLightning = null;
     }
 }
