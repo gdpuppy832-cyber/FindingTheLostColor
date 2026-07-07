@@ -200,8 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d961ffd97a16e94b84f47227ef27ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 4
-  lineWidth: 6
+  attackRange: 2
+  lineWidth: 4
   telegraphTime: 0.7
   jumpDuration: 0.6
   jumpHeight: 2

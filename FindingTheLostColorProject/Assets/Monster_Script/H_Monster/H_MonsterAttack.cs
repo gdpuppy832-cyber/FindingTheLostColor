@@ -43,12 +43,18 @@ public class H_MonsterAttack : MonoBehaviour
 
     bool isAttacking = false;
     bool canAttack = true;
+    private Coroutine activeMeleeCoroutine;
 
     H_MonsterMove enemyMove;
     private Rigidbody2D rigid;
 
     // 최초 덮치기 도중 플레이어 타격 성공 여부 플래그
     private bool initialPounceHitPlayer = false;
+
+    [Header("몸통 접촉(ContactHit) 피해 쿨타임")]
+    [Tooltip("몬스터 몸에 플레이어가 닿아있을 때 반복 피해를 주는 간격 (초). 없으면 매 프레임 데미지가 들어가 사실상 쿨타임이 없는 것처럼 보임")]
+    public float contactDamageCooldown = 1f;
+    private float lastContactDamageTime = -999f;
 
     void Start()
     {
@@ -105,6 +111,9 @@ public class H_MonsterAttack : MonoBehaviour
 
         if (!other.CompareTag("Player")) return;
 
+        // onTriggerStay가 매 물리 프레임마다 호출되어 쿨타임 없이 데미지가 반복 적용되는 것을 방지
+        if (Time.time - lastContactDamageTime < contactDamageCooldown) return;
+
         PlayerHealth player = other.GetComponent<PlayerHealth>();
         if (player == null) player = other.GetComponentInParent<PlayerHealth>();
         if (player != null)
@@ -115,6 +124,7 @@ public class H_MonsterAttack : MonoBehaviour
             if (nm != null) damage = nm.attackDamage;
 
             player.TakeDamage(damage);
+            lastContactDamageTime = Time.time;
 
             // ★ [요구사항] 최초 돌진 상태(isAttacking) 중 플레이어 타격에 성공하면 플래그 활성화
             if (isAttacking && enemyMove != null && !enemyMove.IsAmbushed)
@@ -137,9 +147,9 @@ public class H_MonsterAttack : MonoBehaviour
         if (isAttacking || !canAttack) return;
 
         // 최초 덮치기(점프) 이후부터는 일반 몬스터와 동일한 근접 공격 판정을 사용
-        if (IsMeleeInRange())
+        if (IsMeleeInRange() && activeMeleeCoroutine == null)
         {
-            StartCoroutine(MeleeAttackRoutine());
+            activeMeleeCoroutine = StartCoroutine(MeleeAttackRoutine());
         }
     }
 
@@ -214,7 +224,9 @@ public class H_MonsterAttack : MonoBehaviour
 
         yield return new WaitForSeconds(meleeCooldown);
         canAttack = true;
+        activeMeleeCoroutine = null;
     }
+
 
     /// <summary>
     /// H_MonsterMove가 플레이어를 첫 포착해 숨겨진 상태에서 점프 덮치기 공격을 가할 때 호출됩니다.
