@@ -384,10 +384,12 @@ public class PlayerHealth : MonoBehaviour
             // [피해사 모션] - 지정된 애니메이션 재생
             if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
             {
+                Debug.Log($"[PlayerHealth] '{deathTriggerName}' 애니메이션 트리거를 호출했습니다.");
                 animator.SetTrigger(deathTriggerName);
             }
             else
             {
+                Debug.LogWarning("[PlayerHealth] Animator 컴포넌트가 연결되지 않았거나 deathTriggerName이 비어있어 백업용 사망 이미지 교체를 실행합니다.");
                 // 애니메이터가 동작하지 않거나 비어있는 경우 사망 이미지로 백업 변경
                 if (spriteRenderer != null && deathSprite != null)
                 {
