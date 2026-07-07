@@ -11,6 +11,11 @@ public class BossAttack : MonoBehaviour
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
     public float bossAttackDamage = 1f;     // 모든 보스 공격(가시/레이저/서리/암흑구슬/번개/암영결계)이 공통으로 사용하는 피해량
 
+    [Header("Contact Damage")]
+    public GameObject contactHitbox;        // 보스 본체와 별도로 몸통 충돌 피해를 판정할 히트박스 오브젝트 (ContactHit + Collider2D 필요)
+    public float contactDamage = 1f;        // 몸통 충돌 시 입히는 피해량
+    Vector3 contactHitboxOffset; // 보스 계층에서 분리된 후에도 위치를 따라가기 위한 오프셋 (보스 기준 상대 위치)
+
 
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
 
@@ -177,12 +182,25 @@ public class BossAttack : MonoBehaviour
             lightningPrefab.SetActive(false);
         }
 
-        // 보스 본체(자기 자신) + 자식의 모든 콜라이더를 트리거로 설정.
+        if (contactHitbox != null)
+        {
+            contactHitboxOffset = contactHitbox.transform.position - transform.position; // 분리 전 상대 위치 기록
+            contactHitbox.transform.SetParent(null, true); // worldPositionStays: true → 위치 유지하며 분리
 
-        // 보스 본체(자기 자신) + 자식의 모든 콜라이더를 트리거로 설정.
-        // 단, 크리스탈 자신의 콜라이더는 1페이즈 내내 붓질 가능해야 하므로 제외함
-        // (자식 히트박스 등을 통해 1페이즈에도 보스가 붓질/공격당하는 걸 막기 위해
-        //  기존의 "자기 자신만" 방식에서 "자식 전체 - 크리스탈 제외" 방식으로 확장)
+            contactHitbox.gameObject.layer = 0; // Default
+
+            Collider2D hitboxCol = contactHitbox.GetComponent<Collider2D>();
+            if (hitboxCol != null)
+            {
+                hitboxCol.isTrigger = true;
+                hitboxCol.enabled = true; // 1페이즈/2페이즈 관계없이 항상 켜둠
+            }
+
+            ContactHit relay = contactHitbox.GetComponent<ContactHit>();
+            if (relay == null) relay = contactHitbox.AddComponent<ContactHit>();
+            relay.onTriggerStay += TryContactDamage;
+        }
+
         List<Collider2D> ownColliderList = new List<Collider2D>();
         Collider2D[] allChildColliders = GetComponentsInChildren<Collider2D>(true);
         foreach (var col in allChildColliders)
@@ -326,6 +344,18 @@ public class BossAttack : MonoBehaviour
     }
 
 
+    void TryContactDamage(Collider2D other)
+    {
+        if (bossHealth != null && bossHealth.IsPurified) return;
+
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        if (player == null) player = other.GetComponentInParent<PlayerHealth>();
+
+        if (player != null)
+        {
+            player.TakeDamage(contactDamage);
+        }
+    }
 
     void SetBossColliderState(bool enabled)
     {
@@ -338,6 +368,12 @@ public class BossAttack : MonoBehaviour
 
     void Update()
     {
+        // 보스 계층에서 분리된 contactHitbox가 보스를 계속 따라다니도록 매 프레임 위치 동기화
+        if (contactHitbox != null)
+        {
+            contactHitbox.transform.position = transform.position + contactHitboxOffset;
+        }
+
         if (isAttacking || Time.time < nextAttackAllowedTime || target == null)
             return;
 

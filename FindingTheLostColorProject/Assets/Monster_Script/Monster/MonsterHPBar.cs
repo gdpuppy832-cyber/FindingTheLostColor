@@ -19,7 +19,7 @@ public class MonsterHPBar : MonoBehaviour
 
     [Header("체력바 단계적 업데이트 설정")]
     [Tooltip("게이지가 갱신되는 체력 단위 (n씩 찰 때만 갱신, 예: 1.0이면 1.0, 2.0 단위로 툭툭 뜀)")]
-    public float healthStepUnit = 1.0f;
+    float healthStepUnit = 0.05f;
 
     [Header("뒤집힘 방지 설정")]
     [Tooltip("몬스터 캐릭터가 좌우로 뒤집혀도 머리 위 체력바는 뒤집히지 않게 고정할지 여부")]

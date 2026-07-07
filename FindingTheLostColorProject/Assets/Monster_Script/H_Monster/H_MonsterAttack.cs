@@ -26,12 +26,20 @@ public class H_MonsterAttack : MonoBehaviour
     public float stunDuration = 3.0f;
 
     [Header("기타 물리 및 필터링 설정")]
-    public ContactRelay contactHitbox;
+    public ContactHit contactHitbox;  
     public LayerMask groundLayer;
     public LayerMask obstacleLayer;
     Transform target;
     public LayerMask targetLayer;
     public float minJumpDistance = 1f;
+
+    [Header("일반 근접 공격 설정 (최초 덮치기 이후, 일반 몬스터 사양)")]
+    public float meleeWidth = 2f;
+    public float meleeHeight = 1f;
+    public float meleeTelegraphTime = 1f;
+    public SpriteRenderer meleeTelegraphSprite;
+    public float meleePostDelay = 0.5f;
+    public float meleeCooldown = 2f;
 
     bool isAttacking = false;
     bool canAttack = true;
@@ -47,6 +55,10 @@ public class H_MonsterAttack : MonoBehaviour
         enemyMove = GetComponent<H_MonsterMove>();
         rigid = GetComponent<Rigidbody2D>();
 
+        // 게임 시작 시 텔레그래프가 그대로 보이는 문제 방지 (일반 몬스터 EnemyAttack.cs와 동일하게 처음부터 꺼둠)
+        if (meleeTelegraphSprite != null)
+            meleeTelegraphSprite.enabled = false;
+
         // groundLayer가 Nothing(0)으로 풀려있으면 기본 Platform 레이어로 자동 할당하여 예외 차단
         if (groundLayer.value == 0)
         {
@@ -54,10 +66,18 @@ public class H_MonsterAttack : MonoBehaviour
             Debug.Log($"[H_MonsterAttack] {gameObject.name}의 groundLayer가 비어있어 기본 'Platform' 레이어로 자동 할당했습니다.");
         }
 
+        // targetLayer가 Nothing(0)으로 풀려있으면 근접/점프 판정(OverlapBox 등)이 항상 실패하므로
+        // 기본 Player 레이어로 자동 할당하여 "공격이 아예 안 나가는" 문제를 원천 차단
+        if (targetLayer.value == 0)
+        {
+            targetLayer = LayerMask.GetMask("Player");
+            Debug.LogWarning($"[H_MonsterAttack] {gameObject.name}의 targetLayer가 비어있어 기본 'Player' 레이어로 자동 할당했습니다. 인스펙터에서 직접 설정해두는 것을 권장합니다.");
+        }
+
         // contactHitbox 슬롯이 비어있으면 자식 오브젝트에서 자동으로 찾아 연결 (인스펙터 실수 방지)
         if (contactHitbox == null)
         {
-            contactHitbox = GetComponentInChildren<ContactRelay>();
+            contactHitbox = GetComponentInChildren<ContactHit>();
             if (contactHitbox != null)
             {
                 Debug.Log($"[H_MonsterAttack] {gameObject.name}의 자식 오브젝트에서 ContactRelay({contactHitbox.gameObject.name})를 찾아 자동 매칭했습니다.");
@@ -123,13 +143,85 @@ public class H_MonsterAttack : MonoBehaviour
         if (enemyMove != null && enemyMove.IsAmbushed) return;
         if (isAttacking || !canAttack) return;
 
-        float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
-        float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
-
-        if (horizontalDist <= lineWidth && verticalDist <= attackRange)
+        // 최초 덮치기(점프) 이후부터는 일반 몬스터와 동일한 근접 공격 판정을 사용
+        if (IsMeleeInRange())
         {
-            StartCoroutine(JumpAttackRoutine(false));
+            StartCoroutine(MeleeAttackRoutine());
         }
+    }
+
+    // 몬스터가 바라보는 방향 기준 근접 판정 범위 안에 타겟이 있는지 확인 (EnemyAttack.cs와 동일한 방식)
+    bool IsMeleeInRange()
+    {
+        float dir = -Mathf.Sign(transform.localScale.x);
+        if (dir == 0f) dir = 1f;
+
+        Collider2D selfCol = GetComponent<Collider2D>();
+        float edgeOffset = selfCol != null ? selfCol.bounds.extents.x : 0f;
+
+        Vector2 attackCenter = (Vector2)transform.position
+            + new Vector2(dir * edgeOffset, 0f)
+            + new Vector2(dir * meleeWidth / 2f, 0f);
+
+        return Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer) != null;
+    }
+
+    System.Collections.IEnumerator MeleeAttackRoutine()
+    {
+        isAttacking = true;
+        canAttack = false;
+
+        if (enemyMove != null)
+            enemyMove.enabled = false;
+
+        float dir = -Mathf.Sign(transform.localScale.x);
+        if (dir == 0f) dir = 1f;
+
+        Collider2D selfCol = GetComponent<Collider2D>();
+        float edgeOffset = selfCol != null ? selfCol.bounds.extents.x : 0f;
+
+        Vector2 attackCenter = (Vector2)transform.position
+            + new Vector2(dir * edgeOffset, 0f)
+            + new Vector2(dir * meleeWidth / 2f, 0f);
+
+        if (meleeTelegraphSprite != null)
+        {
+            meleeTelegraphSprite.enabled = true;
+            meleeTelegraphSprite.transform.position = new Vector3(attackCenter.x, attackCenter.y, meleeTelegraphSprite.transform.position.z);
+            meleeTelegraphSprite.size = new Vector2(meleeWidth, meleeHeight);
+        }
+
+        yield return new WaitForSeconds(meleeTelegraphTime);
+
+        if (meleeTelegraphSprite != null)
+            meleeTelegraphSprite.enabled = false;
+
+        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer);
+        if (hit != null)
+        {
+            Debug.Log("근접 공격 적중: " + hit.name);
+            PlayerHealth player = hit.GetComponent<PlayerHealth>();
+            if (player == null) player = hit.GetComponentInParent<PlayerHealth>();
+            if (player != null)
+            {
+                float damage = 0.5f;
+                NormalMonster nm = GetComponent<NormalMonster>();
+                if (nm == null) nm = GetComponentInParent<NormalMonster>();
+                if (nm != null) damage = nm.attackDamage;
+
+                player.TakeDamage(damage);
+            }
+        }
+
+        yield return new WaitForSeconds(meleePostDelay);
+
+        if (enemyMove != null)
+            enemyMove.enabled = true;
+
+        isAttacking = false;
+
+        yield return new WaitForSeconds(meleeCooldown);
+        canAttack = true;
     }
 
     /// <summary>
@@ -192,15 +284,6 @@ public class H_MonsterAttack : MonoBehaviour
         Debug.Log($"[H_MonsterAttack] 점프 전 위협 경고 대기 시간 시작 (대기 시간: {activeTelegraphTime}초)");
         yield return new WaitForSeconds(activeTelegraphTime);
 
-        // 점프 시작 시 Rigidbody2D를 Kinematic으로 임시 변경하여 물리 엔진과의 대립/충돌 차단
-        RigidbodyType2D originalBodyType = RigidbodyType2D.Dynamic;
-        if (rigid != null)
-        {
-            originalBodyType = rigid.bodyType;
-            rigid.bodyType = RigidbodyType2D.Kinematic;
-            rigid.linearVelocity = Vector2.zero;
-        }
-
         // ★ [핵심 요구사항] 위장상태에서 공중으로 몸을 던져 날아가는 순간, 모습을 바꿉니다 (WakeUp 호출)
         if (isInitialPounce && enemyMove != null)
         {
@@ -242,14 +325,7 @@ public class H_MonsterAttack : MonoBehaviour
             }
 
             lastValidPos = desiredPos;
-            if (rigid != null)
-            {
-                rigid.position = desiredPos;
-            }
-            else
-            {
-                transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            }
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
             yield return null;
 
             if (hitCeiling)
@@ -263,21 +339,7 @@ public class H_MonsterAttack : MonoBehaviour
         }
         else
         {
-            if (rigid != null)
-            {
-                rigid.position = landPos;
-            }
-            else
-            {
-                transform.position = landPos; 
-            }
-        }
-
-        // 점프 완료 후 Rigidbody2D 원상복구 (Dynamic)
-        if (rigid != null)
-        {
-            rigid.bodyType = originalBodyType;
-            rigid.linearVelocity = Vector2.zero;
+            transform.position = landPos; // 정확히 착지 지점에 정렬 (J_EnemyAttack과 동일)
         }
 
         // [핵심 요구사항] 최초 돌진 완료 시 기절 시간 계산
@@ -320,7 +382,6 @@ public class H_MonsterAttack : MonoBehaviour
     {
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
-        float colOffsetY = selfCol != null ? selfCol.offset.y : 0f;
 
         float fallSpeed = 0f;
         float fallElapsed = 0f;
@@ -331,18 +392,11 @@ public class H_MonsterAttack : MonoBehaviour
             fallSpeed += fallAcceleration * Time.deltaTime;
 
             Vector2 nextPos = (Vector2)transform.position + Vector2.down * fallSpeed * Time.deltaTime;
-            Vector2 groundCheckPos = new Vector2(nextPos.x, nextPos.y + colOffsetY - footOffset);
+            Vector2 groundCheckPos = nextPos + Vector2.down * footOffset;
 
             bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
 
-            if (rigid != null)
-            {
-                rigid.position = nextPos;
-            }
-            else
-            {
-                transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
-            }
+            transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
 
             if (foundGround)
                 yield break;
@@ -357,7 +411,6 @@ public class H_MonsterAttack : MonoBehaviour
     {
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
-        float colOffsetY = selfCol != null ? selfCol.offset.y : 0f;
 
         float rayStartY = desired.y + 1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
@@ -366,13 +419,11 @@ public class H_MonsterAttack : MonoBehaviour
 
         int steps = 10;
         Vector2 lastGroundPos = start;
-        // i = 0인 시작점 검사는 본체의 공중 오프셋이나 임시 플로팅으로 인해 실패하기 쉬우므로, 
-        // 1번째 간격부터 바닥 검사를 수행하여 공중 도약을 차단하지 않도록 개선합니다.
-        for (int i = 1; i <= steps; i++)
+        for (int i = 0; i <= steps; i++)
         {
             float t = (float)i / steps;
             Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-            Vector2 groundCheckPos = new Vector2(checkPos.x, checkPos.y + colOffsetY - footOffset);
+            Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
 
             bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
 

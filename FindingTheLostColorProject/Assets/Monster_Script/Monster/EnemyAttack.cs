@@ -16,7 +16,7 @@ public class EnemyAttack : MonoBehaviour
 
 
 
-    public ContactRelay contactHitbox;
+    public ContactHit contactHitbox;
     void Start()
     {
         enemyMove = GetComponent<EnemyMove>();

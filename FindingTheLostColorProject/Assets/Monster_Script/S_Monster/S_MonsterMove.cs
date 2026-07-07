@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class S_MonsterMove : MonoBehaviour
 {
-    [Header("이동 설정")]
+    [Header("Move")]
     [Tooltip("좌우 순찰 범위 (시작 지점 기준 X축 이동 반경)")]
     public float patrolRange = 3f;
 
@@ -27,12 +27,17 @@ public class S_MonsterMove : MonoBehaviour
     [Tooltip("몬스터가 충돌할 플랫폼/바닥 레이어들 (이 레이어들을 제외한 플레이어, 아이템 등 모든 레이어는 무조건 관통합니다)")]
     public LayerMask platformLayers;
 
+    [Header("방향 전환 설정")]
+    [Tooltip("방향을 바꾸기 전 멈추는 시간 (초)")]
+    public float turnPauseDuration = 0.5f;
+
     private float startX;
     private bool movingRight;
     private float spawnTimer = 0f;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private NormalMonster normalMonster; // 정화 상태 연동용
+    private bool isPausedForTurn = false; // 방향 전환 전 정지 중인지 여부
 
     void Start()
     {
@@ -97,19 +102,27 @@ public class S_MonsterMove : MonoBehaviour
     /// </summary>
     private void UpdateMovement()
     {
+        // 방향 전환 때문에 멈춰있는 동안에는 이동을 시도하지 않음
+        if (isPausedForTurn)
+        {
+            if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            return;
+        }
+
         float currentX = transform.position.x;
         float deltaX = currentX - startX;
 
-        // 방향 전환 감지
+        // 방향 전환 감지: 즉시 방향을 바꾸지 않고, 잠깐 멈췄다가 전환하도록 코루틴 시작
         if (movingRight && deltaX >= patrolRange)
         {
-            movingRight = false;
-            UpdateSpriteDirection();
+            StartCoroutine(PauseThenTurn(false));
         }
         else if (!movingRight && deltaX <= -patrolRange)
         {
-            movingRight = true;
-            UpdateSpriteDirection();
+            StartCoroutine(PauseThenTurn(true));
         }
 
         float moveDir = movingRight ? 1f : -1f;
@@ -126,12 +139,38 @@ public class S_MonsterMove : MonoBehaviour
     }
 
     /// <summary>
+    /// 방향 전환 전 turnPauseDuration만큼 제자리에 멈춘 뒤, 방향을 실제로 전환합니다.
+    /// </summary>
+    private System.Collections.IEnumerator PauseThenTurn(bool nextMovingRight)
+    {
+        isPausedForTurn = true;
+
+        if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        }
+
+        yield return new WaitForSeconds(turnPauseDuration);
+
+        movingRight = nextMovingRight;
+        UpdateSpriteDirection();
+        isPausedForTurn = false;
+    }
+
+    [Header("자국 소멸 설정")]
+    [Tooltip("자국이 옅어지기 시작하는 시점 (생성 후 경과 시간, 초)")]
+    public float trailFadeStartTime = 3f;
+
+    [Tooltip("자국이 완전히 사라지는 시점 (생성 후 경과 시간, 초 - trailFadeStartTime보다 커야 함)")]
+    public float trailFullyGoneTime = 4f;
+
+    /// <summary>
     /// 몬스터가 기어가는 길바닥에 자국을 생성합니다.
     /// </summary>
     private void SpawnTrail()
     {
         GameObject trailObj;
-        
+
         // 몬스터 발 밑 쪽에 소환하기 위한 위치 보정
         Vector3 spawnPosition = transform.position;
         Collider2D col = GetComponent<Collider2D>();
@@ -160,10 +199,48 @@ public class S_MonsterMove : MonoBehaviour
             BoxCollider2D boxCol = trailObj.AddComponent<BoxCollider2D>();
             boxCol.isTrigger = true;
             boxCol.size = new Vector2(0.8f, 0.3f);
-
-            // 자국 관리 스크립트 강제 추가
-            trailObj.AddComponent<S_MonsterTrail>();
         }
+
+        // 생성된 자국(프리팹이든 디버그용이든)을 3초부터 서서히 옅어지다가 4초에 완전히 사라지게 함
+        StartCoroutine(FadeAndDestroyTrail(trailObj));
+    }
+
+    private System.Collections.IEnumerator FadeAndDestroyTrail(GameObject trailObj)
+    {
+        if (trailObj == null) yield break;
+
+        SpriteRenderer sr = trailObj.GetComponent<SpriteRenderer>();
+        if (sr == null) sr = trailObj.GetComponentInChildren<SpriteRenderer>();
+
+        // 페이드 시작 전까지 대기
+        yield return new WaitForSeconds(trailFadeStartTime);
+
+        if (sr == null)
+        {
+            // 페이드시킬 스프라이트가 없으면 그냥 종료 시점에 파괴
+            yield return new WaitForSeconds(Mathf.Max(0f, trailFullyGoneTime - trailFadeStartTime));
+            if (trailObj != null) Destroy(trailObj);
+            yield break;
+        }
+
+        Color startColor = sr.color;
+        float fadeDuration = Mathf.Max(0.01f, trailFullyGoneTime - trailFadeStartTime);
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            if (trailObj == null) yield break; // 페이드 도중 다른 이유로 먼저 파괴된 경우 안전 종료
+
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+            Color c = startColor;
+            c.a = Mathf.Lerp(startColor.a, 0f, t);
+            sr.color = c;
+
+            yield return null;
+        }
+
+        if (trailObj != null) Destroy(trailObj);
     }
 
     /// <summary>

@@ -27,10 +27,16 @@ public class R_EnemyAttack : MonoBehaviour
     public float postDelay = 0.5f; // 공격 후 이동/공격 불가 딜레이
     R_EnemyMove enemyMove;
 
-    public ContactRelay contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
+    public ContactHit contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
 
     void Start()
     {
+        if (target == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null) target = player.transform;
+        }
+
         if (telegraphSprite != null)
             telegraphSprite.enabled = false;
         enemyMove = GetComponent<R_EnemyMove>();

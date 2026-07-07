@@ -24,7 +24,7 @@ public class FrostCrystalHazard : MonoBehaviour
 
     float currentSpeed;
     bool hasDealtDamage = false; // 한 번만 피해를 주기 위한 플래그
-    ContactRelay hitboxRelay;    // 별도 히트박스 오브젝트 (BossAttack이 생성 직후 연결해줌)
+    ContactHit hitboxRelay;    // 별도 히트박스 오브젝트 (BossAttack이 생성 직후 연결해줌)
     Quaternion fixedRotation;    // 스폰 시점의 회전값 (디자인된 기울기) - 이후 계속 이 값으로 고정
     void Start()
     {
@@ -34,7 +34,7 @@ public class FrostCrystalHazard : MonoBehaviour
     }
 
     // BossAttack이 생성 직후 호출해서 별도 히트박스를 연결함 (없으면 호출 안 해도 됨)
-    public void SetHitboxRelay(ContactRelay relay)
+    public void SetHitboxRelay(ContactHit relay)
     {
         hitboxRelay = relay;
         if (hitboxRelay != null)

@@ -6,7 +6,7 @@ public class T_EnemyAttack : MonoBehaviour
     public float detectRange = 8f;      // 이 범위 안에 들어오면 추격상태
     public Transform target;            // 비워두면 Player 태그로 자동 탐색
     public LayerMask targetLayer;
-    public ContactRelay contactHitbox;
+    public ContactHit contactHitbox;
     public MonoBehaviour moveScript;    // 이 몬스터가 쓰는 이동 스크립트 (인스펙터 연결)
 
 
@@ -145,7 +145,18 @@ public class T_EnemyAttack : MonoBehaviour
                 if (IsRangedInRange()) StartCoroutine(RangedAttackRoutine());
                 break;
             case AttackType.Jump:
-                if (IsJumpInRange()) StartCoroutine(JumpAttackRoutine());
+                if (IsJumpInRange())
+                {
+                    Vector2 startPos = transform.position;
+                    Vector2 desiredLandPos = target.position;
+                    Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);
+
+                    // 착지 지점이 낭떠러지 때문에 잘린 경우, 점프 자체를 시도하지 않음 (텔레그래프도 안 뜨고 상태 변화 없음)
+                    if (!isCliff)
+                    {
+                        StartCoroutine(JumpAttackRoutine(landPos));
+                    }
+                }
                 break;
         }
     }
@@ -378,7 +389,7 @@ public class T_EnemyAttack : MonoBehaviour
         return h <= jumpLineWidth && v <= jumpAttackRange;
     }
 
-    System.Collections.IEnumerator JumpAttackRoutine()
+    System.Collections.IEnumerator JumpAttackRoutine(Vector2 landPos)
     {
         Vector2 jumpColliderSize = bodyCollider != null ? bodyCollider.bounds.size * 0.95f : Vector2.one * 0.5f;
 
@@ -387,19 +398,20 @@ public class T_EnemyAttack : MonoBehaviour
         if (moveScript != null) moveScript.enabled = false;
 
         Vector2 startPos = transform.position;
-        Vector2 desiredLandPos = target.position;
-        Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos);
 
+        // 낭떠러지가 아니어도 착지 지점이 너무 가까우면(제자리 수준) 안전장치로 취소
         if (Vector2.Distance(startPos, landPos) < minJumpDistance)
         {
+            isAttacking = false;
+            canAttack = true;
             if (moveScript != null) moveScript.enabled = true;
             EndAttackCycle();
-            yield return new WaitForSeconds(jumpCooldown);
-            canAttack = true;
             yield break;
         }
+
         yield return new WaitForSeconds(jumpTelegraphTime);
 
+        // 포물선 점프
         float elapsed = 0f;
         Vector2 lastValidPos = startPos;
         bool hitCeiling = false;
@@ -410,6 +422,7 @@ public class T_EnemyAttack : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / jumpDuration);
             Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
             float heightOffset = 4f * jumpHeight * t * (1f - t);
+
             Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
 
             Vector2 moveDir = desiredPos - lastValidPos;
@@ -428,13 +441,18 @@ public class T_EnemyAttack : MonoBehaviour
             transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
             yield return null;
 
-            if (hitCeiling) break;
+            if (hitCeiling)
+                break;
         }
 
         if (hitCeiling)
+        {
             yield return StartCoroutine(FallToGround());
+        }
         else
+        {
             transform.position = landPos;
+        }
 
         yield return new WaitForSeconds(jumpPostDelay);
         if (moveScript != null) moveScript.enabled = true;
@@ -448,6 +466,7 @@ public class T_EnemyAttack : MonoBehaviour
     System.Collections.IEnumerator FallToGround()
     {
         float footOffset = bodyCollider != null ? bodyCollider.bounds.extents.y : 0.5f;
+
         float fallSpeed = 0f;
         float fallElapsed = 0f;
 
@@ -456,19 +475,29 @@ public class T_EnemyAttack : MonoBehaviour
             fallElapsed += Time.deltaTime;
             fallSpeed += fallAcceleration * Time.deltaTime;
 
-            Vector2 nextPos = (Vector2)transform.position + Vector2.down * fallSpeed * Time.deltaTime;
-            Vector2 groundCheckPos = nextPos + Vector2.down * footOffset;
-            bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
+            float moveDist = fallSpeed * Time.deltaTime;
 
-            transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
+            // 이동하기 전에 먼저 발밑 기준으로 이번 프레임에 이동할 거리(moveDist)만큼 아래에
+            // 바닥이 있는지 레이캐스트로 미리 검사함.
+            // (기존에는 먼저 이동한 뒤 검사해서, 낙하 속도가 붙으면 바닥을 뚫고 들어간 위치까지
+            //  이동한 다음에야 멈춰서 "땅속에 들어갔다 나오는" 현상이 있었음)
+            RaycastHit2D groundHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, footOffset + moveDist, groundLayer);
+            if (groundHit.collider != null)
+            {
+                transform.position = new Vector3(transform.position.x, groundHit.point.y + footOffset, transform.position.z);
+                yield break;
+            }
 
-            if (foundGround) yield break;
+            transform.position += new Vector3(0f, -moveDist, 0f);
             yield return null;
         }
     }
 
-    Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired)
+    // isCliff: 경로 중간에 바닥이 끊겨서 착지 지점이 원래 목표(desired)보다 앞에서 잘렸는지 여부
+    Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
+        isCliff = false;
+
         float footOffset = bodyCollider != null ? bodyCollider.bounds.extents.y : 0.5f;
 
         float rayStartY = desired.y + 1f;
@@ -483,10 +512,18 @@ public class T_EnemyAttack : MonoBehaviour
             float t = (float)i / steps;
             Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
             Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
+
             bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
 
-            if (foundGround) lastGroundPos = checkPos;
-            else return lastGroundPos;
+            if (foundGround)
+            {
+                lastGroundPos = checkPos;
+            }
+            else
+            {
+                isCliff = true;
+                return lastGroundPos;
+            }
         }
 
         return targetLandPos;
