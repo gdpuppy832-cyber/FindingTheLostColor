@@ -116,7 +116,11 @@ public class BossMove : MonoBehaviour
     }
     void MoveInfinity()
     {
-        GetInfinitySegment(infSegmentIndex, out float tStart, out float tEnd, out float duration, out bool pauseAfter);
+        GetInfinitySegment(infSegmentIndex, out float tStart, out float tEnd, out float baseDuration, out bool pauseAfter);
+
+        // infinitySpeed는 전체 이동 속도 배율로 사용: 값이 클수록 구간 소요 시간이 짧아져 더 빨리 움직임
+        float safeSpeed = Mathf.Max(0.01f, infinitySpeed);
+        float duration = baseDuration / safeSpeed;
 
         // 노란 지점(구간 끝)에서 정지 중
         if (infPaused)

@@ -19,9 +19,12 @@ public class H_MonsterMove : MonoBehaviour
     float timer = 0;
     Vector3 prevposition;
     Rigidbody2D rigid;
+    bool groundedLeft = true;
+    bool groundedRight = true;
     bool isStopped = false;
     float stopTimer = 0f;
     float ignoreEdgeTimer = 0f;
+    float moveDir = -1f; // 현재 이동 방향 (배회 모드 기준, 절벽에서 반전시킬 때 사용)
     private SpriteRenderer spriteRenderer;
     private Collider2D col;
     bool isChasing = false;
@@ -68,7 +71,7 @@ public class H_MonsterMove : MonoBehaviour
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-        
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
@@ -81,7 +84,7 @@ public class H_MonsterMove : MonoBehaviour
             originalSpriteLocalPos = spriteRenderer.transform.localPosition;
             hasCachedOffsets = true;
         }
-        
+
         // 콜라이더 타입별 크기 캐싱
         if (col != null)
         {
@@ -118,11 +121,11 @@ public class H_MonsterMove : MonoBehaviour
             if (distance <= detectionRange && !isPouncing)
             {
                 isPouncing = true;
-                
+
                 // H_MonsterAttack 스크립트가 있다면 최초 덮치기 점프를 즉시 요청
                 H_MonsterAttack attackScript = GetComponent<H_MonsterAttack>();
                 if (attackScript == null) attackScript = GetComponentInChildren<H_MonsterAttack>();
-                
+
                 if (attackScript != null)
                 {
                     attackScript.TriggerPounce();
@@ -143,30 +146,13 @@ public class H_MonsterMove : MonoBehaviour
             return;
         }
 
-        // --- 이하는 J_Monster(J_EnemyMove) 원본 추적/패트롤 로직 복제 ---
+        // --- 이하는 EnemyMove 계열과 동일한 절벽 감지/추적 복귀 로직 ---
         if (ignoreEdgeTimer > 0f)
             ignoreEdgeTimer -= Time.deltaTime;
 
-        if (isStopped)
-        {
-            stopTimer += Time.deltaTime;
-            if (stopTimer >= 0.5f)
-            {
-                isStopped = false;
-                stopTimer = 0f;
-
-                if (timer < 3.5f)
-                    timer = 3.5f;
-                else
-                    timer = 0f;
-
-                ignoreEdgeTimer = 1.3f;
-            }
-            return;
-        }
-
-        timer += Time.deltaTime;
-
+        // 추적 시작/종료 판정은 isStopped 상태와 무관하게 항상 먼저 체크
+        // (isStopped 블록 뒤에 두면, 절벽에서 멈춰있는 동안 추적 종료 조건이 검사되지 않아
+        //  플레이어가 멀어져도 isChasing이 계속 true로 남는 문제가 있었음)
         if (!isChasing && distance <= range)
         {
             isChasing = true;
@@ -174,37 +160,118 @@ public class H_MonsterMove : MonoBehaviour
         else if (isChasing && distance > chaseRange)
         {
             isChasing = false;
+            timer = 0f; // 배회 모드로 깨끗하게 복귀하도록 타이머 리셋
+
+            if (isStopped) stopTimer = 0f; // 절벽에서 대기 중이었다면 배회 반전 흐름으로 자연스럽게 이어지도록 리셋
         }
 
+        if (isStopped)
+        {
+            // 추적 중이었다면: 매 프레임 플레이어 방향을 다시 계산해서,
+            // 그 방향이 절벽이 아니면(반대쪽으로 갔거나 안전해지면) 즉시 대기 해제
+            if (isChasing)
+            {
+                float xDiff = target.position.x - transform.position.x;
+                if (Mathf.Abs(xDiff) > attackStopDistance)
+                {
+                    float wantDir = Mathf.Sign(xDiff);
+                    bool wantDirIsEdge = (wantDir < 0f && !groundedLeft) || (wantDir > 0f && !groundedRight);
+                    if (!wantDirIsEdge)
+                    {
+                        isStopped = false;
+                        stopTimer = 0f;
+                    }
+                }
+                return; // 절벽 방향을 계속 원할 때만 대기 유지
+            }
+
+            stopTimer += Time.deltaTime;
+            if (stopTimer >= 0.5f)
+            {
+                isStopped = false;
+                stopTimer = 0f;
+                moveDir = -moveDir; // 반대 방향으로 전환 (배회 모드 전용)
+                ignoreEdgeTimer = 1.3f; // 전환 직후 짧게 재감지 무시
+                timer = moveDir < 0f ? 0f : 3.5f; // 배회 타이머도 반전된 방향에 맞게 재설정
+            }
+            return;
+        }
+
+        timer += Time.deltaTime;
+
+        // 1. 원래 하고 싶은 이동 방향
+        float desiredDir = 0f;
         if (isChasing)
         {
             float xDiff = target.position.x - transform.position.x;
             if (Mathf.Abs(xDiff) > attackStopDistance)
-            {
-                float xDir = Mathf.Sign(xDiff);
-                transform.Translate(speed * 1.5f * xDir * Time.deltaTime, 0f, 0f);
-            }
+                desiredDir = Mathf.Sign(xDiff);
         }
-        else if (timer < 3)
+        else if (timer < 3f)
         {
-            transform.Translate(new Vector2(-speed * Time.deltaTime, 0f));
+            desiredDir = -1f;
         }
-        else if (timer > 3.5 && timer < 6.5)
+        else if (timer > 3.5f && timer < 6.5f)
         {
-            transform.Translate(new Vector2(speed * Time.deltaTime, 0f));
+            desiredDir = 1f;
         }
-        else if (timer > 7)
+        else if (timer > 7f)
         {
-            timer = 0;
+            timer = 0f;
         }
 
-        float velocityX = transform.position.x - prevposition.x;
-        if (velocityX != 0)
+        if (desiredDir == 0f)
+        {
+            prevposition = transform.position;
+            return;
+        }
+
+        // 2. 이동하려는 방향 쪽에 땅이 없으면(절벽) 즉시 반전하지 않고 멈춤 상태로 전환
+        bool edgeAhead = (desiredDir < 0f && !groundedLeft) || (desiredDir > 0f && !groundedRight);
+
+        // 유예 시간(ignoreEdgeTimer)은 "배회 모드에서 방금 반전한 방향(moveDir)으로 계속 갈 때"만 적용.
+        // 추적이 반대 방향(절벽 쪽)으로 끌어당기는 경우엔 방향이 다르므로 유예 시간과 무관하게
+        // 항상 절벽을 감지해야 함 - 안 그러면 반전 직후 유예 시간 동안 추적이 절벽 방향으로 끼어들 때
+        // 절벽 감지가 무시된 채 몇 걸음 걸어가버리는 문제가 있음
+        bool suppressCheck = !isChasing && ignoreEdgeTimer > 0f && desiredDir == moveDir;
+
+        if (edgeAhead && !suppressCheck)
+        {
+            isStopped = true;
+            stopTimer = 0f;
+            return;
+        }
+
+        float moveSpeed = isChasing ? speed * 1.5f : speed;
+
+        // 이동 방향 앞에 벽이 있는지 검사
+        float rayDistance = 0.1f;
+
+        RaycastHit2D wallHit = Physics2D.BoxCast(
+            col.bounds.center,
+            col.bounds.size * 0.9f,
+            0f,
+            Vector2.right * desiredDir,
+            rayDistance,
+            LayerMask.GetMask("Platform")
+        );
+
+        if (wallHit.collider != null)
+        {
+            prevposition = transform.position;
+            return;
+        }
+
+        transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
+        moveDir = desiredDir;
+
+        if (desiredDir != 0)
         {
             Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(velocityX);
+            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(desiredDir);
             transform.localScale = scale;
         }
+
         prevposition = transform.position;
     }
 
@@ -222,13 +289,8 @@ public class H_MonsterMove : MonoBehaviour
         RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
         RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
 
-        bool isGrounded = leftHit.collider != null && rightHit.collider != null;
-
-        if (!isGrounded && !isStopped && ignoreEdgeTimer <= 0f)
-        {
-            isStopped = true;
-            stopTimer = 0f;
-        }
+        groundedLeft = leftHit.collider != null;
+        groundedRight = rightHit.collider != null;
     }
 
     /// <summary>
@@ -248,7 +310,7 @@ public class H_MonsterMove : MonoBehaviour
         {
             animator.SetBool(ambushAnimBool, false);
         }
-        
+
         // 3. 스프라이트 이미지 대체 적용 (모습 2)
         if (activeSprite != null && spriteRenderer != null)
         {

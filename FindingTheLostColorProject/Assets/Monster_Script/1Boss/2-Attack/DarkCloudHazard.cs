@@ -44,12 +44,15 @@ public class DarkCloudHazard : MonoBehaviour
         if (erased || finished || isFadingOut) return;
         elapsed += Time.deltaTime;
 
+        // 페이드인이 아직 끝나지 않았으면(완전히 나타나기 전) 붓질 자체가 먹히지 않음
+        bool isStillFadingIn = elapsed < fadeInDuration;
+
         // 붓질 판정: CursorController의 canDraw와 동일한 조건 - 실제로 트레일에 색이 나오는 상태일 때만 유효
         bool hasPaint = gaugeController == null || gaugeController.currentPaint >= gaugeController.minPaintToDraw;
         bool needsReclick = gaugeController != null && gaugeController.NeedsReclick;
         bool isDead = playerHealth != null && playerHealth.IsDead;
         bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
-        bool canDraw = Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
+        bool canDraw = !isStillFadingIn && Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
 
         if (cursorTransform != null && hitCollider != null && canDraw)
         {
