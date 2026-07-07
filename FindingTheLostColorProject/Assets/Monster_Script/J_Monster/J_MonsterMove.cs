@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
+
 public class J_EnemyMove : MonoBehaviour
 {
     public float speed = 1.5f;
@@ -123,16 +122,36 @@ public class J_EnemyMove : MonoBehaviour
         }
 
         float moveSpeed = isChasing ? speed * 1.5f : speed;
+
+        // 이동 방향 앞에 벽이 있는지 검사
+        Vector2 origin = (Vector2)transform.position + Vector2.up * 0.2f;
+        float rayDistance = 0.1f;
+
+        RaycastHit2D wallHit = Physics2D.BoxCast(
+            col.bounds.center,
+            col.bounds.size * 0.9f,
+            0f,
+            Vector2.right * desiredDir,
+            rayDistance,
+            LayerMask.GetMask("Platform")
+        );
+
+        if (wallHit.collider != null)
+        {
+            prevposition = transform.position;
+            return;
+        }
+
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
 
-        float velocityX = transform.position.x - prevposition.x;
-        if (velocityX != 0)//이미지 반전
+        if (desiredDir != 0)
         {
             Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(velocityX);
+            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(desiredDir);
             transform.localScale = scale;
         }
+
         prevposition = transform.position;
     }
     void FixedUpdate()

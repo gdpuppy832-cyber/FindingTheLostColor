@@ -303,7 +303,6 @@ MonoBehaviour:
   hpImage: {fileID: 8472198279424573598}
   lerpSpeed: 5
   hideWhenPurified: 1
-  healthStepUnit: 0.1
   preventFlipping: 1
 --- !u!1 &7642267068386756628
 GameObject:
@@ -391,7 +390,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &5223325601593235741
 MonoBehaviour:
   m_ObjectHideFlags: 0

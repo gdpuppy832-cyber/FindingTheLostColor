@@ -243,16 +243,35 @@ public class H_MonsterMove : MonoBehaviour
         }
 
         float moveSpeed = isChasing ? speed * 1.5f : speed;
+
+        // 이동 방향 앞에 벽이 있는지 검사
+        float rayDistance = 0.1f;
+
+        RaycastHit2D wallHit = Physics2D.BoxCast(
+            col.bounds.center,
+            col.bounds.size * 0.9f,
+            0f,
+            Vector2.right * desiredDir,
+            rayDistance,
+            LayerMask.GetMask("Platform")
+        );
+
+        if (wallHit.collider != null)
+        {
+            prevposition = transform.position;
+            return;
+        }
+
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
 
-        float velocityX = transform.position.x - prevposition.x;
-        if (velocityX != 0)
+        if (desiredDir != 0)
         {
             Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(velocityX);
+            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(desiredDir);
             transform.localScale = scale;
         }
+
         prevposition = transform.position;
     }
 

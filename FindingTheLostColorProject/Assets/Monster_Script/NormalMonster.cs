@@ -438,4 +438,23 @@ public class FloatingText : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private float lastAttackTime = 0f;
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        NormalMonster normal = GetComponent<NormalMonster>();
+        if (normal == null || normal.IsPurified) return;
+
+        if (!other.CompareTag("Player")) return;
+
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        if (player == null)
+            player = other.GetComponentInParent<PlayerHealth>();
+
+        if (player != null && Time.time - lastAttackTime >= normal.attackCooldown)
+        {
+            player.TakeDamage(normal.attackDamage);
+            lastAttackTime = Time.time;
+        }
+    }
 }

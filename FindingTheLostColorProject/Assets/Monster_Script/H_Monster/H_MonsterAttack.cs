@@ -63,7 +63,7 @@ public class H_MonsterAttack : MonoBehaviour
         if (groundLayer.value == 0)
         {
             groundLayer = LayerMask.GetMask("Platform");
-            Debug.Log($"[H_MonsterAttack] {gameObject.name}의 groundLayer가 비어있어 기본 'Platform' 레이어로 자동 할당했습니다.");
+            
         }
 
         // targetLayer가 Nothing(0)으로 풀려있으면 근접/점프 판정(OverlapBox 등)이 항상 실패하므로
@@ -71,21 +71,14 @@ public class H_MonsterAttack : MonoBehaviour
         if (targetLayer.value == 0)
         {
             targetLayer = LayerMask.GetMask("Player");
-            Debug.LogWarning($"[H_MonsterAttack] {gameObject.name}의 targetLayer가 비어있어 기본 'Player' 레이어로 자동 할당했습니다. 인스펙터에서 직접 설정해두는 것을 권장합니다.");
+            
         }
 
         // contactHitbox 슬롯이 비어있으면 자식 오브젝트에서 자동으로 찾아 연결 (인스펙터 실수 방지)
         if (contactHitbox == null)
         {
             contactHitbox = GetComponentInChildren<ContactHit>();
-            if (contactHitbox != null)
-            {
-                Debug.Log($"[H_MonsterAttack] {gameObject.name}의 자식 오브젝트에서 ContactRelay({contactHitbox.gameObject.name})를 찾아 자동 매칭했습니다.");
-            }
-            else
-            {
-                Debug.LogWarning($"[H_MonsterAttack] {gameObject.name}에게서 피해를 줄 ContactRelay 자식 오브젝트를 찾을 수 없습니다! 콜라이더 피해가 들어가지 않을 수 있습니다.");
-            }
+            
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -199,7 +192,6 @@ public class H_MonsterAttack : MonoBehaviour
         Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer);
         if (hit != null)
         {
-            Debug.Log("근접 공격 적중: " + hit.name);
             PlayerHealth player = hit.GetComponent<PlayerHealth>();
             if (player == null) player = hit.GetComponentInParent<PlayerHealth>();
             if (player != null)
@@ -231,7 +223,6 @@ public class H_MonsterAttack : MonoBehaviour
     {
         if (isAttacking)
         {
-            Debug.LogWarning($"[H_MonsterAttack] {gameObject.name}가 이미 공격 중이므로 덮치기 요청을 무시합니다.");
             return;
         }
         initialPounceHitPlayer = false; // 타격 플래그 리셋
@@ -240,7 +231,6 @@ public class H_MonsterAttack : MonoBehaviour
 
     System.Collections.IEnumerator JumpAttackRoutine(bool isInitialPounce)
     {
-        Debug.Log($"[H_MonsterAttack] JumpAttackRoutine 시작됨! (isInitialPounce: {isInitialPounce})");
 
         Collider2D selfColForJump = GetComponent<Collider2D>();
         Vector2 jumpColliderSize = selfColForJump != null ? selfColForJump.bounds.size * 0.95f : Vector2.one * 0.5f;
@@ -254,16 +244,18 @@ public class H_MonsterAttack : MonoBehaviour
         // 점프 시작/착지 지점 고정
         Vector2 startPos = transform.position;
         Vector2 desiredLandPos = target.position;
-        Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos);
+        Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);
 
         float jumpDistance = Vector2.Distance(startPos, landPos);
-        Debug.Log($"[H_MonsterAttack] 계산된 착지 위치: {landPos}, 현재 위치로부터의 거리: {jumpDistance}");
+
 
         // 덮치기 경로에 서 있을 지형이 마땅치 않아 점프가 취소되는 경우의 예외 복구 및 디버그 경고 출력
-        if (jumpDistance < minJumpDistance)
+        // (최소 거리 미달 OR 낭떠러지 때문에 착지 지점이 잘린 경우 모두 취소 대상)
+        if (jumpDistance < minJumpDistance || isCliff)
         {
-            Debug.LogWarning($"[H_MonsterAttack] 점프가 취소되었습니다! (도약 거리 {jumpDistance}가 최소 거리 {minJumpDistance}보다 작음). groundLayer가 정상적으로 매칭되었는지 확인하세요.");
-            
+            string reason = isCliff ? "낭떠러지로 인해 착지 지점이 잘림" : $"도약 거리 {jumpDistance}가 최소 거리 {minJumpDistance}보다 작음";
+
+
             isAttacking = false;
             if (enemyMove != null)
             {
@@ -278,23 +270,26 @@ public class H_MonsterAttack : MonoBehaviour
             canAttack = true;
             yield break;
         }
-        
+
         // [핵심 요구사항] 최초 돌진일 경우 설정된 별도의 대기시간(initialTelegraphTime)을 사용합니다.
         float activeTelegraphTime = isInitialPounce ? initialTelegraphTime : telegraphTime;
-        Debug.Log($"[H_MonsterAttack] 점프 전 위협 경고 대기 시간 시작 (대기 시간: {activeTelegraphTime}초)");
         yield return new WaitForSeconds(activeTelegraphTime);
 
-        // ★ [핵심 요구사항] 위장상태에서 공중으로 몸을 던져 날아가는 순간, 모습을 바꿉니다 (WakeUp 호출)
+        // ★ [핵심 요구사항] 위장상태에서 공중으로 몸을 던져 날아가는 순간, 모습을 바꾸고 점프 방향을 바라봅니다.
         if (isInitialPounce && enemyMove != null)
         {
             enemyMove.WakeUp();
+
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1 : -1);
+            transform.localScale = scale;
         }
 
         // [핵심 요구사항] 최초 돌진일 경우 설정된 돌진 사양(높이/공중 시간)을 사용합니다.
         float activeJumpHeight = isInitialPounce ? initialJumpHeight : jumpHeight;
         float activeJumpDuration = isInitialPounce ? initialJumpDuration : jumpDuration;
 
-        Debug.Log($"[H_MonsterAttack] 포물선 공중 비행 시작! (목표 위치: {landPos}, 높이: {activeJumpHeight}, 시간: {activeJumpDuration}초)");
+
 
         // 포물선 점프 시작
         float elapsed = 0f;
@@ -318,7 +313,6 @@ public class H_MonsterAttack : MonoBehaviour
                 RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
                 if (hit.collider != null)
                 {
-                    Debug.Log("점프 중 천장 부딪힘: " + hit.collider.name);
                     desiredPos = hit.point - moveDir.normalized * 0.05f;
                     hitCeiling = true;
                 }
@@ -334,7 +328,6 @@ public class H_MonsterAttack : MonoBehaviour
 
         if (hitCeiling)
         {
-            Debug.Log("[H_MonsterAttack] 천장 충돌로 인한 바닥 수직 낙하 시작");
             yield return StartCoroutine(FallToGround());
         }
         else
@@ -347,7 +340,6 @@ public class H_MonsterAttack : MonoBehaviour
         if (isInitialPounce)
         {
             float activeStunDuration = initialPounceHitPlayer ? 0.5f : stunDuration;
-            Debug.Log($"[H_MonsterAttack] 최초 덮치기 돌진 완료! (플레이어 피격 성공 여부: {initialPounceHitPlayer}) -> {activeStunDuration}초 동안 기절(Stun)합니다.");
             
             // 기절용 애니메이터 매개변수가 있을 시 호출 (Animator "Stun" Trigger)
             Animator anim = GetComponent<Animator>();
@@ -358,7 +350,7 @@ public class H_MonsterAttack : MonoBehaviour
             }
 
             yield return new WaitForSeconds(activeStunDuration);
-            Debug.Log("[H_MonsterAttack] 기절 해제! 이제 정상 정찰 및 J_Monster 기본 점프 공격 패턴을 시작합니다.");
+            
         }
         else
         {
@@ -391,24 +383,28 @@ public class H_MonsterAttack : MonoBehaviour
             fallElapsed += Time.deltaTime;
             fallSpeed += fallAcceleration * Time.deltaTime;
 
-            Vector2 nextPos = (Vector2)transform.position + Vector2.down * fallSpeed * Time.deltaTime;
-            Vector2 groundCheckPos = nextPos + Vector2.down * footOffset;
+            float moveDist = fallSpeed * Time.deltaTime;
 
-            bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
-
-            transform.position = new Vector3(nextPos.x, nextPos.y, transform.position.z);
-
-            if (foundGround)
+            RaycastHit2D groundHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, footOffset + moveDist, groundLayer);
+            if (groundHit.collider != null)
+            {
+                // 뚫고 들어가지 않도록, 바닥 표면에 발이 정확히 닿는 위치로 정렬하고 종료
+                transform.position = new Vector3(transform.position.x, groundHit.point.y + footOffset, transform.position.z);
                 yield break;
+            }
 
+            transform.position += new Vector3(0f, -moveDist, 0f);
             yield return null;
         }
     }
 
     public float groundCheckRadius = 0.3f;  // 바닥 감지 반경
 
-    Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired)
+    // isCliff: 경로 중간에 바닥이 끊겨서 착지 지점이 원래 목표(desired)보다 앞에서 잘렸는지 여부
+    Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
+        isCliff = false;
+
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
@@ -433,6 +429,7 @@ public class H_MonsterAttack : MonoBehaviour
             }
             else
             {
+                isCliff = true;
                 return lastGroundPos;
             }
         }
