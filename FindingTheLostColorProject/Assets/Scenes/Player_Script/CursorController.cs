@@ -43,8 +43,8 @@ public class CursorController : MonoBehaviour
     public float chargeDuration = 1.0f;
     [Tooltip("차징 샷 폭발 반경 (범위, 기본값: 2.5)")]
     public float chargeAttackRadius = 2.5f;
-    [Tooltip("차징 샷 성공 시 정화/힐량 (기본값: 8.0)")]
-    public float chargeAttackHealAmount = 8.0f;
+    [Tooltip("차징 샷 성공 시 정화/힐량 (기본값: 2.0)")]
+    public float chargeAttackHealAmount = 2.0f;
     [Tooltip("차징 샷 발사 시 소모될 물감량 (기본값: 0.2, maxPaint는 1f)")]
     public float chargePaintCost = 0.2f;
     [Tooltip("차징 중 물감 소모 비율 (기존 소모량 대비 배율, 0.3 = 30% 소모)")]
@@ -61,6 +61,24 @@ public class CursorController : MonoBehaviour
     [SerializeField] private float releaseScaleMultiplier = 2.5f;
     [Tooltip("마우스를 뗄 때 스르륵 투명해지며 커지는 연출 시간 (초)")]
     [SerializeField] private float releaseFadeDuration = 0.2f;
+
+    [Header("Super Ultimate Settings")]
+    [Tooltip("궁극기 별똥별 프리팹 (지정하지 않을 경우 구체 오브젝트 자동 생성)")]
+    [SerializeField] private GameObject meteorPrefab;
+    [Tooltip("별똥별 낙하 속도 (기본값: 15.0)")]
+    [SerializeField] private float meteorSpeed = 15f;
+    [Tooltip("별똥별 지형 충돌 시 폭발 피해 반경 (기본값: 1.8)")]
+    [SerializeField] private float meteorExplosionRadius = 1.8f;
+
+    [Header("Super Ultimate Spawn Settings (Min/Max Ranges)")]
+    [Tooltip("별똥별 낙하 대상 최소 범위 (플레이어 기준 최소 빗겨날 거리, 기본값: 2.0)")]
+    [SerializeField] private float minSpawnRange = 2.0f;
+    [Tooltip("별똥별 낙하 대상 최대 범위 (플레이어 기준 최대 빗겨날 거리, 기본값: 7.0)")]
+    [SerializeField] private float maxSpawnRange = 7.0f;
+    [Tooltip("별똥별 스폰 높이 (타겟 지점 기준 하늘 Y축 거리, 기본값: 9.0)")]
+    [SerializeField] private float spawnHeight = 9.0f;
+    [Tooltip("사선 낙하를 위한 수평 오프셋 (스폰 지점이 타겟 지점보다 좌/우로 빗겨나 시작하는 거리)")]
+    [SerializeField] private float diagonalHorizontalOffset = 4.0f;
 
     private int currentCursorIndex = -1;
     private GaugeController gaugeController; // 물감 게이지 스크립트 참조
@@ -140,7 +158,25 @@ public class CursorController : MonoBehaviour
             Debug.Log($"[공격 모드 스왑] 현재 모드: {attackMode}번 (1: 일반 브러시, 2: 차징 샷)");
         }
 
-        // 6. 물감 상태 및 조건 계산
+        // 6. 궁극기 발사 감지 (마우스 우클릭 입력)
+        bool isRightClickPressed = false;
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            isRightClickPressed = Mouse.current.rightButton.wasPressedThisFrame;
+        }
+#else
+        isRightClickPressed = Input.GetMouseButtonDown(1);
+#endif
+
+        // 궁극기 게이지가 완충된 상태에서 우클릭 입력 시 실행
+        if (isRightClickPressed && SuperGaugeController.Instance != null && SuperGaugeController.Instance.IsFullyCharged)
+        {
+            SuperGaugeController.Instance.UseSuper();
+            StartCoroutine(SpawnMeteorShowerRoutine(mouseWorldPos));
+        }
+
+        // 7. 물감 상태 및 조건 계산
         bool hasPaint = false;
         bool needsReclick = false;
         if (gaugeController != null)
@@ -199,7 +235,7 @@ public class CursorController : MonoBehaviour
                     float currentScale = Mathf.Lerp(minChargeVisualScale, maxChargeVisualScale, progress);
                     chargeEffectSprite.transform.localScale = new Vector3(currentScale, currentScale, 1f);
 
-                    // [수정] 1번 모드처럼 거리 단계별로 차징 이펙트 이미지의 기본 투명도(Alpha)를 차등 적용
+                    // 1번 모드처럼 거리 단계별로 차징 이펙트 이미지의 기본 투명도(Alpha)를 차등 적용
                     float[] alphas = { 1.0f, 0.6f, 0.3f };
                     float distanceAlpha = 1.0f;
                     if (currentCursorIndex >= 0 && currentCursorIndex < alphas.Length)
@@ -268,7 +304,7 @@ public class CursorController : MonoBehaviour
         }
     }
 
-    // 1번 모드의 기존 힐링 로직 분리 (중복 콜라이더에 의한 중첩 정화 버그 해결)
+    // 1번 모드의 기존 힐링 로직 (위장 상태 몬스터 필터링 및 궁극기 게이지 충전 제외)
     private void ApplyNormalHealing(Vector3 mouseWorldPos, float activeHealRate)
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(mouseWorldPos, paintRadius);
@@ -287,7 +323,22 @@ public class CursorController : MonoBehaviour
                 if (healedObjects.Contains(monster.gameObject)) continue;
                 healedObjects.Add(monster.gameObject);
 
-                monster.Heal(activeHealRate * Time.deltaTime);
+                // [수정] H고양이의 잠복(위장) 상태 감지
+                H_MonsterMove hMove = monster.GetComponent<H_MonsterMove>();
+                if (hMove == null) hMove = monster.GetComponentInParent<H_MonsterMove>();
+                bool isAmbushed = hMove != null && hMove.IsAmbushed;
+
+                // 이미 정화 완료(사망)되었거나, 잠복(위장) 상태인 몬스터는 힐과 궁극기 가산에서 배제합니다.
+                if (!monster.IsPurified && !isAmbushed)
+                {
+                    float healAmount = activeHealRate * Time.deltaTime;
+                    monster.Heal(healAmount);
+
+                    if (SuperGaugeController.Instance != null)
+                    {
+                        SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                    }
+                }
             }
             else
             {
@@ -299,7 +350,17 @@ public class CursorController : MonoBehaviour
                     if (healedObjects.Contains(roseBush.gameObject)) continue;
                     healedObjects.Add(roseBush.gameObject);
 
-                    roseBush.Heal(activeHealRate * Time.deltaTime);
+                    // 정화 완료된 덤불 배제
+                    if (!roseBush.IsPurified)
+                    {
+                        float healAmount = activeHealRate * Time.deltaTime;
+                        roseBush.Heal(healAmount);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                        }
+                    }
                 }
                 else
                 {
@@ -311,7 +372,17 @@ public class CursorController : MonoBehaviour
                         if (healedObjects.Contains(bridge.gameObject)) continue;
                         healedObjects.Add(bridge.gameObject);
 
-                        bridge.Heal(activeHealRate * Time.deltaTime);
+                        // 정화 완료된 다리 배제
+                        if (!bridge.IsPurified)
+                        {
+                            float healAmount = activeHealRate * Time.deltaTime;
+                            bridge.Heal(healAmount);
+
+                            if (SuperGaugeController.Instance != null)
+                            {
+                                SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                            }
+                        }
                     }
                     else
                     {
@@ -323,7 +394,17 @@ public class CursorController : MonoBehaviour
                             if (healedObjects.Contains(trampoline.gameObject)) continue;
                             healedObjects.Add(trampoline.gameObject);
 
-                            trampoline.Heal(activeHealRate * Time.deltaTime);
+                            // 정화 완료된 트램펄린 배제
+                            if (!trampoline.IsPurified)
+                            {
+                                float healAmount = activeHealRate * Time.deltaTime;
+                                trampoline.Heal(healAmount);
+
+                                if (SuperGaugeController.Instance != null)
+                                {
+                                    SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                                }
+                            }
                         }
                         else
                         {
@@ -335,7 +416,17 @@ public class CursorController : MonoBehaviour
                                 if (healedObjects.Contains(lamp.gameObject)) continue;
                                 healedObjects.Add(lamp.gameObject);
 
-                                lamp.Heal(activeHealRate * Time.deltaTime);
+                                // 정화 완료된 등불 배제
+                                if (!lamp.IsPurified)
+                                {
+                                    float healAmount = activeHealRate * Time.deltaTime;
+                                    lamp.Heal(healAmount);
+
+                                    if (SuperGaugeController.Instance != null)
+                                    {
+                                        SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                                    }
+                                }
                             }
                         }
                     }
@@ -344,7 +435,7 @@ public class CursorController : MonoBehaviour
         }
     }
 
-    // 2번 모드의 차징 범위 샷 공격 실행 (중복 콜라이더에 의한 중첩 대미지/정화 버그 해결)
+    // 2번 모드의 차징 범위 샷 공격 실행 (위장 상태 몬스터 필터링 및 궁극기 게이지 충전 제외)
     private void ExecuteChargeAttack(Vector3 attackPos)
     {
         // 1. 물감 잔량 강제 소모 (GaugeController 연동)
@@ -361,8 +452,7 @@ public class CursorController : MonoBehaviour
             // 예: SoundManager.Instance.PlaySFX("ChargeBoom");
         }
 
-        // [추가] 2번 모드 차징 공격도 플레이어와 마우스 간 거리에 따라 정화량(피해량) 감소 배율 적용
-        // 근거리(0) : 100%, 중거리(1) : 70%, 원거리(2) : 40%
+        // 2번 모드 차징 공격도 플레이어와 마우스 간 거리에 따라 정화량(피해량) 감소 배율 적용
         float[] damageMultipliers = { 1.0f, 0.7f, 0.4f };
         float activeChargeHeal = chargeAttackHealAmount;
         if (currentCursorIndex >= 0 && currentCursorIndex < damageMultipliers.Length)
@@ -385,7 +475,22 @@ public class CursorController : MonoBehaviour
                 if (healedObjects.Contains(monster.gameObject)) continue;
                 healedObjects.Add(monster.gameObject);
 
-                monster.Heal(activeChargeHeal);
+                // [수정] H고양이의 잠복(위장) 상태 감지
+                H_MonsterMove hMove = monster.GetComponent<H_MonsterMove>();
+                if (hMove == null) hMove = monster.GetComponentInParent<H_MonsterMove>();
+                bool isAmbushed = hMove != null && hMove.IsAmbushed;
+
+                // 이미 정화 완료(사망)되었거나 잠복(위장) 상태인 몬스터는 힐과 궁극기 가산에서 배제
+                if (!monster.IsPurified && !isAmbushed)
+                {
+                    monster.Heal(activeChargeHeal);
+
+                    // 궁극기 게이지 가산
+                    if (SuperGaugeController.Instance != null)
+                    {
+                        SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                    }
+                }
                 hitCount++;
             }
             else
@@ -397,7 +502,16 @@ public class CursorController : MonoBehaviour
                     if (healedObjects.Contains(roseBush.gameObject)) continue;
                     healedObjects.Add(roseBush.gameObject);
 
-                    roseBush.Heal(activeChargeHeal);
+                    // 정화 완료된 덤불 배제
+                    if (!roseBush.IsPurified)
+                    {
+                        roseBush.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
                     hitCount++;
                     continue;
                 }
@@ -409,7 +523,16 @@ public class CursorController : MonoBehaviour
                     if (healedObjects.Contains(bridge.gameObject)) continue;
                     healedObjects.Add(bridge.gameObject);
 
-                    bridge.Heal(activeChargeHeal);
+                    // 정화 완료된 다리 배제
+                    if (!bridge.IsPurified)
+                    {
+                        bridge.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
                     hitCount++;
                     continue;
                 }
@@ -421,7 +544,16 @@ public class CursorController : MonoBehaviour
                     if (healedObjects.Contains(trampoline.gameObject)) continue;
                     healedObjects.Add(trampoline.gameObject);
 
-                    trampoline.Heal(activeChargeHeal);
+                    // 정화 완료된 트램펄린 배제
+                    if (!trampoline.IsPurified)
+                    {
+                        trampoline.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
                     hitCount++;
                     continue;
                 }
@@ -433,7 +565,16 @@ public class CursorController : MonoBehaviour
                     if (healedObjects.Contains(lamp.gameObject)) continue;
                     healedObjects.Add(lamp.gameObject);
 
-                    lamp.Heal(activeChargeHeal);
+                    // 정화 완료된 등불 배제
+                    if (!lamp.IsPurified)
+                    {
+                        lamp.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
                     hitCount++;
                     continue;
                 }
@@ -471,6 +612,116 @@ public class CursorController : MonoBehaviour
         chargeEffectSprite.gameObject.SetActive(false);
         chargeTimer = 0f;
         releaseEffectCoroutine = null;
+    }
+
+    // ==========================================================
+    // [궁극기: 별똥별 투하 연출 코루틴 (6방 순차 폭격으로 변경)]
+    // ==========================================================
+    private IEnumerator SpawnMeteorShowerRoutine(Vector3 mouseTargetPos)
+    {
+        Debug.Log("[궁극기 발동] 하늘에서 무지개 별똥별 샤워가 6방 내립니다!");
+
+        // 패턴 (1타:마우스, 2타:왼쪽, 3타:오른쪽)을 2회 돌려 총 6방 생성
+        for (int round = 0; round < 2; round++)
+        {
+            // 1/4타. 우클릭 누른 마우스 좌표로 1번째 별똥별 낙하 (왼쪽 위 -> 오른쪽 아래 사선)
+            Vector3 spawnPos1 = mouseTargetPos + new Vector3(-diagonalHorizontalOffset, spawnHeight, 0f);
+            Vector3 dir1 = (mouseTargetPos - spawnPos1).normalized;
+            SpawnMeteor(spawnPos1, dir1);
+
+            yield return new WaitForSeconds(0.2f);
+
+            // 2/5타. 플레이어 기준 왼쪽 (최소 ~ 최대) 범위 내 랜덤 위치로 2번째 별똥별 사선 낙하 (왼쪽 위 -> 오른쪽 아래 사선)
+            float targetX2 = player.position.x - Random.Range(minSpawnRange, maxSpawnRange);
+            float targetY2 = player.position.y;
+            Vector3 targetPos2 = new Vector3(targetX2, targetY2, 0f);
+            Vector3 spawnPos2 = targetPos2 + new Vector3(-diagonalHorizontalOffset, spawnHeight, 0f);
+            Vector3 dir2 = (targetPos2 - spawnPos2).normalized;
+            SpawnMeteor(spawnPos2, dir2);
+
+            yield return new WaitForSeconds(0.2f);
+
+            // 3/6타. 플레이어 기준 오른쪽 (최소 ~ 최대) 범위 내 랜덤 위치로 3번째 별똥별 사선 낙하 (왼쪽 위 -> 오른쪽 아래 사선)
+            float targetX3 = player.position.x + Random.Range(minSpawnRange, maxSpawnRange);
+            float targetY3 = player.position.y;
+            Vector3 targetPos3 = new Vector3(targetX3, targetY3, 0f);
+            Vector3 spawnPos3 = targetPos3 + new Vector3(-diagonalHorizontalOffset, spawnHeight, 0f);
+            Vector3 dir3 = (targetPos3 - spawnPos3).normalized;
+            SpawnMeteor(spawnPos3, dir3);
+
+            // 3타를 발사하고 4타로 넘어가기 전에도 0.2초 대기
+            if (round == 0)
+            {
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+    }
+
+    // 개별 별똥별 스폰 및 초기화 헬퍼 함수
+    private void SpawnMeteor(Vector3 spawnPos, Vector3 direction)
+    {
+        GameObject meteorObj;
+
+        if (meteorPrefab != null)
+        {
+            meteorObj = Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            // [방어 코드] 만약 별똥별 프리팹을 인스펙터에 지정하지 않았을 경우, 임시 구체를 생성해 줍니다.
+            meteorObj = new GameObject("TempMeteor");
+            meteorObj.transform.position = spawnPos;
+            meteorObj.transform.localScale = Vector3.one * 0.7f;
+
+            SpriteRenderer sr = meteorObj.AddComponent<SpriteRenderer>();
+            sr.sprite = CreateTempMeteorSprite();
+            sr.color = Color.yellow; // 노란색 별똥별 색상 지정
+            sr.sortingOrder = 100;   // 배경이나 지형 뒤로 가려지지 않도록 정렬 순서를 높임
+
+            CircleCollider2D col2D = meteorObj.AddComponent<CircleCollider2D>();
+            col2D.isTrigger = true;
+
+            // [추가] 유니티 2D 물리 충돌 판정을 발동시키기 위해 Rigidbody2D 부착 (지형 뚫림 방지)
+            Rigidbody2D rb = meteorObj.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Kinematic; // 스크립트 등속 운동 제어를 위해 Kinematic 설정
+            rb.simulated = true;
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; // 빠른 속도 낙하 시 통과 감지 방지
+        }
+
+        // Meteor 스크립트가 붙어있는지 확인 후 부착 및 초기화
+        Meteor meteorComponent = meteorObj.GetComponent<Meteor>();
+        if (meteorComponent == null)
+        {
+            meteorComponent = meteorObj.AddComponent<Meteor>();
+        }
+
+        meteorComponent.Initialize(direction, meteorSpeed, meteorExplosionRadius);
+    }
+
+    // 임시 노란색 원형 Sprite 동적 생성 함수 (유니티 CreatePrimitive Assertion 에디터 오류 완벽 우회)
+    private Sprite CreateTempMeteorSprite()
+    {
+        Texture2D texture = new Texture2D(32, 32);
+        Color[] colors = new Color[32 * 32];
+        for (int y = 0; y < 32; y++)
+        {
+            for (int x = 0; x < 32; x++)
+            {
+                float dx = x - 15.5f;
+                float dy = y - 15.5f;
+                if (dx * dx + dy * dy <= 15.5f * 15.5f)
+                {
+                    colors[y * 32 + x] = Color.white;
+                }
+                else
+                {
+                    colors[y * 32 + x] = Color.clear;
+                }
+            }
+        }
+        texture.SetPixels(colors);
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
     }
 
     private void ResetCharge()

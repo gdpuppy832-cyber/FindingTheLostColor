@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class NormalMonster : MonoBehaviour
@@ -21,9 +22,9 @@ public class NormalMonster : MonoBehaviour
     [Tooltip("정화 완료 시 재생할 Animator Trigger 이름 (기본값: Purified)")]
     public string purifiedTriggerName = "Purified";
 
-    [Header("HIT! 폰트 설정")]
-    [Tooltip("체력 회복 시 뜨는 HIT! 텍스트의 폰트 (비워두면 PlayerInteraction에 연결된 폰트를 자동 상속합니다)")]
-    public Font hitTextFont;
+    [Header("HIT! 폰트 설정 (TextMeshPro 전용)")]
+    [Tooltip("체력 회복 시 뜨는 HIT! 텍스트의 TMPro 폰트 에셋 (드래그 앤 드롭 가능)")]
+    public TMP_FontAsset hitTextFont;
 
     [Header("Color Fade Settings (물감 칠해지는 색상 연출)")]
     [Tooltip("시작 시 (체력이 0일 때) 몬스터의 색상 (어둡거나 색이 빠진 톤)")]
@@ -178,7 +179,7 @@ public class NormalMonster : MonoBehaviour
     }
 
     /// <summary>
-    /// 1 회복할 때마다 고양이 주변에 HIT! 문양을 띄워주는 연출 함수
+    /// 1 회복할 때마다 몬스터 주변에 TextMeshPro를 이용한 HIT! 문양을 띄워주는 연출 함수
     /// </summary>
     private void SpawnHitText()
     {
@@ -189,51 +190,25 @@ public class NormalMonster : MonoBehaviour
         Vector3 spawnOffset = new Vector3(Random.Range(-0.4f, 0.4f), Random.Range(0.6f, 1.2f), 0f);
         hitTextObj.transform.position = transform.position + spawnOffset;
         
-        // 2. TextMesh 추가 및 세팅
-        TextMesh textMesh = hitTextObj.AddComponent<TextMesh>();
-        textMesh.text = "HIT!";
-        textMesh.fontSize = 36; // 폰트 사이즈 키움
-        textMesh.characterSize = 0.16f; // 글자 물리 크기 2배 확장 (0.08 -> 0.16)
-        textMesh.color = new Color(1f, 0.7f, 0f); // 선명한 주황/노란색 계열
-        textMesh.anchor = TextAnchor.MiddleCenter;
-        textMesh.alignment = TextAlignment.Center;
+        // 2. TextMeshPro 추가 및 세팅
+        TextMeshPro tmp = hitTextObj.AddComponent<TextMeshPro>();
+        tmp.text = "HIT!";
+        tmp.fontSize = 4.5f; // TextMeshPro용 폰트 사이즈
+        tmp.color = new Color(1f, 0.7f, 0f); // 선명한 주황/노란색 계열
+        tmp.alignment = TextAlignmentOptions.Center;
 
-        // 폰트 설정 (몬스터에 명시적 폰트가 지정되지 않은 경우, Player의 폰트 설정을 상속받아 자동 적용)
-        Font appliedFont = hitTextFont;
-        if (appliedFont == null)
+        // 폰트 설정 (TextMeshPro 폰트 에셋 지정)
+        if (hitTextFont != null)
         {
-            PlayerInteraction playerInt = FindFirstObjectByType<PlayerInteraction>();
-            if (playerInt != null && playerInt.customFont != null)
-            {
-                appliedFont = playerInt.customFont;
-            }
-            else
-            {
-                CaveEntrance caveEnt = FindFirstObjectByType<CaveEntrance>();
-                if (caveEnt != null && caveEnt.customFont != null)
-                {
-                    appliedFont = caveEnt.customFont;
-                }
-            }
-        }
-
-        if (appliedFont != null)
-        {
-            textMesh.font = appliedFont;
+            tmp.font = hitTextFont;
         }
         
-        // 3. 렌더 순서 설정 (UI 레이어로 설정하여 화면 최상단 출력) 및 폰트 머티리얼 동기화 (깨짐 방지)
+        // 3. 렌더 순서 설정 (UI 레이어로 설정하여 화면 최상단 출력)
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
             meshRenderer.sortingLayerName = "UI";
             meshRenderer.sortingOrder = 150;
-            
-            // TextMesh는 폰트를 바꿀 때 렌더러의 머티리얼도 해당 폰트의 머티리얼로 매핑해주어야 글씨가 깨지지 않고 선명하게 나옵니다.
-            if (appliedFont != null)
-            {
-                meshRenderer.material = appliedFont.material;
-            }
         }
 
         // 4. 서서히 위로 떠오르며 사라지는 제어용 FloatingText 컴포넌트 장착
@@ -280,13 +255,11 @@ public class NormalMonster : MonoBehaviour
         }
 
         // 3. 물리 움직임 멈춤 및 중력 활성화 (수직 낙하 착지)
-        // (공중 공격 등으로 Kinematic 처리되었던 상태를 강제로 Dynamic 및 중력 1로 복구하여 무조건 바닥으로 떨어지게 함)
         if (rb != null)
         {
             rb.bodyType = RigidbodyType2D.Dynamic; // 물리 중력을 강제로 다시 켬!
             rb.gravityScale = 1.5f;                // 바닥에 빠르게 안착하도록 가중치 부여
             rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            // 가로 이동(X) 및 회전(Z)을 잠궈서 제자리에서 바닥으로 수직 낙하만 허용
             rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         }
 
@@ -401,19 +374,19 @@ public class NormalMonster : MonoBehaviour
 }
 
 /// <summary>
-/// 1 회복당 한번씩 몬스터 머리 위에 주황색으로 둥실 떠올랐다 사라지는 텍스트 컴포넌트
+/// TextMeshPro를 이용해 위로 둥실 떠오르며 사라지는 텍스트 컴포넌트
 /// </summary>
 public class FloatingText : MonoBehaviour
 {
     private float duration = 0.8f;
     private float speed = 1.2f;
-    private TextMesh textMesh;
+    private TextMeshPro textMesh;
     private Color baseColor;
     private float elapsedTime = 0f;
 
     public void Setup(Color color, float dur)
     {
-        textMesh = GetComponent<TextMesh>();
+        textMesh = GetComponent<TextMeshPro>();
         baseColor = color;
         duration = dur;
     }

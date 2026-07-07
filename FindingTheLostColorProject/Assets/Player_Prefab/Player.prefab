@@ -177,6 +177,8 @@ MonoBehaviour:
   damageStunDuration: 0.5
   damageShakeIntensity: 0.2
   damageShakeDuration: 0.2
+  knockbackForce: 3
+  knockbackUpwardForce: 4
   animator: {fileID: 0}
   deathTriggerName: Die
   deathYThreshold: -7

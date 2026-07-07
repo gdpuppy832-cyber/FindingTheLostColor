@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7125870187585655391}
@@ -143,21 +143,28 @@ MonoBehaviour:
   mediumDistance: 3.8
   intenseDistance: 6.7
   trailWidth: 0.15
-  paintRadius: 0.75
+  paintRadius: 0.5
   closeHealRate: 1
   mediumHealRate: 0.7
   farHealRate: 0.4
   attackMode: 1
   chargeDuration: 1
-  chargeAttackRadius: 0.75
+  chargeAttackRadius: 0.7
   chargeAttackHealAmount: 2
   chargePaintCost: 0.19
-  chargeDepletionMultiplier: 0.01
+  chargeDepletionMultiplier: 0
   chargeEffectSprite: {fileID: 9071747882889396090}
   minChargeVisualScale: 0.2
   maxChargeVisualScale: 0.9
   releaseScaleMultiplier: 3
   releaseFadeDuration: 0.3
+  meteorPrefab: {fileID: 0}
+  meteorSpeed: 15
+  meteorExplosionRadius: 1.8
+  minSpawnRange: 2
+  maxSpawnRange: 7
+  spawnHeight: 9
+  diagonalHorizontalOffset: 2
 --- !u!96 &6700452772112822177
 TrailRenderer:
   serializedVersion: 3

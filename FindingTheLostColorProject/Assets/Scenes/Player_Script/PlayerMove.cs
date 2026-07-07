@@ -67,8 +67,11 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 벽 감지 로직 없이 부드러운 이동 속도 적용
-        rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+        // 조작 가능한 상태일 때만 키 입력에 따른 좌우 이동 속도 적용 (넉백 등의 물리 외력 보존을 위함)
+        if (canControl)
+        {
+            rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+        }
 
         if (!isGrounded && jumpCount == 0)
         {
@@ -105,11 +108,6 @@ public class PlayerMove : MonoBehaviour
         if (!canControl)
         {
             moveDirection = Vector2.zero;
-            if (rb != null)
-            {
-                // 즉시 좌우 이동 속도를 0으로 만들어 멈추게 함
-                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            }
         }
     }
 }
