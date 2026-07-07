@@ -207,6 +207,7 @@ MonoBehaviour:
   range: 6
   chaseRange: 8
   attackStopDistance: 1.5
+  safeDropDistance: 7
 --- !u!114 &7268727226851208348
 MonoBehaviour:
   m_ObjectHideFlags: 0

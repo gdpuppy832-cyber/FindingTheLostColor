@@ -15,6 +15,9 @@ public class H_MonsterMove : MonoBehaviour
     [Tooltip("공격 직전 멈춰설 대상과의 거리")]
     public float attackStopDistance = 1.5f;
 
+    [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
+    public float safeDropDistance = 3f;
+
     Transform target;
     float timer = 0;
     Vector3 prevposition;
@@ -229,10 +232,6 @@ public class H_MonsterMove : MonoBehaviour
         // 2. 이동하려는 방향 쪽에 땅이 없으면(절벽) 즉시 반전하지 않고 멈춤 상태로 전환
         bool edgeAhead = (desiredDir < 0f && !groundedLeft) || (desiredDir > 0f && !groundedRight);
 
-        // 유예 시간(ignoreEdgeTimer)은 "배회 모드에서 방금 반전한 방향(moveDir)으로 계속 갈 때"만 적용.
-        // 추적이 반대 방향(절벽 쪽)으로 끌어당기는 경우엔 방향이 다르므로 유예 시간과 무관하게
-        // 항상 절벽을 감지해야 함 - 안 그러면 반전 직후 유예 시간 동안 추적이 절벽 방향으로 끼어들 때
-        // 절벽 감지가 무시된 채 몇 걸음 걸어가버리는 문제가 있음
         bool suppressCheck = !isChasing && ignoreEdgeTimer > 0f && desiredDir == moveDir;
 
         if (edgeAhead && !suppressCheck)
@@ -258,6 +257,14 @@ public class H_MonsterMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
+            // (추적 모드에서는 낭떠러지 처리와 마찬가지로 절벽/벽 회피를 강제로 걸지 않음 - 플레이어를 계속 쫓아가려는 의도 유지)
+            if (!isChasing)
+            {
+                isStopped = true;
+                stopTimer = 0f;
+            }
+
             prevposition = transform.position;
             return;
         }
@@ -280,14 +287,21 @@ public class H_MonsterMove : MonoBehaviour
         // 잠복 중에는 고지/낙하 체크 패스
         if (isAmbushed) return;
 
+        // 절벽 감지: 배회 모드에서는 기존처럼 짧은 거리(2)로 엄격하게 감지,
+        // 추적 모드일 때만 safeDropDistance만큼 더 멀리 검사해서 낮은 턱/계단을 내려갈 수 있게 함
         float halfWidth = col.bounds.extents.x;
         float oneThird = halfWidth * 2f / 3f;
 
         Vector2 leftPoint = (Vector2)rigid.position + Vector2.left * oneThird;
         Vector2 rightPoint = (Vector2)rigid.position + Vector2.right * oneThird;
 
-        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
-        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
+        float checkDistance = isChasing ? safeDropDistance : 2f;
+
+        Debug.DrawRay(leftPoint, Vector2.down * checkDistance, Color.red);
+        Debug.DrawRay(rightPoint, Vector2.down * checkDistance, Color.blue);
+
+        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
+        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
 
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;

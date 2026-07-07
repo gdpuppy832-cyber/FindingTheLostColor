@@ -235,6 +235,7 @@ MonoBehaviour:
   range: 6
   chaseRange: 8
   attackStopDistance: 0.5
+  safeDropDistance: 7
 --- !u!61 &8974623747071684690
 BoxCollider2D:
   m_ObjectHideFlags: 0
