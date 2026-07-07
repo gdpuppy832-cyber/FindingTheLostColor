@@ -38,6 +38,13 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("피격 시 카메라 흔들림 시간 (기본값: 0.2초)")]
     public float damageShakeDuration = 0.2f;
 
+    [Header("Knockback Settings")]
+    [Tooltip("피격 시 밀려나는 수평 힘 (기본값: 4.0)")]
+    [SerializeField] private float knockbackForce = 4.0f;
+
+    [Tooltip("피격 시 공중으로 뜨는 수직 힘 (기본값: 3.5)")]
+    [SerializeField] private float knockbackUpwardForce = 3.5f;
+
     [Header("Animator Settings")]
     [Tooltip("플레이어의 Animator (비어있으면 자동으로 검색)")]
     public Animator animator;
@@ -215,6 +222,65 @@ public class PlayerHealth : MonoBehaviour
         // 피격 시 일정 시간 동안 플레이어 조작 차단 (움직이지 못함)
         StartCoroutine(DamageStunRoutine(damageStunDuration));
 
+        // [추가] 피격 시 진행 방향 반대로 밀려나고 공중으로 살짝 뜨는 넉백 효과 적용
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb == null) rb = GetComponentInParent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero; // 이전 속도 초기화
+            
+            // 피격당한 방향의 반대 방향 구하기 (주변 3m 내에 있는 가장 가까운 몬스터/덤불로부터 튕겨나감)
+            float pushDirection = 0f;
+            Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, 3.0f);
+            float closestDist = float.MaxValue;
+            Vector3 closestAttackerPos = Vector3.zero;
+            bool foundAttacker = false;
+
+            foreach (var col in nearbyObjects)
+            {
+                if (col.gameObject == gameObject) continue;
+
+                string colName = col.gameObject.name.ToLower();
+                string colTag = col.gameObject.tag;
+
+                if (colName.Contains("monster") || 
+                    colName.Contains("enemy") || 
+                    colName.Contains("rose") || 
+                    colName.Contains("bush") || 
+                    colName.Contains("boss") || 
+                    colName.Contains("trap") ||
+                    colName.Contains("bullet") || 
+                    colName.Contains("projectile") || 
+                    colName.Contains("projectil") || 
+                    colName.Contains("shot") || 
+                    colTag == "Enemy" ||
+                    colTag == "Monster")
+                {
+                    float dist = Vector2.Distance(transform.position, col.transform.position);
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closestAttackerPos = col.transform.position;
+                        foundAttacker = true;
+                    }
+                }
+            }
+
+            if (foundAttacker)
+            {
+                // 공격자가 오른쪽에 있으면 왼쪽(-1), 왼쪽에 있으면 오른쪽(+1)으로 밀려납니다.
+                pushDirection = Mathf.Sign(transform.position.x - closestAttackerPos.x);
+            }
+            else
+            {
+                // 근처에 공격 주체가 감지되지 않으면(디버그 단축키 피격 등) 현재 플레이어가 바라보는 방향의 반대 방향으로 설정
+                pushDirection = -Mathf.Sign(transform.localScale.x);
+            }
+
+            // 속도를 즉시 재설정하여 넉백과 뜨기 적용
+            rb.linearVelocity = new Vector2(pushDirection * knockbackForce, knockbackUpwardForce);
+        }
+
         // 카메라 흔들림 효과 트리거
         CameraFollow camFollow = Camera.main != null ? Camera.main.GetComponent<CameraFollow>() : null;
         if (camFollow == null)
@@ -318,10 +384,12 @@ public class PlayerHealth : MonoBehaviour
             // [피해사 모션] - 지정된 애니메이션 재생
             if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
             {
+                Debug.Log($"[PlayerHealth] '{deathTriggerName}' 애니메이션 트리거를 호출했습니다.");
                 animator.SetTrigger(deathTriggerName);
             }
             else
             {
+                Debug.LogWarning("[PlayerHealth] Animator 컴포넌트가 연결되지 않았거나 deathTriggerName이 비어있어 백업용 사망 이미지 교체를 실행합니다.");
                 // 애니메이터가 동작하지 않거나 비어있는 경우 사망 이미지로 백업 변경
                 if (spriteRenderer != null && deathSprite != null)
                 {
