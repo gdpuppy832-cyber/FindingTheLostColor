@@ -13,16 +13,17 @@ public class PlayerMove : MonoBehaviour
     public float jumpDelay = 0.1f;
 
     private Rigidbody2D rb;
+    private Animator animator;
     private int jumpCount = 0;
     private float lastJumpTime = 0f;
     private bool isGrounded = false;
     private Vector2 moveDirection;
-
     private bool canControl = true; // 조작 가능 상태 플래그
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -58,7 +59,20 @@ public class PlayerMove : MonoBehaviour
                     jumpCount++;
                     lastJumpTime = Time.time;
                     isGrounded = false;
+                    animator.SetTrigger("OnJump");
                 }
+            }
+
+            // [추가] 키 입력 방향(moveInput)에 따라 캐릭터 좌우 스케일 반전 (뒤집기)
+            if (moveInput > 0.01f)
+            {
+                // 오른쪽을 볼 때 (양수 스케일)
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+            else if (moveInput < -0.01f)
+            {
+                // 왼쪽을 볼 때 (음수 스케일)
+                transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
         }
 
@@ -67,13 +81,18 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 벽 감지 로직 없이 부드러운 이동 속도 적용
-        rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+        // 조작 가능한 상태일 때만 키 입력에 따른 좌우 이동 속도 적용 (넉백 등의 물리 외력 보존을 위함)
+        if (canControl)
+        {
+            rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+        }
 
         if (!isGrounded && jumpCount == 0)
         {
             jumpCount = 1;
         }
+
+        animator.SetFloat("VelocityX", moveDirection.x * moveSpeed);
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -105,11 +124,6 @@ public class PlayerMove : MonoBehaviour
         if (!canControl)
         {
             moveDirection = Vector2.zero;
-            if (rb != null)
-            {
-                // 즉시 좌우 이동 속도를 0으로 만들어 멈추게 함
-                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            }
         }
     }
 }

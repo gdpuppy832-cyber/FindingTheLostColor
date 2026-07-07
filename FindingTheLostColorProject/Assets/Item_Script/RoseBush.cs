@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(Collider2D))]
 public class RoseBush : MonoBehaviour
@@ -24,9 +25,9 @@ public class RoseBush : MonoBehaviour
     [Tooltip("정화 완료 시 (원래 색상)의 색상")]
     public Color targetColor = Color.white;
 
-    [Header("HIT! 텍스트 폰트")]
-    [Tooltip("회복할 때 팝업되는 HIT! 텍스트 폰트 (비워두면 플레이어 폰트 자동 상속)")]
-    public Font hitTextFont;
+    [Header("HIT! 텍스트 폰트 (TextMeshPro 전용)")]
+    [Tooltip("회복할 때 팝업되는 HIT! 텍스트의 TMPro 폰트 에셋 (드래그 앤 드롭 가능)")]
+    public TMP_FontAsset hitTextFont;
 
     private SpriteRenderer[] allSpriteRenderers;
     private bool isPurified = false;
@@ -139,7 +140,7 @@ public class RoseBush : MonoBehaviour
     }
 
     /// <summary>
-    /// 회복 시 HIT! 문양 팝업 생성
+    /// 회복 시 TextMeshPro를 이용한 HIT! 문양 팝업 생성
     /// </summary>
     private void SpawnHitText()
     {
@@ -147,28 +148,16 @@ public class RoseBush : MonoBehaviour
         Vector3 spawnOffset = new Vector3(Random.Range(-0.4f, 0.4f), Random.Range(0.6f, 1.2f), 0f);
         hitTextObj.transform.position = transform.position + spawnOffset;
 
-        TextMesh textMesh = hitTextObj.AddComponent<TextMesh>();
-        textMesh.text = "HIT!";
-        textMesh.fontSize = 36;
-        textMesh.characterSize = 0.16f;
-        textMesh.color = new Color(1f, 0.7f, 0f);
-        textMesh.anchor = TextAnchor.MiddleCenter;
-        textMesh.alignment = TextAlignment.Center;
+        TextMeshPro tmp = hitTextObj.AddComponent<TextMeshPro>();
+        tmp.text = "HIT!";
+        tmp.fontSize = 4.5f; // TextMeshPro용 폰트 크기
+        tmp.color = new Color(1f, 0.7f, 0f);
+        tmp.alignment = TextAlignmentOptions.Center;
 
-        // 폰트 지정 및 상속
-        Font appliedFont = hitTextFont;
-        if (appliedFont == null)
+        // TextMeshPro 폰트 에셋 상속/지정
+        if (hitTextFont != null)
         {
-            PlayerInteraction playerInt = FindFirstObjectByType<PlayerInteraction>();
-            if (playerInt != null && playerInt.customFont != null)
-            {
-                appliedFont = playerInt.customFont;
-            }
-        }
-
-        if (appliedFont != null)
-        {
-            textMesh.font = appliedFont;
+            tmp.font = hitTextFont;
         }
 
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
@@ -176,10 +165,6 @@ public class RoseBush : MonoBehaviour
         {
             meshRenderer.sortingLayerName = "UI";
             meshRenderer.sortingOrder = 150;
-            if (appliedFont != null)
-            {
-                meshRenderer.material = appliedFont.material;
-            }
         }
 
         // FloatingText 컴포넌트를 달아 위로 올라가게 함

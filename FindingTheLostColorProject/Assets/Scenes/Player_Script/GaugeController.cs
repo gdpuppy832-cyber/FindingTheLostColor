@@ -28,6 +28,7 @@ public class GaugeController : MonoBehaviour
 
     private Image gaugeImage;
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
+    private CursorController cursorController; // 커서 컨트롤러 참조 추가
     private bool needsReclick = false; // 물감 고갈 시 마우스 재클릭 필요 여부
     private float baseRegenSpeed;
 
@@ -45,8 +46,9 @@ public class GaugeController : MonoBehaviour
 
     void Start()
     {
-        // 씬에서 플레이어 체력 컨트롤러 검색
+        // 씬에서 필요한 컨트롤러 검색 및 참조
         playerHealth = FindFirstObjectByType<PlayerHealth>();
+        cursorController = FindFirstObjectByType<CursorController>();
         
         // 원본 재생 속도 저장
         baseRegenSpeed = regenSpeed;
@@ -96,7 +98,24 @@ public class GaugeController : MonoBehaviour
         // 좌클릭을 누르고 있고 + 물감 잔량이 최소 설정치보다 많으며 + 재클릭 대기 중이 아니고 + 플레이어가 죽지 않았을 때만 소모
         else if (isLeftClickHeld && currentPaint > minPaintToDraw && !needsReclick && !isDead)
         {
-            currentPaint -= decreaseSpeed * Time.deltaTime;
+            float activeDecreaseSpeed = decreaseSpeed;
+
+            // 2번 공격 모드(차징 모드)일 때의 소모 속도 차등 조율
+            if (cursorController != null && cursorController.attackMode == 2)
+            {
+                if (cursorController.IsChargeCompleted)
+                {
+                    // 최대 충전 시 더 이상 게이지가 닳지 않음
+                    activeDecreaseSpeed = 0f;
+                }
+                else
+                {
+                    // 차징 중일 때는 설정된 비율(기본 30%)만큼 소모
+                    activeDecreaseSpeed = decreaseSpeed * cursorController.chargeDepletionMultiplier;
+                }
+            }
+
+            currentPaint -= activeDecreaseSpeed * Time.deltaTime;
         }
         else
         {
