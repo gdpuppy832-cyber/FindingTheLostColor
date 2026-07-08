@@ -6,7 +6,6 @@ public class BossAttack : MonoBehaviour
 {
     // ===== 공통 =====
     public Transform target;               // 비워두면 Player 태그로 자동 탐색
-    [Range(0f, 1f)] public float phase2ThresholdRatio = 0.5f; // F_HealthMoveSwitcher와 같은 값으로 맞추면 이동 전환과 동시에 페이즈 전환됨
     public LayerMask groundLayer;
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
     public float bossAttackDamage = 1f;     // 모든 보스 공격(가시/레이저/서리/암흑구슬/번개/암영결계)이 공통으로 사용하는 피해량
@@ -709,8 +708,10 @@ public class BossAttack : MonoBehaviour
             float wait = t - prevTime;
             if (wait > 0f) yield return new WaitForSeconds(wait);
 
-            float x = transform.position.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
-            float y = transform.position.y + frostRangrY;
+            // 보스의 현재 위치가 아니라 처음 배치된 위치(initialPosition) 기준으로 스폰
+            // -> 2페이즈에서 보스가 이동해도 서리비 범위가 항상 동일한 위치에 고정됨
+            float x = initialPosition.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
+            float y = initialPosition.y + frostRangrY;
             GameObject crystal = SpawnFrostCrystal(new Vector2(x, y));
             if (crystal != null) activeFrostCrystals.Add(crystal);
 
