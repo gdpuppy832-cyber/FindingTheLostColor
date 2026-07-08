@@ -221,7 +221,6 @@ public class T_EnemyAttack : MonoBehaviour
         Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer);
         if (hit != null)
         {
-            Debug.Log("근접 공격 적중: " + hit.name);
             PlayerHealth player = hit.GetComponent<PlayerHealth>();
             if (player == null) player = hit.GetComponentInParent<PlayerHealth>();
             if (player != null)

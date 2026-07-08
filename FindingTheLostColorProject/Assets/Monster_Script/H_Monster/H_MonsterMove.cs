@@ -148,7 +148,6 @@ public class H_MonsterMove : MonoBehaviour
             if (attackScript != null)
             {
                 attackScript.TriggerPounce();
-                Debug.Log($"[H_MonsterMove] {gameObject.name} 플레이어 감지! 최초 돌진 덮치기를 개시합니다.");
             }
             else
             {
@@ -346,8 +345,6 @@ public class H_MonsterMove : MonoBehaviour
         {
             spriteRenderer.sprite = activeSprite;
         }
-
-        Debug.Log($"[H_MonsterMove] {gameObject.name} 최초 돌진 도약 시작! 위장을 영구 해제합니다 (무적 풀림).");
     }
 
     /// <summary>

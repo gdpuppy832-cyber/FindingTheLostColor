@@ -337,8 +337,6 @@ public class BossAttack : MonoBehaviour
                 fog.SetTarget(spawnedOrb);
                 fog.StartMoving();
             }
-
-            Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
     }
 
