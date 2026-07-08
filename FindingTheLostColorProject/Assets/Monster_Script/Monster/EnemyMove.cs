@@ -135,7 +135,7 @@ public class EnemyMove : MonoBehaviour
         float moveSpeed = isChasing ? speed * 1.5f : speed;
 
         // 이동 방향 앞에 벽이 있는지 검사
-        float rayDistance = 0.1f;
+        float rayDistance = 0.2f;
 
         RaycastHit2D wallHit = Physics2D.BoxCast(
              col.bounds.center,

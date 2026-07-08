@@ -345,8 +345,10 @@ public class NormalMonster : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (isPurified) return;
+        // 보스는 BossAttack의 별도 contactHitbox로만 접촉 피해를 관리하므로,
+        // 여기서 중복으로 데미지를 주지 않도록 제외 (0.5 데미지가 섞여 들어오는 원인이었음)
+        if (GetComponent<BossAttack>() != null) return;
 
-        // 플레이어 감지 및 데미지 전달
         PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
         if (player == null) player = collision.gameObject.GetComponentInParent<PlayerHealth>();
 
@@ -360,6 +362,7 @@ public class NormalMonster : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (isPurified) return;
+        if (GetComponent<BossAttack>() != null) return;
 
         PlayerHealth player = collision.GetComponent<PlayerHealth>();
         if (player == null) player = collision.GetComponentInParent<PlayerHealth>();

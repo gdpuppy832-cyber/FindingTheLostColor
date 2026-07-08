@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 public class B_EnemyMove : MonoBehaviour
 {
-    public float speed = 1.5f;
+    public float speed = 0.75f;
     Transform target;
     public float range;
     float timer = 0;
@@ -121,7 +121,7 @@ public class B_EnemyMove : MonoBehaviour
 
         float moveSpeed = isChasing ? speed * 1.5f : speed;
 
-        float rayDistance = 0.1f;
+        float rayDistance = 0.2f;
 
         RaycastHit2D wallHit = Physics2D.BoxCast(
             col.bounds.center,
