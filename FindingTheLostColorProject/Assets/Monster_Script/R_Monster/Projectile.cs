@@ -7,6 +7,9 @@ public class Projectile : MonoBehaviour
     public float blinkInterval = 0.1f; // 반짝임 간격
     public bool reusable = false;      // true면 Destroy 대신 비활성화만 함 (자식으로 미리 배치된 투사체용)
     public Transform homeParent;       // 재사용 모드일 때 되돌아갈 부모 (T_EnemyAttack이 발사 직전에 직접 지정)
+
+    public float offscreenMargin = 0.5f;
+
     SpriteRenderer sr;
     Camera mainCam;
     Rigidbody2D rb;
@@ -47,10 +50,14 @@ public class Projectile : MonoBehaviour
         if (reusable && !gameObject.activeSelf) return; // 숨겨진 상태면 화면 밖 체크 스킵
 
         Vector3 viewportPos = mainCam.WorldToViewportPoint(transform.position);
-        bool onScreen = viewportPos.z > 0f &&
-                         viewportPos.x > 0f && viewportPos.x < 1f &&
-                         viewportPos.y > 0f && viewportPos.y < 1f;
-        if (!onScreen)
+
+        // 뷰포트 기준 0~1이 화면 안쪽. offscreenMargin만큼 여유를 둬서,
+        // 화면 경계를 살짝 벗어나는 정도로는 사라지지 않고 그보다 더 멀리 나가야 소멸함
+        bool tooFarOffscreen = viewportPos.z < 0f ||
+                                viewportPos.x < -offscreenMargin || viewportPos.x > 1f + offscreenMargin ||
+                                viewportPos.y < -offscreenMargin || viewportPos.y > 1f + offscreenMargin;
+
+        if (tooFarOffscreen)
             Despawn();
     }
 

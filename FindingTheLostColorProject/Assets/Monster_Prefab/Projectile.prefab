@@ -143,3 +143,6 @@ MonoBehaviour:
   lifetime: 3
   blinkTime: 1
   blinkInterval: 0.1
+  reusable: 0
+  homeParent: {fileID: 0}
+  offscreenMargin: 0.1
