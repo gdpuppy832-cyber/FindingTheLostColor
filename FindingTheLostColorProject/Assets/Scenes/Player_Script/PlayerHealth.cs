@@ -45,12 +45,18 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("피격 시 공중으로 뜨는 수직 힘 (기본값: 3.5)")]
     [SerializeField] private float knockbackUpwardForce = 3.5f;
 
+    [Tooltip("체력이 0이 되었을 때, 피격 모션을 보여준 뒤 사망 모션으로 넘어갈 유예 시간 (초, 기본값: 0.35초)")]
+    [SerializeField] private float deathDelayAfterHurt = 0.35f;
+
     [Header("Animator Settings")]
     [Tooltip("플레이어의 Animator (비어있으면 자동으로 검색)")]
     public Animator animator;
 
     [Tooltip("피해 사망 시 실행할 Animator Trigger 이름")]
     public string deathTriggerName = "Die";
+
+    [Tooltip("피격 시 실행할 Animator Trigger 이름")]
+    public string hurtTriggerName = "Hurt";
 
     [Header("Death Settings")]
     [Tooltip("사망 감지 Y축 좌표 (이 값보다 밑으로 내려가면 추락사)")]
@@ -119,6 +125,12 @@ public class PlayerHealth : MonoBehaviour
             }
         }
 
+        // 시작 시 애니메이터 IsDead 상태 리셋
+        if (animator != null)
+        {
+            animator.SetBool("IsDead", false);
+        }
+
         // 슬라이더 UI 초기 설정
         if (hpSlider != null)
         {
@@ -134,7 +146,6 @@ public class PlayerHealth : MonoBehaviour
     void Update()
     {
         // 낭떠러지 추락 감지 (사망하지 않았고 Y축 좌표가 기준치 이하일 때)
-        // 무적 상태(isInvincible)일지라도 즉시 추락사 처리되도록 예외 없이 동작
         if (!isDead && transform.position.y < deathYThreshold)
         {
             isInvincible = false; // 무적 강제 해제
@@ -301,13 +312,40 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Die(isFalling: false);
+            // [수정] 피격 직후 사망 연출을 위해 코루틴 실행 (피격모션 -> 대기 -> 사망모션)
+            StartCoroutine(HurtThenDieRoutine());
         }
         else
         {
-            // 데미지를 입고 살아있다면 0.5초간 무적 및 깜빡임 처리
+            // 피격 시 살아있는 경우 피격(Hurt) 애니메이션 트리거 재생
+            if (animator != null && !string.IsNullOrEmpty(hurtTriggerName))
+            {
+                Debug.Log($"[PlayerHealth] 피격 애니메이션 트리거 '{hurtTriggerName}'을 호출했습니다.");
+                animator.SetTrigger(hurtTriggerName);
+            }
+
+            // 데미지를 입고 살아있다면 1.2초간 무적 및 깜빡임 처리
             StartCoroutine(InvincibilityRoutine());
         }
+    }
+
+    /// <summary>
+    /// [수정] 피격당해 아파하며 넉백되는 모션(Hurt)을 살짝 보여준 뒤 사망 처리(Die)로 연계하는 코루틴
+    /// </summary>
+    private System.Collections.IEnumerator HurtThenDieRoutine()
+    {
+        // 1. 먼저 피격 애니메이션 트리거 재생
+        if (animator != null && !string.IsNullOrEmpty(hurtTriggerName))
+        {
+            Debug.Log($"[PlayerHealth] 피격 후 사망 연출 시작! 피격 트리거 '{hurtTriggerName}' 호출.");
+            animator.SetTrigger(hurtTriggerName);
+        }
+
+        // 2. 피격 넉백 포즈 연출 시간만큼 대기 (기본값: 0.35초)
+        yield return new WaitForSeconds(deathDelayAfterHurt);
+
+        // 3. 대기 후 최종 사망 처리 실행 (Die 트리거 발동)
+        Die(isFalling: false);
     }
 
     /// <summary>
@@ -333,6 +371,7 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="isFalling">추락사 여부</param>
     private void Die(bool isFalling)
     {
+        // 이미 사망 체크 완료되었으면 중복 진입 방지 (HurtThenDie 연계 시 필요)
         if (isDead) return;
         isDead = true;
         isInvincible = false;
@@ -386,6 +425,9 @@ public class PlayerHealth : MonoBehaviour
             {
                 Debug.Log($"[PlayerHealth] '{deathTriggerName}' 애니메이션 트리거를 호출했습니다.");
                 animator.SetTrigger(deathTriggerName);
+                
+                // 애니메이터 가로채기 방지를 위해 IsDead Bool 변수도 true로 켜줍니다.
+                animator.SetBool("IsDead", true);
             }
             else
             {
@@ -400,12 +442,13 @@ public class PlayerHealth : MonoBehaviour
                 }
             }
 
-            // 물리적 멈춤 처리
+            // 물리적 멈춤 처리 (수직 낙하는 허용하되, 좌우 미끄러짐 및 자전은 차단)
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.bodyType = RigidbodyType2D.Kinematic; // 미끄러짐 방지
+                rb.bodyType = RigidbodyType2D.Dynamic; // 물리 낙하가 가능하도록 다이내믹 유지
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y); // 수평 속도 리셋
+                rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation; // X축 미끄러짐 방지 및 회전 고정
             }
 
             // 피해 사망 연출 진행 후 재시작 대기

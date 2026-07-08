@@ -54,12 +54,28 @@ public class PlayerMove : MonoBehaviour
             {
                 if (jumpCount < 2 && Time.time - lastJumpTime >= jumpDelay)
                 {
+                    // 낙하 중 점프 시 중력 속도에 의해 점프가 씹히는 현상을 방지하기 위해 Y축 속도만 0으로 초기화
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
                     // 점프 시 X축 속도는 유지하여 벽에서 점프 시 튕겨 나가게 함
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                    rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+
+                    // 공중에서 두 번째 점프를 가했을 때를 '더블점프'로 명확히 판정하여 신호 전송
+                    if (jumpCount == 1)
+                    {
+                        Debug.Log("[PlayerMove] 공중 더블점프(2단 점프) 작동!");
+                        if (animator != null)
+                        {
+                            animator.SetTrigger("DoubleJump");
+                        }
+                    }
+                    else
+                    {
+                        animator.SetTrigger("OnJump");
+                    }
+
                     jumpCount++;
                     lastJumpTime = Time.time;
                     isGrounded = false;
-                    animator.SetTrigger("OnJump");
                 }
             }
 

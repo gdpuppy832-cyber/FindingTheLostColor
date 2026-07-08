@@ -1,24 +1,22 @@
 using UnityEngine;
 
-
 public class BlackFog : MonoBehaviour
 {
-    [Header("Å¸°Ù (»öÃ¤ ±¸½½)")]
-    public Transform target; // ºñ¿öµÎ¸é ¾À¿¡¼­ ColorOrb¸¦ ÀÚµ¿ Å½»ö
+    [Header("??? (??a ????)")]
+    public Transform target; // ????? ?????? ColorOrb?? ??? ???
 
-    public enum FogSide { Left, Right } // ±¸½½ ±âÁØ ¾î´À ÂÊ¿¡¼­ ¼ÒÈ¯µÉÁö (ÀÎ½ºÆåÅÍ¿¡¼­ ¸í½ÃÀûÀ¸·Î ÁöÁ¤)
+    public enum FogSide { Left, Right } // ???? ???? ??? ????? ??????? (????????? ????????? ????)
 
-    [Header("ÀÌµ¿ ¼³Á¤")]
-    public FogSide side = FogSide.Left;  // ÁÂ/¿ì °¢°¢ º°µµÀÇ ¾È°³ ¿ÀºêÁ§Æ®·Î ¹èÄ¡ÇÏ¹Ç·Î, À§Ä¡ Ãß·Ğ ´ë½Å Á÷Á¢ ÁöÁ¤
-    public float spawnDistanceX = 10f;   // ±¸½½ ±âÁØ XÃàÀ¸·Î ÀÌ¸¸Å­ ¶³¾îÁø À§Ä¡¿¡¼­ ½ÃÀÛ
-    public float travelDuration = 10f;   // ¹æÇØ ¾øÀÌ ±¸½½±îÁö µµ´ŞÇÏ´Â µ¥ °É¸®´Â ½Ã°£ (ÀÌ °ªÀ¸·Î ÀüÁø ¼Óµµ°¡ °è»êµÊ)
-    public float pushBackSpeed = -1f;    // °ø°İ¹Ş´Â µ¿¾È ¹Ğ·Á³ª´Â ¼Óµµ (À½¼ö·Î µÎ¸é ÀüÁø ¼Óµµ¿Í µ¿ÀÏÇÏ°Ô ÀÚµ¿ ¼³Á¤)
+    [Header("??? ????")]
+    public FogSide side = FogSide.Left;  // ??/?? ???? ?????? ??? ????????? ???????, ??? ??? ??? ???? ????
+    public float spawnDistanceX = 10f;   // ???? ???? X?????? ???? ?????? ??????? ????
+    public float travelDuration = 10f;   // ???? ???? ???????? ??????? ?? ????? ?? (?? ?????? ???? ????? ????)
+    public float pushBackSpeed = -1f;    // ?????? ???? ?????? ??? (?????? ?? ???? ????? ??????? ??? ????)
 
-    [Header("ÇÇÇØ ¼³Á¤")]
-    public float damagePerSecond = 1f;   // ¾È°³ ¹üÀ§ ¾È¿¡ ±¸½½ÀÌ ÀÖÀ» ¶§ ÃÊ´ç ÇÇÇØ·®
+    [Header("???? ????")]
+    public float damagePerSecond = 1f;   // ??? ???? ??? ?????? ???? ?? ??? ?????
 
-    [Header("ÇÇ°İ ÆÇÁ¤ (ÇÃ·¹ÀÌ¾î º×Áú)")]
-    // attackRadius ´ë½Å, ¾È°³ ¿ÀºêÁ§Æ®(¶Ç´Â ÀÚ½Ä)¿¡ ºÙÀº Äİ¶óÀÌ´õÀÇ ½ÇÁ¦ ¸ğ¾çÀ» ±×´ë·Î ÆÇÁ¤ ±âÁØÀ¸·Î »ç¿ë
+    [Header("??? ???? (????? ????)")]
     Collider2D hitCollider;
 
     float forwardSpeed;
@@ -26,22 +24,27 @@ public class BlackFog : MonoBehaviour
     ColorOrb orbTarget;
 
     public float velocitySmoothTime = 0.3f;
-    float currentVelocityX = 0f;   // ÇöÀç ½ÇÁ¦·Î Àû¿ë ÁßÀÎ XÃà ¼Óµµ (ºÎµå·´°Ô º¸°£µÇ´Â °ª)
-    float velocitySmoothRef = 0f;  // SmoothDamp ³»ºÎ ÂüÁ¶ º¯¼ö
+    float currentVelocityX = 0f;   // ???? ?????? ???? ???? X?? ??? (??? ??????? ??)
+    float velocitySmoothRef = 0f;  // SmoothDamp ???? ???? ????
 
-    // CursorController¸¦ ¼öÁ¤ÇÒ ¼ö ¾øÀ¸¹Ç·Î, ¾È°³°¡ ½º½º·Î ¸¶¿ì½º/º× À§Ä¡¿Í ÁÂÅ¬¸¯ ¿©ºÎ¸¦ °¨ÁöÇÔ
-    Transform cursorTransform; // ¾ÀÀÇ CursorController ¿ÀºêÁ§Æ® (¸¶¿ì½º¸¦ µû¶ó´Ù´Ï´Â ±× ¿ÀºêÁ§Æ®)
-    GaugeController gaugeController; // ¹°°¨ ÀÜ·® È®ÀÎ¿ë
-    PlayerHealth playerHealth; // »ç¸Á/ÇÇ°İ »óÅÂ È®ÀÎ¿ë
+    Transform cursorTransform; // ???? CursorController ??????? (???J?? ??????? ?? ???????)
+    GaugeController gaugeController; // ???? ??? ???
+    PlayerHealth playerHealth; // ???/??? ???? ???
     bool isBeingAttacked = false;
 
-    // 2ÆäÀÌÁî°¡ ½ÃÀÛµÇ±â Àü±îÁö´Â ¾È°³°¡ Á¦ÀÚ¸®¿¡¼­ ´ë±âÇÔ (BossAttackÀÌ StartMoving()À» È£ÃâÇÏ¸é true·Î ÀüÈ¯)
+    // 2?????? ?????? ???????? ????? ????????? ????? (BossAttack?? StartMoving()?? ?????? true?? ???)
     bool isActivated = false;
 
+    private CursorController cachedCursorController; // ìºì‹±ëœ ì»¤ì„œ ì»¨íŠ¸ë¡¤ëŸ¬ ì°¸ì¡°
 
-    // ¿ÜºÎ(BossAttack)¿¡¼­ ¸í½ÃÀûÀ¸·Î Å¸°Ù ±¸½½À» ÁöÁ¤ÇÒ ¶§ È£Ãâ.
-    // Start()¿¡¼­ ¾ÀÀ» ÀÚµ¿ Å½»öÇØ ¾û¶×ÇÑ(±âÁ¸) ±¸½½À» ÀÌ¹Ì Ã£¾Æµ×´õ¶óµµ,
-    // ÀÌ ÇÔ¼ö°¡ È£ÃâµÇ¸é ±× °ªÀ» µ¤¾î½á¼­ Á¤È®È÷ ÀÌ ±¸½½À» ÂÑ¾Æ°¡°Ô µÊ
+    [Header("Explosion Push Settings")]
+    [Tooltip("í­ë°œë¡œ ë°€ë ¤ë‚  ë•Œì˜ ë¶€ë“œëŸ¬ìš´ ê°ì† ì†ë„ ë°°ìœ¨ (ë†’ì„ìˆ˜ë¡ ë¹ ë¥´ê²Œ ì´ë™, ê¸°ë³¸ê°’: 5.0)")]
+    [SerializeField] private float explosionPushLerpSpeed = 5.0f;
+
+    // í­ë°œ ë„‰ë°± ë‚´ë¶€ ìƒíƒœ ë³€ìˆ˜
+    private float targetPushX;
+    private bool isPushingByExplosion = false;
+
     public void SetTarget(ColorOrb orb)
     {
         if (orb == null) return;
@@ -49,9 +52,6 @@ public class BlackFog : MonoBehaviour
         orbTarget = orb;
     }
 
-    // target ±âÁØÀ¸·Î side ¹æÇâ¿¡ spawnDistanceX¸¸Å­ ¶³¾îÁø À§Ä¡·Î ÀÌµ¿½ÃÅ´
-    // X´Â spawnDistanceX¸¸Å­ ¶³¾îÁø À§Ä¡·Î, Y´Â ±¸½½°ú °°Àº ³ôÀÌ·Î ¸ÂÃç¼­
-    // Äİ¶óÀÌ´õ°¡ ÀüÁøÇßÀ» ¶§ ½ÇÁ¦·Î ±¸½½°ú °ãÄ¥ ¼ö ÀÖµµ·Ï ÇÔ
     void PositionAtSpawnDistance()
     {
         if (target == null) return;
@@ -64,7 +64,6 @@ public class BlackFog : MonoBehaviour
 
     public void StartMoving()
     {
-        // targetÀ» ¾ÆÁ÷ ¸ø Ã£¾Ò´Ù¸é ÀÌÁ¦¼­¾ß(±¸½½ÀÌ »ı¼ºµÈ µÚ) ´Ù½Ã Å½»ö
         if (target == null)
         {
             ColorOrb foundOrb = FindFirstObjectByType<ColorOrb>();
@@ -77,15 +76,9 @@ public class BlackFog : MonoBehaviour
 
         if (target != null)
         {
-            // spawnDistanceX ±âÁØÀ¸·Î ±¸½½¿¡¼­ side ¹æÇâÀ¸·Î ¶³¾îÁø À§Ä¡¿¡ ¹èÄ¡
             PositionAtSpawnDistance();
-
             spawnPosition = transform.position;
 
-            // Äİ¶óÀÌ´õ °¡ÀåÀÚ¸®°¡ µµ´Ş ±âÁØÀÌ¹Ç·Î(Update()ÀÇ pivotStopX¿Í µ¿ÀÏÇÑ °è»ê),
-            // ½ÇÁ¦·Î ¸ØÃß´Â ÁöÁ¡±îÁöÀÇ °Å¸®¸¦ ±âÁØÀ¸·Î ¼Óµµ¸¦ °è»êÇØ¾ß travelDurationÀÌ Á¤È®È÷ ÁöÄÑÁü.
-            // (ÀÌÀü¿£ target.position±îÁöÀÇ ÀüÃ¼ °Å¸®·Î ¼Óµµ¸¦ °è»êÇß´Âµ¥,
-            //  ½ÇÁ¦·Î´Â halfWidth¸¸Å­ ¸ø ¹ÌÃÄ¼­ ¸ØÃß±â ¶§¹®¿¡ travelDurationº¸´Ù ÀÏÂï µµÂøÇÏ´Â ¹®Á¦°¡ ÀÖ¾úÀ½)
             float dir = (side == FogSide.Left) ? -1f : 1f;
             float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;
             float pivotStopX = target.position.x + dir * halfWidth;
@@ -106,20 +99,20 @@ public class BlackFog : MonoBehaviour
             if (foundOrb != null) target = foundOrb.transform;
         }
 
-        // CursorController´Â ¼öÁ¤ÇÏÁö ¾Ê°í, ¾À¿¡¼­ ±× ¿ÀºêÁ§Æ®¸¦ Ã£¾Æ À§Ä¡¸¸ ÀĞ¾î¿È
         CursorController cursor = FindFirstObjectByType<CursorController>();
-        if (cursor != null) cursorTransform = cursor.transform;
+        if (cursor != null)
+        {
+            cursorTransform = cursor.transform;
+            cachedCursorController = cursor;
+        }
 
         gaugeController = FindFirstObjectByType<GaugeController>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
 
-        // º×Áú ÇÇ°İ ÆÇÁ¤¿¡ »ç¿ëÇÒ Äİ¶óÀÌ´õ¸¦ ¹Ì¸® Ã£¾ÆµÒ (º»Ã¼ ¿ì¼±, ¾øÀ¸¸é ÀÚ½Ä¿¡¼­ Å½»ö)
         hitCollider = GetComponent<Collider2D>();
         if (hitCollider == null) hitCollider = GetComponentInChildren<Collider2D>();
 
         if (target != null) orbTarget = target.GetComponent<ColorOrb>();
-
-        // targetÀÌ ÀÌ¹Ì ¿¬°áµÇ¾î ÀÖ´Ù¸é(ÀÎ½ºÆåÅÍ¿¡¼­ Á÷Á¢ ¿¬°áÇÑ °æ¿ì) ¿©±â¼­ ¹Ù·Î ¹èÄ¡
         if (target != null) PositionAtSpawnDistance();
 
         spawnPosition = transform.position;
@@ -128,46 +121,56 @@ public class BlackFog : MonoBehaviour
     void Update()
     {
         if (target == null) return;
-        if (!isActivated) return; // 2ÆäÀÌÁî°¡ ½ÃÀÛµÇ±â Àü±îÁö´Â ¿òÁ÷ÀÌÁöµµ, ÇÇÇØ¸¦ ÁÖÁöµµ ¾ÊÀ½
+        if (!isActivated) return;
 
-        float dir = (side == FogSide.Left) ? -1f : 1f; // ±¸½½ ±âÁØ ¾È°³°¡ ÀÖ´Â ÂÊ ¹æÇâ (Start¿¡¼­ Á¤ÇÑ side¿Í µ¿ÀÏÇÏ°Ô À¯Áö)
+        float dir = (side == FogSide.Left) ? -1f : 1f;
 
-        // º×Áú ÆÇÁ¤: CursorControllerÀÇ canDraw¿Í µ¿ÀÏÇÑ Á¶°Ç - ½ÇÁ¦·Î Æ®·¹ÀÏ¿¡ »öÀÌ ³ª¿À´Â »óÅÂÀÏ ¶§¸¸ "°ø°İ¹Ş´Â Áß"À¸·Î ÆÇÁ¤
-        bool hasPaint = gaugeController == null || gaugeController.currentPaint >= gaugeController.minPaintToDraw;
-        bool needsReclick = gaugeController != null && gaugeController.NeedsReclick;
-        bool isDead = playerHealth != null && playerHealth.IsDead;
-        bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
-        bool canDraw = Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
-
-        isBeingAttacked = false;
-        if (cursorTransform != null && hitCollider != null && canDraw)
+        if (isPushingByExplosion)
         {
-            if (hitCollider.OverlapPoint(cursorTransform.position))
+            // [ë¶€ë“œëŸ¬ìš´ ë°€ë¦¼ ì—°ì¶œ] í­ë°œ í”¼ê²© ì‹œ ëª©í‘œ ì§€ì (targetPushX)ìœ¼ë¡œ ë¶€ë“œëŸ½ê²Œ ì´ë™(Lerp)ì‹œí‚µë‹ˆë‹¤.
+            float newX = Mathf.Lerp(transform.position.x, targetPushX, Time.deltaTime * explosionPushLerpSpeed);
+            transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+
+            // ê±°ì˜ ê·¼ì ‘í•˜ê²Œ ë„ë‹¬í•˜ë©´ ë„‰ë°± ìƒíƒœë¥¼ í•´ì œí•˜ì—¬ ìì—°ìŠ¤ëŸ½ê²Œ ë‹¤ì‹œ ë³µêµ¬
+            if (Mathf.Abs(transform.position.x - targetPushX) < 0.05f)
             {
-                isBeingAttacked = true;
+                transform.position = new Vector3(targetPushX, transform.position.y, transform.position.z);
+                isPushingByExplosion = false;
             }
         }
+        else
+        {
+            // ê¸°ì¡´ 1ë²ˆ ë¸ŒëŸ¬ì‹œ ê³µê²© ë° ìë™ ì „ì§„ ì²˜ë¦¬
+            bool hasPaint = gaugeController == null || gaugeController.currentPaint >= gaugeController.minPaintToDraw;
+            bool needsReclick = gaugeController != null && gaugeController.NeedsReclick;
+            bool isDead = playerHealth != null && playerHealth.IsDead;
+            bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
 
-        // ¸ñÇ¥ ¼Óµµ(ÀüÁøÀº -forwardSpeed, ¹Ğ·Á³²Àº +pushBackSpeed) »çÀÌ¸¦ ºÎµå·´°Ô º¸°£
-        // -> º×ÁúÀÌ ½ÃÀÛ/Á¾·áµÇ´Â ¼ø°£ ¼Óµµ°¡ ¶Ò ²÷±âÁö ¾Ê°í ¼­¼­È÷ ÀüÈ¯µÊ
-        float targetVelocityX = isBeingAttacked ? (dir * pushBackSpeed) : (-dir * forwardSpeed);
-        currentVelocityX = Mathf.SmoothDamp(currentVelocityX, targetVelocityX, ref velocitySmoothRef, velocitySmoothTime);
+            bool isMode1 = cachedCursorController != null && cachedCursorController.attackMode == 1;
+            bool canDraw = isMode1 && Input.GetMouseButton(0) && hasPaint && !needsReclick && !isDead && !isDrawBlocked;
 
-        transform.position += new Vector3(currentVelocityX * Time.deltaTime, 0f, 0f);
+            isBeingAttacked = false;
+            if (cursorTransform != null && hitCollider != null && canDraw)
+            {
+                if (hitCollider.OverlapPoint(cursorTransform.position))
+                {
+                    isBeingAttacked = true;
+                }
+            }
 
+            float targetVelocityX = isBeingAttacked ? (dir * pushBackSpeed) : (-dir * forwardSpeed);
+            currentVelocityX = Mathf.SmoothDamp(currentVelocityX, targetVelocityX, ref velocitySmoothRef, velocitySmoothTime);
 
-        float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;
-        float pivotStopX = target.position.x + dir * halfWidth;
-        float minX = Mathf.Min(pivotStopX, spawnPosition.x);
-        float maxX = Mathf.Max(pivotStopX, spawnPosition.x);
-        float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);
-        transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
+            transform.position += new Vector3(currentVelocityX * Time.deltaTime, 0f, 0f);
 
+            float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;
+            float pivotStopX = target.position.x + dir * halfWidth;
+            float minX = Mathf.Min(pivotStopX, spawnPosition.x);
+            float maxX = Mathf.Max(pivotStopX, spawnPosition.x);
+            float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);
+            transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
+        }
 
-        // ¾È°³ Äİ¶óÀÌ´õ ¸ğ¾ç ¾È¿¡ ±¸½½ÀÌ µé¾î¿Í ÀÖÀ¸¸é ÃÊ´ç ÇÇÇØ
-        // (¿øÇü ¹İ°æ ´ë½Å Äİ¶óÀÌ´õÀÇ ½ÇÁ¦ ¸ğ¾çÀ» ±×´ë·Î »ç¿ë - attackRadius ÆÇÁ¤°ú µ¿ÀÏÇÑ ¹æ½Ä)
-        bool overlapping = hitCollider != null && hitCollider.OverlapPoint(target.position);
-        
         if (orbTarget != null && hitCollider != null)
         {
             if (hitCollider.OverlapPoint(target.position))
@@ -175,12 +178,33 @@ public class BlackFog : MonoBehaviour
                 orbTarget.TakeDamage(damagePerSecond * Time.deltaTime);
             }
         }
+    }
 
+    // [ìˆ˜ì •] 2ë²ˆ ì°¨ì§• ëª¨ë“œ ë°œì‚¬ ì‹œ(ë§ˆìš°ìŠ¤ ë—„ ë•Œ) í­ë°œ íš¨ê³¼ë¡œ ì¸í•´ ì•ˆê°œë¥¼ ì¦‰ì‹œê°€ ì•„ë‹Œ ë¶€ë“œëŸ½ê²Œ ë„‰ë°±ì‹œí‚¤ëŠ” ë°©ì‹
+    public void PushBack(float amount)
+    {
+        float dir = (side == FogSide.Left) ? -1f : 1f;
+        
+        // ë¶€ë“œëŸ½ê²Œ ì´ë™ì‹œí‚¬ ëª©í‘œ ì¢Œí‘œ ì„¤ì •
+        targetPushX = transform.position.x + (dir * amount);
+
+        // í´ë¨í”„ ë²”ìœ„ë¥¼ ë¯¸ë¦¬ ê³„ì‚°í•˜ì—¬ ëª©í‘œì§€ì  ìì²´ê°€ ì˜¤ì°¨ë²”ìœ„ë¥¼ ë²—ì–´ë‚˜ì§€ ì•Šë„ë¡ ëŒ€ì…
+        if (target != null)
+        {
+            float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;
+            float pivotStopX = target.position.x + dir * halfWidth;
+            float minX = Mathf.Min(pivotStopX, spawnPosition.x);
+            float maxX = Mathf.Max(pivotStopX, spawnPosition.x);
+            targetPushX = Mathf.Clamp(targetPushX, minX, maxX);
+        }
+
+        // ë¶€ë“œëŸ¬ìš´ ë„‰ë°± ëª¨ë“œ ê°€ë™
+        isPushingByExplosion = true;
+        Debug.Log($"[BlackFog] ì°¨ì§• ìƒ· í­ë°œ íƒ€ê²©! ì•ˆê°œê°€ {targetPushX} ì§€ì ì„ í–¥í•´ ë¶€ë“œëŸ½ê²Œ ë°€ë ¤ë‚©ë‹ˆë‹¤.");
     }
 
     private void OnDrawGizmosSelected()
     {
-        // fogRadius°¡ »ç¶óÁ³À¸¹Ç·Î, ´ë½Å ½ÇÁ¦ ÆÇÁ¤¿¡ ¾²ÀÌ´Â Äİ¶óÀÌ´õÀÇ ¹Ù¿îµå¸¦ Ç¥½Ã
         if (hitCollider != null)
         {
             Gizmos.color = new Color(0f, 0f, 0f, 0.4f);

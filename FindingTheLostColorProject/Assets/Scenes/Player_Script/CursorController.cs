@@ -70,6 +70,10 @@ public class CursorController : MonoBehaviour
     [Tooltip("별똥별 지형 충돌 시 폭발 피해 반경 (기본값: 1.8)")]
     [SerializeField] private float meteorExplosionRadius = 1.8f;
 
+    [Header("Charge Attack Black Fog Settings")]
+    [Tooltip("2번 공격 폭발 시 검은 안개(BlackFog)를 부드럽게 밀어낼 거리 수치 (기본값: 2.5)")]
+    [SerializeField] private float chargeFogPushAmount = 2.5f;
+
     [Header("Super Ultimate Spawn Settings (Min/Max Ranges)")]
     [Tooltip("별똥별 낙하 대상 최소 범위 (플레이어 기준 최소 빗겨날 거리, 기본값: 2.0)")]
     [SerializeField] private float minSpawnRange = 2.0f;
@@ -212,10 +216,22 @@ public class CursorController : MonoBehaviour
             // 2번 방식: 1초간 마우스 차징 후 손을 뗄 때 공격
             canDraw = false; // 차징 중에는 일반 붓질 트레일을 그리지 않음
 
-            // 발사에 필요한 물감 비용(chargePaintCost)보다 현재 게이지가 많을 때만 차징을 시작할 수 있음
-            bool hasEnoughPaintForCharge = gaugeController != null && gaugeController.currentPaint >= chargePaintCost;
+            // [버그 수정] 차징을 시작할 때(timer == 0)는 chargePaintCost 이상의 물감이 있어야 하나, 
+            // 이미 차징을 시작해서 진행 중일 때는 물감이 minPaintToDraw(0.02) 이하로 완전히 바닥나지 않는 한 차징 상태를 계속 유지합니다.
+            bool canStartOrContinueCharge = false;
+            if (gaugeController != null)
+            {
+                if (chargeTimer > 0f)
+                {
+                    canStartOrContinueCharge = gaugeController.currentPaint >= gaugeController.minPaintToDraw;
+                }
+                else
+                {
+                    canStartOrContinueCharge = gaugeController.currentPaint >= chargePaintCost;
+                }
+            }
 
-            if (isLeftClickHeld && hasEnoughPaintForCharge && !needsReclick && !isDead && !isDrawBlocked)
+            if (isLeftClickHeld && canStartOrContinueCharge && !needsReclick && !isDead && !isDrawBlocked)
             {
                 // 이전 발사 코루틴이 돌고 있다면 즉시 멈추고 초기화
                 if (releaseEffectCoroutine != null)
@@ -575,6 +591,19 @@ public class CursorController : MonoBehaviour
                             SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
                         }
                     }
+                    hitCount++;
+                    continue;
+                }
+
+                // [추가] 검은 안개(BlackFog) 감지 및 인스펙터 지정 거리만큼 즉시 밀어내기 적용
+                BlackFog fog = hitCollider.GetComponent<BlackFog>();
+                if (fog == null) fog = hitCollider.GetComponentInParent<BlackFog>();
+                if (fog != null)
+                {
+                    if (healedObjects.Contains(fog.gameObject)) continue;
+                    healedObjects.Add(fog.gameObject);
+
+                    fog.PushBack(chargeFogPushAmount);
                     hitCount++;
                     continue;
                 }
