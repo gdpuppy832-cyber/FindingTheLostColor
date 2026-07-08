@@ -103,12 +103,12 @@ TextureImporter:
       name: 00_player_IDEL_6_0
       rect:
         serializedVersion: 2
-        x: 118
+        x: 117
         y: 89
         width: 287
         height: 218
       alignment: 9
-      pivot: {x: 0.5, y: 0.7}
+      pivot: {x: 0.3904662, y: 0.595}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
