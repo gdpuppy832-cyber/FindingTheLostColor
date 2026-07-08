@@ -1,0 +1,403 @@
+fileFormatVersion: 2
+guid: d7e618ebd9b14d349aa7667ca9e341a6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5509353958794423153
+    second: 01_CailcoCat_Attack_6_0
+  - first:
+      213: -69114318698081201
+    second: 01_CailcoCat_Attack_6_1
+  - first:
+      213: -5264680792501462764
+    second: 01_CailcoCat_Attack_6_2
+  - first:
+      213: 4030661357059478392
+    second: 01_CailcoCat_Attack_6_3
+  - first:
+      213: 5292633281743123806
+    second: 01_CailcoCat_Attack_6_4
+  - first:
+      213: 4942266648617662552
+    second: 01_CailcoCat_Attack_6_5
+  - first:
+      213: -1374179006027284568
+    second: 01_CailcoCat_Attack_6_6
+  - first:
+      213: 2530500872555322830
+    second: 01_CailcoCat_Attack_6_7
+  - first:
+      213: -1760876590841234600
+    second: 01_CailcoCat_Attack_6_8
+  - first:
+      213: 8255249246371242979
+    second: 01_CailcoCat_Attack_6_9
+  - first:
+      213: -7180324490387393065
+    second: 01_CailcoCat_Attack_6_10
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 323
+        height: 266
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17b65d75c38257c40800000000000000
+      internalID: 5509353958794423153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_1
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 227
+        width: 9
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f449b11b4e47a0ff0800000000000000
+      internalID: -69114318698081201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_2
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 188
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 419d02376b810f6b0800000000000000
+      internalID: -5264680792501462764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_3
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 169
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8739c6d1629cfe730800000000000000
+      internalID: 4030661357059478392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_4
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 118
+        width: 31
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5575bc9de5337940800000000000000
+      internalID: 5292633281743123806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_5
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 102
+        width: 31
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 858bd18e455769440800000000000000
+      internalID: 4942266648617662552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_6
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 101
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8afb1f7897fedece0800000000000000
+      internalID: -1374179006027284568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_7
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 73
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecdd97ce2252e1320800000000000000
+      internalID: 2530500872555322830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_8
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 48
+        width: 28
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85b7b95f11c1097e0800000000000000
+      internalID: -1760876590841234600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_9
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 36
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e3e44e8379809270800000000000000
+      internalID: 8255249246371242979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 01_CailcoCat_Attack_6_10
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 32
+        width: 40
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d5fb624bec5a5c90800000000000000
+      internalID: -7180324490387393065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a8b90b19a5fce9b48adb17c2be74a16a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      01_CailcoCat_Attack_6_0: 5509353958794423153
+      01_CailcoCat_Attack_6_1: -69114318698081201
+      01_CailcoCat_Attack_6_10: -7180324490387393065
+      01_CailcoCat_Attack_6_2: -5264680792501462764
+      01_CailcoCat_Attack_6_3: 4030661357059478392
+      01_CailcoCat_Attack_6_4: 5292633281743123806
+      01_CailcoCat_Attack_6_5: 4942266648617662552
+      01_CailcoCat_Attack_6_6: -1374179006027284568
+      01_CailcoCat_Attack_6_7: 2530500872555322830
+      01_CailcoCat_Attack_6_8: -1760876590841234600
+      01_CailcoCat_Attack_6_9: 8255249246371242979
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
