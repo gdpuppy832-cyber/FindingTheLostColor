@@ -159,9 +159,8 @@ public class S_MonsterMove : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 순찰 범위 내에서 좌우 이동을 처리합니다.
-    /// </summary>
+    public float wallCheckDistance = 0.2f;
+
     private void UpdateMovement()
     {
         // 방향 전환 때문에 멈춰있는 동안에는 이동을 시도하지 않음
@@ -176,8 +175,31 @@ public class S_MonsterMove : MonoBehaviour
 
         float currentX = transform.position.x;
         float deltaX = currentX - startX;
+        float moveDir = movingRight ? 1f : -1f;
 
-        // 방향 전환 감지: 즉시 방향을 바꾸지 않고, 잠깐 멈췄다가 전환하도록 코루틴 시작
+        // 이동 방향 앞에 벽(platformLayers)이 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
+        Collider2D selfCol = GetComponent<Collider2D>();
+        if (selfCol == null) selfCol = GetComponentInChildren<Collider2D>();
+
+        if (selfCol != null)
+        {
+            RaycastHit2D wallHit = Physics2D.BoxCast(
+                selfCol.bounds.center,
+                selfCol.bounds.size * 0.9f,
+                0f,
+                Vector2.right * moveDir,
+                wallCheckDistance,
+                platformLayers
+            );
+
+            if (wallHit.collider != null && !isPausedForTurn)
+            {
+                StartCoroutine(PauseThenTurn(!movingRight));
+                return; // 방향 전환 코루틴이 시작되면 이번 프레임 이동은 하지 않음
+            }
+        }
+
+        // 방향 전환 감지: 즉시 방향을 바꾸지 않고, 잠깐 멈췄다가 전환하도록 코루틴 시작 (기존 순찰 범위 기준)
         if (movingRight && deltaX >= patrolRange)
         {
             StartCoroutine(PauseThenTurn(false));
@@ -186,8 +208,6 @@ public class S_MonsterMove : MonoBehaviour
         {
             StartCoroutine(PauseThenTurn(true));
         }
-
-        float moveDir = movingRight ? 1f : -1f;
 
         // 물리 엔진(Rigidbody2D)이 달려있으면 속도를 제어하고, 없으면 transform을 직접 이동
         if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)

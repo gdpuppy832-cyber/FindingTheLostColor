@@ -202,7 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 2
   lineWidth: 4
-  telegraphTime: 0.7
+  telegraphTime: 2
   jumpDuration: 0.6
   jumpHeight: 2
   landRadius: 1.5
@@ -229,6 +229,7 @@ MonoBehaviour:
   meleeTelegraphSprite: {fileID: 1240629702977576825}
   meleePostDelay: 0.5
   meleeCooldown: 2
+  contactDamageCooldown: 1
   fallAcceleration: 20
   maxFallTime: 3
   groundCheckRadius: 0.3
@@ -248,6 +249,7 @@ MonoBehaviour:
   range: 6
   chaseRange: 8
   attackStopDistance: 1.5
+  safeDropDistance: 7
   detectionRange: 6
   ambushAnimBool: isAmbushed
   ambushYOffset: 0

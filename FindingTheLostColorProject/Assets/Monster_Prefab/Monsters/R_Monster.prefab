@@ -366,6 +366,7 @@ MonoBehaviour:
   range: 8
   chaseRange: 10
   attackStopDistance: 1.5
+  safeDropDistance: 7
 --- !u!50 &5328816977903137336
 Rigidbody2D:
   serializedVersion: 5

@@ -15,6 +15,9 @@ public class H_MonsterMove : MonoBehaviour
     [Tooltip("공격 직전 멈춰설 대상과의 거리")]
     public float attackStopDistance = 1.5f;
 
+    [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
+    public float safeDropDistance = 3f;
+
     Transform target;
     float timer = 0;
     Vector3 prevposition;
@@ -57,6 +60,7 @@ public class H_MonsterMove : MonoBehaviour
     private Animator animator;
     private bool isAmbushed = true;
     private bool isPouncing = false; // 최초 덮치기 점프 실행 중 여부
+    private H_MonsterAttack attackScript; // 덮치기 발동 범위(lineWidth/attackRange)를 여기서 읽어옴
 
     private Vector3 originalSpriteLocalPos;
     private Vector2 originalColliderOffset;
@@ -105,9 +109,14 @@ public class H_MonsterMove : MonoBehaviour
         if (player != null)
             target = player.transform;
 
+        // 덮치기 발동 범위(lineWidth/attackRange)를 읽어오기 위해 미리 참조 확보
+        attackScript = GetComponent<H_MonsterAttack>();
+        if (attackScript == null) attackScript = GetComponentInChildren<H_MonsterAttack>();
+
         // 게임 시작 시 무조건 잠복 상태로 리셋
         GoToSleep();
     }
+
 
     void Update()
     {
@@ -115,33 +124,43 @@ public class H_MonsterMove : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, target.position);
 
-        // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
-        if (isAmbushed)
+    // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
+    // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
+    if (isAmbushed && !isPouncing)
+    {
+        bool inRange;
+        if (attackScript != null)
         {
-            if (distance <= detectionRange && !isPouncing)
+            float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
+            float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
+            inRange = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
+        }
+        else
+        {
+            // H_MonsterAttack을 못 찾았을 때를 대비한 안전장치용 폴백 (기존 원형 판정)
+            inRange = distance <= detectionRange;
+        }
+
+        if (inRange)
+        {
+            isPouncing = true;
+
+            if (attackScript != null)
             {
-                isPouncing = true;
-
-                // H_MonsterAttack 스크립트가 있다면 최초 덮치기 점프를 즉시 요청
-                H_MonsterAttack attackScript = GetComponent<H_MonsterAttack>();
-                if (attackScript == null) attackScript = GetComponentInChildren<H_MonsterAttack>();
-
-                if (attackScript != null)
-                {
-                    attackScript.TriggerPounce();
-                    Debug.Log($"[H_MonsterMove] {gameObject.name} 플레이어 감지! 최초 돌진 덮치기를 개시합니다.");
-                }
-                else
-                {
-                    // 공격 스크립트가 없을 시 즉시 강제 기상
-                    WakeUp();
-                }
+                attackScript.TriggerPounce();
+                Debug.Log($"[H_MonsterMove] {gameObject.name} 플레이어 감지! 최초 돌진 덮치기를 개시합니다.");
+            }
+            else
+            {
+                // 공격 스크립트가 없을 시 즉시 강제 기상
+                WakeUp();
             }
         }
-        // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
+    }
+    // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
 
-        // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
-        if (isAmbushed)
+    // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
+    if (isAmbushed)
         {
             return;
         }
@@ -229,10 +248,6 @@ public class H_MonsterMove : MonoBehaviour
         // 2. 이동하려는 방향 쪽에 땅이 없으면(절벽) 즉시 반전하지 않고 멈춤 상태로 전환
         bool edgeAhead = (desiredDir < 0f && !groundedLeft) || (desiredDir > 0f && !groundedRight);
 
-        // 유예 시간(ignoreEdgeTimer)은 "배회 모드에서 방금 반전한 방향(moveDir)으로 계속 갈 때"만 적용.
-        // 추적이 반대 방향(절벽 쪽)으로 끌어당기는 경우엔 방향이 다르므로 유예 시간과 무관하게
-        // 항상 절벽을 감지해야 함 - 안 그러면 반전 직후 유예 시간 동안 추적이 절벽 방향으로 끼어들 때
-        // 절벽 감지가 무시된 채 몇 걸음 걸어가버리는 문제가 있음
         bool suppressCheck = !isChasing && ignoreEdgeTimer > 0f && desiredDir == moveDir;
 
         if (edgeAhead && !suppressCheck)
@@ -245,7 +260,7 @@ public class H_MonsterMove : MonoBehaviour
         float moveSpeed = isChasing ? speed * 1.5f : speed;
 
         // 이동 방향 앞에 벽이 있는지 검사
-        float rayDistance = 0.1f;
+        float rayDistance = 0.2f;
 
         RaycastHit2D wallHit = Physics2D.BoxCast(
             col.bounds.center,
@@ -258,6 +273,14 @@ public class H_MonsterMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
+            // (추적 모드에서는 낭떠러지 처리와 마찬가지로 절벽/벽 회피를 강제로 걸지 않음 - 플레이어를 계속 쫓아가려는 의도 유지)
+            if (!isChasing)
+            {
+                isStopped = true;
+                stopTimer = 0f;
+            }
+
             prevposition = transform.position;
             return;
         }
@@ -280,14 +303,21 @@ public class H_MonsterMove : MonoBehaviour
         // 잠복 중에는 고지/낙하 체크 패스
         if (isAmbushed) return;
 
+        // 절벽 감지: 배회 모드에서는 기존처럼 짧은 거리(2)로 엄격하게 감지,
+        // 추적 모드일 때만 safeDropDistance만큼 더 멀리 검사해서 낮은 턱/계단을 내려갈 수 있게 함
         float halfWidth = col.bounds.extents.x;
         float oneThird = halfWidth * 2f / 3f;
 
         Vector2 leftPoint = (Vector2)rigid.position + Vector2.left * oneThird;
         Vector2 rightPoint = (Vector2)rigid.position + Vector2.right * oneThird;
 
-        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
-        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, 2, LayerMask.GetMask("Platform"));
+        float checkDistance = isChasing ? safeDropDistance : 2f;
+
+        Debug.DrawRay(leftPoint, Vector2.down * checkDistance, Color.red);
+        Debug.DrawRay(rightPoint, Vector2.down * checkDistance, Color.blue);
+
+        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
+        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
 
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;

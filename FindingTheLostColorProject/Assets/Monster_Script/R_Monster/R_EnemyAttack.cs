@@ -15,6 +15,7 @@ public class R_EnemyAttack : MonoBehaviour
 
     public SpriteRenderer telegraphSprite; // 일직선 텔레그래프용 (가늘고 긴 사각형 스프라이트, 자식 오브젝트)
     public GameObject projectilePrefab;    // 비워두면 코드에서 임시 도형 생성
+    GameObject projectileTemplate;
 
     bool isAttacking = false;
     bool canAttack = true;
@@ -41,6 +42,14 @@ public class R_EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
         enemyMove = GetComponent<R_EnemyMove>();
         bodyCollider = GetComponent<Collider2D>();
+
+        if (projectilePrefab != null)
+        {
+            projectileTemplate = Instantiate(projectilePrefab, projectilePrefab.transform.position, projectilePrefab.transform.rotation);
+            projectileTemplate.transform.SetParent(null);
+            projectileTemplate.SetActive(false);
+            projectilePrefab.SetActive(false); // 원본은 그냥 숨겨만 두고 다시는 건드리지 않음
+        }
 
         int playerLayer = LayerMask.NameToLayer("Player");
         int monsterLayer = LayerMask.NameToLayer("Monster");
@@ -157,9 +166,10 @@ public class R_EnemyAttack : MonoBehaviour
     void SpawnProjectile(Vector2 fireDir, float angle, Vector2 spawnPos)
     {
         GameObject proj;
-        if (projectilePrefab != null)
+        if (projectileTemplate != null)
         {
-            proj = Instantiate(projectilePrefab, spawnPos, Quaternion.Euler(0f, 0f, angle));
+            proj = Instantiate(projectileTemplate, spawnPos, Quaternion.Euler(0f, 0f, angle));
+            proj.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
         }
         else
         {

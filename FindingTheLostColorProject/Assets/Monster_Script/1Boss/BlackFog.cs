@@ -25,6 +25,10 @@ public class BlackFog : MonoBehaviour
     Vector3 spawnPosition;
     ColorOrb orbTarget;
 
+    public float velocitySmoothTime = 0.3f;
+    float currentVelocityX = 0f;   // 현재 실제로 적용 중인 X축 속도 (부드럽게 보간되는 값)
+    float velocitySmoothRef = 0f;  // SmoothDamp 내부 참조 변수
+
     // CursorController를 수정할 수 없으므로, 안개가 스스로 마우스/붓 위치와 좌클릭 여부를 감지함
     Transform cursorTransform; // 씬의 CursorController 오브젝트 (마우스를 따라다니는 그 오브젝트)
     GaugeController gaugeController; // 물감 잔량 확인용
@@ -144,16 +148,12 @@ public class BlackFog : MonoBehaviour
             }
         }
 
-        if (isBeingAttacked)
-        {
-            // 공격받는 동안: 구슬로부터 멀어지는 방향(원래 소환 위치 쪽)으로 밀려남
-            transform.position += new Vector3(dir * pushBackSpeed * Time.deltaTime, 0f, 0f);
-        }
-        else
-        {
-            // 평소: 구슬을 향해 전진
-            transform.position -= new Vector3(dir * forwardSpeed * Time.deltaTime, 0f, 0f);
-        }
+        // 목표 속도(전진은 -forwardSpeed, 밀려남은 +pushBackSpeed) 사이를 부드럽게 보간
+        // -> 붓질이 시작/종료되는 순간 속도가 뚝 끊기지 않고 서서히 전환됨
+        float targetVelocityX = isBeingAttacked ? (dir * pushBackSpeed) : (-dir * forwardSpeed);
+        currentVelocityX = Mathf.SmoothDamp(currentVelocityX, targetVelocityX, ref velocitySmoothRef, velocitySmoothTime);
+
+        transform.position += new Vector3(currentVelocityX * Time.deltaTime, 0f, 0f);
 
 
         float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;

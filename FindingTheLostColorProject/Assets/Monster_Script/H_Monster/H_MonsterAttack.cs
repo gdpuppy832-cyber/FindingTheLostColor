@@ -253,7 +253,8 @@ public class H_MonsterAttack : MonoBehaviour
         if (enemyMove != null)
             enemyMove.enabled = false;
 
-        // 점프 시작/착지 지점 고정
+        // 점프 시작/착지 지점 고정 (최초 감지 시점의 플레이어 위치를 기준으로 착지 지점을 정하고,
+        // 이후 텔레그래프 대기 시간 동안 플레이어가 움직여도 재계산하지 않음)
         Vector2 startPos = transform.position;
         Vector2 desiredLandPos = target.position;
         Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);

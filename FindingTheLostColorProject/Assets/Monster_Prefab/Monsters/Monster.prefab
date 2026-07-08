@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5525985110957521975}
   - component: {fileID: 3110220901936660074}
-  - component: {fileID: 5612014100559127896}
-  - component: {fileID: 6686519120801493739}
   - component: {fileID: 8147386393899145757}
   - component: {fileID: 3942307000133411523}
+  - component: {fileID: 5612014100559127896}
+  - component: {fileID: 6686519120801493739}
   - component: {fileID: 2915333899100964050}
   m_Layer: 8
   m_Name: Monster
@@ -95,39 +95,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5612014100559127896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 946412894994910540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1a5447c27154b84d91caaf8af4f62b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  telegraphSprite: {fileID: 3486162412084351728}
-  contactHitbox: {fileID: 331626701248160981}
---- !u!114 &6686519120801493739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 946412894994910540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27fa4bac6a2166e469f18c7e1ec96199, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 1.5
-  range: 6
-  chaseRange: 8
-  attackStopDistance: 1.5
 --- !u!61 &8147386393899145757
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -201,6 +168,40 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &5612014100559127896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a5447c27154b84d91caaf8af4f62b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  telegraphSprite: {fileID: 3486162412084351728}
+  contactHitbox: {fileID: 331626701248160981}
+--- !u!114 &6686519120801493739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27fa4bac6a2166e469f18c7e1ec96199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1.5
+  range: 6
+  chaseRange: 8
+  attackStopDistance: 1.5
+  safeDropDistance: 7
 --- !u!114 &2915333899100964050
 MonoBehaviour:
   m_ObjectHideFlags: 0
