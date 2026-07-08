@@ -348,9 +348,10 @@ public class T_EnemyAttack : MonoBehaviour
         pb.targetLayer = targetLayer;
         pb.lifetime = projectileLifetime;
         pb.reusable = true;
-        pb.homeParent = transform; // 재사용 시 되돌아갈 부모 (복제본은 이미 부모 없음)
+        pb.homeParent = transform; 
 
-        // 복제본이라 이미 부모가 없는 상태 — 위치/회전만 갱신
+        childProjectileRuntime.transform.SetParent(null);
+
         childProjectileRuntime.transform.position = spawnPos;
         childProjectileRuntime.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
