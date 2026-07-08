@@ -60,6 +60,7 @@ public class H_MonsterMove : MonoBehaviour
     private Animator animator;
     private bool isAmbushed = true;
     private bool isPouncing = false; // 최초 덮치기 점프 실행 중 여부
+    private H_MonsterAttack attackScript; // 덮치기 발동 범위(lineWidth/attackRange)를 여기서 읽어옴
 
     private Vector3 originalSpriteLocalPos;
     private Vector2 originalColliderOffset;
@@ -108,9 +109,14 @@ public class H_MonsterMove : MonoBehaviour
         if (player != null)
             target = player.transform;
 
+        // 덮치기 발동 범위(lineWidth/attackRange)를 읽어오기 위해 미리 참조 확보
+        attackScript = GetComponent<H_MonsterAttack>();
+        if (attackScript == null) attackScript = GetComponentInChildren<H_MonsterAttack>();
+
         // 게임 시작 시 무조건 잠복 상태로 리셋
         GoToSleep();
     }
+
 
     void Update()
     {
@@ -118,33 +124,43 @@ public class H_MonsterMove : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, target.position);
 
-        // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
-        if (isAmbushed)
+    // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
+    // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
+    if (isAmbushed && !isPouncing)
+    {
+        bool inRange;
+        if (attackScript != null)
         {
-            if (distance <= detectionRange && !isPouncing)
+            float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
+            float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
+            inRange = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
+        }
+        else
+        {
+            // H_MonsterAttack을 못 찾았을 때를 대비한 안전장치용 폴백 (기존 원형 판정)
+            inRange = distance <= detectionRange;
+        }
+
+        if (inRange)
+        {
+            isPouncing = true;
+
+            if (attackScript != null)
             {
-                isPouncing = true;
-
-                // H_MonsterAttack 스크립트가 있다면 최초 덮치기 점프를 즉시 요청
-                H_MonsterAttack attackScript = GetComponent<H_MonsterAttack>();
-                if (attackScript == null) attackScript = GetComponentInChildren<H_MonsterAttack>();
-
-                if (attackScript != null)
-                {
-                    attackScript.TriggerPounce();
-                    Debug.Log($"[H_MonsterMove] {gameObject.name} 플레이어 감지! 최초 돌진 덮치기를 개시합니다.");
-                }
-                else
-                {
-                    // 공격 스크립트가 없을 시 즉시 강제 기상
-                    WakeUp();
-                }
+                attackScript.TriggerPounce();
+                Debug.Log($"[H_MonsterMove] {gameObject.name} 플레이어 감지! 최초 돌진 덮치기를 개시합니다.");
+            }
+            else
+            {
+                // 공격 스크립트가 없을 시 즉시 강제 기상
+                WakeUp();
             }
         }
-        // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
+    }
+    // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
 
-        // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
-        if (isAmbushed)
+    // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
+    if (isAmbushed)
         {
             return;
         }

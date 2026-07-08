@@ -55,7 +55,7 @@ public class T_EnemyAttack : MonoBehaviour
     public float groundCheckRadius = 0.3f;
     public float jumpPostDelay = 3f;
     public float jumpCooldown = 2f;
-
+    public float safeDropDistance = 3f;
     void Start()
     {
         bodyCollider = GetComponent<Collider2D>();
@@ -411,10 +411,8 @@ public class T_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(jumpTelegraphTime);
 
-        // 포물선 점프
+        // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
         float elapsed = 0f;
-        Vector2 lastValidPos = startPos;
-        bool hitCeiling = false;
 
         while (elapsed < jumpDuration)
         {
@@ -425,34 +423,11 @@ public class T_EnemyAttack : MonoBehaviour
 
             Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
 
-            Vector2 moveDir = desiredPos - lastValidPos;
-            float moveDist = moveDir.magnitude;
-            if (moveDist > 0.0001f)
-            {
-                RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
-                if (hit.collider != null)
-                {
-                    desiredPos = hit.point - moveDir.normalized * 0.05f;
-                    hitCeiling = true;
-                }
-            }
-
-            lastValidPos = desiredPos;
             transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
             yield return null;
-
-            if (hitCeiling)
-                break;
         }
 
-        if (hitCeiling)
-        {
-            yield return StartCoroutine(FallToGround());
-        }
-        else
-        {
-            transform.position = landPos;
-        }
+        transform.position = landPos;
 
         yield return new WaitForSeconds(jumpPostDelay);
         if (moveScript != null) moveScript.enabled = true;
@@ -493,7 +468,8 @@ public class T_EnemyAttack : MonoBehaviour
         }
     }
 
-    // isCliff: 경로 중간에 바닥이 끊겨서 착지 지점이 원래 목표(desired)보다 앞에서 잘렸는지 여부
+    // isCliff: 경로 중간에 (safeDropDistance 안에서도) 바닥을 전혀 못 찾거나,
+    // 시작 지점보다 착지 지점이 safeDropDistance 이상 훨씬 낮아서 (진짜 낭떠러지로 추정되어) 취소된 경우 true
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
@@ -505,25 +481,46 @@ public class T_EnemyAttack : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
         Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
+        // 안전장치 1: 시작 지점 기준 착지 지점이 safeDropDistance보다 훨씬 더 아래(진짜 낭떠러지 낙차)면
+        // 애초에 점프 자체를 취소함. 계단 정도의 낙차(safeDropDistance 이내)만 허용.
+        float startGroundY = start.y - footOffset;
+        float landGroundY = targetLandPos.y - footOffset;
+        if (startGroundY - landGroundY > safeDropDistance)
+        {
+            isCliff = true;
+            return start;
+        }
+
         int steps = 10;
         Vector2 lastGroundPos = start;
+        float lastGroundY = startGroundY; // 급격한 단차(중간에 툭 떨어지는 진짜 낭떠러지) 감지용
+
         for (int i = 0; i <= steps; i++)
         {
             float t = (float)i / steps;
             Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-            Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
 
-            bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
+            // 바로 아래(footOffset)만 검사하는 대신, safeDropDistance만큼 더 깊게 검사해서
+            // 그 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함
+            RaycastHit2D dropHit = Physics2D.Raycast(checkPos, Vector2.down, footOffset + safeDropDistance, groundLayer);
 
-            if (foundGround)
+            if (dropHit.collider == null)
             {
-                lastGroundPos = checkPos;
+                // safeDropDistance 안에서도 땅을 전혀 못 찾음 -> 진짜 낭떠러지
+                isCliff = true;
+                return lastGroundPos;
             }
-            else
+
+            // 안전장치 2: 직전 검사 지점의 땅보다 이번 지점의 땅이 safeDropDistance 이상 갑자기 낮아지면
+            // (경로 중간에 급격한 단차/낭떠러지가 있다는 뜻이므로) 취소
+            if (lastGroundY - dropHit.point.y > safeDropDistance)
             {
                 isCliff = true;
                 return lastGroundPos;
             }
+
+            lastGroundPos = checkPos;
+            lastGroundY = dropHit.point.y;
         }
 
         return targetLandPos;
