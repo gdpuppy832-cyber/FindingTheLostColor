@@ -26,6 +26,13 @@ public class NormalMonster : MonoBehaviour
     [Tooltip("체력 회복 시 뜨는 HIT! 텍스트의 TMPro 폰트 에셋 (드래그 앤 드롭 가능)")]
     public TMP_FontAsset hitTextFont;
 
+    [Header("Purification Floating Indicator")]
+    [Tooltip("정화 완료 시 머리 위에 띄울 둥둥이 이미지 프리팹")]
+    public GameObject purificationIndicatorPrefab;
+
+    [Tooltip("머리 위 이미지 소환 시의 Y축 높이 오프셋")]
+    public Vector3 indicatorOffset = new Vector3(0f, 1.5f, 0f);
+
     [Header("Color Fade Settings (물감 칠해지는 색상 연출)")]
     [Tooltip("시작 시 (체력이 0일 때) 몬스터의 색상 (어둡거나 색이 빠진 톤)")]
     public Color startColor = new Color(0.35f, 0.35f, 0.35f, 1f);
@@ -227,6 +234,44 @@ public class NormalMonster : MonoBehaviour
 
         Debug.Log($"[NormalMonster] {gameObject.name} 정화 완료!");
 
+        // [추가] 정화 완료 시 머리 위에 둥둥 떠다니는 아이콘 이미지 소환
+        if (purificationIndicatorPrefab != null)
+        {
+            Debug.Log($"[NormalMonster] '{gameObject.name}' 정화 둥둥이 프리팹 확인 완료. 머리 위 소환을 가동합니다. (오프셋: {indicatorOffset})");
+            // 몬스터의 자식으로 즉시 소환
+            GameObject indicator = Instantiate(purificationIndicatorPrefab, transform);
+            
+            // ⚠️ 프리팹 내부에 원래 들어있던 자식 스프라이트들의 엉뚱한 X, Y 오프셋을 완전히 초기화(0,0,0)하여 
+            // 우주 먼 곳에 잘못 생성되는 오동작을 원천 봉쇄합니다.
+            foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+            {
+                if (child != indicator.transform)
+                {
+                    child.localPosition = Vector3.zero;
+                }
+            }
+
+            indicator.transform.localPosition = indicatorOffset; // 부모 머리 위 정확한 오프셋 좌표 대입
+            indicator.transform.localRotation = Quaternion.identity;
+            
+            // ⚠️ 중요: 이름에 "indicator", "effect" 등이 들어가면 하단의 자식 오브젝트 정리(비활성화) 필터에 걸려 
+            // 스폰되자마자 파괴되거나 꺼지므로, 해당 키워드가 전혀 섞이지 않은 안전한 이름으로 명명합니다.
+            indicator.name = "PurifiedSignObject"; 
+            
+            // [추가] 부모 몬스터의 물리 레이어(Layer)를 그대로 상속하여 카메라 컬링에 가려지는 버그 원천 방지
+            indicator.layer = gameObject.layer;
+            foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+            {
+                child.gameObject.layer = gameObject.layer;
+            }
+
+            Debug.Log($"[NormalMonster] 정화 둥둥이 생성 성공: {indicator.name}, 로컬 좌표: {indicator.transform.localPosition}, 레이어: {LayerMask.LayerToName(indicator.layer)}, 월드 위치: {indicator.transform.position}");
+        }
+        else
+        {
+            Debug.LogError($"[NormalMonster] '{gameObject.name}'의 머리 위 정화 둥둥이 프리팹(Purification Indicator Prefab) 슬롯이 비어있습니다(None)! 인스펙터창에서 에셋을 할당해 주세요.");
+        }
+
         // 정화 카운트 매니저가 존재하면 카운트 증가 알림 (즉시 UI에 반영)
         if (PurificationManager.Instance != null)
         {
@@ -287,7 +332,8 @@ public class NormalMonster : MonoBehaviour
         MonoBehaviour[] childScripts = GetComponentsInChildren<MonoBehaviour>(true);
         foreach (var script in childScripts)
         {
-            if (script != this && !(script is NormalMonster))
+            // ⚠️ 중요: 머리 위에 띄워둔 둥둥이 스크립트(FloatingIndicator)는 비활성화 대상에서 안전하게 제외합니다.
+            if (script != this && !(script is NormalMonster) && !(script is FloatingIndicator))
             {
                 script.StopAllCoroutines();
                 script.enabled = false;
