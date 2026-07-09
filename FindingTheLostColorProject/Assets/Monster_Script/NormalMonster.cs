@@ -236,6 +236,10 @@ public class NormalMonster : MonoBehaviour
         // 1. 정화 애니메이션 트리거 재생
         if (animator != null)
         {
+            // 혹시 남아있을 수 있는 다른 상태 파라미터를 먼저 꺼서,
+            // Any State -> Purified 트랜지션이 다른 파라미터와 충돌 없이 확실하게 걸리도록 함
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsAttacking", false);
             animator.SetTrigger(purifiedTriggerName);
         }
 
