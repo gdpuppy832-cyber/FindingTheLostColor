@@ -959,6 +959,14 @@ PrefabInstance:
       propertyPath: hitTextFont
       value: 
       objectReference: {fileID: 11400000, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
+    - target: {fileID: 3036536045429307032, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: indicatorOffset.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3036536045429307032, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: purificationIndicatorPrefab
+      value: 
+      objectReference: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
     - target: {fileID: 7626104859796593790, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.24
