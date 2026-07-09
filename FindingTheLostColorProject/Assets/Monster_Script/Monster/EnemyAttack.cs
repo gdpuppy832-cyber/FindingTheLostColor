@@ -3,10 +3,10 @@ using UnityEngine;
 public class EnemyAttack : MonoBehaviour
 {
     float telegraphTime = 1f;    // 경고 표시 시간
-    float attackWidth = 2f;      // 공격 판정 가로 길이
-    float attackHeight = 1f;     // 공격 판정 세로 길이
-    float postDelay = 0.5f;      // 공격 후 이동 불가 딜레이
-    float attackCooldown = 2f;   // 공격 쿨타임
+    public float attackWidth = 2f;      // 공격 판정 가로 길이
+    public float attackHeight = 1f;     // 공격 판정 세로 길이
+    public float postDelay = 0.5f;      // 공격 후 이동 불가 딜레이
+    public float attackCooldown = 2f;   // 공격 쿨타임
 
     public LayerMask targetLayer;
     public SpriteRenderer telegraphSprite; // 경고 영역 표시용 
@@ -88,6 +88,7 @@ public class EnemyAttack : MonoBehaviour
         {
             animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
             animator.SetBool("IsAttacking", true);
+            animator.speed = 1f;
         }
 
         if (enemyMove != null)
@@ -139,10 +140,12 @@ public class EnemyAttack : MonoBehaviour
 
         if (animator != null) animator.SetBool("IsAttacking", false);
 
+        isAttacking = false;
+
+        // enemyMove를 IsAttacking을 끈 다음에 활성화해서,
+        // 같은 프레임에 IsWalking이 급하게 바뀌어 트랜지션이 꼬이는 걸 방지
         if (enemyMove != null)
             enemyMove.enabled = true;
-
-        isAttacking = false;
 
         //쿨타임
         yield return new WaitForSeconds(attackCooldown);

@@ -74,7 +74,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0000009536743, y: -0.026119947}
+  m_Offset: {x: 0.0000009536743, y: -0.009230614}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -84,7 +84,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3210926, y: 2.0598826}
+  m_Size: {x: 1.3210926, y: 2.026104}
   m_EdgeRadius: 0
 --- !u!50 &3942307000133411523
 Rigidbody2D:
@@ -145,7 +145,7 @@ MonoBehaviour:
   speed: 1.5
   range: 6
   chaseRange: 8
-  attackStopDistance: 1.5
+  attackStopDistance: 0.1
   safeDropDistance: 7
 --- !u!114 &2915333899100964050
 MonoBehaviour:
@@ -165,7 +165,10 @@ MonoBehaviour:
   attackCooldown: 1
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
-  startColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+  hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
+  purificationIndicatorPrefab: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
+  indicatorOffset: {x: 0, y: 1.5, z: 0}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2494274776069390064
 GameObject:
