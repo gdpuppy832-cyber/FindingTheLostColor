@@ -49,6 +49,10 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("잔상 고유 틴트 컬러")]
     public Color afterimageColor = new Color(0.3f, 0.75f, 1.0f, 0.55f);
 
+    [Header("Dash Gauge HUD")]
+    [Tooltip("플레이어 옆 아치형 대쉬 게이지 컨트롤러")]
+    public DashGaugeController dashGaugeCtrl;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -197,6 +201,12 @@ public class PlayerMove : MonoBehaviour
     {
         canDash = false;
         isDashing = true;
+
+        // 아치형 대쉬 쿨타임 게이지 UI 구동
+        if (dashGaugeCtrl != null)
+        {
+            dashGaugeCtrl.StartDashGauge(dashCooldown);
+        }
 
         // 대쉬 사용 즉시 발밑 원형을 어두운 색상으로 변경
         if (dashIndicatorSR != null)
