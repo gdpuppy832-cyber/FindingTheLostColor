@@ -162,7 +162,6 @@ public class PlayerTrailDebuff : MonoBehaviour
                 gaugeController.SetRegenMultiplier(currentAppliedRegenMultiplier);
             }
 
-            Debug.Log($"[Debuff] 몬스터 자국 밟음! 디버프 갱신 ➡️ 이속 배율: {currentAppliedSpeedMultiplier * 100}%, 점프 배율: {currentAppliedJumpMultiplier * 100}%, 물감 회복 배율: {currentAppliedRegenMultiplier * 100}%");
         }
         else
         {

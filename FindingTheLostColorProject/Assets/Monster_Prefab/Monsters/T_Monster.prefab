@@ -84,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1878472207
-  m_SortingLayer: 0
+  m_SortingLayerID: 354283401
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
   m_Color: {r: 0.5093005, g: 0.990566, b: 0.88776773, a: 1}
@@ -188,6 +188,7 @@ MonoBehaviour:
   attackDamage: 0.5
   attackCooldown: 1
   purifiedTriggerName: Purified
+  hitTextFont: {fileID: 0}
   startColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &4701564109528166527
@@ -206,6 +207,7 @@ MonoBehaviour:
   range: 6
   chaseRange: 8
   attackStopDistance: 1.5
+  safeDropDistance: 7
 --- !u!114 &7268727226851208348
 MonoBehaviour:
   m_ObjectHideFlags: 0

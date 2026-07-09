@@ -92,7 +92,6 @@ MonoBehaviour:
   hpImage: {fileID: 8472198279424573598}
   lerpSpeed: 5
   hideWhenPurified: 1
-  healthStepUnit: 1
   preventFlipping: 1
 --- !u!1 &7642267068386756628
 GameObject:

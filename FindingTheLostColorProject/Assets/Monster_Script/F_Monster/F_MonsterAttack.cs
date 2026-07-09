@@ -16,7 +16,7 @@ public class F_EnemyAttack : MonoBehaviour
     bool canAttack = true;     // 쿨타임 여부
 
     F_EnemyMove F_enemyMove;
-    public ContactRelay contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
+    public ContactHit contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
 
     void Start()
     {
@@ -31,6 +31,7 @@ public class F_EnemyAttack : MonoBehaviour
 
         if (contactHitbox != null)
         {
+            contactHitbox.gameObject.layer = 0; // Default 레이어로 변경하여 Player/Monster 레이어 무시 상태에서도 피격 감지 보장
             contactHitbox.onTriggerEnter += TryContactDamage;
             contactHitbox.onTriggerStay += TryContactDamage;
         }

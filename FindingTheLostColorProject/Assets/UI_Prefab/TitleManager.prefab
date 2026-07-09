@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6690854853553435745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1175708380690734906}
+  - component: {fileID: 1107582050289427127}
+  - component: {fileID: 4394088215836494809}
+  - component: {fileID: 7560632457700493465}
+  m_Layer: 0
+  m_Name: TitleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1175708380690734906
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6690854853553435745}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 478.47, y: 187.3904, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1107582050289427127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6690854853553435745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9bb522cfd99dbf4f9b6beb6c48c307c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextSceneName: Map_a
+  optionPanel: {fileID: 0}
+  fadeImage: {fileID: 0}
+  fadeDuration: 1
+  useFadeInOnStart: 0
+--- !u!114 &4394088215836494809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6690854853553435745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848f117a3ffb0054782d2bae8ed16a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterVolume:
+    volumeName: Master
+    volumeSlider: {fileID: 0}
+    volumeValueText: {fileID: 0}
+    muteToggle: {fileID: 0}
+    plusButton: {fileID: 0}
+    minusButton: {fileID: 0}
+    lastVolumeValue: 0
+    isMuted: 0
+  bgmVolume:
+    volumeName: BGM
+    volumeSlider: {fileID: 0}
+    volumeValueText: {fileID: 0}
+    muteToggle: {fileID: 0}
+    plusButton: {fileID: 0}
+    minusButton: {fileID: 0}
+    lastVolumeValue: 0
+    isMuted: 0
+  sfxVolume:
+    volumeName: Sfx
+    volumeSlider: {fileID: 0}
+    volumeValueText: {fileID: 0}
+    muteToggle: {fileID: 0}
+    plusButton: {fileID: 0}
+    minusButton: {fileID: 0}
+    lastVolumeValue: 0
+    isMuted: 0
+  stepSize: 1
+--- !u!114 &7560632457700493465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6690854853553435745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7714b249745dfe04f8270ba942935286, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolutionDropdown: {fileID: 0}
