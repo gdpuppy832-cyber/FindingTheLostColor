@@ -6,7 +6,6 @@ public class BossAttack : MonoBehaviour
 {
     // ===== 공통 =====
     public Transform target;               // 비워두면 Player 태그로 자동 탐색
-    [Range(0f, 1f)] public float phase2ThresholdRatio = 0.5f; // F_HealthMoveSwitcher와 같은 값으로 맞추면 이동 전환과 동시에 페이즈 전환됨
     public LayerMask groundLayer;
     public float attackCooldown = 1f;       // 공격 종료 후 다음 공격까지 대기 시간
     public float bossAttackDamage = 1f;     // 모든 보스 공격(가시/레이저/서리/암흑구슬/번개/암영결계)이 공통으로 사용하는 피해량
@@ -338,8 +337,6 @@ public class BossAttack : MonoBehaviour
                 fog.SetTarget(spawnedOrb);
                 fog.StartMoving();
             }
-
-            Debug.Log("[BossAttack] 크리스탈 4개 모두 파괴 - 2페이즈로 전환");
         }
     }
 
@@ -431,7 +428,9 @@ public class BossAttack : MonoBehaviour
     GameObject spikeTemplate;                     // spikePrefab의 런타임 복제 템플릿 (원본 보호용)
     public float spikeTelegraphDuration = 2f;      // 텔레그래프 지속 시간
     public float spikeTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
+    [Tooltip("가시 유지 시간")]
     public float spikeLifetime = 3f;               // 가시가 유지되는 시간
+    [Tooltip("가시 생성 반경")]
     public float spikeSearchRadius = 8f;           // 보스 주변 랜덤 위치 탐색 반경
     public float spikeGroundRaycastDistance = 20f; // 바닥 탐색용 레이캐스트 최대 거리
     public int spikeMaxSearchAttempts = 20;        // 유효 바닥 못 찾을 때 재시도 최대 횟수
@@ -510,6 +509,7 @@ public class BossAttack : MonoBehaviour
     GameObject laserTemplate;                 // laserPrefab의 런타임 복제 템플릿 (원본 보호용)
     public float laserTelegraphDuration = 2f;       // 텔레그래프 지속 시간
     public float laserTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
+    [Tooltip("레이저 지속 시간")]
     public float laserActiveDuration = 5f;          // 레이저 발동 유지 시간
     
 
@@ -614,11 +614,17 @@ public class BossAttack : MonoBehaviour
     [Header("1P FrostCrystal")]
     public GameObject frostCrystalPrefab;            // 서리 수정 프리팹 (비워두면 임시 생성)
     GameObject frostCrystalTemplate;                  // frostCrystalPrefab의 런타임 복제 템플릿 (원본 보호용)
-    public float frostSpawnYAboveBoss = 6f;      // 보스보다 이만큼 높은 Y좌표에서 생성
-    public float frostRainDuration = 4f;              // 비가 내리는 총 시간
-    public float frostSpawnInterval = 0.3f;           // 생성 주기
-    public int frostSpawnCountPerTick = 5;            // 주기마다 생성되는 개수
+    [Tooltip("보스기준 프리즘 샤워 Y좌표")]
+    public float frostRangrY = 6f;      // 보스보다 이만큼 높은 Y좌표에서 생성
+    [Tooltip("보스기준 프리즘 샤워 X좌표")]
     public float frostRangeX = 12f;                // 보스 X좌표 기준 좌우로 퍼지는 폭 (예: 12면 보스 기준 -6 ~ +6 범위)
+    [Tooltip("공격 시간")]
+    public float frostRainDuration = 4f;              // 비가 내리는 총 시간
+    [Tooltip("생성 주기")]
+    public float frostSpawnInterval = 0.3f;           // 생성 주기
+    [Tooltip("주기마다 새성되는 개수")]
+    public int frostSpawnCountPerTick = 5;            // 주기마다 생성되는 개수
+    
     public float frostFallInitialSpeed = 0f;          // 낙하 시작 속도
     public float frostFallAcceleration = 15f;         // 낙하 가속도
     public float frostMaxLifetime = 6f;               // 바닥에 못 닿았을 때 안전장치용 최대 생존 시간
@@ -700,8 +706,10 @@ public class BossAttack : MonoBehaviour
             float wait = t - prevTime;
             if (wait > 0f) yield return new WaitForSeconds(wait);
 
-            float x = transform.position.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
-            float y = transform.position.y + frostSpawnYAboveBoss;
+            // 보스의 현재 위치가 아니라 처음 배치된 위치(initialPosition) 기준으로 스폰
+            // -> 2페이즈에서 보스가 이동해도 서리비 범위가 항상 동일한 위치에 고정됨
+            float x = initialPosition.x + Random.Range(-frostRangeX * 0.5f, frostRangeX * 0.5f);
+            float y = initialPosition.y + frostRangrY;
             GameObject crystal = SpawnFrostCrystal(new Vector2(x, y));
             if (crystal != null) activeFrostCrystals.Add(crystal);
 
@@ -718,9 +726,13 @@ public class BossAttack : MonoBehaviour
     GameObject darkOrbTemplate;                    // darkOrbPrefab의 런타임 복제 템플릿 (원본 보호용)
     public int darkOrbCount = 3;                   // 구슬 개수
     public float darkOrbOrbitRadius = 2f;          // 보스 주위를 도는 궤도 반지름
+    [Tooltip("회전 시간")]
     public float darkOrbOrbitDuration = 2f;        // 궤도 회전 지속 시간 (이 시간 동안 한 바퀴 돎)
+    [Tooltip("발사 간격")]
     public float darkOrbLaunchInterval = 0.8f;     // 구슬이 하나씩 발사되는 간격
+    [Tooltip("추적 시간")]
     public float darkOrbTrackDuration = 2f;        // 발사된 구슬이 플레이어를 추적하는 시간
+    [Tooltip("속도(플레이어 속도 기준 배율)")]
     public float darkOrbSpeedMultiplier = 1f;      // 플레이어 속도 기준 배율 (1보다 크면 플레이어보다 빠르게, 작으면 느리게
 
     public float fallbackDarkOrbSize = 0.6f;       // 프리팹 없을 때 임시 구슬 크기
@@ -845,8 +857,11 @@ public class BossAttack : MonoBehaviour
 
     public Vector2 darkCloudSpawnOffset = Vector2.zero; // 보스의 처음 배치 위치(initialPosition) 기준으로 이 값만큼 이동해서 생성 (Y값 조절 가능)
 
+    [Tooltip("먹구름 나타나는 시간")]
     public float darkCloudFadeInDuration = 3f;      // 먹구름이 서서히 나타나는 시간
+    [Tooltip("번개 치기까지 걸리는 시간")]
     public float darkCloudHoldDuration = 6f;        // 완전히 나타난 뒤 번개가 치기까지 대기 시간
+    [Tooltip("붓질을 해야하는 시간")]
     public float darkCloudPaintEraseDuration = 3f;  // 누적 붓질 시간이 이 값에 도달하면 먹구름이 지워짐 (공격 취소)
     public float lightningLifetime = 0.4f;          // 번개가 유지되는 시간
     public float lightningLength = 100f;            // 번개가 뻗어나가는 길이 (충분히 크게 잡아 화면 끝까지 이어지도록)
@@ -997,6 +1012,7 @@ public class BossAttack : MonoBehaviour
     GameObject shadowBarrierHazardTemplate;                    // shadowBarrierHazardPrefab의 런타임 복제 템플릿 (원본 보호용)
     public float shadowBarrierTelegraphDuration = 2f;          // 텔레그래프 지속 시간
     public float shadowBarrierTelegraphBlinkInterval = 0.5f;   // 깜빡임 간격
+    [Tooltip("공격 지속 시간")]
     public float shadowBarrierActiveDuration = 1.5f;           // 텔레그래프 종료 후 실제 피해 판정이 유지되는 시간
 
     public float fallbackShadowBarrierWidth = 3f;              // 프리팹 없을 때 컬럼 하나의 가로 크기

@@ -97,7 +97,6 @@ public class Projectile : MonoBehaviour
         // 1. Tag 검사(Player) 혹은 레이어 마스크 일치 검사로 피격 판정 (인스펙터 미설정 방지)
         if (hitObj.CompareTag("Player") || ((1 << hitObj.layer) & targetLayer) != 0)
         {
-            Debug.Log("투사체 피격: " + hitObj.name);
             PlayerHealth player = hitObj.GetComponent<PlayerHealth>();
             if (player == null) player = hitObj.GetComponentInParent<PlayerHealth>();
             if (player != null)

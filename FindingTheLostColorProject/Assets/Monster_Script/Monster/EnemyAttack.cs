@@ -17,9 +17,14 @@ public class EnemyAttack : MonoBehaviour
 
 
     public ContactHit contactHitbox;
+    Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+
     void Start()
     {
         enemyMove = GetComponent<EnemyMove>();
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+
         if (telegraphSprite != null)
             telegraphSprite.enabled = false;
 
@@ -79,6 +84,12 @@ public class EnemyAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
+            animator.SetBool("IsAttacking", true);
+        }
+
         if (enemyMove != null)
             enemyMove.enabled = false;
 
@@ -126,8 +137,10 @@ public class EnemyAttack : MonoBehaviour
         //후딜레이 
         yield return new WaitForSeconds(postDelay);
 
+        if (animator != null) animator.SetBool("IsAttacking", false);
+
         if (enemyMove != null)
-            enemyMove.enabled = true; 
+            enemyMove.enabled = true;
 
         isAttacking = false;
 
@@ -136,5 +149,5 @@ public class EnemyAttack : MonoBehaviour
         canAttack = true;
     }
 
-    
+
 }

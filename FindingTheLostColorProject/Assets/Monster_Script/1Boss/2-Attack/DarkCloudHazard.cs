@@ -82,7 +82,6 @@ public class DarkCloudHazard : MonoBehaviour
         if (!fadeInLogged && elapsed >= fadeInDuration)
         {
             fadeInLogged = true;
-            Debug.Log($"[DarkCloudHazard] 먹구름 생성 완료 (페이드인 {fadeInDuration}초 종료) - 위치: {transform.position}");
         }
 
         // fadeInDuration + holdDuration이 지나면 번개 발동 신호

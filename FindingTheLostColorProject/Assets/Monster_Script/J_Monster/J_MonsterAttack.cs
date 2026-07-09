@@ -64,7 +64,6 @@ public class J_EnemyAttack : MonoBehaviour
     {
         if (target == null)
         {
-            Debug.Log("타겟이 null입니다. Player 태그를 확인하세요.");
             return;
         }
         if (isAttacking || !canAttack) return;
