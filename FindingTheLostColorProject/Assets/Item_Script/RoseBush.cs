@@ -29,6 +29,9 @@ public class RoseBush : MonoBehaviour
     [Tooltip("회복할 때 팝업되는 HIT! 텍스트의 TMPro 폰트 에셋 (드래그 앤 드롭 가능)")]
     public TMP_FontAsset hitTextFont;
 
+    [Tooltip("Resources 폴더 내부의 TMPro 폰트 에셋 파일명 (메타 파일 충돌 방지 백업용)")]
+    public string hitTextFontResourceName = "Hakgyoansim Nadeuri TTF L SDF";
+
     private SpriteRenderer[] allSpriteRenderers;
     private bool isPurified = false;
     private float lastAttackTime = 0f;
@@ -37,6 +40,20 @@ public class RoseBush : MonoBehaviour
 
     void Start()
     {
+        // 폰트 에셋 슬롯이 누락(None/Missing)된 경우 Resources 폴더에서 자동으로 로드해 옵니다.
+        if (hitTextFont == null && !string.IsNullOrEmpty(hitTextFontResourceName))
+        {
+            hitTextFont = Resources.Load<TMP_FontAsset>(hitTextFontResourceName);
+            if (hitTextFont != null)
+            {
+                Debug.Log($"[RoseBush] Resources 폴더에서 '{hitTextFontResourceName}' 폰트 에셋을 성공적으로 자동 로드하여 복구했습니다.");
+            }
+            else
+            {
+                Debug.LogWarning($"[RoseBush] Resources 폴더 내에 '{hitTextFontResourceName}' 이름의 폰트 에셋이 보이지 않습니다. 파일명을 확인해 주세요.");
+            }
+        }
+
         // 본체 및 자식의 모든 SpriteRenderer 검색
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
 

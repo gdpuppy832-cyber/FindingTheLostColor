@@ -27,9 +27,12 @@ public class Trampoline : MonoBehaviour
     [Tooltip("채색 완료 (활성화된 상태)의 색상")]
     public Color targetColor = Color.white;
 
-    [Header("HIT! 텍스트 폰트")]
+    [Header("HIT! 텍스트 폰트 (TextMeshPro 전용)")]
     [Tooltip("회복할 때 팝업되는 HIT! 텍스트 폰트 (비워두면 플레이어 폰트 자동 상속)")]
-    public Font hitTextFont;
+    public TMP_FontAsset hitTextFont;
+
+    [Tooltip("Resources 폴더 내부의 TMPro 폰트 에셋 파일명")]
+    public string hitTextFontResourceName = "Hakgyoansim Nadeuri TTF L SDF";
 
     private SpriteRenderer[] allSpriteRenderers;
     private bool isPurified = false;
@@ -40,6 +43,12 @@ public class Trampoline : MonoBehaviour
 
     void Start()
     {
+        // 폰트 에셋 슬롯이 누락(None/Missing)된 경우 Resources 폴더에서 자동으로 로드해 옵니다.
+        if (hitTextFont == null && !string.IsNullOrEmpty(hitTextFontResourceName))
+        {
+            hitTextFont = Resources.Load<TMP_FontAsset>(hitTextFontResourceName);
+        }
+
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         UpdateVisualColor();
 
@@ -180,27 +189,26 @@ public class Trampoline : MonoBehaviour
         Vector3 spawnOffset = new Vector3(Random.Range(-0.4f, 0.4f), Random.Range(0.6f, 1.2f), 0f);
         hitTextObj.transform.position = transform.position + spawnOffset;
 
-        TextMesh textMesh = hitTextObj.AddComponent<TextMesh>();
-        textMesh.text = "HIT!";
-        textMesh.fontSize = 36;
-        textMesh.characterSize = 0.16f;
-        textMesh.color = new Color(1f, 0.7f, 0f);
-        textMesh.anchor = TextAnchor.MiddleCenter;
-        textMesh.alignment = TextAlignment.Center;
+        // TextMeshPro 추가 및 세팅
+        TMPro.TextMeshPro tmp = hitTextObj.AddComponent<TMPro.TextMeshPro>();
+        tmp.text = "HIT!";
+        tmp.fontSize = 4.5f; // TextMeshPro용 폰트 크기
+        tmp.color = new Color(1f, 0.7f, 0f);
+        tmp.alignment = TMPro.TextAlignmentOptions.Center;
 
-        Font appliedFont = hitTextFont;
+        TMP_FontAsset appliedFont = hitTextFont;
         if (appliedFont == null)
         {
             PlayerInteraction playerInt = FindFirstObjectByType<PlayerInteraction>();
-            if (playerInt != null && playerInt.customFont != null)
+            if (playerInt != null && playerInt.customTMPFont != null)
             {
-                appliedFont = playerInt.customFont;
+                appliedFont = playerInt.customTMPFont;
             }
         }
 
         if (appliedFont != null)
         {
-            textMesh.font = appliedFont;
+            tmp.font = appliedFont;
         }
 
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
@@ -208,10 +216,6 @@ public class Trampoline : MonoBehaviour
         {
             meshRenderer.sortingLayerName = "UI";
             meshRenderer.sortingOrder = 150;
-            if (appliedFont != null)
-            {
-                meshRenderer.material = appliedFont.material;
-            }
         }
 
         FloatingText floatingScript = hitTextObj.AddComponent<FloatingText>();

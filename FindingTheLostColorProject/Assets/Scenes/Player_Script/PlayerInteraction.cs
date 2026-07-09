@@ -28,11 +28,23 @@ public class PlayerInteraction : MonoBehaviour
     [Tooltip("상호작용 안내창이 자동 생성될 때 사용할 폰트 에셋")]
     public Font customFont;
 
+    [Tooltip("상호작용 안내창용 TextMeshPro 폰트 에셋")]
+    public TMP_FontAsset customTMPFont;
+
+    [Tooltip("Resources 폴더 내부의 TMPro 폰트 에셋 파일명")]
+    public string customTMPFontResourceName = "Hakgyoansim Nadeuri TTF L SDF";
+
     private bool isInteractionLocked = false;
     private bool isDynamicUI = false;
 
     void Start()
     {
+        // 폰트 에셋 슬롯이 누락(None/Missing)된 경우 Resources 폴더에서 자동으로 로드해 옵니다.
+        if (customTMPFont == null && !string.IsNullOrEmpty(customTMPFontResourceName))
+        {
+            customTMPFont = Resources.Load<TMP_FontAsset>(customTMPFontResourceName);
+        }
+
         // 사용자가 아무 UI 텍스트 컴포넌트도 지정하지 않았을 때만 임시 안내 UI를 동적 생성
         if (promptText == null && promptTmpText == null && promptTmp3DText == null && promptLegacyTextMesh == null)
         {

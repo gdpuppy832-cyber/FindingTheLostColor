@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -897715971
   m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 3334485571138429853, guid: 2081354884984af4ea5837d0f482c1ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -169,7 +169,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -897715971
   m_SortingLayer: 5
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -5873331033001879359, guid: 192b4c19628494a488e330d937e391e2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -267,6 +267,10 @@ MonoBehaviour:
   dashIndicatorSR: {fileID: 4725047618536858541}
   dashReadyColor: {r: 1, g: 1, b: 1, a: 1}
   dashCooldownColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.5}
+  spawnAfterimage: 1
+  afterimageInterval: 0.04
+  afterimageFadeSpeed: 3.5
+  afterimageColor: {r: 0.3, g: 0.75, b: 1, a: 0.55}
 --- !u!114 &71575615107380523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,7 +336,7 @@ Animator:
   m_GameObject: {fileID: 7784401301948481320}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ae988c8f2f71b8a46bfb4e75a1b103c0, type: 2}
+  m_Controller: {fileID: 9100000, guid: 42acfc50647eb364b982d221fb5fa6ad, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
