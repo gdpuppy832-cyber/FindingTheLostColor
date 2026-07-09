@@ -22,12 +22,9 @@ public class PuzzleLamp : MonoBehaviour
     [Tooltip("점등 시 빛날 목표 색상 (빨/주/노/초/파/보 중 매칭)")]
     public Color targetColor = Color.white;
 
-    [Header("HIT! 텍스트 폰트 (TextMeshPro 전용)")]
+    [Header("HIT! 텍스트 폰트")]
     [Tooltip("회복할 때 팝업되는 HIT! 텍스트 폰트 (비워두면 플레이어 폰트 자동 상속)")]
-    public TMP_FontAsset hitTextFont;
-
-    [Tooltip("Resources 폴더 내부의 TMPro 폰트 에셋 파일명")]
-    public string hitTextFontResourceName = "Hakgyoansim Nadeuri TTF L SDF";
+    public Font hitTextFont;
 
     private SpriteRenderer[] allSpriteRenderers;
     private GameObject lightChild;
@@ -40,12 +37,6 @@ public class PuzzleLamp : MonoBehaviour
 
     void Start()
     {
-        // 폰트 에셋 슬롯이 누락(None/Missing)된 경우 Resources 폴더에서 자동으로 로드해 옵니다.
-        if (hitTextFont == null && !string.IsNullOrEmpty(hitTextFontResourceName))
-        {
-            hitTextFont = Resources.Load<TMP_FontAsset>(hitTextFontResourceName);
-        }
-
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         
         // 자식 오브젝트 중 "Light"라는 이름이 있다면 매칭
@@ -178,26 +169,27 @@ public class PuzzleLamp : MonoBehaviour
         Vector3 spawnOffset = new Vector3(Random.Range(-0.4f, 0.4f), Random.Range(0.6f, 1.2f), 0f);
         hitTextObj.transform.position = transform.position + spawnOffset;
 
-        // TextMeshPro 추가 및 세팅
-        TMPro.TextMeshPro tmp = hitTextObj.AddComponent<TMPro.TextMeshPro>();
-        tmp.text = "HIT!";
-        tmp.fontSize = 4.5f; // TextMeshPro용 폰트 크기
-        tmp.color = new Color(1f, 0.7f, 0f);
-        tmp.alignment = TMPro.TextAlignmentOptions.Center;
+        TextMesh textMesh = hitTextObj.AddComponent<TextMesh>();
+        textMesh.text = "HIT!";
+        textMesh.fontSize = 36;
+        textMesh.characterSize = 0.16f;
+        textMesh.color = new Color(1f, 0.7f, 0f);
+        textMesh.anchor = TextAnchor.MiddleCenter;
+        textMesh.alignment = TextAlignment.Center;
 
-        TMP_FontAsset appliedFont = hitTextFont;
+        Font appliedFont = hitTextFont;
         if (appliedFont == null)
         {
             PlayerInteraction playerInt = FindFirstObjectByType<PlayerInteraction>();
-            if (playerInt != null && playerInt.customTMPFont != null)
+            if (playerInt != null && playerInt.customFont != null)
             {
-                appliedFont = playerInt.customTMPFont;
+                appliedFont = playerInt.customFont;
             }
         }
 
         if (appliedFont != null)
         {
-            tmp.font = appliedFont;
+            textMesh.font = appliedFont;
         }
 
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
@@ -205,6 +197,10 @@ public class PuzzleLamp : MonoBehaviour
         {
             meshRenderer.sortingLayerName = "UI";
             meshRenderer.sortingOrder = 150;
+            if (appliedFont != null)
+            {
+                meshRenderer.material = appliedFont.material;
+            }
         }
 
         FloatingText floatingScript = hitTextObj.AddComponent<FloatingText>();
