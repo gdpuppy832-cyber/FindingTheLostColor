@@ -301,6 +301,12 @@ public class T_EnemyAttack : MonoBehaviour
 
     void SpawnProjectile(Vector2 fireDir, float angle, Vector2 spawnPos)
     {
+        // 몬스터 원거리 발사 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyShoot, transform.position, 0.75f);
+        }
+
         // 미리 복제해둔 런타임 투사체가 있으면 그걸 재사용 (파괴하지 않음)
         if (childProjectileRuntime != null)
         {

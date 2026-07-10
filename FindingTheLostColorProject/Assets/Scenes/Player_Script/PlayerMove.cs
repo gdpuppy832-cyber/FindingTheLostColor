@@ -101,6 +101,12 @@ public class PlayerMove : MonoBehaviour
                     // 점프 시 X축 속도는 유지하여 벽에서 점프 시 튕겨 나가게 함
                     rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
 
+                    // 점프 효과음 재생
+                    if (SoundManager.Instance != null)
+                    {
+                        SoundManager.Instance.PlaySFX(SoundManager.SFXType.Jump, 0.8f);
+                    }
+
                     // 공중에서 두 번째 점프를 가했을 때를 '더블점프'로 명확히 판정하여 신호 전송
                     if (jumpCount == 1)
                     {

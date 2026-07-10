@@ -126,6 +126,13 @@ public class RoseBush : MonoBehaviour
     {
         isPurified = true;
         currentHealth = maxHealth;
+
+        // 정화 완료 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
+        }
+
         UpdateVisualColor();
         Debug.Log($"[RoseBush] {gameObject.name} 장미덤불 정화 완료! 이제 피해를 주지 않습니다.");
     }

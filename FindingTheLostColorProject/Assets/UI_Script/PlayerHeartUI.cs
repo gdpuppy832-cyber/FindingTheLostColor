@@ -177,18 +177,21 @@ public class PlayerHeartUI : MonoBehaviour
 
     void OnDisable()
     {
-        // 비활성화 시 모든 실행 중인 흔들림 강제 정지 및 복구
-        for (int i = 0; i < shakeCoroutines.Length; i++)
+        // [방탄 코드] 비활성화 시 모든 실행 중인 흔들림 강제 정지 및 안전 복구 (초기화되지 않은 상태의 NullReference 예방)
+        if (shakeCoroutines != null)
         {
-            if (shakeCoroutines[i] != null)
+            for (int i = 0; i < shakeCoroutines.Length; i++)
             {
-                StopCoroutine(shakeCoroutines[i]);
-                shakeCoroutines[i] = null;
-            }
-            if (heartImages[i] != null)
-            {
-                heartImages[i].transform.localRotation = Quaternion.identity;
-                heartImages[i].transform.localScale = Vector3.one;
+                if (shakeCoroutines[i] != null)
+                {
+                    StopCoroutine(shakeCoroutines[i]);
+                    shakeCoroutines[i] = null;
+                }
+                if (heartImages != null && i < heartImages.Length && heartImages[i] != null)
+                {
+                    heartImages[i].transform.localRotation = Quaternion.identity;
+                    heartImages[i].transform.localScale = Vector3.one;
+                }
             }
         }
     }

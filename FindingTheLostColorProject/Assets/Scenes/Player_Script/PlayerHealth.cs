@@ -227,6 +227,12 @@ public class PlayerHealth : MonoBehaviour
         // 무적 상태인 경우 데미지 무시
         if (isInvincible) return;
 
+        // 플레이어 피격 효과음 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.SFXType.PlayerHit, 0.9f);
+        }
+
         // 피격 시 일정 시간 동안 그리기 차단
         StartCoroutine(BlockDrawRoutine(damageDrawBlockDuration));
 

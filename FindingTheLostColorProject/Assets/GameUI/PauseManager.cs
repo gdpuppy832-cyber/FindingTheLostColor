@@ -90,6 +90,8 @@ public class PauseManager : MonoBehaviour
     // 1. 게임 계속하기 (일시정지 해제)
     public void Resume()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
+
         if (pausePanel != null) pausePanel.SetActive(false);
         if (optionPanel != null) optionPanel.SetActive(false);
         if (quitConfirmPanel != null) quitConfirmPanel.SetActive(false);
@@ -111,18 +113,21 @@ public class PauseManager : MonoBehaviour
     // 3. 옵션 패널 열기
     public void OpenOption()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (optionPanel != null) optionPanel.SetActive(true);
     }
 
     // 4. 옵션 패널 닫기
     public void CloseOption()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (optionPanel != null) optionPanel.SetActive(false);
     }
 
     // 5. 타이틀 화면으로 이동 버튼 클릭 시 호출 (이동 확인 팝업창을 켬)
     public void GoToTitle()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (titleConfirmPanel != null)
         {
             titleConfirmPanel.SetActive(true);
@@ -137,6 +142,7 @@ public class PauseManager : MonoBehaviour
     // 6. 타이틀 이동 확인 팝업 닫기 (팝업창의 '아니오' 버튼)
     public void CloseTitleConfirm()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (titleConfirmPanel != null) titleConfirmPanel.SetActive(false);
     }
 
@@ -151,6 +157,7 @@ public class PauseManager : MonoBehaviour
     // 8. 게임 종료하기 버튼 클릭 시 호출 (종료 확인 팝업창을 켬)
     public void QuitGame()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (quitConfirmPanel != null)
         {
             quitConfirmPanel.SetActive(true);
@@ -165,6 +172,7 @@ public class PauseManager : MonoBehaviour
     // 9. 종료 확인 팝업 닫기 (팝업창의 '아니오' 버튼)
     public void CloseQuitConfirm()
     {
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
         if (quitConfirmPanel != null) quitConfirmPanel.SetActive(false);
     }
 
