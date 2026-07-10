@@ -105,6 +105,7 @@ MonoBehaviour:
   speedMultiplier: 0.5
   jumpMultiplier: 0.5
   paintRegenMultiplier: 0.5
+  dashMultiplier: 0.037
 --- !u!61 &6455047153828892262
 BoxCollider2D:
   m_ObjectHideFlags: 0

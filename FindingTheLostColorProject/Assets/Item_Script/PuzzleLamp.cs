@@ -118,6 +118,13 @@ public class PuzzleLamp : MonoBehaviour
         isPurified = true;
         currentHealth = maxHealth;
         litTimer = 0f;
+
+        // 등불 켜짐 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.9f);
+        }
+
         UpdateVisualColor();
 
         if (lightChild != null)
@@ -136,6 +143,13 @@ public class PuzzleLamp : MonoBehaviour
         isPurified = true;
         isLockedLit = true;
         currentHealth = maxHealth;
+
+        // 등불 고정 점등 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
+        }
+
         UpdateVisualColor();
 
         if (lightChild != null)

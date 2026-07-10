@@ -243,10 +243,17 @@ public class NormalMonster : MonoBehaviour
     /// <summary>
     /// 체력이 가득 차서 고양이가 정화되었을 때의 처리
     /// </summary>
-    private void Purify()
+    public void Purify()
     {
+        if (isPurified) return;
         isPurified = true;
         currentHealth = maxHealth;
+
+        // 정화 완료 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
+        }
         UpdateVisualColor(); // 완전히 원래 색으로 변경
 
         Debug.Log($"[NormalMonster] {gameObject.name} 정화 완료!");

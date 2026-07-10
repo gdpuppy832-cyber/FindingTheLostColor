@@ -99,6 +99,13 @@ public class ColoringBridge : MonoBehaviour
     {
         isPurified = true;
         currentHealth = maxHealth;
+
+        // 정화 완료 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
+        }
+
         UpdateVisualColor();
         SetSolidState(true); // 이제 단단해져서 건널 수 있는 다리가 됨
         Debug.Log($"[ColoringBridge] {gameObject.name} 채색다리 활성화! 이제 건널 수 있습니다.");

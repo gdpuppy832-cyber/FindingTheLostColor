@@ -101,6 +101,12 @@ public class PlayerMove : MonoBehaviour
                     // 점프 시 X축 속도는 유지하여 벽에서 점프 시 튕겨 나가게 함
                     rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
 
+                    // 점프 효과음 재생
+                    if (SoundManager.Instance != null)
+                    {
+                        SoundManager.Instance.PlaySFX(SoundManager.SFXType.Jump, 0.8f);
+                    }
+
                     // 공중에서 두 번째 점프를 가했을 때를 '더블점프'로 명확히 판정하여 신호 전송
                     if (jumpCount == 1)
                     {
@@ -121,8 +127,11 @@ public class PlayerMove : MonoBehaviour
                 }
             }
 
-            // 대쉬 시도 조건
-            if (dashPressed && canDash)
+            // 대쉬 시도 조건 (S_Monster 슬로우 장판의 대쉬 차단 여부 검사)
+            PlayerTrailDebuff trailDebuff = GetComponent<PlayerTrailDebuff>();
+            bool isDashBlockedByTrail = (trailDebuff != null && trailDebuff.DashMultiplier <= 0.005f);
+
+            if (dashPressed && canDash && !isDashBlockedByTrail)
             {
                 StartCoroutine(DashRoutine());
             }
@@ -239,10 +248,15 @@ public class PlayerMove : MonoBehaviour
         float elapsed = 0f;
         float lastAfterimageTime = -100f;
 
+        // 대쉬 중 실시간 슬로우 장판 효율 디버프 갱신
+        PlayerTrailDebuff trailDebuff = GetComponent<PlayerTrailDebuff>();
+
         while (elapsed < dashDuration)
         {
-            // 대쉬 속도로 수평 방향으로 강하게 추진하며 수직 낙하는 0으로 굳힘
-            rb.linearVelocity = new Vector2(dashDir * dashSpeed, 0f);
+            float currentDashMult = trailDebuff != null ? trailDebuff.DashMultiplier : 1.0f;
+
+            // 대쉬 속도로 수평 방향으로 강하게 추진(슬로우 장판 배율 곱함)하며 수직 낙하는 0으로 굳힘
+            rb.linearVelocity = new Vector2(dashDir * dashSpeed * currentDashMult, 0f);
             
             // 대쉬 중 정해진 시간 주기마다 뒤에 스프라이트 잔상 생성
             if (spawnAfterimage && playerSR != null && Time.time - lastAfterimageTime >= afterimageInterval)

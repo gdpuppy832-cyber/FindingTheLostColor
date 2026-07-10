@@ -138,6 +138,13 @@ public class Trampoline : MonoBehaviour
         currentHealth = maxHealth;
         activeTimer = 0f;
         fadeTimer = 0f;
+
+        // 트램펄린 활성화 효과음 재생 (3D 입체 음향)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
+        }
+
         UpdateVisualColor();
         Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 활성화! 이제 밟으면 점프높이의 2배로 튑니다.");
     }
@@ -160,6 +167,12 @@ public class Trampoline : MonoBehaviour
                 {
                     // 2022+버전 linearVelocity 연동 지원
                     playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, launchVelocity);
+
+                    // 트램펄린 도약 효과음 재생
+                    if (SoundManager.Instance != null)
+                    {
+                        SoundManager.Instance.PlaySFX(SoundManager.SFXType.Jump, 1.0f);
+                    }
                     
                     // 플레이어의 이중점프 카운트를 강제 리셋하여 트램펄린을 탄 후에도 다시 정상 점프를 가능하게 지원 (선택사항)
                     PlayerMove pm = collision.gameObject.GetComponent<PlayerMove>();

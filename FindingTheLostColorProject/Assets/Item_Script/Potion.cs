@@ -79,17 +79,31 @@ public class Potion : MonoBehaviour
             // 포션 획득 성공 시 연출 및 오브젝트 처리
             if (consumed)
             {
-                // 효과음 재생
-                if (collectSFX != null)
+                // 효과음 재생 (피치 1.1배 및 앞부분 0.15초 무음 컷 적용 오버랩 재생)
+                AudioClip clipToPlay = collectSFX;
+                if (clipToPlay == null && SoundManager.Instance != null)
                 {
-                    if (playerHealth.sfxAudioSource != null)
-                    {
-                        playerHealth.sfxAudioSource.PlayOneShot(collectSFX);
-                    }
-                    else
-                    {
-                        AudioSource.PlayClipAtPoint(collectSFX, transform.position);
-                    }
+                    clipToPlay = SoundManager.Instance.GetCachedClip(SoundManager.SFXType.PaintRecover);
+                }
+
+                if (clipToPlay != null)
+                {
+                    GameObject tempGO = new GameObject("TempPotionSFX");
+                    tempGO.transform.position = transform.position;
+                    AudioSource tempSource = tempGO.AddComponent<AudioSource>();
+                    tempSource.clip = clipToPlay;
+
+                    // SoundManager에서 볼륨 정보 가져와서 적용
+                    float masterVol = SoundManager.Instance != null ? SoundManager.Instance.GetMasterVolume() : 0.5f;
+                    float sfxVol = SoundManager.Instance != null ? SoundManager.Instance.GetSFXVolume() : 0.5f;
+                    tempSource.volume = 0.85f * sfxVol * masterVol;
+
+                    tempSource.pitch = 1.2f; // 1.2배속
+                    tempSource.time = Mathf.Clamp(0.15f, 0f, clipToPlay.length - 0.01f); // 앞부분 0.15초 스킵 자르기
+                    tempSource.spatialBlend = 0f; // 2D 음향 재생
+
+                    tempSource.Play();
+                    Destroy(tempGO, ((clipToPlay.length - 0.15f) / 1.2f) + 0.1f); // 완재생 후 파괴
                 }
 
                 // 이펙트 프리팹 생성

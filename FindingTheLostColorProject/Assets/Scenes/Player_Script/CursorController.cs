@@ -87,6 +87,7 @@ public class CursorController : MonoBehaviour
     private int currentCursorIndex = -1;
     private GaugeController gaugeController; // 물감 게이지 스크립트 참조
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
+    private GaugeVisualFeedback gaugeFeedback; // [추가] 물감 게이지 비주얼 피드백 참조
 
     // 차징용 내부 변수
     private float chargeTimer = 0f;
@@ -94,6 +95,7 @@ public class CursorController : MonoBehaviour
 
     private Coroutine releaseEffectCoroutine;
     private Color originalSpriteColor;
+    private bool wasDrawingLastFrame = false; // [추가] 이전 프레임 그리기/차징 여부 기억 변수
 
     void Start()
     {
@@ -114,6 +116,7 @@ public class CursorController : MonoBehaviour
         // 씬에서 게이지 및 체력 컨트롤러 검색 및 참조
         gaugeController = FindFirstObjectByType<GaugeController>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
+        gaugeFeedback = FindFirstObjectByType<GaugeVisualFeedback>(); // 피드백 컴포넌트 탐색
     }
 
     void Update()
@@ -195,16 +198,44 @@ public class CursorController : MonoBehaviour
 
         bool isLeftClickHeld = false;
         bool isLeftClickReleased = false;
+        bool isLeftClickDown = false;
 #if ENABLE_INPUT_SYSTEM
         if (Mouse.current != null)
         {
             isLeftClickHeld = Mouse.current.leftButton.isPressed;
             isLeftClickReleased = Mouse.current.leftButton.wasReleasedThisFrame;
+            isLeftClickDown = Mouse.current.leftButton.wasPressedThisFrame;
         }
 #else
         isLeftClickHeld = Input.GetMouseButton(0);
         isLeftClickReleased = Input.GetMouseButtonUp(0);
+        isLeftClickDown = Input.GetMouseButtonDown(0);
 #endif
+
+        // [효과음 연동] 물감이 부족한 상태에서 그리기를 시도할 때 단발성 경고음 출력 (점묘화 모드 20% 제한 대응)
+        bool isPaintLackForAttack = false;
+        if (attackMode == 2)
+        {
+            // 2번 점묘화(차징) 모드는 시작 시 chargePaintCost (20%) 이상이 필요합니다.
+            isPaintLackForAttack = (gaugeController != null && gaugeController.currentPaint < chargePaintCost);
+        }
+        else
+        {
+            // 1번 일반 모드는 최소 그리기 가능 선인 hasPaint (minPaintToDraw) 조건 적용
+            isPaintLackForAttack = !hasPaint;
+        }
+
+        if (isLeftClickDown && isPaintLackForAttack && !isDead && !isDrawBlocked)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(SoundManager.SFXType.NoPaint, 0.75f);
+            }
+            if (gaugeFeedback != null)
+            {
+                gaugeFeedback.TriggerFeedback(); // [시각적 피드백] 점멸 및 흔들림 재생
+            }
+        }
 
         bool canDraw = false;
 
@@ -318,6 +349,30 @@ public class CursorController : MonoBehaviour
         {
             trail.emitting = canDraw;
         }
+
+        // [효과음 연동] 그리고 있는 프레임 동안 붓 칠하는 사운드 재생 (매니저 자체 쿨타임으로 시끄러움 예방)
+        if (canDraw)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(SoundManager.SFXType.Painting, 0.45f);
+            }
+        }
+
+        // [효과음 연동] 그리거나 차징을 하던 도중 물감이 완전히 바닥난(동난) 순간 1회 경고음 출력
+        bool isCurrentlyDrawingOrCharging = canDraw || (attackMode == 2 && chargeTimer > 0f && isLeftClickHeld);
+        if (wasDrawingLastFrame && !isCurrentlyDrawingOrCharging && !hasPaint && !isDead && isLeftClickHeld)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(SoundManager.SFXType.NoPaint, 0.75f);
+            }
+            if (gaugeFeedback != null)
+            {
+                gaugeFeedback.TriggerFeedback(); // [시각적 피드백] 점멸 및 흔들림 재생
+            }
+        }
+        wasDrawingLastFrame = isCurrentlyDrawingOrCharging;
     }
 
     // 1번 모드의 기존 힐링 로직 (위장 상태 몬스터 필터링 및 궁극기 게이지 충전 제외)

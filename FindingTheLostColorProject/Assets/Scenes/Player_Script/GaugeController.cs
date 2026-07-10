@@ -98,24 +98,44 @@ public class GaugeController : MonoBehaviour
         // 좌클릭을 누르고 있고 + 물감 잔량이 최소 설정치보다 많으며 + 재클릭 대기 중이 아니고 + 플레이어가 죽지 않았을 때만 소모
         else if (isLeftClickHeld && currentPaint > minPaintToDraw && !needsReclick && !isDead)
         {
-            float activeDecreaseSpeed = decreaseSpeed;
-
-            // 2번 공격 모드(차징 모드)일 때의 소모 속도 차등 조율
+            // [점묘화 모드 소모 차단 버그 해결]
+            // 2번 점묘화(차징) 모드이고 물감이 20% (chargePaintCost) 미만인 경우,
+            // 차징 공격 자체가 시작되지 않으므로 소모하지 않고 재생(regen) 로직을 적용시킵니다.
+            bool canDecreasePaint = true;
             if (cursorController != null && cursorController.attackMode == 2)
             {
-                if (cursorController.IsChargeCompleted)
+                if (currentPaint < cursorController.chargePaintCost)
                 {
-                    // 최대 충전 시 더 이상 게이지가 닳지 않음
-                    activeDecreaseSpeed = 0f;
-                }
-                else
-                {
-                    // 차징 중일 때는 설정된 비율(기본 30%)만큼 소모
-                    activeDecreaseSpeed = decreaseSpeed * cursorController.chargeDepletionMultiplier;
+                    canDecreasePaint = false;
                 }
             }
 
-            currentPaint -= activeDecreaseSpeed * Time.deltaTime;
+            if (canDecreasePaint)
+            {
+                float activeDecreaseSpeed = decreaseSpeed;
+
+                // 2번 공격 모드(차징 모드)일 때의 소모 속도 차등 조율
+                if (cursorController != null && cursorController.attackMode == 2)
+                {
+                    if (cursorController.IsChargeCompleted)
+                    {
+                        // 최대 충전 시 더 이상 게이지가 닳지 않음
+                        activeDecreaseSpeed = 0f;
+                    }
+                    else
+                    {
+                        // 차징 중일 때는 설정된 비율(기본 30%)만큼 소모
+                        activeDecreaseSpeed = decreaseSpeed * cursorController.chargeDepletionMultiplier;
+                    }
+                }
+
+                currentPaint -= activeDecreaseSpeed * Time.deltaTime;
+            }
+            else
+            {
+                // 20% 미만이라 차징 불가능할 때는 물감을 실시간 충전 재생시킴
+                currentPaint += regenSpeed * Time.deltaTime;
+            }
         }
         else
         {
