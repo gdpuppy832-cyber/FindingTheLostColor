@@ -106,7 +106,7 @@ MonoBehaviour:
   paintRestoreAmount: 0.3
   destroyOnConsume: 1
   respawnOnConsume: 1
-  respawnCooldown: 5
+  respawnCooldown: 12
   collectSFX: {fileID: 0}
   collectEffectPrefab: {fileID: 0}
 --- !u!70 &4481925058671957026
