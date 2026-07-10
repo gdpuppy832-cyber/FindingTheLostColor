@@ -103,12 +103,12 @@ TextureImporter:
       name: 03_Furcat_Success_7_0
       rect:
         serializedVersion: 2
-        x: 88
-        y: 19
-        width: 131
-        height: 231
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 322
+        height: 262
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ceaf77a1ed8ba2342ba4a2848cdabe88
     internalID: 0
     vertices: []
     indices: 

@@ -29,6 +29,7 @@ public class R_EnemyAttack : MonoBehaviour
     R_EnemyMove enemyMove;
 
     public ContactHit contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
+    Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
     void Start()
     {
@@ -42,6 +43,9 @@ public class R_EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
         enemyMove = GetComponent<R_EnemyMove>();
         bodyCollider = GetComponent<Collider2D>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         if (projectilePrefab != null)
         {
@@ -121,6 +125,12 @@ public class R_EnemyAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
+            animator.SetBool("IsAttacking", true);
+        }
+
         if (enemyMove != null)
             enemyMove.enabled = false; // 텔레그래프 시작과 동시에 이동 정지
 
@@ -153,6 +163,8 @@ public class R_EnemyAttack : MonoBehaviour
         // 후딜레이: 이동도 공격도 불가
         yield return new WaitForSeconds(postDelay); // 0.5초 대기
 
+        if (animator != null) animator.SetBool("IsAttacking", false);
+
         if (enemyMove != null)
             enemyMove.enabled = true; // 이동 재개
 
@@ -184,6 +196,14 @@ public class R_EnemyAttack : MonoBehaviour
 
             CircleCollider2D col = proj.AddComponent<CircleCollider2D>();
             col.isTrigger = true;
+        }
+
+        // 왼쪽으로 발사할 때만 X축을 뒤집음 (오른쪽 발사는 원본 그대로 유지)
+        if (fireDir.y < 0f)
+        {
+            Vector3 scale = proj.transform.localScale;
+            scale.y = -Mathf.Abs(scale.x);
+            proj.transform.localScale = scale;
         }
 
         Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();

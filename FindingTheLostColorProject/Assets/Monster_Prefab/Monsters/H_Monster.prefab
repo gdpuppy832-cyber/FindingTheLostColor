@@ -196,12 +196,12 @@ MonoBehaviour:
   speed: 1.5
   range: 6
   chaseRange: 8
-  attackStopDistance: 1.5
+  attackStopDistance: 0.1
   safeDropDistance: 7
   detectionRange: 6
   ambushAnimBool: isAmbushed
   ambushYOffset: 0
-  ambushColliderSize: {x: 1, y: 1}
+  ambushColliderSize: {x: 1, y: 0.75}
   ambushColliderOffset: {x: 0, y: 0}
   ambushSprite: {fileID: 8580089753507832943, guid: c89fdd431f3ceda4f948e0fe34e04b59, type: 3}
   activeSprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}

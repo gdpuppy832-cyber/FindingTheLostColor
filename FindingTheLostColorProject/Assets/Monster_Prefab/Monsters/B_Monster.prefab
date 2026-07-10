@@ -145,7 +145,7 @@ MonoBehaviour:
   speed: 1
   range: 6
   chaseRange: 8
-  attackStopDistance: 1.5
+  attackStopDistance: 0.1
   safeDropDistance: 7
 --- !u!114 &-1757121507883713966
 MonoBehaviour:

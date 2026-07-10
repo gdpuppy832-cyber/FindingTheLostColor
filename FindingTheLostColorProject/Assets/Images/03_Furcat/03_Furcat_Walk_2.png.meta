@@ -103,12 +103,12 @@ TextureImporter:
       name: 03_Furcat_Walk_2_0
       rect:
         serializedVersion: 2
-        x: 77
-        y: 23
-        width: 160
-        height: 207
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 322
+        height: 262
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 8f8280ff1defef6449a7f60dca5e77b7
     internalID: 0
     vertices: []
     indices: 

@@ -103,12 +103,12 @@ TextureImporter:
       name: 03_Furcat_IDEL_3_0
       rect:
         serializedVersion: 2
-        x: 87
-        y: 19
-        width: 131
-        height: 193
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 322
+        height: 262
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5964868ea066f4b4e8022275765c37e5
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +136,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       03_Furcat_IDEL_3_0: 7843639310730118908
+      03_Furcat_IDEL_3_1: -1765352109
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -217,9 +217,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 1.5
   lineWidth: 4
-  telegraphTime: 2
-  jumpDuration: 0.6
-  jumpHeight: 2
+  telegraphTime: 1
+  jumpDuration: 0.3
+  jumpHeight: 3.5
   landRadius: 1.5
   postDelay: 3
   attackCooldown: 2
@@ -253,7 +253,7 @@ MonoBehaviour:
   speed: 1.5
   range: 6
   chaseRange: 8
-  attackStopDistance: 0.5
+  attackStopDistance: 0.1
   safeDropDistance: 7
 --- !u!114 &-6962878910128233073
 MonoBehaviour:

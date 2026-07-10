@@ -10,9 +10,18 @@ public class Projectile : MonoBehaviour
 
     public float offscreenMargin = 0.5f;
 
+    [Header("발사 지연 및 회전 설정")]
+    [Tooltip("생성된 후 실제로 날아가기 시작하기까지의 대기 시간 (초)")]
+    public float preFlightDelay = 0.3f;
+
+    [Tooltip("날아가는 동안 초당 회전하는 각도 (양수면 반시계, 음수면 시계 방향)")]
+    public float rotationSpeed = 360f;
+
     SpriteRenderer sr;
     Camera mainCam;
     Rigidbody2D rb;
+
+    bool isFlying = false;  // preFlightDelay가 끝나서 실제로 이동+회전 중인지 여부
 
     void Start()
     {
@@ -32,20 +41,45 @@ public class Projectile : MonoBehaviour
             Invoke(nameof(Despawn), lifetime);
 
         Invoke(nameof(StartBlink), Mathf.Max(0f, lifetime - blinkTime));
+
+        // 발사한 스크립트(R_EnemyAttack 등)가 이미 rb.linearVelocity를 설정해둔 상태이므로,
+        // 그 값을 저장해두고 일단 제자리에 멈춰있다가 preFlightDelay 뒤에 실제로 날아가게 함
+        BeginDelayedLaunch();
     }
 
     // 재사용 모드 초기화: 발사할 때마다 T_EnemyAttack이 호출
     public void ResetForFire()
     {
         CancelInvoke(); // 이전 예약된 Despawn/StartBlink 취소
+        StopAllCoroutines(); // 이전 발사 때 돌던 지연 발사/회전 코루틴 정지
         if (sr != null) sr.enabled = true;
         gameObject.SetActive(true);
         Invoke(nameof(Despawn), lifetime);
         Invoke(nameof(StartBlink), Mathf.Max(0f, lifetime - blinkTime));
+
+        transform.rotation = Quaternion.identity; // 회전 각도 초기화 (이전 발사 때 회전한 상태가 남지 않도록)
+        BeginDelayedLaunch();
+    }
+
+    // 이동(속도)은 생성 즉시 그대로 유지하고, 회전만 preFlightDelay 뒤에 시작되게 함
+    void BeginDelayedLaunch()
+    {
+        isFlying = false;
+        StartCoroutine(DelayedLaunchRoutine());
+    }
+
+    System.Collections.IEnumerator DelayedLaunchRoutine()
+    {
+        yield return new WaitForSeconds(preFlightDelay);
+        isFlying = true;
     }
 
     void Update()
     {
+        // preFlightDelay가 끝나 실제로 날아가는 동안에는 계속 회전시킴
+        if (isFlying)
+            transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+
         if (mainCam == null) return;
         if (reusable && !gameObject.activeSelf) return; // 숨겨진 상태면 화면 밖 체크 스킵
 
@@ -111,6 +145,7 @@ public class Projectile : MonoBehaviour
     void Despawn()
     {
         CancelInvoke();
+        isFlying = false;
 
         if (!reusable)
         {
