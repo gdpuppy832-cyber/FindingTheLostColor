@@ -191,6 +191,17 @@ public class PlayerMove : MonoBehaviour
         if (!canControl)
         {
             moveDirection = Vector2.zero;
+
+            // [컷씬 진입 시 속도 고정 버그 방탄 처리]
+            // 키를 누르고 있던 와중에 조작을 잃을 경우, 기존 X축 속도가 고정되는 현상을 즉각 차단
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            if (animator != null)
+            {
+                animator.SetFloat("VelocityX", 0f);
+            }
         }
     }
 
