@@ -185,6 +185,9 @@ MonoBehaviour:
   attackCooldown: 1
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
+  hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
+  purificationIndicatorPrefab: {fileID: 0}
+  indicatorOffset: {x: 0, y: 1.5, z: 0}
   startColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-1984632610777454492
@@ -221,11 +224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  phase2ThresholdRatio: 0.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackCooldown: 4
+  attackCooldown: 3
   bossAttackDamage: 1
   contactHitbox: {fileID: 4047836205825665637}
   contactDamage: 1
@@ -258,11 +260,11 @@ MonoBehaviour:
   fallbackLaserWidth: 20
   fallbackLaserThickness: 0.6
   frostCrystalPrefab: {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
-  frostSpawnYAboveBoss: 6
+  frostRangrY: 6
+  frostRangeX: 12
   frostRainDuration: 4
   frostSpawnInterval: 0.3
   frostSpawnCountPerTick: 5
-  frostRangeX: 12
   frostFallInitialSpeed: 0
   frostFallAcceleration: 15
   frostMaxLifetime: 6
@@ -305,7 +307,7 @@ MonoBehaviour:
   shadowBarrierHazardPrefab: {fileID: 1923042159831812501, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
   shadowBarrierTelegraphDuration: 2
   shadowBarrierTelegraphBlinkInterval: 0.5
-  shadowBarrierActiveDuration: 1.5
+  shadowBarrierActiveDuration: 5
   fallbackShadowBarrierWidth: 3
   fallbackShadowBarrierHeight: 10
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
