@@ -43,6 +43,15 @@ public class S_MonsterMove : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private NormalMonster normalMonster; // 정화 상태 연동용
     private bool isPausedForTurn = false; // 방향 전환 전 정지 중인지 여부
+    private Animator animator; // 걷기 애니메이션 제어용
+
+    [Header("낭떠러지 감지 설정")]
+    [Tooltip("발밑에 땅이 있는지 검사하는 레이 길이")]
+    public float groundCheckDistance = 2f;
+
+    private Collider2D selfColCached; // 매 프레임 GetComponent 호출 방지용 캐시
+    private bool groundedLeft = true;
+    private bool groundedRight = true;
 
     void Start()
     {
@@ -51,6 +60,9 @@ public class S_MonsterMove : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         normalMonster = GetComponent<NormalMonster>();
         if (normalMonster == null) normalMonster = GetComponentInParent<NormalMonster>();
@@ -77,6 +89,9 @@ public class S_MonsterMove : MonoBehaviour
             col.excludeLayers = ~platformLayers;
         }
 
+        selfColCached = GetComponent<Collider2D>();
+        if (selfColCached == null) selfColCached = GetComponentInChildren<Collider2D>();
+
         // 초기 방향 스프라이트 셋업
         UpdateSpriteDirection();
     }
@@ -98,10 +113,39 @@ public class S_MonsterMove : MonoBehaviour
     void FixedUpdate()
     {
         // 정화 완료 시 물리 이동 정지
-        if (normalMonster != null && normalMonster.IsPurified) return;
+        if (normalMonster != null && normalMonster.IsPurified)
+        {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+            return;
+        }
 
+        CheckGrounded();
         UpdateMovement();
         CheckPlayerContactDamage();
+    }
+
+    /// <summary>
+    /// 좌우 발밑 바닥 유무를 검사해서 groundedLeft/groundedRight를 갱신합니다.
+    /// (EnemyMove.cs와 동일한 방식: 콜라이더 좌/우 지점에서 아래로 레이캐스트)
+    /// </summary>
+    private void CheckGrounded()
+    {
+        if (selfColCached == null) return;
+
+        float halfWidth = selfColCached.bounds.extents.x;
+        float oneThird = halfWidth * 2f / 3f;
+        Vector2 leftPoint = (Vector2)selfColCached.bounds.center + Vector2.left * oneThird;
+        Vector2 rightPoint = (Vector2)selfColCached.bounds.center + Vector2.right * oneThird;
+
+        Debug.DrawRay(leftPoint, Vector2.down * groundCheckDistance, Color.red);
+        Debug.DrawRay(rightPoint, Vector2.down * groundCheckDistance, Color.blue);
+
+        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, groundCheckDistance, platformLayers);
+        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, groundCheckDistance, platformLayers);
+
+        groundedLeft = leftHit.collider != null;
+        groundedRight = rightHit.collider != null;
     }
 
     // excludeLayers 설정으로 인해 물리 충돌/트리거 이벤트 자체가 발생하지 않으므로,
@@ -170,6 +214,10 @@ public class S_MonsterMove : MonoBehaviour
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
             }
+
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             return;
         }
 
@@ -177,9 +225,19 @@ public class S_MonsterMove : MonoBehaviour
         float deltaX = currentX - startX;
         float moveDir = movingRight ? 1f : -1f;
 
+        // 이동 방향 앞에 낭떠러지(바닥 없음)가 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
+        bool edgeAhead = (moveDir < 0f && !groundedLeft) || (moveDir > 0f && !groundedRight);
+        if (edgeAhead && !isPausedForTurn)
+        {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
+            StartCoroutine(PauseThenTurn(!movingRight));
+            return;
+        }
+
         // 이동 방향 앞에 벽(platformLayers)이 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
-        Collider2D selfCol = GetComponent<Collider2D>();
-        if (selfCol == null) selfCol = GetComponentInChildren<Collider2D>();
+        Collider2D selfCol = selfColCached;
 
         if (selfCol != null)
         {
@@ -194,6 +252,9 @@ public class S_MonsterMove : MonoBehaviour
 
             if (wallHit.collider != null && !isPausedForTurn)
             {
+                if (animator != null)
+                    animator.SetBool("IsWalking", false);
+
                 StartCoroutine(PauseThenTurn(!movingRight));
                 return; // 방향 전환 코루틴이 시작되면 이번 프레임 이동은 하지 않음
             }
@@ -208,6 +269,9 @@ public class S_MonsterMove : MonoBehaviour
         {
             StartCoroutine(PauseThenTurn(true));
         }
+
+        if (animator != null)
+            animator.SetBool("IsWalking", true);
 
         // 물리 엔진(Rigidbody2D)이 달려있으면 속도를 제어하고, 없으면 transform을 직접 이동
         if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
