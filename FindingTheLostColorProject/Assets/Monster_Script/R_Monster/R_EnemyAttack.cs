@@ -182,7 +182,6 @@ public class R_EnemyAttack : MonoBehaviour
         {
             SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyShoot, transform.position, 0.75f);
         }
-
         GameObject proj;
         if (projectileTemplate != null)
         {
@@ -205,10 +204,10 @@ public class R_EnemyAttack : MonoBehaviour
         }
 
         // 왼쪽으로 발사할 때만 X축을 뒤집음 (오른쪽 발사는 원본 그대로 유지)
-        if (fireDir.y < 0f)
+        if (fireDir.x < 0f)
         {
             Vector3 scale = proj.transform.localScale;
-            scale.y = -Mathf.Abs(scale.x);
+            scale.x = -Mathf.Abs(scale.x);
             proj.transform.localScale = scale;
         }
 
