@@ -31,7 +31,13 @@ public class PauseManager : MonoBehaviour
         // ESC 키를 누르면 일시정지 상태를 토글(켜고 끄기)합니다.
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
+            // [방탄 코드] 변수 대신 실제 화면에 UI 패널이 켜져 있는지 실시간 검사
+            bool currentlyPaused = (pausePanel != null && pausePanel.activeSelf) ||
+                                   (optionPanel != null && optionPanel.activeSelf) ||
+                                   (quitConfirmPanel != null && quitConfirmPanel.activeSelf) ||
+                                   (titleConfirmPanel != null && titleConfirmPanel.activeSelf);
+
+            if (currentlyPaused)
             {
                 // 1순위: 종료 확인 팝업이 켜져있다면 그것부터 닫습니다.
                 if (quitConfirmPanel != null && quitConfirmPanel.activeSelf)
@@ -57,6 +63,26 @@ public class PauseManager : MonoBehaviour
             else
             {
                 Pause();
+            }
+        }
+
+        // [초강력 동기화 감지기 추가]
+        // 설정창 속 게임재개 버튼 클릭 등으로 시간 배율은 재생(1f)되었으나,
+        // 일시정지창(pausePanel) 등 백그라운드 패널이 여전히 켜져있는 꼬임 상태를 실시간 감지하여 자동 청소합니다.
+        if (Time.timeScale > 0f)
+        {
+            bool anyPanelActive = (pausePanel != null && pausePanel.activeSelf) ||
+                                  (optionPanel != null && optionPanel.activeSelf) ||
+                                  (quitConfirmPanel != null && quitConfirmPanel.activeSelf) ||
+                                  (titleConfirmPanel != null && titleConfirmPanel.activeSelf);
+
+            if (anyPanelActive || isPaused)
+            {
+                if (pausePanel != null) pausePanel.SetActive(false);
+                if (optionPanel != null) optionPanel.SetActive(false);
+                if (quitConfirmPanel != null) quitConfirmPanel.SetActive(false);
+                if (titleConfirmPanel != null) titleConfirmPanel.SetActive(false);
+                isPaused = false;
             }
         }
     }

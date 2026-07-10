@@ -49,6 +49,10 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("잔상 고유 틴트 컬러")]
     public Color afterimageColor = new Color(0.3f, 0.75f, 1.0f, 0.55f);
 
+    [Header("Dash Gauge HUD")]
+    [Tooltip("플레이어 옆 아치형 대쉬 게이지 컨트롤러")]
+    public DashGaugeController dashGaugeCtrl;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -187,6 +191,17 @@ public class PlayerMove : MonoBehaviour
         if (!canControl)
         {
             moveDirection = Vector2.zero;
+
+            // [컷씬 진입 시 속도 고정 버그 방탄 처리]
+            // 키를 누르고 있던 와중에 조작을 잃을 경우, 기존 X축 속도가 고정되는 현상을 즉각 차단
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            if (animator != null)
+            {
+                animator.SetFloat("VelocityX", 0f);
+            }
         }
     }
 
@@ -197,6 +212,12 @@ public class PlayerMove : MonoBehaviour
     {
         canDash = false;
         isDashing = true;
+
+        // 아치형 대쉬 쿨타임 게이지 UI 구동
+        if (dashGaugeCtrl != null)
+        {
+            dashGaugeCtrl.StartDashGauge(dashCooldown);
+        }
 
         // 대쉬 사용 즉시 발밑 원형을 어두운 색상으로 변경
         if (dashIndicatorSR != null)
