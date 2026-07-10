@@ -187,7 +187,7 @@ public class Trampoline : MonoBehaviour
         textMesh.color = new Color(1f, 0.7f, 0f);
         textMesh.anchor = TextAnchor.MiddleCenter;
         textMesh.alignment = TextAlignment.Center;
-
+ 
         Font appliedFont = hitTextFont;
         if (appliedFont == null)
         {
@@ -197,12 +197,12 @@ public class Trampoline : MonoBehaviour
                 appliedFont = playerInt.customFont;
             }
         }
-
+ 
         if (appliedFont != null)
         {
             textMesh.font = appliedFont;
         }
-
+ 
         MeshRenderer meshRenderer = hitTextObj.GetComponent<MeshRenderer>();
         if (meshRenderer != null)
         {
@@ -213,7 +213,7 @@ public class Trampoline : MonoBehaviour
                 meshRenderer.material = appliedFont.material;
             }
         }
-
+ 
         FloatingText floatingScript = hitTextObj.AddComponent<FloatingText>();
         if (floatingScript != null)
         {
