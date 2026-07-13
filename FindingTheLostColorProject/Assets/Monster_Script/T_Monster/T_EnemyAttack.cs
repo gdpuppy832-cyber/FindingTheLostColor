@@ -53,9 +53,13 @@ public class T_EnemyAttack : MonoBehaviour
     public float fallAcceleration = 20f;
     public float maxFallTime = 3f;
     public float groundCheckRadius = 0.3f;
-    public float jumpPostDelay = 3f;
+    public float jumpPostDelay = 3f;              // 착지 후 이동 불가 딜레이 (공격 실패 시 적용)
+    public float jumpHitPostDelay = 0.25f;        // 착지 후 이동 불가 딜레이 (공격 성공 시 적용, 조정 가능)
     public float jumpCooldown = 2f;
     public float safeDropDistance = 3f;
+
+    // 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
+    bool hitPlayerThisJump = false;
     void Start()
     {
         bodyCollider = GetComponent<Collider2D>();
@@ -110,6 +114,12 @@ public class T_EnemyAttack : MonoBehaviour
             if (nm != null) damage = nm.attackDamage;
 
             player.TakeDamage(damage);
+
+            // 점프 공격 도중이었다면, 실제로 플레이어와 충돌했다는 것을 기록해서 후딜 판정에 사용
+            if (isAttacking)
+            {
+                hitPlayerThisJump = true;
+            }
         }
     }
 
@@ -401,6 +411,7 @@ public class T_EnemyAttack : MonoBehaviour
 
         isAttacking = true;
         canAttack = false;
+        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
         if (moveScript != null) moveScript.enabled = false;
 
         Vector2 startPos = transform.position;
@@ -435,7 +446,15 @@ public class T_EnemyAttack : MonoBehaviour
 
         transform.position = landPos;
 
-        yield return new WaitForSeconds(jumpPostDelay);
+        // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
+        // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
+        yield return new WaitForFixedUpdate();
+
+        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했는지에 따라 후딜 시간을 다르게 적용
+        // 성공: jumpHitPostDelay(기본 0.25초, 조정 가능) / 실패: jumpPostDelay(기본 3초)
+        float actualPostDelay = hitPlayerThisJump ? jumpHitPostDelay : jumpPostDelay;
+        yield return new WaitForSeconds(actualPostDelay);
+
         if (moveScript != null) moveScript.enabled = true;
 
         EndAttackCycle();
