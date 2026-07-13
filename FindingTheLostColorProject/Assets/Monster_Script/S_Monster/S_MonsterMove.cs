@@ -23,6 +23,9 @@ public class S_MonsterMove : MonoBehaviour
     [Tooltip("이동 방향에 따라 SpriteRenderer의 FlipX를 제어할지 여부")]
     public bool useSpriteFlip = true;
 
+    [Tooltip("스프라이트 기본 에셋이 왼쪽을 바라보고 있어서 문워크를 하는 경우 체크를 켜 줍니다.")]
+    public bool invertSpriteDirection = false;
+
     [Header("충돌 필터 설정")]
     [Tooltip("몬스터가 충돌할 플랫폼/바닥 레이어들 (이 레이어들을 제외한 플레이어, 아이템 등 모든 레이어는 무조건 관통합니다)")]
     public LayerMask platformLayers;
@@ -393,16 +396,21 @@ public class S_MonsterMove : MonoBehaviour
     /// </summary>
     private void UpdateSpriteDirection()
     {
+        bool faceRight = movingRight;
+        if (invertSpriteDirection)
+        {
+            faceRight = !movingRight;
+        }
+
         if (useSpriteFlip && spriteRenderer != null)
         {
-            // 우측 이동 시 flipX = false(정방향), 좌측 이동 시 flipX = true(반전)
-            spriteRenderer.flipX = !movingRight;
+            spriteRenderer.flipX = !faceRight;
         }
         else
         {
-            // localScale을 직접 뒤집는 전통적인 방식 지원
+            // localScale을 직접 뒤집는 방식 지원 
             Vector3 scale = transform.localScale;
-            scale.x = movingRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            scale.x = faceRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             transform.localScale = scale;
         }
     }

@@ -242,6 +242,15 @@ MonoBehaviour:
   blackFogs:
   - {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
   - {fileID: 4059382244844945514, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
+  portalObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  spawnMonsterPrefabs:
+  - {fileID: 946412894994910540, guid: 0c03a8999f3178144a705ce901686007, type: 3}
+  - {fileID: 5474003369453071791, guid: bf8d862bc11b98842bad3ec18d3f9eba, type: 3}
+  - {fileID: 1639313505367669230, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
+  - {fileID: 946412894994910540, guid: e7339c7820e3f454ca0516f2169bddb4, type: 3}
+  portalPatternCooldown: 8
   telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
   spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
   spikeTelegraphDuration: 2

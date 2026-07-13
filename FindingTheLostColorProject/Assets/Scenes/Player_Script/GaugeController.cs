@@ -29,6 +29,7 @@ public class GaugeController : MonoBehaviour
     private Image gaugeImage;
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
     private CursorController cursorController; // 커서 컨트롤러 참조 추가
+    private GaugeVisualFeedback gaugeFeedback; // [추가] 물감 부족 비주얼 피드백 컴포넌트 참조
     private bool needsReclick = false; // 물감 고갈 시 마우스 재클릭 필요 여부
     private float baseRegenSpeed;
 
@@ -49,6 +50,7 @@ public class GaugeController : MonoBehaviour
         // 씬에서 필요한 컨트롤러 검색 및 참조
         playerHealth = FindFirstObjectByType<PlayerHealth>();
         cursorController = FindFirstObjectByType<CursorController>();
+        gaugeFeedback = FindFirstObjectByType<GaugeVisualFeedback>(); // [추가] 캐싱
         
         // 원본 재생 속도 저장
         baseRegenSpeed = regenSpeed;
@@ -119,13 +121,38 @@ public class GaugeController : MonoBehaviour
                 {
                     if (cursorController.IsChargeCompleted)
                     {
-                        // 최대 충전 시 더 이상 게이지가 닳지 않음
-                        activeDecreaseSpeed = 0f;
+                        // 최대 충전 완료 후 홀드(조준 유지) 중일 때의 소모율 적용
+                        activeDecreaseSpeed = decreaseSpeed * cursorController.chargeHoldDepletionMultiplier;
                     }
                     else
                     {
-                        // 차징 중일 때는 설정된 비율(기본 30%)만큼 소모
+                        // 차지 중 소모율 적용
                         activeDecreaseSpeed = decreaseSpeed * cursorController.chargeDepletionMultiplier;
+                    }
+
+                    // [추가] 고갈(minPaintToDraw)되기 2초 전의 임계값 실시간 감지 (2초 전 = minPaintToDraw + 2초간의 소모량)
+                    float dangerThreshold = minPaintToDraw + (activeDecreaseSpeed * 2f);
+                    if (currentPaint <= dangerThreshold)
+                    {
+                        if (gaugeFeedback != null)
+                        {
+                            gaugeFeedback.SetLoopWarning(true); // 2초 전 돌입 시 빨간색 루프 점멸 구동
+                        }
+                    }
+                    else
+                    {
+                        if (gaugeFeedback != null)
+                        {
+                            gaugeFeedback.SetLoopWarning(false);
+                        }
+                    }
+                }
+                else
+                {
+                    // 1번 모드는 루프 경고 해제
+                    if (gaugeFeedback != null)
+                    {
+                        gaugeFeedback.SetLoopWarning(false);
                     }
                 }
 
@@ -133,13 +160,22 @@ public class GaugeController : MonoBehaviour
             }
             else
             {
+                // 소모 중단 시 루프 경고 정지
+                if (gaugeFeedback != null)
+                {
+                    gaugeFeedback.SetLoopWarning(false);
+                }
                 // 20% 미만이라 차징 불가능할 때는 물감을 실시간 충전 재생시킴
                 currentPaint += regenSpeed * Time.deltaTime;
             }
         }
         else
         {
-            // 그 외에는 물감 재생 (1이상으로 늘어나지 않음)
+            // 그 외에는 물감 재생 및 루프 경고 비활성화
+            if (gaugeFeedback != null)
+            {
+                gaugeFeedback.SetLoopWarning(false);
+            }
             currentPaint += regenSpeed * Time.deltaTime;
         }
 

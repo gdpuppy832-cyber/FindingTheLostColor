@@ -49,6 +49,8 @@ public class CursorController : MonoBehaviour
     public float chargePaintCost = 0.2f;
     [Tooltip("차징 중 물감 소모 비율 (기존 소모량 대비 배율, 0.3 = 30% 소모)")]
     public float chargeDepletionMultiplier = 0.3f;
+    [Tooltip("차징 완료 후 발사 대기(Aim/Hold) 중일 때의 물감 소모 비율 (기존 소모량 대비 배율, 기본값: 0.3)")]
+    public float chargeHoldDepletionMultiplier = 0.3f;
 
     [Header("Charge Visual Effect Settings")]
     [Tooltip("차징 시 마우스 커서 위치에 나타나서 크기가 변할 스프라이트 렌더러")]
@@ -98,6 +100,7 @@ public class CursorController : MonoBehaviour
     private bool wasDrawingLastFrame = false; // [추가] 이전 프레임 그리기/차징 여부 기억 변수
     private float chatterTimer = 0f;          // [추가] 마우스 튐(채터링) 방지용 타이머
     private bool isActuallyCharging = false;  // [추가] 현재 마우스 클릭 상태와 무관하게 논리적으로 차징 중인지 여부
+    private const float CHATTER_GRACE_TIME = 0.08f; // [추가] 마우스 클릭 튐 유예 시간
 
     void Start()
     {

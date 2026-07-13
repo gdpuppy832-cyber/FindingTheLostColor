@@ -151,8 +151,9 @@ MonoBehaviour:
   chargeDuration: 1
   chargeAttackRadius: 0.7
   chargeAttackHealAmount: 2
-  chargePaintCost: 0.19
-  chargeDepletionMultiplier: 0
+  chargePaintCost: 0.18
+  chargeDepletionMultiplier: 0.25
+  chargeHoldDepletionMultiplier: 0.25
   chargeEffectSprite: {fileID: 9071747882889396090}
   minChargeVisualScale: 0.2
   maxChargeVisualScale: 0.9
@@ -161,6 +162,7 @@ MonoBehaviour:
   meteorPrefab: {fileID: 0}
   meteorSpeed: 15
   meteorExplosionRadius: 1.8
+  chargeFogPushAmount: 2.5
   minSpawnRange: 2
   maxSpawnRange: 7
   spawnHeight: 9

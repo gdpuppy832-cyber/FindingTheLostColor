@@ -32,6 +32,29 @@ public class Potion : MonoBehaviour
     [Tooltip("획득 시 생성할 파티클/이펙트 프리팹 (옵션)")]
     public GameObject collectEffectPrefab;
 
+    [Header("Hovering Settings (Bobbing)")]
+    [Tooltip("위아래 둥둥 움직임의 주파수 (주기/속도, 높을수록 빠름, 기본값: 2.0)")]
+    public float hoverSpeed = 2f;
+    [Tooltip("위아래 둥둥 움직임의 진폭 (높이 범위, 높을수록 더 많이 움직임, 기본값: 0.15)")]
+    public float hoverAmplitude = 0.15f;
+
+    private Vector3 startPos;
+    private bool isHoverActive = true;
+
+    private void Start()
+    {
+        startPos = transform.position;
+    }
+
+    private void Update()
+    {
+        if (isHoverActive)
+        {
+            float newY = startPos.y + Mathf.Sin(Time.time * hoverSpeed) * hoverAmplitude;
+            transform.position = new Vector3(startPos.x, newY, startPos.z);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 플레이어 판정 (PlayerHealth 컴포넌트가 있는지 확인)
@@ -152,6 +175,11 @@ public class Potion : MonoBehaviour
     /// </summary>
     private void SetComponentsActive(bool active)
     {
+        isHoverActive = active;
+        if (active)
+        {
+            transform.position = startPos; // 원래 리스폰 정렬 위치 복원
+        }
         // 본체 및 자식의 SpriteRenderer 일괄 제어
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null) sr.enabled = active;
