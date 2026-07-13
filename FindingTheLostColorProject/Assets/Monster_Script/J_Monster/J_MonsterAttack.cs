@@ -24,6 +24,9 @@ public class J_EnemyAttack : MonoBehaviour
     J_EnemyMove enemyMove;
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
+    // 이번 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
+    bool hitPlayerThisJump = false;
+
     void Start()
     {
         enemyMove = GetComponent<J_EnemyMove>();
@@ -60,6 +63,12 @@ public class J_EnemyAttack : MonoBehaviour
             if (nm != null) damage = nm.attackDamage;
 
             player.TakeDamage(damage);
+
+            // 점프 공격 도중이었다면, 실제로 플레이어와 충돌했다는 것을 기록해서 후딜 판정에 사용
+            if (isAttacking)
+            {
+                hitPlayerThisJump = true;
+            }
         }
     }
 
@@ -94,6 +103,7 @@ public class J_EnemyAttack : MonoBehaviour
 
         isAttacking = true;
         canAttack = false;
+        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
 
         if (animator != null)
         {
@@ -139,7 +149,16 @@ public class J_EnemyAttack : MonoBehaviour
 
         transform.position = landPos;
 
-        yield return new WaitForSeconds(postDelay);
+        // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
+        // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
+        yield return new WaitForFixedUpdate();
+
+        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했으면 공격 성공으로 판정
+        // -> 후딜 없이 바로 이동 재개, 충돌이 없었으면(공격 실패) postDelay만큼 대기
+        if (!hitPlayerThisJump)
+        {
+            yield return new WaitForSeconds(postDelay);
+        }
 
         if (animator != null) animator.SetBool("IsAttacking", false);
 
