@@ -22,10 +22,13 @@ public class J_EnemyAttack : MonoBehaviour
     bool canAttack = true;
 
     J_EnemyMove enemyMove;
+    Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
     void Start()
     {
         enemyMove = GetComponent<J_EnemyMove>();
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -92,6 +95,12 @@ public class J_EnemyAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
+            animator.SetBool("IsAttacking", true);
+        }
+
         if (enemyMove != null)
             enemyMove.enabled = false;
 
@@ -102,6 +111,10 @@ public class J_EnemyAttack : MonoBehaviour
         {
             isAttacking = false;
             canAttack = true;
+
+            if (animator != null)
+                animator.SetBool("IsAttacking", false);
+
             if (enemyMove != null)
                 enemyMove.enabled = true;
             yield break;
@@ -128,10 +141,14 @@ public class J_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(postDelay);
 
-        if (enemyMove != null)
-            enemyMove.enabled = true;
+        if (animator != null) animator.SetBool("IsAttacking", false);
 
         isAttacking = false;
+
+        // enemyMove를 IsAttacking을 끈 다음에 활성화해서,
+        // 같은 프레임에 IsWalking이 급하게 바뀌어 트랜지션이 꼬이는 걸 방지
+        if (enemyMove != null)
+            enemyMove.enabled = true;
 
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
