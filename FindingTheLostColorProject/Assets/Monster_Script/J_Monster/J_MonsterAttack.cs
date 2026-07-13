@@ -8,7 +8,8 @@ public class J_EnemyAttack : MonoBehaviour
     public float jumpDuration = 0.6f;     // 점프(공중에 떠있는) 시간
     public float jumpHeight = 2f;         // 포물선 최고 높이
     public float landRadius = 1.5f;       // 착지 피해 범위
-    public float postDelay = 0.5f;        // 착지 후 이동 불가 딜레이
+    public float postDelay = 0.5f;        // 착지 후 이동 불가 딜레이 (공격 실패 시 적용)
+    public float hitPostDelay = 0.25f;    // 착지 후 이동 불가 딜레이 (공격 성공 시 적용, 조정 가능)
     public float attackCooldown = 2f;     // 쿨타임
     public ContactHit contactHitbox;
     public LayerMask groundLayer;
@@ -26,6 +27,18 @@ public class J_EnemyAttack : MonoBehaviour
 
     // 이번 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
     bool hitPlayerThisJump = false;
+
+    GameObject activeMissIndicator;
+
+    [Header("공격 실패 표시 오브젝트")]
+    [Tooltip("공격 실패(후딜레이) 동안 몬스터 머리 위에 띄울, 자체 애니메이션이 있는 프리팹 (비워두면 생성 안 함)")]
+    public GameObject missIndicatorPrefab;
+
+    [Tooltip("몬스터 기준 표시 오브젝트가 생성될 위치 오프셋")]
+    public Vector3 missIndicatorOffset = new Vector3(0f, 1.5f, 0f);
+
+    [Tooltip("공격 실패 후딜레이가 시작되고 나서, 표시 오브젝트가 실제로 나타나기까지 대기하는 시간(초)")]
+    public float missIndicatorDelay = 0.2f;
 
     void Start()
     {
@@ -131,6 +144,14 @@ public class J_EnemyAttack : MonoBehaviour
         }
         yield return new WaitForSeconds(telegraphTime);
 
+        // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
+        if (landPos.x != startPos.x)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1f : -1f);
+            transform.localScale = scale;
+        }
+
         // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
         float elapsed = 0f;
 
@@ -153,11 +174,55 @@ public class J_EnemyAttack : MonoBehaviour
         // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
         yield return new WaitForFixedUpdate();
 
-        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했으면 공격 성공으로 판정
-        // -> 후딜 없이 바로 이동 재개, 충돌이 없었으면(공격 실패) postDelay만큼 대기
-        if (!hitPlayerThisJump)
+        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했는지에 따라 후딜 시간을 다르게 적용
+        // 성공: hitPostDelay(기본 0.25초, 조정 가능) / 실패: postDelay(기본 0.5초)
+        if (hitPlayerThisJump)
         {
-            yield return new WaitForSeconds(postDelay);
+            yield return new WaitForSeconds(hitPostDelay);
+        }
+        else
+        {
+            // 공격 실패 시에만 IsDelaying 애니메이션 파라미터를 켬
+            if (animator != null) animator.SetBool("IsDelaying", true);
+
+            // NormalMonster는 수정하지 않는 전제이므로, 정화 여부(IsPurified)는 참조만 해서 확인
+            NormalMonster nm = GetComponent<NormalMonster>();
+            if (nm == null) nm = GetComponentInParent<NormalMonster>();
+
+            bool indicatorSpawned = false;
+            float waitElapsed = 0f;
+
+            // postDelay 동안 매 프레임 진행하면서,
+            // 1) missIndicatorDelay가 지나면 그때 표시 오브젝트를 생성하고
+            // 2) 표시 중에 몬스터가 정화되면 즉시 파괴함
+            // (참고: 정화로 인해 이 스크립트 자체가 비활성화되면 이 루프도 함께 멈추는데,
+            //  그 경우를 대비한 정리는 OnDisable에서 별도로 처리함)
+            while (waitElapsed < postDelay)
+            {
+                waitElapsed += Time.deltaTime;
+
+                if (!indicatorSpawned && waitElapsed >= missIndicatorDelay)
+                {
+                    activeMissIndicator = SpawnMissIndicator();
+                    indicatorSpawned = true;
+                }
+
+                if (activeMissIndicator != null && nm != null && nm.IsPurified)
+                {
+                    Destroy(activeMissIndicator);
+                    activeMissIndicator = null;
+                }
+
+                yield return null;
+            }
+
+            if (animator != null) animator.SetBool("IsDelaying", false);
+
+            if (activeMissIndicator != null)
+            {
+                Destroy(activeMissIndicator);
+                activeMissIndicator = null;
+            }
         }
 
         if (animator != null) animator.SetBool("IsAttacking", false);
@@ -172,41 +237,29 @@ public class J_EnemyAttack : MonoBehaviour
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
     }
-
-    public float fallAcceleration = 20f;
-    public float maxFallTime = 3f;
-
-    System.Collections.IEnumerator FallToGround()
+    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
+    // 그 시점에 코루틴이 멈춰서 위 while 루프의 정리 로직이 실행되지 못하므로,
+    // 여기서 확실하게 표시 오브젝트를 파괴함
+    void OnDisable()
     {
-        Collider2D selfCol = GetComponent<Collider2D>();
-        float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
-
-        float fallSpeed = 0f;
-        float fallElapsed = 0f;
-
-        while (fallElapsed < maxFallTime)
+        if (activeMissIndicator != null)
         {
-            fallElapsed += Time.deltaTime;
-            fallSpeed += fallAcceleration * Time.deltaTime;
-
-            float moveDist = fallSpeed * Time.deltaTime;
-
-            // 이동하기 전에 먼저 발밑 기준으로 이번 프레임에 이동할 거리(moveDist)만큼 아래에
-            // 바닥이 있는지 레이캐스트로 미리 검사함.
-            // (기존에는 먼저 이동한 뒤 검사해서, 낙하 속도가 붙으면 바닥을 뚫고 들어간 위치까지
-            //  이동한 다음에야 멈춰서 "땅속에 들어갔다 나오는" 현상이 있었음)
-            RaycastHit2D groundHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, footOffset + moveDist, groundLayer);
-            if (groundHit.collider != null)
-            {
-                // 뚫고 들어가지 않도록, 바닥 표면에 발이 정확히 닿는 위치로 정렬하고 종료
-                transform.position = new Vector3(transform.position.x, groundHit.point.y + footOffset, transform.position.z);
-                yield break;
-            }
-
-            transform.position += new Vector3(0f, -moveDist, 0f);
-            yield return null;
+            Destroy(activeMissIndicator);
+            activeMissIndicator = null;
         }
     }
+
+    // 공격 실패 시 몬스터 머리 위에 띄울 표시 오브젝트 생성 (자체 애니메이션은 프리팹의 Animator가 알아서 재생)
+    GameObject SpawnMissIndicator()
+    {
+        if (missIndicatorPrefab == null) return null;
+
+        GameObject indicator = Instantiate(missIndicatorPrefab, transform);
+        indicator.transform.localPosition = missIndicatorOffset;
+        indicator.transform.localRotation = Quaternion.identity;
+        return indicator;
+    }
+
 
     public float groundCheckRadius = 0.3f;
 

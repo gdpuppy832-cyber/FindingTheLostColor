@@ -57,6 +57,14 @@ public class NormalMonster : MonoBehaviour
         if (rb == null) rb = GetComponentInParent<Rigidbody2D>();
         if (rb == null) rb = GetComponentInChildren<Rigidbody2D>();
 
+        // Rigidbody가 물리적으로 정지 상태(겹친 채 멈춰있는 등)에 들어가 Sleep되면
+        // OnTriggerStay2D/OnCollisionStay2D 호출 자체가 멈춰서 데미지가 안 들어가는 문제가 있었음.
+        // Never Sleep으로 설정해서 항상 충돌 감지가 갱신되도록 함
+        if (rb != null)
+        {
+            rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        }
+
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
     }
@@ -444,6 +452,45 @@ public class NormalMonster : MonoBehaviour
         if (player != null && Time.time - lastAttackTime >= attackCooldown)
         {
             player.TakeDamage(attackDamage);
+            lastAttackTime = Time.time;
+        }
+    }
+
+    PlayerHealth cachedPlayer;
+    Collider2D cachedPlayerCol;
+
+    // OnTriggerStay2D/OnCollisionStay2D는 Rigidbody가 Sleep 상태에 들어가면 호출이 멈출 수 있어서,
+    // 매 프레임 직접 오버랩을 검사하는 방식으로 보완 (겹친 채 정지해 있어도 항상 정상 작동함)
+    void Update()
+    {
+        if (isPurified) return;
+        if (GetComponent<BossAttack>() != null) return;
+
+        if (cachedPlayer == null)
+        {
+            cachedPlayer = FindFirstObjectByType<PlayerHealth>();
+            if (cachedPlayer != null)
+            {
+                cachedPlayerCol = cachedPlayer.GetComponent<Collider2D>();
+                if (cachedPlayerCol == null) cachedPlayerCol = cachedPlayer.GetComponentInChildren<Collider2D>();
+            }
+        }
+        if (cachedPlayer == null || cachedPlayerCol == null) return;
+
+        Collider2D[] myCols = GetComponentsInChildren<Collider2D>(true);
+        bool overlapping = false;
+        foreach (var col in myCols)
+        {
+            if (col != null && col.IsTouching(cachedPlayerCol))
+            {
+                overlapping = true;
+                break;
+            }
+        }
+
+        if (overlapping && Time.time - lastAttackTime >= attackCooldown)
+        {
+            cachedPlayer.TakeDamage(attackDamage);
             lastAttackTime = Time.time;
         }
     }

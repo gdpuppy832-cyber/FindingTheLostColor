@@ -218,11 +218,12 @@ MonoBehaviour:
   attackRange: 1.5
   lineWidth: 4
   telegraphTime: 1
-  jumpDuration: 0.3
-  jumpHeight: 3.5
+  jumpDuration: 0.75
+  jumpHeight: 1.5
   landRadius: 1.5
-  postDelay: 3
-  attackCooldown: 2
+  postDelay: 2
+  hitPostDelay: 0.5
+  attackCooldown: 1
   contactHitbox: {fileID: 6120970918814212014}
   groundLayer:
     serializedVersion: 2
@@ -234,8 +235,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   minJumpDistance: 1
-  fallAcceleration: 20
-  maxFallTime: 3
+  missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
+  missIndicatorOffset: {x: 0, y: 1.5, z: 0}
+  missIndicatorDelay: 0.175
   groundCheckRadius: 0.3
   safeDropDistance: 3
 --- !u!114 &-5272792582670928354
@@ -274,7 +276,7 @@ MonoBehaviour:
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
-  purificationIndicatorPrefab: {fileID: 0}
+  purificationIndicatorPrefab: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
