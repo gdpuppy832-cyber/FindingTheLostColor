@@ -96,6 +96,8 @@ public class CursorController : MonoBehaviour
     private Coroutine releaseEffectCoroutine;
     private Color originalSpriteColor;
     private bool wasDrawingLastFrame = false; // [추가] 이전 프레임 그리기/차징 여부 기억 변수
+    private float chatterTimer = 0f;          // [추가] 마우스 튐(채터링) 방지용 타이머
+    private bool isActuallyCharging = false;  // [추가] 현재 마우스 클릭 상태와 무관하게 논리적으로 차징 중인지 여부
 
     void Start()
     {
@@ -262,8 +264,15 @@ public class CursorController : MonoBehaviour
                 }
             }
 
-            if (isLeftClickHeld && canStartOrContinueCharge && !needsReclick && !isDead && !isDrawBlocked)
+            // 차징 조건 충족 여부
+            bool isConditionMet = canStartOrContinueCharge && !needsReclick && !isDead && !isDrawBlocked;
+
+            if (isLeftClickHeld && isConditionMet)
             {
+                // 실시간 차징 상태 활성화 및 튐 타이머 리셋
+                isActuallyCharging = true;
+                chatterTimer = 0f;
+
                 // 이전 발사 코루틴이 돌고 있다면 즉시 멈추고 초기화
                 if (releaseEffectCoroutine != null)
                 {
@@ -300,31 +309,36 @@ public class CursorController : MonoBehaviour
                     Debug.Log("[CursorController] 차징 완료! 마우스를 떼면 발사합니다.");
                 }
             }
-            else
+            else if (isActuallyCharging)
             {
-                // 누르고 있지 않거나 조건이 불충족되면 차징 타이머 초기화 (단, Up하는 프레임에는 발사 처리를 위해 예외)
-                if (!isLeftClickReleased)
+                // 차징 중이었으나 마우스 클릭이 순간 튀었거나 조건이 깨진 경우 ➔ 0.08초 동안 마우스 복구 대기
+                chatterTimer += Time.deltaTime;
+
+                // 0.08초 유예 시간을 초과했거나, 마우스를 떼는 릴리즈 키 신호가 명확히 감지됐거나, 피격/사망/물감 완전 고갈 등의 락이 걸린 경우 릴리즈 연출 처리
+                if (chatterTimer >= CHATTER_GRACE_TIME || isLeftClickReleased || !isConditionMet)
                 {
-                    ResetCharge();
+                    isActuallyCharging = false;
+                    chatterTimer = 0f;
+
+                    if (chargeTimer >= chargeDuration && !isDead && !isDrawBlocked)
+                    {
+                        ExecuteChargeAttack(mouseWorldPos);
+
+                        // 손을 뗄 때 투명해지며 확 커지는 코루틴 실행
+                        if (releaseEffectCoroutine != null) StopCoroutine(releaseEffectCoroutine);
+                        releaseEffectCoroutine = StartCoroutine(ReleaseVisualEffectRoutine());
+                    }
+                    else
+                    {
+                        // 완충되지 않았거나 조건이 불충족한 상태에서 떼진 경우 취소
+                        ResetCharge();
+                    }
                 }
             }
-
-            // 마우스 버튼에서 손을 떼었을 때 (차징 샷 발사)
-            if (isLeftClickReleased)
+            else
             {
-                if (chargeTimer >= chargeDuration && !isDead && !isDrawBlocked)
-                {
-                    ExecuteChargeAttack(mouseWorldPos);
-
-                    // 손을 뗄 때 투명해지며 확 커지는 코루틴 실행
-                    if (releaseEffectCoroutine != null) StopCoroutine(releaseEffectCoroutine);
-                    releaseEffectCoroutine = StartCoroutine(ReleaseVisualEffectRoutine());
-                }
-                else
-                {
-                    // 차징이 미완성인 채 뗐다면 이펙트 즉시 끄기
-                    ResetCharge();
-                }
+                // 차징 중이 아닐 때 클릭을 뗐다면 확실히 초기화
+                ResetCharge();
             }
         }
         else
@@ -811,11 +825,27 @@ public class CursorController : MonoBehaviour
     private void ResetCharge()
     {
         chargeTimer = 0f;
+        chatterTimer = 0f;
+        isActuallyCharging = false;
 
-        if (releaseEffectCoroutine == null && chargeEffectSprite != null)
+        // 발사 연출 코루틴이 돌고 있다면 강제 취소합니다.
+        if (releaseEffectCoroutine != null)
+        {
+            StopCoroutine(releaseEffectCoroutine);
+            releaseEffectCoroutine = null;
+        }
+
+        // 강제로 차징 구체 스프라이트를 꺼 줍니다.
+        if (chargeEffectSprite != null)
         {
             chargeEffectSprite.gameObject.SetActive(false);
         }
+    }
+
+    private void OnDisable()
+    {
+        // 씬 전환, 비활성화 시 차징 상태를 깔끔하게 리셋하여 이펙트 박제 방지
+        ResetCharge();
     }
 
     void UpdateTrailStyle(int index)
