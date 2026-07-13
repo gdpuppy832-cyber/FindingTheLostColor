@@ -101,6 +101,9 @@ public class CursorController : MonoBehaviour
     private float chatterTimer = 0f;          // [추가] 마우스 튐(채터링) 방지용 타이머
     private bool isActuallyCharging = false;  // [추가] 현재 마우스 클릭 상태와 무관하게 논리적으로 차징 중인지 여부
     private const float CHATTER_GRACE_TIME = 0.08f; // [추가] 마우스 클릭 튐 유예 시간
+    
+    private Vector3 lastMouseScreenPos;      // [추가] 마우스 움직임 감지용 이전 프레임 위치
+    private float mouseMoveLingerTimer = 0f; // [추가] 마우스 움직임 판정 잔존 타이머 (0.15초)
 
     void Start()
     {
@@ -122,10 +125,39 @@ public class CursorController : MonoBehaviour
         gaugeController = FindFirstObjectByType<GaugeController>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
         gaugeFeedback = FindFirstObjectByType<GaugeVisualFeedback>(); // 피드백 컴포넌트 탐색
+
+        // 마우스 시작 위치 기록
+        lastMouseScreenPos = Input.mousePosition;
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            lastMouseScreenPos = Mouse.current.position.ReadValue();
+        }
+#endif
     }
 
     void Update()
     {
+        // 마우스 실시간 움직임 감지 및 0.15초 판정 유지
+        Vector3 currentMouseScreenPos = Input.mousePosition;
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            currentMouseScreenPos = Mouse.current.position.ReadValue();
+        }
+#endif
+        float deltaMouse = Vector3.Distance(currentMouseScreenPos, lastMouseScreenPos);
+        lastMouseScreenPos = currentMouseScreenPos;
+
+        if (deltaMouse > 0.1f) // 미세 잡음 방지용 0.1 픽셀 문턱값
+        {
+            mouseMoveLingerTimer = 0.15f; // 움직임 판정 0.15초 동안 유지
+        }
+        else
+        {
+            mouseMoveLingerTimer -= Time.deltaTime;
+        }
+
         // 1. 마우스 위치 이동
 #if ENABLE_INPUT_SYSTEM
         Vector3 mouseScreenPos = Mouse.current != null ? (Vector3)Mouse.current.position.ReadValue() : Input.mousePosition;
@@ -351,7 +383,8 @@ public class CursorController : MonoBehaviour
             ResetCharge();
 
             // 1번 방식일 때만 주변 일반 몬스터 및 물체들 정화/치료 처리
-            if (canDraw)
+            // 마우스 움직임 판정(mouseMoveLingerTimer > 0f)이 감지되고 있을 때만 실제 정화 피해량이 가해집니다.
+            if (canDraw && mouseMoveLingerTimer > 0f)
             {
                 float activeHealRate = closeHealRate;
                 if (currentCursorIndex == 1) activeHealRate = mediumHealRate;
