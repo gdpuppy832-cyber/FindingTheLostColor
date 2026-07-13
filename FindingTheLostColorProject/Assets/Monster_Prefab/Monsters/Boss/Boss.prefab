@@ -242,6 +242,15 @@ MonoBehaviour:
   blackFogs:
   - {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
   - {fileID: 4059382244844945514, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
+  colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
+  colorWhirlpoolSpawnOffset: {x: 0, y: -3}
+  colorWhirlpoolFadeInDuration: 2
+  colorWhirlpoolPullRadius: 20
+  colorWhirlpoolPullForce: 40
+  colorWhirlpoolMinEffectiveDistance: 0
+  colorWhirlpoolDuration: 10
+  fallbackColorWhirlpoolSize: 5
+  colorWhirlpoolTriggerCount: 3
   telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
   spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
   spikeTelegraphDuration: 2

@@ -45,6 +45,32 @@ public class BossAttack : MonoBehaviour
     GameObject activeDarkCloud;                                     // 현재 진행 중인 먹구름 (동시에 하나만 존재)
     GameObject activeLightning;                                     // 현재 발동 중인 번개
 
+    // ================= 색채 소용돌이 (1P/2P 공용, 랜덤 풀에는 포함되지 않고 다른 패턴과 동시에 발동) =================
+    [Header("Color Whirlpool")]
+    public GameObject colorWhirlpoolPrefab;              // 색채 소용돌이 프리팹 (비워두면 임시 생성)
+    GameObject colorWhirlpoolTemplate;                    // colorWhirlpoolPrefab의 런타임 복제 템플릿 (원본 보호용)
+    [Tooltip("보스의 처음 배치 위치(initialPosition) 기준 오프셋 (Y를 음수로 하면 아래쪽에 소환됨)")]
+    public Vector2 colorWhirlpoolSpawnOffset = new Vector2(0f, -3f);
+    [Tooltip("소용돌이가 서서히 나타나는 시간 (초)")]
+    public float colorWhirlpoolFadeInDuration = 2f;
+    [Tooltip("끌어당김 판정 반경 (피해 판정은 프리팹의 콜라이더 크기로 결정됨)")]
+    public float colorWhirlpoolPullRadius = 5f;
+    [Tooltip("반경 안에서 중심으로 끌어당기는 힘")]
+    public float colorWhirlpoolPullForce = 10f;
+    [Tooltip("이 거리 이내는 중앙 구역으로 취급해 끌어당기지 않고 둔화만 적용")]
+    public float colorWhirlpoolMinEffectiveDistance = 0.5f;
+    [Tooltip("끌려가는 속도의 최대치. 무적 시간 등으로 속도 리셋이 없어도 이 이상 빨라지지 않음")]
+    public float colorWhirlpoolMaxPullSpeed = 8f;
+    [Tooltip("소용돌이가 유지되는 최대 시간 (초). 짝지어진 다른 공격이 이보다 먼저 끝나면 그때 같이 종료됨")]
+    public float colorWhirlpoolDuration = 10f;
+    public float fallbackColorWhirlpoolSize = 5f;        // 프리팹 없을 때 임시 소용돌이 크기
+    [Tooltip("소용돌이를 제외한 다른 공격이 이 횟수만큼 나온 뒤, 다음 공격 때 소용돌이가 함께 발동됨 (일종의 '쿨타임' 역할)")]
+    public int colorWhirlpoolTriggerCount = 3;
+
+    int nonWhirlpoolAttackCount = 0;      // 소용돌이를 제외한 다른 패턴이 몇 번 나왔는지 (3이 되면 다음 기회에 소용돌이 발동)
+    Coroutine activeWhirlpoolCoroutine;    // 현재 진행 중인 소용돌이 코루틴 (함께 시작된 패턴이 끝나면 강제 종료용)
+    GameObject activeColorWhirlpool;       // 현재 씬에 존재하는 소용돌이 오브젝트
+
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
 
@@ -181,6 +207,14 @@ public class BossAttack : MonoBehaviour
             lightningPrefab.SetActive(false);
         }
 
+        if (colorWhirlpoolPrefab != null)
+        {
+            colorWhirlpoolTemplate = Instantiate(colorWhirlpoolPrefab, colorWhirlpoolPrefab.transform.position, colorWhirlpoolPrefab.transform.rotation);
+            colorWhirlpoolTemplate.transform.SetParent(null);
+            colorWhirlpoolTemplate.SetActive(false);
+            colorWhirlpoolPrefab.SetActive(false);
+        }
+
         if (contactHitbox != null)
         {
             contactHitboxOffset = contactHitbox.transform.position - transform.position; // 분리 전 상대 위치 기록
@@ -275,12 +309,25 @@ public class BossAttack : MonoBehaviour
         if (destroyedCrystalCount >= crystals.Count)
         {
             phase2Unlocked = true;
+            nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
             // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
             if (isAttacking && currentAttackCoroutine != null)
             {
                 StopCoroutine(currentAttackCoroutine);
                 currentAttackCoroutine = null;
+
+                // 함께 진행 중이던 소용돌이도 강제 종료
+                if (activeWhirlpoolCoroutine != null)
+                {
+                    StopCoroutine(activeWhirlpoolCoroutine);
+                    activeWhirlpoolCoroutine = null;
+                }
+                if (activeColorWhirlpool != null)
+                {
+                    Destroy(activeColorWhirlpool);
+                    activeColorWhirlpool = null;
+                }
 
                 // 코루틴이 중간에 끊기면서 스스로 정리하지 못한 잔여 오브젝트들을 직접 정리
                 foreach (var marker in activeTelegraphMarkers)
@@ -379,6 +426,15 @@ public class BossAttack : MonoBehaviour
         List<AttackEntry> pool = GetCurrentPhasePool();
         if (pool == null || pool.Count == 0) return;
 
+        // 소용돌이가 떠 있는 동안에는 프리즘 샤워(FrostRain)를 후보에서 제외
+        // (소용돌이는 애초에 FrostRain과 함께 시작되지 않지만, 이미 떠 있는 상태에서
+        //  나중에 FrostRain이 선택되는 것도 막기 위함)
+        if (activeColorWhirlpool != null)
+        {
+            pool = pool.FindAll(a => a.name != "FrostRain");
+            if (pool.Count == 0) return;
+        }
+
         AttackEntry chosen = PickRandomAttack(pool);
         if (chosen == null) return;
 
@@ -410,11 +466,28 @@ public class BossAttack : MonoBehaviour
         isAttacking = true;
         lastUsedAttack = attack;
 
+        // 소용돌이는 프리즘 샤워(FrostRain)와 절대 겹치지 않으며,
+        // 소용돌이 제외 다른 패턴이 colorWhirlpoolTriggerCount번 나온 뒤에야 다음 기회에 발동함
+        bool triggerWhirlpool = attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
+
+        if (triggerWhirlpool)
+        {
+            activeWhirlpoolCoroutine = StartCoroutine(ColorWhirlpoolAttackRoutine());
+            nonWhirlpoolAttackCount = 0;
+        }
+
         // StartCoroutine으로 한 번 더 감싸면 별도의 독립 코루틴이 되어버려서,
         // 이 RunAttack 코루틴만 StopCoroutine 해도 안쪽 attack.routine()은 안 멈추는 문제가 있었음
         // (서리비 등 attack.routine() 내부에서 또 코루틴을 중첩 시작하는 경우 특히 문제)
         // -> 같은 코루틴 체인으로 직접 실행되도록 변경
         yield return attack.routine();
+
+        // 소용돌이는 함께 시작된 패턴이 먼저 끝나도 강제 종료하지 않고,
+        // 자기 자신의 colorWhirlpoolDuration이 다 될 때까지 독립적으로 유지됨
+        if (!triggerWhirlpool)
+        {
+            nonWhirlpoolAttackCount++;
+        }
 
         isAttacking = false;
         nextAttackAllowedTime = Time.time + attackCooldown;
@@ -1167,6 +1240,61 @@ public class BossAttack : MonoBehaviour
 
         return barrier;
     }
+    // ================= 색채 소용돌이 (1P/2P 공용) =================
+    IEnumerator ColorWhirlpoolAttackRoutine()
+    {
+        Vector3 spawnPos = initialPosition + (Vector3)colorWhirlpoolSpawnOffset;
+        GameObject whirlpool = SpawnColorWhirlpool(spawnPos);
+        activeColorWhirlpool = whirlpool;
+
+        // 최대 colorWhirlpoolDuration(기본 10초) 동안 유지됨.
+        // 짝지어진 다른 공격이 이보다 먼저 끝나면, RunAttack이 StopCoroutine + Destroy로 더 일찍 정리함
+        yield return new WaitForSeconds(colorWhirlpoolDuration);
+
+        if (activeColorWhirlpool != null)
+        {
+            Destroy(activeColorWhirlpool);
+            activeColorWhirlpool = null;
+        }
+    }
+
+    GameObject SpawnColorWhirlpool(Vector3 pos)
+    {
+        GameObject whirlpool;
+        if (colorWhirlpoolTemplate != null)
+        {
+            whirlpool = Instantiate(colorWhirlpoolTemplate, pos, Quaternion.identity);
+            whirlpool.SetActive(true); // 템플릿이 꺼져있어도 복제본은 반드시 켜서 생성
+        }
+        else
+        {
+            // 프리팹이 없으면 임시 소용돌이 생성 (보라색 원)
+            whirlpool = new GameObject("ColorWhirlpool_Temp");
+            whirlpool.transform.position = pos;
+            SpriteRenderer sr = whirlpool.AddComponent<SpriteRenderer>();
+            sr.color = new Color(0.6f, 0.3f, 1f, 1f);
+            sr.sprite = CreateTempSquareSprite();
+            whirlpool.transform.localScale = Vector3.one * fallbackColorWhirlpoolSize;
+
+            CircleCollider2D col = whirlpool.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+        }
+
+        ForceAllCollidersToTrigger(whirlpool);
+
+        ColorWhirlpoolHazard hazard = whirlpool.GetComponent<ColorWhirlpoolHazard>();
+        if (hazard == null) hazard = whirlpool.AddComponent<ColorWhirlpoolHazard>();
+        hazard.SetStats(
+               colorWhirlpoolFadeInDuration,
+               bossAttackDamage,
+               colorWhirlpoolPullRadius,
+               colorWhirlpoolPullForce,
+               colorWhirlpoolMinEffectiveDistance,
+               colorWhirlpoolMaxPullSpeed
+           );
+
+        return whirlpool;
+    }
 
     // ================= 색채 구슬 (2페이즈 진입 시 1회 소환) =================
     ColorOrb SpawnColorOrb()
@@ -1420,5 +1548,13 @@ public class BossAttack : MonoBehaviour
 
         if (activeLightning != null) Destroy(activeLightning);
         activeLightning = null;
+
+        if (activeWhirlpoolCoroutine != null)
+        {
+            StopCoroutine(activeWhirlpoolCoroutine);
+            activeWhirlpoolCoroutine = null;
+        }
+        if (activeColorWhirlpool != null) Destroy(activeColorWhirlpool);
+        activeColorWhirlpool = null;
     }
 }
