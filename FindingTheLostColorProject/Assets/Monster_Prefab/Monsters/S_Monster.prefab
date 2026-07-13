@@ -64,7 +64,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!61 &6412846292199598211
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -129,6 +129,7 @@ MonoBehaviour:
   trailPrefab: {fileID: 6060694035351487940, guid: a279126c55b5bb44fa82d390cd92d06e, type: 3}
   spawnInterval: 0.5
   useSpriteFlip: 1
+  invertSpriteDirection: 1
   platformLayers:
     serializedVersion: 2
     m_Bits: 0

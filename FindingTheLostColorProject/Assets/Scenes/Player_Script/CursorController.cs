@@ -49,6 +49,8 @@ public class CursorController : MonoBehaviour
     public float chargePaintCost = 0.2f;
     [Tooltip("차징 중 물감 소모 비율 (기존 소모량 대비 배율, 0.3 = 30% 소모)")]
     public float chargeDepletionMultiplier = 0.3f;
+    [Tooltip("차징 완료 후 발사 대기(Aim/Hold) 중일 때의 물감 소모 비율 (기존 소모량 대비 배율, 기본값: 0.3)")]
+    public float chargeHoldDepletionMultiplier = 0.3f;
 
     [Header("Charge Visual Effect Settings")]
     [Tooltip("차징 시 마우스 커서 위치에 나타나서 크기가 변할 스프라이트 렌더러")]
@@ -96,6 +98,12 @@ public class CursorController : MonoBehaviour
     private Coroutine releaseEffectCoroutine;
     private Color originalSpriteColor;
     private bool wasDrawingLastFrame = false; // [추가] 이전 프레임 그리기/차징 여부 기억 변수
+    private float chatterTimer = 0f;          // [추가] 마우스 튐(채터링) 방지용 타이머
+    private bool isActuallyCharging = false;  // [추가] 현재 마우스 클릭 상태와 무관하게 논리적으로 차징 중인지 여부
+    private const float CHATTER_GRACE_TIME = 0.08f; // [추가] 마우스 클릭 튐 유예 시간
+    
+    private Vector3 lastMouseScreenPos;      // [추가] 마우스 움직임 감지용 이전 프레임 위치
+    private float mouseMoveLingerTimer = 0f; // [추가] 마우스 움직임 판정 잔존 타이머 (0.15초)
 
     void Start()
     {
@@ -117,10 +125,39 @@ public class CursorController : MonoBehaviour
         gaugeController = FindFirstObjectByType<GaugeController>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
         gaugeFeedback = FindFirstObjectByType<GaugeVisualFeedback>(); // 피드백 컴포넌트 탐색
+
+        // 마우스 시작 위치 기록
+        lastMouseScreenPos = Input.mousePosition;
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            lastMouseScreenPos = Mouse.current.position.ReadValue();
+        }
+#endif
     }
 
     void Update()
     {
+        // 마우스 실시간 움직임 감지 및 0.15초 판정 유지
+        Vector3 currentMouseScreenPos = Input.mousePosition;
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            currentMouseScreenPos = Mouse.current.position.ReadValue();
+        }
+#endif
+        float deltaMouse = Vector3.Distance(currentMouseScreenPos, lastMouseScreenPos);
+        lastMouseScreenPos = currentMouseScreenPos;
+
+        if (deltaMouse > 0.1f) // 미세 잡음 방지용 0.1 픽셀 문턱값
+        {
+            mouseMoveLingerTimer = 0.15f; // 움직임 판정 0.15초 동안 유지
+        }
+        else
+        {
+            mouseMoveLingerTimer -= Time.deltaTime;
+        }
+
         // 1. 마우스 위치 이동
 #if ENABLE_INPUT_SYSTEM
         Vector3 mouseScreenPos = Mouse.current != null ? (Vector3)Mouse.current.position.ReadValue() : Input.mousePosition;
@@ -262,8 +299,15 @@ public class CursorController : MonoBehaviour
                 }
             }
 
-            if (isLeftClickHeld && canStartOrContinueCharge && !needsReclick && !isDead && !isDrawBlocked)
+            // 차징 조건 충족 여부
+            bool isConditionMet = canStartOrContinueCharge && !needsReclick && !isDead && !isDrawBlocked;
+
+            if (isLeftClickHeld && isConditionMet)
             {
+                // 실시간 차징 상태 활성화 및 튐 타이머 리셋
+                isActuallyCharging = true;
+                chatterTimer = 0f;
+
                 // 이전 발사 코루틴이 돌고 있다면 즉시 멈추고 초기화
                 if (releaseEffectCoroutine != null)
                 {
@@ -300,31 +344,36 @@ public class CursorController : MonoBehaviour
                     Debug.Log("[CursorController] 차징 완료! 마우스를 떼면 발사합니다.");
                 }
             }
-            else
+            else if (isActuallyCharging)
             {
-                // 누르고 있지 않거나 조건이 불충족되면 차징 타이머 초기화 (단, Up하는 프레임에는 발사 처리를 위해 예외)
-                if (!isLeftClickReleased)
+                // 차징 중이었으나 마우스 클릭이 순간 튀었거나 조건이 깨진 경우 ➔ 0.08초 동안 마우스 복구 대기
+                chatterTimer += Time.deltaTime;
+
+                // 0.08초 유예 시간을 초과했거나, 마우스를 떼는 릴리즈 키 신호가 명확히 감지됐거나, 피격/사망/물감 완전 고갈 등의 락이 걸린 경우 릴리즈 연출 처리
+                if (chatterTimer >= CHATTER_GRACE_TIME || isLeftClickReleased || !isConditionMet)
                 {
-                    ResetCharge();
+                    isActuallyCharging = false;
+                    chatterTimer = 0f;
+
+                    if (chargeTimer >= chargeDuration && !isDead && !isDrawBlocked)
+                    {
+                        ExecuteChargeAttack(mouseWorldPos);
+
+                        // 손을 뗄 때 투명해지며 확 커지는 코루틴 실행
+                        if (releaseEffectCoroutine != null) StopCoroutine(releaseEffectCoroutine);
+                        releaseEffectCoroutine = StartCoroutine(ReleaseVisualEffectRoutine());
+                    }
+                    else
+                    {
+                        // 완충되지 않았거나 조건이 불충족한 상태에서 떼진 경우 취소
+                        ResetCharge();
+                    }
                 }
             }
-
-            // 마우스 버튼에서 손을 떼었을 때 (차징 샷 발사)
-            if (isLeftClickReleased)
+            else
             {
-                if (chargeTimer >= chargeDuration && !isDead && !isDrawBlocked)
-                {
-                    ExecuteChargeAttack(mouseWorldPos);
-
-                    // 손을 뗄 때 투명해지며 확 커지는 코루틴 실행
-                    if (releaseEffectCoroutine != null) StopCoroutine(releaseEffectCoroutine);
-                    releaseEffectCoroutine = StartCoroutine(ReleaseVisualEffectRoutine());
-                }
-                else
-                {
-                    // 차징이 미완성인 채 뗐다면 이펙트 즉시 끄기
-                    ResetCharge();
-                }
+                // 차징 중이 아닐 때 클릭을 뗐다면 확실히 초기화
+                ResetCharge();
             }
         }
         else
@@ -334,7 +383,8 @@ public class CursorController : MonoBehaviour
             ResetCharge();
 
             // 1번 방식일 때만 주변 일반 몬스터 및 물체들 정화/치료 처리
-            if (canDraw)
+            // 마우스 움직임 판정(mouseMoveLingerTimer > 0f)이 감지되고 있을 때만 실제 정화 피해량이 가해집니다.
+            if (canDraw && mouseMoveLingerTimer > 0f)
             {
                 float activeHealRate = closeHealRate;
                 if (currentCursorIndex == 1) activeHealRate = mediumHealRate;
@@ -811,11 +861,27 @@ public class CursorController : MonoBehaviour
     private void ResetCharge()
     {
         chargeTimer = 0f;
+        chatterTimer = 0f;
+        isActuallyCharging = false;
 
-        if (releaseEffectCoroutine == null && chargeEffectSprite != null)
+        // 발사 연출 코루틴이 돌고 있다면 강제 취소합니다.
+        if (releaseEffectCoroutine != null)
+        {
+            StopCoroutine(releaseEffectCoroutine);
+            releaseEffectCoroutine = null;
+        }
+
+        // 강제로 차징 구체 스프라이트를 꺼 줍니다.
+        if (chargeEffectSprite != null)
         {
             chargeEffectSprite.gameObject.SetActive(false);
         }
+    }
+
+    private void OnDisable()
+    {
+        // 씬 전환, 비활성화 시 차징 상태를 깔끔하게 리셋하여 이펙트 박제 방지
+        ResetCharge();
     }
 
     void UpdateTrailStyle(int index)

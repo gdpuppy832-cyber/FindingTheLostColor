@@ -17,6 +17,7 @@ public class PlayerMove : MonoBehaviour
     private int jumpCount = 0;
     private float lastJumpTime = 0f;
     private bool isGrounded = false;
+    private float lastGroundedTime = 0f; // [추가] 마지막으로 땅을 딛고 서 있던 시간 (코요테 타임용)
     private Vector2 moveDirection;
     private bool canControl = true; // 조작 가능 상태 플래그
 
@@ -92,6 +93,17 @@ public class PlayerMove : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.LeftShift)) dashPressed = true;
 #endif
 
+            // [신규] 지면 근접 판정 전처리 (상승 중이거나 점프 직후 0.15초 이내는 스킵하여 3단 점프 오작동 원천 방지)
+            bool isAscending = rb != null && rb.linearVelocity.y > 0.01f;
+            bool justJumped = (Time.time - lastJumpTime < 0.15f);
+
+            if (!isAscending && !justJumped && CheckNearGround())
+            {
+                isGrounded = true;
+                lastGroundedTime = Time.time;
+                jumpCount = 0; // 1단 점프 가능 상태로 리셋
+            }
+
             if (jumpPressed)
             {
                 if (jumpCount < 2 && Time.time - lastJumpTime >= jumpDelay)
@@ -163,9 +175,13 @@ public class PlayerMove : MonoBehaviour
             rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
         }
 
+        // 땅을 벗어난 뒤 0.1초(코요테 타임) 동안은 공중 강제 판정(jumpCount=1)을 유예하여 기본점프를 보장
         if (!isGrounded && jumpCount == 0)
         {
-            jumpCount = 1;
+            if (Time.time - lastGroundedTime >= 0.1f)
+            {
+                jumpCount = 1;
+            }
         }
 
         animator.SetFloat("VelocityX", moveDirection.x * moveSpeed);
@@ -178,6 +194,7 @@ public class PlayerMove : MonoBehaviour
             if (contact.normal.y > 0.5f)
             {
                 isGrounded = true;
+                lastGroundedTime = Time.time; // 땅을 딛고 있는 동안 실시간 시간 갱신
                 jumpCount = 0;
                 return;
             }
@@ -308,5 +325,37 @@ public class PlayerMove : MonoBehaviour
             sourceSR.sortingOrder,
             sourceSR.sortingLayerName
         );
+    }
+
+    /// <summary>
+    /// [추가] 플레이어 발바닥 기준 아래 방향으로 0.1m 이내에 지면(Ground)이 존재하는지 박스 투사로 정밀 검사합니다.
+    /// </summary>
+    private bool CheckNearGround()
+    {
+        Collider2D col = GetComponent<Collider2D>();
+        if (col == null) col = GetComponentInChildren<Collider2D>();
+        if (col == null) return false;
+
+        // 플레이어 콜라이더 하단 면으로부터 아래로 0.07m + 미세 작동 마진 0.01f 총 0.08f 상자 캐스트
+        float checkDistance = 0.08f; 
+        Vector2 boxSize = new Vector2(col.bounds.size.x * 0.85f, 0.05f); // 발폭보다 미세하게 좁은 상자 크기
+        Vector2 boxCenter = new Vector2(col.bounds.center.x, col.bounds.min.y - 0.01f);
+
+        // Player 레이어는 감지에서 제외하여 자기 자신 충돌 방지
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int layerMask = ~(1 << playerLayer);
+
+        RaycastHit2D hit = Physics2D.BoxCast(boxCenter, boxSize, 0f, Vector2.down, checkDistance, layerMask);
+        
+        // 감지된 지형 콜라이더가 있고, 트리거 성격의 감지 영역이 아닐 경우
+        if (hit.collider != null && !hit.collider.isTrigger)
+        {
+            // 접촉한 바닥면의 각도가 평평하거나 완만한 서 있을 수 있는 경사인지 확인
+            if (hit.normal.y > 0.5f)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

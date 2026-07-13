@@ -30,6 +30,7 @@ public class GaugeVisualFeedback : MonoBehaviour
 
     private Coroutine flashCoroutine;
     private Coroutine shakeCoroutine;
+    private Coroutine loopWarningCoroutine; // [추가] 2초 전 지속 깜빡임 루프용 코루틴 참조
 
     private void Awake()
     {
@@ -169,6 +170,89 @@ public class GaugeVisualFeedback : MonoBehaviour
             if (flashCoroutine == null && warningImages != null && warningImages[index] != null)
             {
                 warningImages[index].color = color;
+            }
+        }
+    }
+
+    /// <summary>
+    /// [추가] 2초 전 임계치 돌입 시 지속 깜빡임 루프를 켜고 끕니다.
+    /// </summary>
+    public void SetLoopWarning(bool active)
+    {
+        if (active)
+        {
+            if (loopWarningCoroutine == null)
+            {
+                // 일반 일회성 깜빡임 코루틴이 돌고 있다면 멈춥니다.
+                if (flashCoroutine != null)
+                {
+                    StopCoroutine(flashCoroutine);
+                    flashCoroutine = null;
+                }
+                loopWarningCoroutine = StartCoroutine(LoopWarningRoutine());
+            }
+        }
+        else
+        {
+            if (loopWarningCoroutine != null)
+            {
+                StopCoroutine(loopWarningCoroutine);
+                loopWarningCoroutine = null;
+                RestoreOriginalColors();
+            }
+        }
+    }
+
+    private IEnumerator LoopWarningRoutine()
+    {
+        if (warningImages == null || warningImages.Length == 0 || originalColors == null) yield break;
+
+        float halfPeriod = 0.22f; // 점멸 반주기 속도 (0.22초)
+
+        while (true)
+        {
+            // 빨간색 경고 색상으로 서서히 페이드
+            float elapsed = 0f;
+            while (elapsed < halfPeriod)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / halfPeriod;
+                for (int i = 0; i < warningImages.Length; i++)
+                {
+                    if (warningImages[i] != null && i < originalColors.Length)
+                    {
+                        warningImages[i].color = Color.Lerp(originalColors[i], warningColor, t);
+                    }
+                }
+                yield return null;
+            }
+
+            // 본래 색상으로 서서히 복귀
+            elapsed = 0f;
+            while (elapsed < halfPeriod)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / halfPeriod;
+                for (int i = 0; i < warningImages.Length; i++)
+                {
+                    if (warningImages[i] != null && i < originalColors.Length)
+                    {
+                        warningImages[i].color = Color.Lerp(warningColor, originalColors[i], t);
+                    }
+                }
+                yield return null;
+            }
+        }
+    }
+
+    private void RestoreOriginalColors()
+    {
+        if (warningImages == null || originalColors == null) return;
+        for (int i = 0; i < warningImages.Length; i++)
+        {
+            if (warningImages[i] != null && i < originalColors.Length)
+            {
+                warningImages[i].color = originalColors[i];
             }
         }
     }
