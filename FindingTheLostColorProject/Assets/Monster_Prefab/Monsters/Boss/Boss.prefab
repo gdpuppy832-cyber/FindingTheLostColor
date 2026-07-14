@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 2369340244454583480}
   m_Layer: 8
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.93, y: 4.61, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9727, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1213662252286422297}
@@ -80,8 +80,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 354283401
-  m_SortingLayer: 3
+  m_SortingLayerID: -485289909
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
   m_Color: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
@@ -128,7 +128,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.043038845, y: -0.077471495}
+  m_Offset: {x: -0.043038845, y: -0.0649668}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -138,7 +138,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.1406279, y: 2.675057}
+  m_Size: {x: 2.1406279, y: 2.7000663}
   m_EdgeRadius: 0
 --- !u!50 &3942307000133411523
 Rigidbody2D:
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e2fccbcb71d9e43b3ee0684e60978f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 60
+  maxHealth: 80
   currentHealth: 0
   attackDamage: 0.5
   attackCooldown: 1
@@ -236,44 +236,47 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  colorOrbPrefab: {fileID: 3671281979859366550, guid: 6111f65c5650fd94d8585dbd33fc2ba0, type: 3}
+  colorOrbPrefab: {fileID: 0}
   colorOrbHealth: 15
   colorOrbSpawnOffsetY: -5
   blackFogs:
-  - {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
-  - {fileID: 4059382244844945514, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
   colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
-  colorWhirlpoolSpawnOffset: {x: 0, y: -3}
+  colorWhirlpoolSpawnOffset: {x: 0, y: -8}
   colorWhirlpoolFadeInDuration: 2
   colorWhirlpoolPullRadius: 20
-  colorWhirlpoolPullForce: 40
+  colorWhirlpoolPullForce: 200
   colorWhirlpoolMinEffectiveDistance: 0
+  colorWhirlpoolMaxPullSpeed: 8
   colorWhirlpoolDuration: 10
   fallbackColorWhirlpoolSize: 5
-  colorWhirlpoolTriggerCount: 3
+  colorWhirlpoolTriggerCount: 2
   telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
   spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
-  spikeTelegraphDuration: 2
-  spikeTelegraphBlinkInterval: 0.5
-  spikeLifetime: 3
+  spikeTelegraphDuration: 1.5
+  spikeTelegraphBlinkInterval: 0.25
+  spikeLifetime: 2
   spikeSearchRadius: 15
   spikeGroundRaycastDistance: 20
   spikeMaxSearchAttempts: 20
   spikeMinDistance: 1.7
   spikeMaxHeightAboveBoss: 10
+  spikeSecondWaveDelay: 0.5
+  frostRainCompanionChance: 1
   laserTelegraphPrefab: {fileID: 1014840232707358376, guid: 9422e8006b9ae53419523c3ecbf12b24, type: 3}
   laserPrefab: {fileID: 4371630478863771354, guid: 817fd6c7639bda64fabe240522c3ba53, type: 3}
-  laserTelegraphDuration: 2
-  laserTelegraphBlinkInterval: 0.5
-  laserActiveDuration: 5
+  laserTelegraphDuration: 1.5
+  laserTelegraphBlinkInterval: 0.25
+  laserActiveDuration: 2
   fallbackLaserWidth: 20
   fallbackLaserThickness: 0.6
   frostCrystalPrefab: {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
-  frostRangrY: 6
-  frostRangeX: 12
-  frostRainDuration: 4
+  frostRangrY: 6.5
+  frostRangeX: 30
+  frostRainDuration: 5
   frostSpawnInterval: 0.3
-  frostSpawnCountPerTick: 5
+  frostSpawnCountPerTick: 3
   frostFallInitialSpeed: 0
   frostFallAcceleration: 15
   frostMaxLifetime: 6
@@ -287,24 +290,24 @@ MonoBehaviour:
   - {fileID: 6236711602578994689}
   - {fileID: 6935614904952108764}
   - {fileID: 8859731356390692833}
-  frostTelegraphDuration: 2
-  frostTelegraphBlinkInterval: 0.5
+  frostTelegraphDuration: 1.5
+  frostTelegraphBlinkInterval: 0.25
   frostTelegraphColumnCount: 10
   frostTelegraphCheckDistance: 30
   frostTelegraphLineLength: 15
   frostTelegraphLineThickness: 0.3
-  darkOrbPrefab: {fileID: 266052320498548891, guid: a13f7480368e19b428816077405700bc, type: 3}
+  darkOrbPrefab: {fileID: 0}
   darkOrbCount: 3
   darkOrbOrbitRadius: 2
   darkOrbOrbitDuration: 2
-  darkOrbLaunchInterval: 0.8
+  darkOrbLaunchInterval: 1
   darkOrbTrackDuration: 2
-  darkOrbSpeedMultiplier: 1
+  darkOrbSpeedMultiplier: 0.8
   fallbackDarkOrbSize: 0.6
-  darkCloudPrefab: {fileID: 6254425877237160721, guid: 77d976ba74a1c8149b58eaa5664fcebd, type: 3}
-  lightningPrefab: {fileID: 3224362926502252807, guid: 457e3adcaffe4f3428d3bbb6af82c7eb, type: 3}
+  darkCloudPrefab: {fileID: 0}
+  lightningPrefab: {fileID: 0}
   darkCloudSpawnOffset: {x: 0, y: 1.5}
-  darkCloudFadeInDuration: 3
+  darkCloudFadeInDuration: 2
   darkCloudHoldDuration: 6
   darkCloudPaintEraseDuration: 3
   lightningLifetime: 0.4
@@ -314,9 +317,9 @@ MonoBehaviour:
   fallbackLightningHeight: 6
   shadowBarrierTelegraphPrefab: {fileID: 4437395552248623217, guid: 654f3ec388745e8439ee27c6b32c3469, type: 3}
   shadowBarrierHazardPrefab: {fileID: 1923042159831812501, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
-  shadowBarrierTelegraphDuration: 2
-  shadowBarrierTelegraphBlinkInterval: 0.5
-  shadowBarrierActiveDuration: 5
+  shadowBarrierTelegraphDuration: 1.5
+  shadowBarrierTelegraphBlinkInterval: 0.25
+  shadowBarrierActiveDuration: 1
   fallbackShadowBarrierWidth: 3
   fallbackShadowBarrierHeight: 10
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
@@ -419,17 +422,101 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5525985110957521975}
     m_Modifications:
+    - target: {fileID: 302878073182151438, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.102641635
+      objectReference: {fileID: 0}
+    - target: {fileID: 302878073182151438, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.52065134
+      objectReference: {fileID: 0}
+    - target: {fileID: 302878073182151438, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.21825
+      objectReference: {fileID: 0}
+    - target: {fileID: 302878073182151438, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.76361
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156608314177551385, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.018642707
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156608314177551385, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.49024
+      objectReference: {fileID: 0}
+    - target: {fileID: 2333089787368598077, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.047541548
+      objectReference: {fileID: 0}
+    - target: {fileID: 2333089787368598077, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.47644
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929430656066337114, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.13315605
+      objectReference: {fileID: 0}
+    - target: {fileID: 2929430656066337114, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.33915
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180792693750202032, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.11368876
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180792693750202032, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.32849
+      objectReference: {fileID: 0}
+    - target: {fileID: 3180792693750202032, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.733
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370234832352909396, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.013383265
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370234832352909396, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5185271
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370234832352909396, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.37779
+      objectReference: {fileID: 0}
+    - target: {fileID: 4370234832352909396, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.23679
+      objectReference: {fileID: 0}
     - target: {fileID: 5853419266408409693, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_Name
       value: FrostCrystalTelegraph
       objectReference: {fileID: 0}
+    - target: {fileID: 5853419266408409693, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6017712332397744534, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.43563583
+      objectReference: {fileID: 0}
+    - target: {fileID: 6017712332397744534, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.05169
+      objectReference: {fileID: 0}
+    - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 31.649506
+      objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.12658119
+      value: -0.0078
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.95981
+      value: 3.77
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalPosition.z

@@ -70,6 +70,7 @@ public class BossAttack : MonoBehaviour
     int nonWhirlpoolAttackCount = 0;      // 소용돌이를 제외한 다른 패턴이 몇 번 나왔는지 (3이 되면 다음 기회에 소용돌이 발동)
     Coroutine activeWhirlpoolCoroutine;    // 현재 진행 중인 소용돌이 코루틴 (함께 시작된 패턴이 끝나면 강제 종료용)
     GameObject activeColorWhirlpool;       // 현재 씬에 존재하는 소용돌이 오브젝트
+    Coroutine activeCompanionCoroutine;    // 프리즘 샤워와 함께 독립적으로 시작된 동반 패턴 코루틴 (2페이즈 전환 시 강제 종료용)
 
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
@@ -311,23 +312,35 @@ public class BossAttack : MonoBehaviour
             phase2Unlocked = true;
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
+            // 소용돌이와 동반 패턴은 메인 공격(isAttacking)과 독립적으로 살아있을 수 있으므로
+            // (예: 메인 공격은 이미 끝나 쿨다운 중인데 소용돌이만 계속 떠 있는 경우),
+            // isAttacking 여부와 무관하게 항상 확인해서 정리함.
+            // (기존에는 이 정리가 "isAttacking && currentAttackCoroutine != null" 블록 안에 있어서,
+            //  마침 쿨다운 중일 때 크리스탈이 깨지면 소용돌이가 정리되지 않고 남는 문제가 있었음)
+            if (activeWhirlpoolCoroutine != null)
+            {
+                StopCoroutine(activeWhirlpoolCoroutine);
+                activeWhirlpoolCoroutine = null;
+            }
+            if (activeColorWhirlpool != null)
+            {
+                Destroy(activeColorWhirlpool);
+                activeColorWhirlpool = null;
+            }
+
+            // 프리즘 샤워의 동반 패턴(예: 가시 함정 2차 웨이브)도 독립 코루틴이라
+            // 같은 이유로 isAttacking과 무관하게 항상 정리함
+            if (activeCompanionCoroutine != null)
+            {
+                StopCoroutine(activeCompanionCoroutine);
+                activeCompanionCoroutine = null;
+            }
+
             // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
             if (isAttacking && currentAttackCoroutine != null)
             {
                 StopCoroutine(currentAttackCoroutine);
                 currentAttackCoroutine = null;
-
-                // 함께 진행 중이던 소용돌이도 강제 종료
-                if (activeWhirlpoolCoroutine != null)
-                {
-                    StopCoroutine(activeWhirlpoolCoroutine);
-                    activeWhirlpoolCoroutine = null;
-                }
-                if (activeColorWhirlpool != null)
-                {
-                    Destroy(activeColorWhirlpool);
-                    activeColorWhirlpool = null;
-                }
 
                 // 코루틴이 중간에 끊기면서 스스로 정리하지 못한 잔여 오브젝트들을 직접 정리
                 foreach (var marker in activeTelegraphMarkers)
@@ -368,12 +381,20 @@ public class BossAttack : MonoBehaviour
             }
 
             SetBossColliderState(true);
+
             if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
 
             // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복
             if (bossHealth != null)
             {
                 bossHealth.Heal(bossHealth.maxHealth * 0.5f);
+            }
+
+            // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.Heal(4f);
             }
 
             ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
@@ -470,9 +491,9 @@ public class BossAttack : MonoBehaviour
         AttackEntry previousAttack = lastUsedAttack;
         lastUsedAttack = attack;
 
-        // 소용돌이는 프리즘 샤워(FrostRain)와 절대 겹치지 않으며,
+        // 소용돌이는 1페이즈에서만 나오며, 프리즘 샤워(FrostRain)와도 절대 겹치지 않고,
         // 소용돌이 제외 다른 패턴이 colorWhirlpoolTriggerCount번 나온 뒤에야 다음 기회에 발동함
-        bool triggerWhirlpool = attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
+        bool triggerWhirlpool = !phase2Unlocked && attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
 
         if (triggerWhirlpool)
         {
@@ -480,7 +501,7 @@ public class BossAttack : MonoBehaviour
             nonWhirlpoolAttackCount = 0;
         }
 
-        Coroutine companionCoroutine = null;
+        activeCompanionCoroutine = null;
 
         if (attack.name == "FrostRain")
         {
@@ -491,7 +512,11 @@ public class BossAttack : MonoBehaviour
             AttackEntry companion = PickFrostRainCompanion(previousAttack);
             if (companion != null)
             {
-                companionCoroutine = StartCoroutine(companion.routine());
+                // 지역 변수 대신 필드에 저장해서, 2페이즈 전환 시 HandleCrystalDestroyed가
+                // 이 독립 코루틴도 함께 강제 종료할 수 있게 함
+                // (기존에는 지역 변수라 currentAttackCoroutine만 멈춰도 이 동반 패턴은
+                //  전혀 영향받지 않고 계속 진행되는 문제가 있었음)
+                activeCompanionCoroutine = StartCoroutine(companion.routine());
             }
 
             yield return RunFrostRainPhase();
@@ -506,11 +531,13 @@ public class BossAttack : MonoBehaviour
         }
 
         // 동반 패턴이 프리즘 샤워보다 오래 지속되는 경우, 끝날 때까지 마저 대기
-        // (동반 패턴이 먼저 끝났다면 이미 완료된 코루틴이라 즉시 통과됨)
-        if (companionCoroutine != null)
+        // (동반 패턴이 먼저 끝났다면 이미 완료된 코루틴이라 즉시 통과되고,
+        //  2페이즈 전환으로 강제 중단됐다면 activeCompanionCoroutine이 이미 null이라 스킵됨)
+        if (activeCompanionCoroutine != null)
         {
-            yield return companionCoroutine;
+            yield return activeCompanionCoroutine;
         }
+        activeCompanionCoroutine = null;
 
         // 소용돌이는 함께 시작된 패턴이 먼저 끝나도 강제 종료하지 않고,
         // 자기 자신의 colorWhirlpoolDuration이 다 될 때까지 독립적으로 유지됨
@@ -1350,7 +1377,11 @@ public class BossAttack : MonoBehaviour
         GameObject whirlpool = SpawnColorWhirlpool(spawnPos);
         activeColorWhirlpool = whirlpool;
 
-        // 최대 colorWhirlpoolDuration(기본 10초) 동안 유지됨.
+        // 페이드 인이 먼저 끝날 때까지 대기한 뒤, 그 시점부터 colorWhirlpoolDuration을 셈
+        // (기존에는 스폰과 동시에 지속시간을 셌기 때문에, 페이드 인 시간까지 지속시간에 포함되어
+        //  실제로 온전히 나타나 있는 시간이 의도한 것보다 짧아지는 문제가 있었음)
+        yield return new WaitForSeconds(colorWhirlpoolFadeInDuration);
+
         // 짝지어진 다른 공격이 이보다 먼저 끝나면, RunAttack이 StopCoroutine + Destroy로 더 일찍 정리함
         yield return new WaitForSeconds(colorWhirlpoolDuration);
 
