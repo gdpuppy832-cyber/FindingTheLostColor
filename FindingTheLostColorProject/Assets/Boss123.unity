@@ -3452,6 +3452,11 @@ MonoBehaviour:
   maxDistance: 15
   minCameraPos: {x: -100, y: -100}
   maxCameraPos: {x: 100, y: 100}
+  isBossStageCamera: 1
+  bossIntroDelay: 3
+  zoomDuration: 1
+  startCameraSize: 5
+  targetCameraSize: 8
 --- !u!114 &1301670478 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
