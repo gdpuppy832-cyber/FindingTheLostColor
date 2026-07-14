@@ -379,12 +379,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 087718397f9364d4192f1b980adf7680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
-  jumpForce: 11
+  moveSpeed: 6
+  jumpForce: 10
   jumpDelay: 0.1
-  dashSpeed: 22
+  dashSpeed: 17
   dashDuration: 0.2
   dashCooldown: 3
+  focusChargeSpeedMultiplier: 0.2
   dashIndicatorSR: {fileID: 0}
   dashReadyColor: {r: 1, g: 1, b: 1, a: 1}
   dashCooldownColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.5}

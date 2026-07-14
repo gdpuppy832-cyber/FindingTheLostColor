@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 6516568648624269212}
   - component: {fileID: 1652133970758502122}
   m_Layer: 5
-  m_Name: UI_Canvas 2
+  m_Name: InGame_MainUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2170,9 +2170,10 @@ MonoBehaviour:
   maxPaint: 1
   currentPaint: 1
   decreaseSpeed: 0.1
-  regenSpeed: 0.05
+  regenSpeed: 0.034
   minPaintToDraw: 0.02
   paintLerpSpeed: 5
+  focusChargeRegenMultiplier: 3
 --- !u!1 &8798422019033421251
 GameObject:
   m_ObjectHideFlags: 0

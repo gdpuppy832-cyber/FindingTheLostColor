@@ -33,11 +33,35 @@ public class GaugeController : MonoBehaviour
     private bool needsReclick = false; // 물감 고갈 시 마우스 재클릭 필요 여부
     private float baseRegenSpeed;
 
+    private PlayerMove playerMove;                 // [추가] 대쉬 여부 판단을 위한 참조
+    private bool isFocusCharging = false;          // [추가] R키 꾹 눌러 충전하는 중인지 여부
+    public bool IsFocusCharging => isFocusCharging; // [추가] 외부 속도 제한기용 Getter
+
+    [Header("집중 충전 설정 (신규)")]
+    [Tooltip("집중 충전(R키 꾹 누름) 시 물감 재생 속도 증가 배율 (기본값: 6배)")]
+    public float focusChargeRegenMultiplier = 6f;
+
+    private float zoneRegenMultiplier = 1f;        // [추가] 페인트 리젠존에 의한 재생 배율
+    private float focusRegenMultiplier = 1f;       // [추가] R키 집중 충전에 의한 재생 배율
+
     public bool NeedsReclick => needsReclick;
 
+    /// <summary>
+    /// 외부(예: PaintRegenZone)에서 물감 재생 속도를 곱해줄 때 호출
+    /// </summary>
     public void SetRegenMultiplier(float multiplier)
     {
-        regenSpeed = baseRegenSpeed * multiplier;
+        zoneRegenMultiplier = multiplier;
+        UpdateFinalRegenSpeed();
+    }
+
+    /// <summary>
+    /// 최종 물감 재생 속도를 곱연산으로 갱신합니다.
+    /// (최종 재생속도 = 기본 속도 * 리젠존 배율 * 집중 충전 배율)
+    /// </summary>
+    private void UpdateFinalRegenSpeed()
+    {
+        regenSpeed = baseRegenSpeed * zoneRegenMultiplier * focusRegenMultiplier;
     }
 
     void Awake()
@@ -51,6 +75,7 @@ public class GaugeController : MonoBehaviour
         playerHealth = FindFirstObjectByType<PlayerHealth>();
         cursorController = FindFirstObjectByType<CursorController>();
         gaugeFeedback = FindFirstObjectByType<GaugeVisualFeedback>(); // [추가] 캐싱
+        playerMove = FindFirstObjectByType<PlayerMove>(); // [추가] 대쉬 체크용 캐싱
         
         // 원본 재생 속도 저장
         baseRegenSpeed = regenSpeed;
@@ -79,6 +104,43 @@ public class GaugeController : MonoBehaviour
         // Legacy Input Manager 사용 시
         isLeftClickHeld = Input.GetMouseButton(0);
 #endif
+
+        // [신규] R키 집중 충전 가동 및 공격/대쉬/사망 시 캔슬 조건 실시간 조율
+        bool rKeyHeld = false;
+#if ENABLE_INPUT_SYSTEM
+        if (Keyboard.current != null)
+        {
+            rKeyHeld = Keyboard.current.rKey.isPressed;
+        }
+#else
+        rKeyHeld = Input.GetKey(KeyCode.R);
+#endif
+
+        bool isDashing = playerMove != null && playerMove.IsDashing;
+        bool isAttacking = isLeftClickHeld && currentPaint > minPaintToDraw && !needsReclick;
+
+        // R키를 누르는 상태이고, 캔슬 방해 요인(공격 중, 대쉬 중, 기동 마비)이 전혀 없을 때만 집중 충전 기믹 가동
+        if (rKeyHeld && !isAttacking && !isDashing && !isDead && !isDrawBlocked)
+        {
+            if (!isFocusCharging)
+            {
+                isFocusCharging = true;
+                focusRegenMultiplier = focusChargeRegenMultiplier; // 집중 충전 배율 할당
+                UpdateFinalRegenSpeed(); // 곱연산 갱신
+                Debug.Log($"[GaugeController] R키 집중 충전 가동! 배율: {focusRegenMultiplier}배 (최종: {regenSpeed / baseRegenSpeed}배)");
+            }
+        }
+        else
+        {
+            if (isFocusCharging)
+            {
+                isFocusCharging = false;
+                focusRegenMultiplier = 1f; // 집중 충전 배율 복원
+                UpdateFinalRegenSpeed(); // 곱연산 갱신
+                Debug.Log($"[GaugeController] R키 집중 충전 해제! (최종: {regenSpeed / baseRegenSpeed}배)");
+            }
+        }
+
 
         // 마우스 클릭을 떼면 재클릭 요구 상태 해제
         if (!isLeftClickHeld)

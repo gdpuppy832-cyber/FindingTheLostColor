@@ -147,9 +147,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1db7bcaaf215634485c6d8b249cc2c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 2
   currentHealth: 0
-  launchVelocity: 15.56
+  launchVelocity: 17.2
   activeDuration: 5
   fadeDuration: 3
   startColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}

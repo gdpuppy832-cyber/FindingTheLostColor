@@ -79,6 +79,16 @@ public class PlayerHeartUI : MonoBehaviour
 
     void Update()
     {
+        // [수정] ExecuteAlways 모드 시 Start가 수행되지 않아 배열들이 null일 수 있으므로 지연 초기화(Lazy Init) 방어
+        if (previousStates == null || previousStates.Length != heartImages.Length)
+        {
+            previousStates = new int[heartImages.Length];
+        }
+        if (shakeCoroutines == null || shakeCoroutines.Length != heartImages.Length)
+        {
+            shakeCoroutines = new Coroutine[heartImages.Length];
+        }
+
         // 실시간으로 씬에서 플레이어 컴포넌트 검색 시도
         if (playerHealth == null)
         {

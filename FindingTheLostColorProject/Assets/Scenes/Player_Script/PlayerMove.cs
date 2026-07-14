@@ -32,6 +32,15 @@ public class PlayerMove : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
 
+    public bool IsDashing => isDashing; // [추가] 외부 스크립트에서 대쉬 상태 여부를 파악할 수 있는 Getter
+    private GaugeController gaugeController; // [추가] 물감 충전 여부에 따른 속도 감소용 참조
+
+    [Header("집중 충전 속도 설정 (신규)")]
+    [Range(0f, 1f)]
+    [Tooltip("집중 충전(R키 꾹 누름) 시 이동 속도 비율 (0.2면 80% 감소, 0이면 완전 정지, 기본값: 0.2)")]
+    public float focusChargeSpeedMultiplier = 0.2f;
+
+
     [Header("Dash Visuals")]
     [Tooltip("대쉬 쿨타임 표시용 플레이어 발밑 원형 SpriteRenderer")]
     public SpriteRenderer dashIndicatorSR;
@@ -58,6 +67,7 @@ public class PlayerMove : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        gaugeController = FindFirstObjectByType<GaugeController>();
 
         // 대쉬 인디케이터 초기 상태를 밝은 색(사용 가능)으로 초기화
         if (dashIndicatorSR != null)
@@ -172,7 +182,13 @@ public class PlayerMove : MonoBehaviour
         // 조작 가능한 상태일 때만 키 입력에 따른 좌우 이동 속도 적용 (넉백 등의 물리 외력 보존을 위함)
         if (canControl)
         {
-            rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+            float activeSpeed = moveSpeed;
+            // R키 꾹 눌러 집중 충전 중인 경우 이동 속도 감소 비율 적용 (기본 80% 감속)
+            if (gaugeController != null && gaugeController.IsFocusCharging)
+            {
+                activeSpeed = moveSpeed * focusChargeSpeedMultiplier;
+            }
+            rb.linearVelocity = new Vector2(moveDirection.x * activeSpeed, rb.linearVelocity.y);
         }
 
         // 땅을 벗어난 뒤 0.1초(코요테 타임) 동안은 공중 강제 판정(jumpCount=1)을 유예하여 기본점프를 보장
