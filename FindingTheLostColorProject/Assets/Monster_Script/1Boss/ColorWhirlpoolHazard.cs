@@ -72,9 +72,8 @@ public class ColorWhirlpoolHazard : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 끌어당김/둔화 계산은 반드시 물리 스텝(FixedUpdate)에서만 처리해야 함.
-        // Update()에서 처리하면 한 물리 스텝에 힘이 여러 번 중복 적용되어
-        // 프레임레이트가 높을 때 플레이어가 순간적으로 튕겨나가는 문제가 있었음
+        if (fadeElapsed < fadeInDuration) return;
+
         if (cachedPlayer == null) return;
 
         float dist = Vector2.Distance(transform.position, cachedPlayer.transform.position);
@@ -127,6 +126,9 @@ public class ColorWhirlpoolHazard : MonoBehaviour
 
     void TryDamage(GameObject obj)
     {
+        // 페이드 인이 끝나기 전(등장 연출 중)에는 피해를 입히지 않음
+        if (fadeElapsed < fadeInDuration) return;
+
         if (!obj.CompareTag("Player")) return;
 
         PlayerHealth player = obj.GetComponent<PlayerHealth>();
