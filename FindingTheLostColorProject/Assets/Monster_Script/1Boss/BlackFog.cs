@@ -32,7 +32,6 @@ public class BlackFog : MonoBehaviour
 
     private CursorController cachedCursorController; // 캐싱된 커서 컨트롤러 참조
 
-    [Header("Explosion Push Settings")]
     [Tooltip("폭발로 밀려날 때의 부드러운 감속 속도 배율 (높을수록 빠르게 이동, 기본값: 5.0)")]
     [SerializeField] private float explosionPushLerpSpeed = 5.0f;
 

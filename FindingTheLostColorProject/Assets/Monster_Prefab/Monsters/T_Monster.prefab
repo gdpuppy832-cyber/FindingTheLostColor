@@ -196,8 +196,8 @@ MonoBehaviour:
   jumpAttackRange: 1.5
   jumpLineWidth: 4
   jumpTelegraphTime: 2
-  jumpDuration: 0.6
-  jumpHeight: 2
+  jumpDuration: 0.75
+  jumpHeight: 1.5
   minJumpDistance: 1
   groundLayer:
     serializedVersion: 2
@@ -209,6 +209,7 @@ MonoBehaviour:
   maxFallTime: 3
   groundCheckRadius: 0.3
   jumpPostDelay: 3
+  jumpHitPostDelay: 0.25
   jumpCooldown: 2
   safeDropDistance: 3
 --- !u!1 &2967901885094795587

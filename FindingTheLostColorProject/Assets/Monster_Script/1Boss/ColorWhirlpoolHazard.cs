@@ -18,7 +18,7 @@ public class ColorWhirlpoolHazard : MonoBehaviour
     /// <summary>
     /// BossAttack이 소용돌이를 스폰한 직후 호출해서 모든 수치를 한 번에 전달합니다.
     /// </summary>
-    public void SetStats(float fadeInDuration, float damage, float pullRadius, float pullForce, float minEffectiveDistance, float maxPullSpeed)
+    public void SetStats(float fadeInDuration, float damage, float pullRadius, float pullForce, float minEffectiveDistance, float maxPullSpeed, float dashVelocityThreshold = 12f)
     {
         this.fadeInDuration = fadeInDuration;
         this.damage = damage;
@@ -26,6 +26,7 @@ public class ColorWhirlpoolHazard : MonoBehaviour
         this.pullForce = pullForce;
         this.minEffectiveDistance = minEffectiveDistance;
         this.maxPullSpeed = maxPullSpeed;
+        this.dashVelocityThreshold = dashVelocityThreshold;
     }
     private SpriteRenderer sr;
     private float fadeElapsed = 0f;
@@ -70,10 +71,17 @@ public class ColorWhirlpoolHazard : MonoBehaviour
     }
 
 
+    [Tooltip("플레이어의 수평 속도 절댓값이 이 값을 넘으면 대쉬 등 특수 이동 중으로 간주하고, 소용돌이가 이번 물리 스텝에 개입하지 않음 (PlayerMove를 직접 참조하지 않기 위한 간접 판별용)")]
+    float dashVelocityThreshold = 12f;
+
     void FixedUpdate()
     {
+        // 페이드 인이 끝나기 전(등장 연출 중)에는 끌어당기지 않음
         if (fadeElapsed < fadeInDuration) return;
 
+        // 끌어당김/둔화 계산은 반드시 물리 스텝(FixedUpdate)에서만 처리해야 함.
+        // Update()에서 처리하면 한 물리 스텝에 힘이 여러 번 중복 적용되어
+        // 프레임레이트가 높을 때 플레이어가 순간적으로 튕겨나가는 문제가 있었음
         if (cachedPlayer == null) return;
 
         float dist = Vector2.Distance(transform.position, cachedPlayer.transform.position);
@@ -82,6 +90,10 @@ public class ColorWhirlpoolHazard : MonoBehaviour
         Rigidbody2D playerRb = cachedPlayer.GetComponent<Rigidbody2D>();
         if (playerRb == null) playerRb = cachedPlayer.GetComponentInParent<Rigidbody2D>();
         if (playerRb == null) return;
+
+        // 현재 수평 속도가 비정상적으로 빠르면(대쉬 등 특수 이동 중으로 추정) 이번 스텝은 개입하지 않음
+        // -> PlayerMove를 직접 참조하지 않고, 속도 크기만으로 간접 판별
+        if (Mathf.Abs(playerRb.linearVelocity.x) >= dashVelocityThreshold) return;
 
         // 점프(Y축)는 PlayerMove와 중력에만 맡기고, 소용돌이는 수평(X축)에만 개입해서
         // 끌려가는 도중에도 점프 궤적이 원래와 동일하게 유지되도록 함
