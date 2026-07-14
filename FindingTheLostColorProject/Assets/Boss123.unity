@@ -1960,6 +1960,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 20958626906777141, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: m_Name
       value: Boss
@@ -2009,6 +2013,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1469305473}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: frostSpawnCountPerTick
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: 'blackFogs.Array.data[0]'
       value: 
       objectReference: {fileID: 1301670478}
@@ -2019,6 +2027,10 @@ PrefabInstance:
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: colorWhirlpoolPullForce
       value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: spawnInterval
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: leftPortalObject
@@ -2036,13 +2048,25 @@ PrefabInstance:
       propertyPath: rightPortalTransform
       value: 
       objectReference: {fileID: 1214664682}
+    - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: spawnMonsterPrefabs1.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: spawnMonsterPrefabs2.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: 'spawnMonsterPrefabs1.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -39.0318
+      value: -39.16
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.83
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2508,7 +2532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3690797216815920063, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -52.14
+      value: -52.04
       objectReference: {fileID: 0}
     - target: {fileID: 3690797216815920063, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3450,11 +3474,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8627405402521814419, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -28.2
+      value: -45.55
       objectReference: {fileID: 0}
     - target: {fileID: 8627405402521814419, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.97
+      value: -2.3
       objectReference: {fileID: 0}
     - target: {fileID: 8627405402521814419, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3574,7 +3598,7 @@ Transform:
   m_GameObject: {fileID: 1214664680}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -23.67, y: -7.72, z: 0}
+  m_LocalPosition: {x: -24.2, y: -7.77, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4124,7 +4148,7 @@ MonoBehaviour:
   smoothTimeX: 0.35
   smoothTimeY: 0.1
   maxDistance: 15
-  minCameraPos: {x: -100, y: -8}
+  minCameraPos: {x: -100, y: -3}
   maxCameraPos: {x: 100, y: 100}
   isBossStageCamera: 0
   bossIntroDelay: 3
@@ -5182,7 +5206,7 @@ Transform:
   m_GameObject: {fileID: 1691975018}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -39.49, y: -7.52, z: 0}
+  m_LocalPosition: {x: -39.49, y: -7.36, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
