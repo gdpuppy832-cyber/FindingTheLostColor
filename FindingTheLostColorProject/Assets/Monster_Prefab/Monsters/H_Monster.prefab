@@ -151,8 +151,8 @@ MonoBehaviour:
   attackRange: 1.5
   lineWidth: 4
   telegraphTime: 2
-  jumpDuration: 0.6
-  jumpHeight: 2
+  jumpDuration: 0.75
+  jumpHeight: 1.5
   landRadius: 1.5
   postDelay: 0.5
   attackCooldown: 2

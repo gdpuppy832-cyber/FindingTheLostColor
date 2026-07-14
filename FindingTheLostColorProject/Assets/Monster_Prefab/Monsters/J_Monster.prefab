@@ -236,8 +236,8 @@ MonoBehaviour:
     m_Bits: 128
   minJumpDistance: 1
   missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
-  missIndicatorOffset: {x: 0, y: 1.5, z: 0}
-  missIndicatorDelay: 0.175
+  missIndicatorOffset: {x: 0, y: 1, z: 0}
+  missIndicatorDelay: 0.375
   groundCheckRadius: 0.3
   safeDropDistance: 3
 --- !u!114 &-5272792582670928354
