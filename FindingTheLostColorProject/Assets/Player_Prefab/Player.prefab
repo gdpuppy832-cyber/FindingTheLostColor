@@ -386,6 +386,7 @@ MonoBehaviour:
   dashDuration: 0.2
   dashCooldown: 3
   focusChargeSpeedMultiplier: 0.2
+  dashSFX: {fileID: 8300000, guid: 3048bea47b6604d45a7a4d3da6d2bf2a, type: 3}
   dashIndicatorSR: {fileID: 0}
   dashReadyColor: {r: 1, g: 1, b: 1, a: 1}
   dashCooldownColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.5}

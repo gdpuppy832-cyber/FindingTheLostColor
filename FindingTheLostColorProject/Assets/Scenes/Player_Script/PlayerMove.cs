@@ -40,6 +40,13 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("집중 충전(R키 꾹 누름) 시 이동 속도 비율 (0.2면 80% 감소, 0이면 완전 정지, 기본값: 0.2)")]
     public float focusChargeSpeedMultiplier = 0.2f;
 
+    [Header("대쉬 효과음 설정 (신규)")]
+    [Tooltip("대쉬 발동 시 재생할 효과음 AudioClip (비워둘 시 무음)")]
+    public AudioClip dashSFX;
+    [Tooltip("대쉬 효과음 시작 오프셋 시간 (초, 앞부분 자를 구간, 기본값: 0.1초)")]
+    public float dashSFXStartOffset = 0.1f;
+
+
 
     [Header("Dash Visuals")]
     [Tooltip("대쉬 쿨타임 표시용 플레이어 발밑 원형 SpriteRenderer")]
@@ -254,6 +261,12 @@ public class PlayerMove : MonoBehaviour
     {
         canDash = false;
         isDashing = true;
+
+        // 대쉬 효과음 재생 (등록된 오디오 클립 및 시작 오프셋 사용)
+        if (dashSFX != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(dashSFX, dashSFXStartOffset);
+        }
 
         // 아치형 대쉬 쿨타임 게이지 UI 구동
         if (dashGaugeCtrl != null)

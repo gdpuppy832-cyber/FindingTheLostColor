@@ -202,6 +202,25 @@ public class SoundManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
+    /// <summary>
+    /// [신규] 특정 시작 오프셋 시간(startTime)부터 오디오 클립을 재생합니다. (앞부분 자르기 대응)
+    /// </summary>
+    public void PlaySFX(AudioClip clip, float startTime)
+    {
+        if (sfxSource == null || clip == null) return;
+
+        GameObject tempGO = new GameObject("TempSFX_" + clip.name);
+        AudioSource tempSource = tempGO.AddComponent<AudioSource>();
+
+        tempSource.clip = clip;
+        tempSource.volume = sfxVolume; // 사운드매니저 효과음 볼륨 동기화
+        tempSource.time = Mathf.Clamp(startTime, 0f, clip.length - 0.01f);
+        tempSource.Play();
+
+        // 재생이 종료되면 임시 게임오브젝트 자동 소멸
+        Destroy(tempGO, clip.length - startTime + 0.2f);
+    }
+
     public void PlaySFX(string sfxFileName)
     {
         AudioClip clip = Resources.Load<AudioClip>($"SoundResource/{sfxFileName}");
