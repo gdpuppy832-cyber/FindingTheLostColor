@@ -207,13 +207,22 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     public void PlaySFX(AudioClip clip, float startTime)
     {
-        if (sfxSource == null || clip == null) return;
+        PlaySFXWithOffset(clip, startTime, 1.0f);
+    }
+
+    /// <summary>
+    /// [신규] 특정 시작 오프셋 및 볼륨 배율로 오디오 클립을 재생하는 헬퍼 메서드
+    /// </summary>
+    public void PlaySFXWithOffset(AudioClip clip, float startTime, float volumeMultiplier = 1.0f)
+    {
+        if (clip == null) return;
 
         GameObject tempGO = new GameObject("TempSFX_" + clip.name);
         AudioSource tempSource = tempGO.AddComponent<AudioSource>();
 
         tempSource.clip = clip;
-        tempSource.volume = sfxVolume; // 사운드매니저 효과음 볼륨 동기화
+        // 마스터 볼륨 및 사운드매니저 효과음 볼륨을 종합하여 반영
+        tempSource.volume = volumeMultiplier * sfxVolume * masterVolume;
         tempSource.time = Mathf.Clamp(startTime, 0f, clip.length - 0.01f);
         tempSource.Play();
 
@@ -250,11 +259,19 @@ public class SoundManager : MonoBehaviour
             lastPaintingSoundTime = Time.time;
         }
  
-        if (sfxSource != null && clip != null)
+        if (clip != null)
         {
-            // SoundManager 고유의 SFX 볼륨 비율을 함께 감안하여 볼륨 결정
-            float finalVolume = volume * sfxVolume * masterVolume;
-            sfxSource.PlayOneShot(clip, finalVolume);
+            // [수정] ButtonClick 타입 효과음의 경우, 항상 앞부분 0.03초를 자르고 재생 (즉각적 반응감 극대화)
+            if (type == SFXType.ButtonClick)
+            {
+                PlaySFXWithOffset(clip, 0.03f, volume);
+            }
+            else if (sfxSource != null)
+            {
+                // SoundManager 고유의 SFX 볼륨 비율을 함께 감안하여 볼륨 결정
+                float finalVolume = volume * sfxVolume * masterVolume;
+                sfxSource.PlayOneShot(clip, finalVolume);
+            }
         }
     }
 

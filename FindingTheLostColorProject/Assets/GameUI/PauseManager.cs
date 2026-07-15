@@ -77,7 +77,7 @@ public class PauseManager : MonoBehaviour
                     }
                     if (SoundManager.Instance != null)
                     {
-                        SoundManager.Instance.PlaySFX(SoundManager.SFXType.TextInfo, 0.8f);
+                        SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
                     }
                     Debug.Log("[PauseManager] 개발자 모드 히든 커맨드 (C->H) 활성화 성공!");
                     commandIndex = 0;
