@@ -70,6 +70,7 @@ public class BossAttack : MonoBehaviour
     int nonWhirlpoolAttackCount = 0;      // 소용돌이를 제외한 다른 패턴이 몇 번 나왔는지 (3이 되면 다음 기회에 소용돌이 발동)
     Coroutine activeWhirlpoolCoroutine;    // 현재 진행 중인 소용돌이 코루틴 (함께 시작된 패턴이 끝나면 강제 종료용)
     GameObject activeColorWhirlpool;       // 현재 씬에 존재하는 소용돌이 오브젝트
+    Coroutine activeCompanionCoroutine;    // 프리즘 샤워와 함께 독립적으로 시작된 동반 패턴 코루틴 (2페이즈 전환 시 강제 종료용)
 
     // ===== 공격 정의 =====
     private delegate IEnumerator AttackRoutineDelegate();
@@ -311,23 +312,35 @@ public class BossAttack : MonoBehaviour
             phase2Unlocked = true;
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
+            // 소용돌이와 동반 패턴은 메인 공격(isAttacking)과 독립적으로 살아있을 수 있으므로
+            // (예: 메인 공격은 이미 끝나 쿨다운 중인데 소용돌이만 계속 떠 있는 경우),
+            // isAttacking 여부와 무관하게 항상 확인해서 정리함.
+            // (기존에는 이 정리가 "isAttacking && currentAttackCoroutine != null" 블록 안에 있어서,
+            //  마침 쿨다운 중일 때 크리스탈이 깨지면 소용돌이가 정리되지 않고 남는 문제가 있었음)
+            if (activeWhirlpoolCoroutine != null)
+            {
+                StopCoroutine(activeWhirlpoolCoroutine);
+                activeWhirlpoolCoroutine = null;
+            }
+            if (activeColorWhirlpool != null)
+            {
+                Destroy(activeColorWhirlpool);
+                activeColorWhirlpool = null;
+            }
+
+            // 프리즘 샤워의 동반 패턴(예: 가시 함정 2차 웨이브)도 독립 코루틴이라
+            // 같은 이유로 isAttacking과 무관하게 항상 정리함
+            if (activeCompanionCoroutine != null)
+            {
+                StopCoroutine(activeCompanionCoroutine);
+                activeCompanionCoroutine = null;
+            }
+
             // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
             if (isAttacking && currentAttackCoroutine != null)
             {
                 StopCoroutine(currentAttackCoroutine);
                 currentAttackCoroutine = null;
-
-                // 함께 진행 중이던 소용돌이도 강제 종료
-                if (activeWhirlpoolCoroutine != null)
-                {
-                    StopCoroutine(activeWhirlpoolCoroutine);
-                    activeWhirlpoolCoroutine = null;
-                }
-                if (activeColorWhirlpool != null)
-                {
-                    Destroy(activeColorWhirlpool);
-                    activeColorWhirlpool = null;
-                }
 
                 // 코루틴이 중간에 끊기면서 스스로 정리하지 못한 잔여 오브젝트들을 직접 정리
                 foreach (var marker in activeTelegraphMarkers)
@@ -368,12 +381,20 @@ public class BossAttack : MonoBehaviour
             }
 
             SetBossColliderState(true);
+
             if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
 
             // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복
             if (bossHealth != null)
             {
                 bossHealth.Heal(bossHealth.maxHealth * 0.5f);
+            }
+
+            // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.Heal(4f);
             }
 
             ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
@@ -464,11 +485,15 @@ public class BossAttack : MonoBehaviour
     IEnumerator RunAttack(AttackEntry attack)
     {
         isAttacking = true;
+
+        // 프리즘 샤워 직전에 나왔던 패턴을 기억해뒀다가, 동반 패턴 선정 시 제외하기 위해
+        // lastUsedAttack을 덮어쓰기 전에 미리 별도 변수로 백업해둠
+        AttackEntry previousAttack = lastUsedAttack;
         lastUsedAttack = attack;
 
-        // 소용돌이는 프리즘 샤워(FrostRain)와 절대 겹치지 않으며,
+        // 소용돌이는 1페이즈에서만 나오며, 프리즘 샤워(FrostRain)와도 절대 겹치지 않고,
         // 소용돌이 제외 다른 패턴이 colorWhirlpoolTriggerCount번 나온 뒤에야 다음 기회에 발동함
-        bool triggerWhirlpool = attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
+        bool triggerWhirlpool = !phase2Unlocked && attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
 
         if (triggerWhirlpool)
         {
@@ -476,11 +501,43 @@ public class BossAttack : MonoBehaviour
             nonWhirlpoolAttackCount = 0;
         }
 
-        // StartCoroutine으로 한 번 더 감싸면 별도의 독립 코루틴이 되어버려서,
-        // 이 RunAttack 코루틴만 StopCoroutine 해도 안쪽 attack.routine()은 안 멈추는 문제가 있었음
-        // (서리비 등 attack.routine() 내부에서 또 코루틴을 중첩 시작하는 경우 특히 문제)
-        // -> 같은 코루틴 체인으로 직접 실행되도록 변경
-        yield return attack.routine();
+        activeCompanionCoroutine = null;
+
+        if (attack.name == "FrostRain")
+        {
+            // 프리즘 샤워는 텔레그래프 단계를 먼저 끝낸 뒤에야 동반 패턴을 시작시킴
+            // (동반 패턴의 텔레그래프가 프리즘 샤워 텔레그래프와 겹쳐 보이지 않도록)
+            yield return RunFrostTelegraphPhase();
+
+            AttackEntry companion = PickFrostRainCompanion(previousAttack);
+            if (companion != null)
+            {
+                // 지역 변수 대신 필드에 저장해서, 2페이즈 전환 시 HandleCrystalDestroyed가
+                // 이 독립 코루틴도 함께 강제 종료할 수 있게 함
+                // (기존에는 지역 변수라 currentAttackCoroutine만 멈춰도 이 동반 패턴은
+                //  전혀 영향받지 않고 계속 진행되는 문제가 있었음)
+                activeCompanionCoroutine = StartCoroutine(companion.routine());
+            }
+
+            yield return RunFrostRainPhase();
+        }
+        else
+        {
+            // StartCoroutine으로 한 번 더 감싸면 별도의 독립 코루틴이 되어버려서,
+            // 이 RunAttack 코루틴만 StopCoroutine 해도 안쪽 attack.routine()은 안 멈추는 문제가 있었음
+            // (서리비 등 attack.routine() 내부에서 또 코루틴을 중첩 시작하는 경우 특히 문제)
+            // -> 같은 코루틴 체인으로 직접 실행되도록 변경
+            yield return attack.routine();
+        }
+
+        // 동반 패턴이 프리즘 샤워보다 오래 지속되는 경우, 끝날 때까지 마저 대기
+        // (동반 패턴이 먼저 끝났다면 이미 완료된 코루틴이라 즉시 통과되고,
+        //  2페이즈 전환으로 강제 중단됐다면 activeCompanionCoroutine이 이미 null이라 스킵됨)
+        if (activeCompanionCoroutine != null)
+        {
+            yield return activeCompanionCoroutine;
+        }
+        activeCompanionCoroutine = null;
 
         // 소용돌이는 함께 시작된 패턴이 먼저 끝나도 강제 종료하지 않고,
         // 자기 자신의 colorWhirlpoolDuration이 다 될 때까지 독립적으로 유지됨
@@ -493,13 +550,29 @@ public class BossAttack : MonoBehaviour
         nextAttackAllowedTime = Time.time + attackCooldown;
     }
 
+    // 프리즘 샤워와 함께 나올 동반 패턴을 고름.
+    // frostRainCompanionChance 확률로 아예 동반 패턴 없이 진행될 수도 있음.
+    // previousAttack(프리즘 샤워 직전에 나왔던 패턴)은 후보에서 제외됨.
+    AttackEntry PickFrostRainCompanion(AttackEntry previousAttack)
+    {
+        if (Random.value > frostRainCompanionChance) return null;
+
+        List<AttackEntry> candidates = new List<AttackEntry>(phase1Attacks);
+        candidates.RemoveAll(a => a.name == "FrostRain");
+        if (previousAttack != null) candidates.Remove(previousAttack);
+
+        if (candidates.Count == 0) return null;
+
+        return candidates[Random.Range(0, candidates.Count)];
+    }
+
     // ================= 가시 함정 공격 (1페이즈) =================
     [Header("1P Spike")]
     public GameObject telegraphMarkerPrefab;      // 경고 표시 프리팹 (SpriteRenderer 포함, 비워두면 임시 마커 생성)
     public GameObject spikePrefab;                // 가시 프리팹 (Collider2D는 Trigger로, 비워두면 임시 가시 생성)
     GameObject telegraphMarkerTemplate;           // telegraphMarkerPrefab의 런타임 복제 템플릿 (원본 보호용)
     GameObject spikeTemplate;                     // spikePrefab의 런타임 복제 템플릿 (원본 보호용)
-    public float spikeTelegraphDuration = 2f;      // 텔레그래프 지속 시간
+    public float spikeTelegraphDuration = 1.5f;      // 텔레그래프 지속 시간
     public float spikeTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     [Tooltip("가시 유지 시간")]
     public float spikeLifetime = 3f;               // 가시가 유지되는 시간
@@ -510,13 +583,53 @@ public class BossAttack : MonoBehaviour
     public float spikeMinDistance = 1.5f;           // 가시끼리 최소 간격 (겹침 방지)
     public float spikeMaxHeightAboveBoss = 3f;      // 보스 기준 이 값보다 높은 땅에는 가시 생성 안 함 (여유 허용치)
 
+    [Tooltip("두 번째 공격 시작 전 대기 시간 (첫 번째 가시가 사라진 뒤)")]
+    public float spikeSecondWaveDelay = 0.5f;
+
+    [Header("Prism Shower Combo")]
+    [Range(0f, 1f)]
+    [Tooltip("프리즘 샤워(FrostRain) 발동 시, 다른 1페이즈 패턴이 함께 나올 확률 (0 = 절대 안 겹침, 1 = 항상 겹침)")]
+    public float frostRainCompanionChance = 0.5f;
+
     IEnumerator SpikeTrapAttackRoutine()
     {
-        // 1. 위치 4곳 결정: 플레이어 위치 1곳 + 랜덤 바닥 위치 3곳
-        List<Vector2> spawnPositions = new List<Vector2>
+        // 1차 공격: 위치 4곳 결정 -> 텔레그래프 -> 가시 생성
+        List<Vector2> firstPositions = new List<Vector2>();
+        yield return RunSpikeTelegraphPhase(firstPositions, null);
+        SpawnSpikesAtPositions(firstPositions);
+
+        // 2차 텔레그래프는 "2차 가시가 실제로 생성되는 시점"에 정확히 맞춰 끝나도록 시작 시점을 계산.
+        // (1차 가시 생성 시점 기준으로, 2차 가시는 spikeLifetime + spikeSecondWaveDelay 후에 생성되므로
+        //  텔레그래프가 그 시점에 딱 끝나도록 그보다 spikeTelegraphDuration만큼 먼저 시작함)
+        float timeUntilSecondSpawn = spikeLifetime + spikeSecondWaveDelay;
+        float telegraphStartDelay = Mathf.Max(0f, timeUntilSecondSpawn - spikeTelegraphDuration);
+        yield return new WaitForSeconds(telegraphStartDelay);
+
+        List<Vector2> secondPositions = new List<Vector2>();
+        yield return RunSpikeTelegraphPhase(secondPositions, firstPositions);
+
+        // 텔레그래프 지속 시간이 길어서(spikeTelegraphDuration > timeUntilSecondSpawn인 경우)
+        // 계산된 생성 시점보다 늦게 끝났을 수 있으니, 남은 시간이 있다면 마저 대기
+        float elapsedSinceFirstSpawn = telegraphStartDelay + spikeTelegraphDuration;
+        float remaining = timeUntilSecondSpawn - elapsedSinceFirstSpawn;
+        if (remaining > 0f)
         {
-            GetGroundPositionBelow(target.position)
-        };
+            yield return new WaitForSeconds(remaining);
+        }
+
+        // 텔레그래프가 끝나는 순간 = 2차 가시가 생성되는 순간
+        SpawnSpikesAtPositions(secondPositions);
+        yield return new WaitForSeconds(spikeLifetime);
+    }
+
+    // 가시 함정 공격의 텔레그래프 단계(위치 결정 -> 텔레그래프 표시 -> 깜빡임 -> 제거)만 처리.
+    // 가시 생성은 포함하지 않으므로, 다른 웨이브와 시간을 겹쳐서 동시에 진행시킬 수 있음.
+    // resultPositions: 이번 사이클에서 실제로 사용할 위치들이 채워짐 (다음 사이클의 회피 대상으로 재사용)
+    // avoidPositions: 이 위치들과는 겹치지 않게 새 위치를 뽑음 (null이면 회피 없음)
+    IEnumerator RunSpikeTelegraphPhase(List<Vector2> resultPositions, List<Vector2> avoidPositions)
+    {
+        // 1. 위치 4곳 결정: 플레이어 위치 1곳 + 랜덤 바닥 위치 3곳
+        resultPositions.Add(GetGroundPositionBelow(target.position));
 
         int found = 0;
         int attempts = 0;
@@ -525,19 +638,25 @@ public class BossAttack : MonoBehaviour
             attempts++;
             Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
             Vector2? groundPos = TryFindGroundPosition(randomPoint);
-            if (groundPos.HasValue && IsFarEnough(groundPos.Value, spawnPositions))
+            if (groundPos.HasValue
+                && IsFarEnough(groundPos.Value, resultPositions)
+                && (avoidPositions == null || IsFarEnough(groundPos.Value, avoidPositions)))
             {
-                spawnPositions.Add(groundPos.Value);
+                resultPositions.Add(groundPos.Value);
                 found++;
             }
         }
 
         // 2. 각 위치에 텔레그래프 마커 생성
-        activeTelegraphMarkers.Clear();
-        foreach (var pos in spawnPositions)
+        List<GameObject> markers = new List<GameObject>();
+        foreach (var pos in resultPositions)
         {
             GameObject marker = SpawnTelegraphMarker(pos);
-            if (marker != null) activeTelegraphMarkers.Add(marker);
+            if (marker != null)
+            {
+                markers.Add(marker);
+                activeTelegraphMarkers.Add(marker);
+            }
         }
 
         // 3. 2초 동안 0.5초 간격으로 투명해졌다 돌아오는 깜빡임
@@ -548,7 +667,7 @@ public class BossAttack : MonoBehaviour
             yield return new WaitForSeconds(spikeTelegraphBlinkInterval);
             elapsed += spikeTelegraphBlinkInterval;
             visible = !visible;
-            foreach (var marker in activeTelegraphMarkers)
+            foreach (var marker in markers)
             {
                 if (marker == null) continue;
                 SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
@@ -557,21 +676,21 @@ public class BossAttack : MonoBehaviour
         }
 
         // 4. 텔레그래프 제거
-        foreach (var marker in activeTelegraphMarkers)
+        foreach (var marker in markers)
         {
             if (marker != null) Destroy(marker);
+            activeTelegraphMarkers.Remove(marker);
         }
-        activeTelegraphMarkers.Clear();
+    }
 
-        // 5. 가시 생성 (각 위치마다)
-        foreach (var pos in spawnPositions)
+    // 주어진 위치들에 실제 가시를 생성 (텔레그래프 단계와 분리되어, 원하는 타이밍에 독립적으로 호출 가능)
+    void SpawnSpikesAtPositions(List<Vector2> positions)
+    {
+        foreach (var pos in positions)
         {
             GameObject spike = SpawnSpike(pos);
             if (spike != null) activeSpikes.Add(spike);
         }
-
-        // 6. 가시가 살아있는 3초 대기 (가시 자체는 SpikeHazard가 스스로 lifetime 관리)
-        yield return new WaitForSeconds(spikeLifetime);
     }
 
     // ================= 레이저 공격 (1페이즈) =================
@@ -715,6 +834,14 @@ public class BossAttack : MonoBehaviour
 
     IEnumerator FrostRainAttackRoutine()
     {
+        yield return RunFrostTelegraphPhase();
+        yield return RunFrostRainPhase();
+    }
+
+    // 프리즘 샤워의 텔레그래프 단계(경고 표시 -> 깜빡임 -> 숨김)만 처리.
+    // 동반 패턴을 텔레그래프가 끝난 시점에 맞춰 시작시킬 수 있도록 별도 함수로 분리함.
+    IEnumerator RunFrostTelegraphPhase()
+    {
         // 1. 씬에 미리 배치된 텔레그래프 오브젝트들을 활성화 (평소엔 꺼져있던 것을 보이게 함)
         foreach (var marker in frostTelegraphMarkers)
         {
@@ -749,8 +876,11 @@ public class BossAttack : MonoBehaviour
             if (sr != null) sr.enabled = true; // 다음 공격 때를 위해 깜빡임 상태를 보이는 상태로 초기화
             marker.SetActive(false);
         }
+    }
 
-        // 4. 서리비 시작 (기존 로직 그대로)
+    // 프리즘 샤워의 실제 서리비 낙하 단계만 처리 (텔레그래프 단계와 분리)
+    IEnumerator RunFrostRainPhase()
+    {
         // SpawnFrostTick도 StartCoroutine으로 중첩시키면 독립 코루틴이 되어
         // 바깥의 RunAttack을 멈춰도 계속 살아남는 문제가 있으므로 직접 yield
         float elapsed = 0f;
@@ -1247,7 +1377,11 @@ public class BossAttack : MonoBehaviour
         GameObject whirlpool = SpawnColorWhirlpool(spawnPos);
         activeColorWhirlpool = whirlpool;
 
-        // 최대 colorWhirlpoolDuration(기본 10초) 동안 유지됨.
+        // 페이드 인이 먼저 끝날 때까지 대기한 뒤, 그 시점부터 colorWhirlpoolDuration을 셈
+        // (기존에는 스폰과 동시에 지속시간을 셌기 때문에, 페이드 인 시간까지 지속시간에 포함되어
+        //  실제로 온전히 나타나 있는 시간이 의도한 것보다 짧아지는 문제가 있었음)
+        yield return new WaitForSeconds(colorWhirlpoolFadeInDuration);
+
         // 짝지어진 다른 공격이 이보다 먼저 끝나면, RunAttack이 StopCoroutine + Destroy로 더 일찍 정리함
         yield return new WaitForSeconds(colorWhirlpoolDuration);
 

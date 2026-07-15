@@ -22,6 +22,19 @@ public class CameraFollow : MonoBehaviour
     public Vector2 minCameraPos;
     public Vector2 maxCameraPos;
 
+    [Header("보스방 진입 연출 설정 (신규)")]
+    [Tooltip("이 카메라가 보스방 전용 카메라인지 여부")]
+    public bool isBossStageCamera = false;
+    [Tooltip("진입 후 연출 대기 시간 (초, 기본값: 3초)")]
+    public float bossIntroDelay = 3.0f;
+    [Tooltip("카메라 크기가 커지는 변환 시간 (초, 기본값: 1초)")]
+    public float zoomDuration = 1.0f;
+    [Tooltip("최초 카메라 크기 (기본값: 5)")]
+    public float startCameraSize = 5.0f;
+    [Tooltip("최종 카메라 크기 (기본값: 8)")]
+    public float targetCameraSize = 8.0f;
+
+    private Camera cam;
     private float velocityX = 0f;
     private float velocityY = 0f;
 
@@ -82,5 +95,42 @@ public class CameraFollow : MonoBehaviour
     {
         shakeIntensity = intensity;
         shakeTimeRemaining = duration;
+    }
+
+    void Start()
+    {
+        cam = GetComponent<Camera>();
+
+        // 만약 보스 씬 카메라이고 카메라 컴포넌트가 존재한다면 줌아웃 연출 루프 가동
+        if (isBossStageCamera && cam != null)
+        {
+            StartCoroutine(BossCameraIntroRoutine());
+        }
+    }
+
+    /// <summary>
+    /// 보스방 진입 시 3초간 5 크기로 대기 후, 1초 동안 8 크기로 부드럽게 확장 줌아웃
+    /// </summary>
+    private System.Collections.IEnumerator BossCameraIntroRoutine()
+    {
+        if (cam == null) yield break;
+
+        // 1. 최초 크기(5.0f)로 즉시 강제 잠금
+        cam.orthographicSize = startCameraSize;
+
+        // 2. 3초간의 등장/대기 연출 지속
+        yield return new WaitForSeconds(bossIntroDelay);
+
+        // 3. 1초에 걸쳐 서서히 크기를 5에서 8로 선형 보간 확대
+        float elapsed = 0f;
+        while (elapsed < zoomDuration)
+        {
+            elapsed += Time.deltaTime;
+            cam.orthographicSize = Mathf.Lerp(startCameraSize, targetCameraSize, elapsed / zoomDuration);
+            yield return null;
+        }
+
+        // 4. 최종 크기(8.0f) 안착 및 고정
+        cam.orthographicSize = targetCameraSize;
     }
 }

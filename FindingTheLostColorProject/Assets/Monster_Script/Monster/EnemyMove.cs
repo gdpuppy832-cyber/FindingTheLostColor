@@ -102,16 +102,7 @@ public class EnemyMove : MonoBehaviour
             return; // 멈춰있는 동안은 이동/반전 로직 스킵
         
 
-        stopTimer += Time.deltaTime;
-            if (stopTimer >= 0.5f)
-            {
-                isStopped = false;
-                stopTimer = 0f;
-                moveDir = -moveDir; // �ݴ� �������� ��ȯ (��ȸ ��� ����)
-                ignoreEdgeTimer = 0.3f; // ��ȯ ���� ª�� �簨�� ����
-                timer = moveDir < 0f ? 0f : 3.5f; // ��ȸ Ÿ�̸ӵ� ������ ���⿡ �°� �缳��
-            }
-            return; // �����ִ� ������ �̵�/���� ���� ��ŵ
+
         }
 
         timer += Time.deltaTime;
