@@ -267,9 +267,10 @@ MonoBehaviour:
   frostRainCompanionChance: 1
   laserTelegraphPrefab: {fileID: 1014840232707358376, guid: 9422e8006b9ae53419523c3ecbf12b24, type: 3}
   laserPrefab: {fileID: 4371630478863771354, guid: 817fd6c7639bda64fabe240522c3ba53, type: 3}
-  laserTelegraphDuration: 1.5
+  laserTelegraphDuration: 2.5
   laserTelegraphBlinkInterval: 0.25
-  laserActiveDuration: 2
+  laserActiveDuration: 0.75
+  laserFollowSpeed: 1
   fallbackLaserWidth: 20
   fallbackLaserThickness: 0.6
   frostCrystalPrefab: {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
@@ -277,7 +278,7 @@ MonoBehaviour:
   frostRangeX: 30
   frostRainDuration: 5
   frostSpawnInterval: 0.3
-  frostSpawnCountPerTick: 3
+  frostSpawnCountPerTick: 2
   frostFallInitialSpeed: 0
   frostFallAcceleration: 15
   frostMaxLifetime: 6
@@ -338,10 +339,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnMonsterPrefabs1:
   - {fileID: 946412894994910540, guid: 0c03a8999f3178144a705ce901686007, type: 3}
-  - {fileID: 946412894994910540, guid: e7339c7820e3f454ca0516f2169bddb4, type: 3}
   spawnMonsterPrefabs2:
   - {fileID: 5474003369453071791, guid: bf8d862bc11b98842bad3ec18d3f9eba, type: 3}
-  - {fileID: 6765033659729166290, guid: 6a4a213fc60a4524998e355076617a39, type: 3}
   leftPortalTransform: {fileID: 0}
   rightPortalTransform: {fileID: 0}
   leftPortalObject: {fileID: 0}
