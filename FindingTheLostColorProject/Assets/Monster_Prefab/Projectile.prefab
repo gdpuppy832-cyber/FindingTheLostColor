@@ -147,8 +147,8 @@ MonoBehaviour:
   reusable: 0
   homeParent: {fileID: 0}
   offscreenMargin: 0.5
-  preFlightDelay: 0.3
-  rotationSpeed: 1000
+  preFlightDelay: 0
+  rotationSpeed: 360
 --- !u!95 &-992817160162491566
 Animator:
   serializedVersion: 7
@@ -157,7 +157,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7350782423160397821}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 0b1ae14e042930b45a3ec4c4df63e307, type: 2}
   m_CullingMode: 0

@@ -24,10 +24,18 @@ public class Trampoline : MonoBehaviour
     [Tooltip("채색 전 (색이 빠진 상태)의 색상")]
     public Color startColor = new Color(0.35f, 0.35f, 0.35f, 1f);
 
-    [Tooltip("채색 완료 (활성화된 상태)의 색상")]
+    [Tooltip("채우기 완료(활성화시)의 색상")]
     public Color targetColor = Color.white;
 
-    [Header("HIT! 텍스트 폰트")]
+    [Header("Sprite Settings (신규)")]
+    [Tooltip("기본 미완성 상태의 스프라이트")]
+    public Sprite defaultSprite;
+    [Tooltip("정화 완료(완성) 상태의 스프라이트")]
+    public Sprite purifiedSprite;
+    [Tooltip("스프라이트를 변경할 대상 SpriteRenderer (비워두면 본인 컴포넌트 자동 캐싱)")]
+    public SpriteRenderer targetSpriteRenderer;
+
+    [Header("HIT! 팝업 폰트")]
     [Tooltip("회복할 때 팝업되는 HIT! 텍스트 폰트 (비워두면 플레이어 폰트 자동 상속)")]
     public Font hitTextFont;
 
@@ -41,7 +49,18 @@ public class Trampoline : MonoBehaviour
     void Start()
     {
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+        
+        if (targetSpriteRenderer == null)
+        {
+            targetSpriteRenderer = GetComponent<SpriteRenderer>();
+            if (targetSpriteRenderer == null)
+            {
+                targetSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+        }
+
         UpdateVisualColor();
+        UpdateSprite(); // 초기 기본 이미지 적용
 
         // 트램펄린은 시작할 때 일반적인 충돌 판정을 지니고 있어야 하므로, trigger는 꺼둡니다.
         Collider2D col = GetComponent<Collider2D>();
@@ -73,13 +92,14 @@ public class Trampoline : MonoBehaviour
             }
             else
             {
-                // 완전히 되돌아감
+                // 완전히 정화 소멸
                 isPurified = false;
                 currentHealth = 0f;
                 activeTimer = 0f;
                 fadeTimer = 0f;
                 UpdateVisualColor();
-                Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 색과 능력을 잃고 초기화되었습니다.");
+                UpdateSprite(); // 기본 스프라이트로 원복
+                Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 정화 능력을 다하고 초기화되었습니다.");
             }
         }
     }
@@ -139,14 +159,35 @@ public class Trampoline : MonoBehaviour
         activeTimer = 0f;
         fadeTimer = 0f;
 
-        // 트램펄린 활성화 효과음 재생 (3D 입체 음향)
+        // 트램펄린 활성화 효과음 재생 (3D 입체 사운드)
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
         }
 
         UpdateVisualColor();
-        Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 활성화! 이제 밟으면 점프높이의 2배로 튑니다.");
+        UpdateSprite(); // 정화 완료 스프라이트로 변경
+        Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 활성화! 이제 밟으면 점프력의 2배를 얻습니다.");
+    }
+
+    private void UpdateSprite()
+    {
+        if (targetSpriteRenderer == null) return;
+
+        if (isPurified)
+        {
+            if (purifiedSprite != null)
+            {
+                targetSpriteRenderer.sprite = purifiedSprite;
+            }
+        }
+        else
+        {
+            if (defaultSprite != null)
+            {
+                targetSpriteRenderer.sprite = defaultSprite;
+            }
+        }
     }
 
     /// <summary>

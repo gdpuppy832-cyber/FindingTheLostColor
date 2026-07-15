@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     public float preFlightDelay = 0.3f;
 
     [Tooltip("날아가는 동안 초당 회전하는 각도 (양수면 반시계, 음수면 시계 방향)")]
-    public float rotationSpeed = 360f;
+    public float rotationSpeed = 720f;
 
     SpriteRenderer sr;
     Camera mainCam;

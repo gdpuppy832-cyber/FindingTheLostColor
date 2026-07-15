@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2915333899100964050}
   - component: {fileID: -1984632610777454492}
   - component: {fileID: 2369340244454583480}
+  - component: {fileID: 2434699336844069180}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
@@ -242,6 +243,16 @@ MonoBehaviour:
   blackFogs:
   - {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
   - {fileID: 4059382244844945514, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
+  colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
+  colorWhirlpoolSpawnOffset: {x: 0, y: -3}
+  colorWhirlpoolFadeInDuration: 2
+  colorWhirlpoolPullRadius: 20
+  colorWhirlpoolPullForce: 40
+  colorWhirlpoolMinEffectiveDistance: 0
+  colorWhirlpoolMaxPullSpeed: 8
+  colorWhirlpoolDuration: 10
+  fallbackColorWhirlpoolSize: 5
+  colorWhirlpoolTriggerCount: 3
   telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
   spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
   spikeTelegraphDuration: 2
@@ -311,6 +322,30 @@ MonoBehaviour:
   fallbackShadowBarrierWidth: 3
   fallbackShadowBarrierHeight: 10
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
+--- !u!114 &2434699336844069180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e529bbe95b944c94fad4c0bd6a760911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnMonsterPrefabs1:
+  - {fileID: 946412894994910540, guid: 0c03a8999f3178144a705ce901686007, type: 3}
+  - {fileID: 946412894994910540, guid: e7339c7820e3f454ca0516f2169bddb4, type: 3}
+  spawnMonsterPrefabs2:
+  - {fileID: 5474003369453071791, guid: bf8d862bc11b98842bad3ec18d3f9eba, type: 3}
+  - {fileID: 6765033659729166290, guid: 6a4a213fc60a4524998e355076617a39, type: 3}
+  leftPortalTransform: {fileID: 0}
+  rightPortalTransform: {fileID: 0}
+  leftPortalObject: {fileID: 0}
+  rightPortalObject: {fileID: 0}
+  spawnInterval: 60
+  isBossBattleStarted: 1
 --- !u!1 &4047836205825665637
 GameObject:
   m_ObjectHideFlags: 0

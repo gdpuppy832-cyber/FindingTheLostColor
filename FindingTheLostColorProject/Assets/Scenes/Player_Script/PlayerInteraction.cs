@@ -92,15 +92,22 @@ public class PlayerInteraction : MonoBehaviour
         // 3. 대상 감지 시 UI 텍스트 갱신 및 키 입력 확인
         if (closestInteractable != null)
         {
-            // 안내 UI 활성화
-            if (promptUIObj != null) promptUIObj.SetActive(true);
-
-            // 지정한 텍스트메쉬 종류에 맞추어 텍스트 데이터 갱신
             string message = closestInteractable.promptMessage;
-            if (promptText != null) promptText.text = message;
-            if (promptTmpText != null) promptTmpText.text = message;
-            if (promptTmp3DText != null) promptTmp3DText.text = message;
-            if (promptLegacyTextMesh != null) promptLegacyTextMesh.text = message;
+
+            // 메시지가 유효할 때만 발밑 안내 UI를 켜고 갱신 (커스텀 텍스트 사용 시 빈 문자열 대응)
+            if (!string.IsNullOrEmpty(message))
+            {
+                if (promptUIObj != null) promptUIObj.SetActive(true);
+
+                if (promptText != null) promptText.text = message;
+                if (promptTmpText != null) promptTmpText.text = message;
+                if (promptTmp3DText != null) promptTmp3DText.text = message;
+                if (promptLegacyTextMesh != null) promptLegacyTextMesh.text = message;
+            }
+            else
+            {
+                if (promptUIObj != null) promptUIObj.SetActive(false);
+            }
 
             // W키 입력 감지 (WasPressedThisFrame 검사로 꾹 눌러도 1회만 트리거되게 설정)
             bool wPressed = false;

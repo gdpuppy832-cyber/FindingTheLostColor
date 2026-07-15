@@ -251,8 +251,6 @@ public class PlayerTrailDebuff : MonoBehaviour
             }
 
             isStatBackedUp = false; // 백업 잠금 해제
-
-            Debug.Log("[Debuff] 모든 자국 구역 탈출! 플레이어 스탯이 원본 값으로 완전히 회복되었습니다.");
         }
     }
 

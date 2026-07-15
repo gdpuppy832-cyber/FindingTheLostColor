@@ -22,11 +22,16 @@ public class J_EnemyMove : MonoBehaviour
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
     public float safeDropDistance = 3f;
 
+    Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+
     void Start()
     {
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             target = player.transform;
@@ -52,6 +57,9 @@ public class J_EnemyMove : MonoBehaviour
 
         if (isStopped)//절벽 끝에서 멈춘 상태
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             if (isChasing)
             {
                 float xDiff = target.position.x - transform.position.x;
@@ -104,6 +112,9 @@ public class J_EnemyMove : MonoBehaviour
 
         if (desiredDir == 0f)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             prevposition = transform.position;
             return;
         }
@@ -133,6 +144,9 @@ public class J_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
             if (!isChasing)
             {
@@ -142,6 +156,13 @@ public class J_EnemyMove : MonoBehaviour
 
             prevposition = transform.position;
             return;
+        }
+
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", true);
+            // 추적 중엔 이동 속도가 1.5배 빨라지므로, 애니메이션 재생 속도도 같은 비율로 빠르게
+            animator.speed = isChasing ? 1.5f : 1f;
         }
 
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
