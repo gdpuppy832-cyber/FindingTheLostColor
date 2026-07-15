@@ -145,6 +145,12 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
+        // [치트] 개발자 모드 무한 체력 적용 시 실시간으로 최대 체력 유지
+        if (PauseManager.IsGodMode)
+        {
+            currentHealth = maxHealth;
+        }
+
         // 낭떠러지 추락 감지 (사망하지 않았고 Y축 좌표가 기준치 이하일 때)
         if (!isDead && transform.position.y < deathYThreshold)
         {
@@ -221,6 +227,9 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="amount">데미지 양</param>
     public void TakeDamage(float amount)
     {
+        // [치트] 개발자 모드 무한 체력(갓모드) 활성화 시 피격 데미지 무시
+        if (PauseManager.IsGodMode) return;
+
         // 이미 사망한 상태면 처리 중단
         if (isDead) return;
 

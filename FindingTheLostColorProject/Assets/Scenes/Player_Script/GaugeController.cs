@@ -90,6 +90,11 @@ public class GaugeController : MonoBehaviour
 
     void Update()
     {
+        // [치트] 개발자 모드 무한 물감 적용 시 실시간으로 최대 물감 유지
+        if (PauseManager.IsInfinitePaint)
+        {
+            currentPaint = maxPaint;
+        }
         bool isLeftClickHeld = false;
         bool isDead = playerHealth != null && playerHealth.IsDead;
         bool isDrawBlocked = playerHealth != null && playerHealth.IsDrawBlocked;
