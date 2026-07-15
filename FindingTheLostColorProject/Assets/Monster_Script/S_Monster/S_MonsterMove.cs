@@ -242,13 +242,16 @@ public class S_MonsterMove : MonoBehaviour
                 platformLayers
             );
 
-            if (wallHit.collider != null && !isPausedForTurn)
+            if (wallHit.collider != null &&
+    wallHit.collider != selfCol &&
+    !wallHit.collider.transform.IsChildOf(transform) &&
+    !isPausedForTurn)
             {
                 if (animator != null)
                     animator.SetBool("IsWalking", false);
 
                 StartCoroutine(PauseThenTurn(!movingRight));
-                return; // 방향 전환 코루틴이 시작되면 이번 프레임 이동은 하지 않음
+                return;
             }
         }
 
