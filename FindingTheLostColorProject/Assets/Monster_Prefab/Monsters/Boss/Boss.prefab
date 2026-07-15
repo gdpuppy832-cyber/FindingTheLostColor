@@ -189,7 +189,7 @@ MonoBehaviour:
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
   purificationIndicatorPrefab: {fileID: 0}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
-  startColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-1984632610777454492
 MonoBehaviour:
