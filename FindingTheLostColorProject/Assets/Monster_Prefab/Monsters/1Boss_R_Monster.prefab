@@ -348,9 +348,10 @@ GameObject:
   - component: {fileID: 9206173711008134357}
   - component: {fileID: 5328816977903137336}
   - component: {fileID: 641493875230957010}
-  - component: {fileID: 165842767403872185}
+  - component: {fileID: 3030645061637698599}
+  - component: {fileID: 7005654985579159564}
   m_Layer: 8
-  m_Name: R_Monster
+  m_Name: 1Boss_R_Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -496,7 +497,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.7164351, y: 1.316603}
   m_EdgeRadius: 0
---- !u!114 &165842767403872185
+--- !u!114 &3030645061637698599
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -515,10 +516,31 @@ MonoBehaviour:
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
-  purificationIndicatorPrefab: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
+  purificationIndicatorPrefab: {fileID: 0}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &7005654985579159564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5474003369453071791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd30bbc31b35f734fbfe18d6a0798235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseDuration: 0.5
+  moveSpeed: 1.5
+  direction: 2
+  offScreenMargin: 0.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 0.1
+  fallAcceleration: 20
 --- !u!1001 &4119949438311600841
 PrefabInstance:
   m_ObjectHideFlags: 0

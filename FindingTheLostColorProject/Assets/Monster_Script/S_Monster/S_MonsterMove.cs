@@ -123,7 +123,6 @@ public class S_MonsterMove : MonoBehaviour
             return;
         }
 
-        CheckGrounded();
         UpdateMovement();
         CheckPlayerContactDamage();
     }
@@ -228,16 +227,6 @@ public class S_MonsterMove : MonoBehaviour
         float deltaX = currentX - startX;
         float moveDir = movingRight ? 1f : -1f;
 
-        // 이동 방향 앞에 낭떠러지(바닥 없음)가 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
-        bool edgeAhead = (moveDir < 0f && !groundedLeft) || (moveDir > 0f && !groundedRight);
-        if (edgeAhead && !isPausedForTurn)
-        {
-            if (animator != null)
-                animator.SetBool("IsWalking", false);
-
-            StartCoroutine(PauseThenTurn(!movingRight));
-            return;
-        }
 
         // 이동 방향 앞에 벽(platformLayers)이 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
         Collider2D selfCol = selfColCached;
@@ -253,13 +242,16 @@ public class S_MonsterMove : MonoBehaviour
                 platformLayers
             );
 
-            if (wallHit.collider != null && !isPausedForTurn)
+            if (wallHit.collider != null &&
+    wallHit.collider != selfCol &&
+    !wallHit.collider.transform.IsChildOf(transform) &&
+    !isPausedForTurn)
             {
                 if (animator != null)
                     animator.SetBool("IsWalking", false);
 
                 StartCoroutine(PauseThenTurn(!movingRight));
-                return; // 방향 전환 코루틴이 시작되면 이번 프레임 이동은 하지 않음
+                return;
             }
         }
 

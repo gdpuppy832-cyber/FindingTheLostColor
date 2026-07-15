@@ -99,6 +99,7 @@ public class PlayerHealth : MonoBehaviour
 
     public bool IsDead => isDead;
     public bool IsDrawBlocked => isDrawBlocked;
+    public bool IsInvincible => isInvincible;
 
     void Start()
     {
