@@ -418,8 +418,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1.5
-  range: 999
-  chaseRange: 999
+  range: 8
+  chaseRange: 10
   attackStopDistance: 0.1
   safeDropDistance: 7
   chaseAnimSpeedMultiplier: 1.5
