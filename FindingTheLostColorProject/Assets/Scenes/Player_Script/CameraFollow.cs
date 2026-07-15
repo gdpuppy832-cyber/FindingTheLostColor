@@ -68,8 +68,12 @@ public class CameraFollow : MonoBehaviour
         float clampedX = Mathf.Clamp(nextPos.x, minCameraPos.x, maxCameraPos.x);
         float clampedY = Mathf.Clamp(nextPos.y, minCameraPos.y, maxCameraPos.y);
 
-        // 5. 카메라 흔들림(Shake) 오프셋 계산
-        if (shakeTimeRemaining > 0f)
+        // 5. 카메라 흔들림(Shake) 오프셋 계산 (일시정지 중 멈춤 처리)
+        if (Time.timeScale == 0f)
+        {
+            shakeOffset = Vector3.zero; // 일시정지 중에는 진동 멈춤
+        }
+        else if (shakeTimeRemaining > 0f)
         {
             float offsetX = Random.Range(-1f, 1f) * shakeIntensity;
             float offsetY = Random.Range(-1f, 1f) * shakeIntensity;
