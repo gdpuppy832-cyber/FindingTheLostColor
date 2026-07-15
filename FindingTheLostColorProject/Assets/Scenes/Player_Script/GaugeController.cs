@@ -56,12 +56,13 @@ public class GaugeController : MonoBehaviour
     }
 
     /// <summary>
-    /// 최종 물감 재생 속도를 곱연산으로 갱신합니다.
-    /// (최종 재생속도 = 기본 속도 * 리젠존 배율 * 집중 충전 배율)
+    /// 최종 물감 재생 속도를 갱신합니다. (중첩 금지: 더 빠른 배율 하나만 최종 적용)
+    /// (최종 재생속도 = 기본 속도 * Max(리젠존 배율, 집중 충전 배율))
     /// </summary>
     private void UpdateFinalRegenSpeed()
     {
-        regenSpeed = baseRegenSpeed * zoneRegenMultiplier * focusRegenMultiplier;
+        float finalMultiplier = Mathf.Max(zoneRegenMultiplier, focusRegenMultiplier);
+        regenSpeed = baseRegenSpeed * finalMultiplier;
     }
 
     void Awake()

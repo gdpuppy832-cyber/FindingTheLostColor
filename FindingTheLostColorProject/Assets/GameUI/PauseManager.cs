@@ -264,6 +264,18 @@ public class PauseManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// [신규] 개발자 모드 패널을 명시적으로 비활성화(닫기)하는 함수 (X 버튼 바인딩용)
+    /// </summary>
+    public void CloseDevPanel()
+    {
+        if (devModePanel != null)
+        {
+            devModePanel.SetActive(false);
+            if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
+        }
+    }
+
     public void ToggleGodMode()
     {
         isGodMode = !isGodMode;
