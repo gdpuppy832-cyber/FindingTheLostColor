@@ -18400,6 +18400,10 @@ PrefabInstance:
       propertyPath: promptTmpText
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4328496780174134983, guid: 8d6fa720df2a2154193ad5ae4344e04f, type: 3}
+      propertyPath: dashCooldown
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5626675105805483269, guid: 8d6fa720df2a2154193ad5ae4344e04f, type: 3}
       propertyPath: spriteRenderer
       value: 
