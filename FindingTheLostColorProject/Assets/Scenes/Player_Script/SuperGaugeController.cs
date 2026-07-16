@@ -42,6 +42,11 @@ public class SuperGaugeController : MonoBehaviour
 
     private void Update()
     {
+        // [치트] 개발자 모드 무한 궁극기 적용 시 실시간으로 최대 충전 상태 유지
+        if (PauseManager.IsInfiniteSuper)
+        {
+            currentSuper = maxSuper;
+        }
         // [치트키] 개발 및 테스트 편의를 위해 인게임에서 'T' 키를 누르면 궁극기 게이지 즉시 충전 완료
         bool isTKeyPressed = false;
 #if ENABLE_INPUT_SYSTEM

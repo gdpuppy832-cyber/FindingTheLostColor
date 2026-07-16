@@ -258,11 +258,19 @@ public class S_MonsterMove : MonoBehaviour
         // 방향 전환 감지: 즉시 방향을 바꾸지 않고, 잠깐 멈췄다가 전환하도록 코루틴 시작 (기존 순찰 범위 기준)
         if (movingRight && deltaX >= patrolRange)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             StartCoroutine(PauseThenTurn(false));
+            return;
         }
         else if (!movingRight && deltaX <= -patrolRange)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             StartCoroutine(PauseThenTurn(true));
+            return;
         }
 
         if (animator != null)

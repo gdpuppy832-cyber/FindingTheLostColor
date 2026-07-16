@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Timeline;
 
 public class BossAttack : MonoBehaviour
 {
@@ -703,7 +704,8 @@ public class BossAttack : MonoBehaviour
     public float laserTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     [Tooltip("레이저 지속 시간")]
     public float laserActiveDuration = 5f;          // 레이저 발동 유지 시간
-    
+    [Tooltip("텔레그래프가 플레이어를 따라가는 속도")]
+    public float laserFollowSpeed = 2f;
 
     public float fallbackLaserWidth = 20f;           // 프리팹 없을 때 임시 레이저 가로 길이
     public float fallbackLaserThickness = 0.6f;      // 프리팹 없을 때 임시 레이저 두께
@@ -722,16 +724,43 @@ public class BossAttack : MonoBehaviour
         // 2. 2초 동안 0.5초 간격으로 투명해졌다 돌아오는 깜빡임
         float elapsed = 0f;
         bool visible = true;
+
+
         while (elapsed < laserTelegraphDuration)
         {
-            yield return new WaitForSeconds(laserTelegraphBlinkInterval);
-            elapsed += laserTelegraphBlinkInterval;
-            visible = !visible;
-            if (marker != null)
+            // 텔레그래프 동안 플레이어의 Y축을 천천히 따라감
+            if (target != null)
             {
-                SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                laserPos.y = Mathf.MoveTowards(
+                    laserPos.y,
+                    target.position.y,
+                    laserFollowSpeed * Time.deltaTime
+                );
+
+                if (marker != null)
+                {
+                    Vector3 pos = marker.transform.position;
+                    pos.y = laserPos.y;
+                    marker.transform.position = pos;
+                }
             }
+
+            elapsed += Time.deltaTime;
+
+            if (Mathf.FloorToInt(elapsed / laserTelegraphBlinkInterval) !=
+                Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
+            {
+                visible = !visible;
+
+                if (marker != null)
+                {
+                    SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                        sr.enabled = visible;
+                }
+            }
+
+            yield return null;
         }
 
         // 3. 텔레그래프 제거

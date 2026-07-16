@@ -858,11 +858,17 @@ public class CursorController : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
     }
 
-    private void ResetCharge()
+    private void ResetCharge(bool forceCancel = false)
     {
         chargeTimer = 0f;
         chatterTimer = 0f;
         isActuallyCharging = false;
+
+        // [수정] 강제 취소가 아니고 릴리즈 연출 코루틴(부드러운 소멸)이 재생 중인 동안에는 강제 종료 및 비활성화를 건너뜁니다!
+        if (!forceCancel && releaseEffectCoroutine != null)
+        {
+            return;
+        }
 
         // 발사 연출 코루틴이 돌고 있다면 강제 취소합니다.
         if (releaseEffectCoroutine != null)
@@ -880,8 +886,8 @@ public class CursorController : MonoBehaviour
 
     private void OnDisable()
     {
-        // 씬 전환, 비활성화 시 차징 상태를 깔끔하게 리셋하여 이펙트 박제 방지
-        ResetCharge();
+        // 씬 전환, 비활성화 시 차징 상태를 강제로 완전히 리셋하여 이펙트 박제 방지
+        ResetCharge(true);
     }
 
     void UpdateTrailStyle(int index)

@@ -50,11 +50,21 @@ public class ColoringBridge : MonoBehaviour
 
     public bool IsPurified => isPurified;
 
+    private int originalLayer;
+
     void Start()
     {
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         bridgeCollider = GetComponent<Collider2D>();
         originalPosition = transform.position; // 최초 고정 원점 위치 백업
+        originalLayer = gameObject.layer;
+
+        // 미완성 상태일 때는 몬스터가 딛지 못하도록 레이어 강제 임시 격리 (Platform 레이어인 경우 예방)
+        int platformLayer = LayerMask.NameToLayer("Platform");
+        if (gameObject.layer == platformLayer)
+        {
+            SetLayerRecursively(gameObject, LayerMask.NameToLayer("Default"));
+        }
 
         if (targetSpriteRenderer == null)
         {
@@ -81,6 +91,18 @@ public class ColoringBridge : MonoBehaviour
         UpdateVisualColor();
         UpdateSprite(); // 초기 스프라이트 셋업
         SetSolidState(false);
+    }
+
+    /// <summary>
+    /// 게임오브젝트와 모든 자식 오브젝트의 레이어를 재귀적으로 변경하는 헬퍼 메서드
+    /// </summary>
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        obj.layer = newLayer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
     }
 
     void Update()
@@ -213,6 +235,23 @@ public class ColoringBridge : MonoBehaviour
     {
         if (isPurified) return;
 
+        Purify();
+
+        // [도미노 연쇄 완성 전이] 나를 정화해 준 방향(sender)을 제외하고, 0.15초 텀으로 옆으로 연쇄 완성
+        if (adjacentBridges != null && adjacentBridges.Length > 0)
+        {
+            foreach (var adj in adjacentBridges)
+            {
+                if (adj != null && adj != sender && !adj.IsPurified)
+                {
+                    StartCoroutine(SpreadPurifyDelayRoutine(adj, 0.15f));
+                }
+            }
+        }
+    }
+
+    private void Purify()
+    {
         isPurified = true;
         currentHealth = maxHealth;
 
@@ -225,18 +264,12 @@ public class ColoringBridge : MonoBehaviour
         UpdateVisualColor();
         UpdateSprite(); // 완성 시 스프라이트 이미지 교체
         SetSolidState(true); // 이제 단단해져서 건널 수 있는 다리가 됨
-        Debug.Log($"[ColoringBridge] {gameObject.name} 채색다리 활성화! 이제 건널 수 있습니다.");
 
-        // [도미노 연쇄 완성 전이] 나를 정화해 준 방향(sender)을 제외하고, 0.15초 텀으로 옆으로 연쇄 완성
-        if (adjacentBridges != null && adjacentBridges.Length > 0)
+        // 레이어를 "Platform"으로 승격시켜 몬스터들의 바닥/벽 감지 레이캐스트에 걸리도록 함
+        int platformLayer = LayerMask.NameToLayer("Platform");
+        if (platformLayer != -1)
         {
-            foreach (var adj in adjacentBridges)
-            {
-                if (adj != null && adj != sender && !adj.IsPurified)
-                {
-                    StartCoroutine(SpreadPurifyDelayRoutine(adj, 0.15f));
-                }
-            }
+            SetLayerRecursively(gameObject, platformLayer);
         }
     }
 
