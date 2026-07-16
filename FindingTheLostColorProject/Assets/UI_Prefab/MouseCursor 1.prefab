@@ -57,13 +57,13 @@ MonoBehaviour:
   intenseDistance: 6.7
   trailWidth: 0.15
   paintRadius: 0.5
-  closeHealRate: 1.1
-  mediumHealRate: 0.77
-  farHealRate: 0.44
+  closeHealRate: 1.8
+  mediumHealRate: 1.4
+  farHealRate: 1
   attackMode: 1
   chargeDuration: 1
   chargeAttackRadius: 0.7
-  chargeAttackHealAmount: 2
+  chargeAttackHealAmount: 2.5
   chargePaintCost: 0.18
   chargeDepletionMultiplier: 0.25
   chargeHoldDepletionMultiplier: 0.25

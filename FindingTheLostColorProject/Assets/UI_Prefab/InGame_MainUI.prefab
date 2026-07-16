@@ -2169,7 +2169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPaint: 1
   currentPaint: 1
-  decreaseSpeed: 0.1
+  decreaseSpeed: 0.05
   regenSpeed: 0.034
   minPaintToDraw: 0.02
   paintLerpSpeed: 5
