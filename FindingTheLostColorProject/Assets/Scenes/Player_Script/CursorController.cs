@@ -100,7 +100,7 @@ public class CursorController : MonoBehaviour
     private bool wasDrawingLastFrame = false; // [추가] 이전 프레임 그리기/차징 여부 기억 변수
     private float chatterTimer = 0f;          // [추가] 마우스 튐(채터링) 방지용 타이머
     private bool isActuallyCharging = false;  // [추가] 현재 마우스 클릭 상태와 무관하게 논리적으로 차징 중인지 여부
-    private const float CHATTER_GRACE_TIME = 0.08f; // [추가] 마우스 클릭 튐 유예 시간
+    private const float CHATTER_GRACE_TIME = 0.05f; // [추가] 마우스 클릭 튐 유예 시간 (0.05초)
     
     private Vector3 lastMouseScreenPos;      // [추가] 마우스 움직임 감지용 이전 프레임 위치
     private float mouseMoveLingerTimer = 0f; // [추가] 마우스 움직임 판정 잔존 타이머 (0.15초)
@@ -349,8 +349,8 @@ public class CursorController : MonoBehaviour
                 // 차징 중이었으나 마우스 클릭이 순간 튀었거나 조건이 깨진 경우 ➔ 0.08초 동안 마우스 복구 대기
                 chatterTimer += Time.deltaTime;
 
-                // 0.08초 유예 시간을 초과했거나, 마우스를 떼는 릴리즈 키 신호가 명확히 감지됐거나, 피격/사망/물감 완전 고갈 등의 락이 걸린 경우 릴리즈 연출 처리
-                if (chatterTimer >= CHATTER_GRACE_TIME || isLeftClickReleased || !isConditionMet)
+                // 유예 시간을 초과했거나(마우스 뗌 유지), 피격/사망/물감 완전 고갈 등의 락이 걸린 경우 릴리즈 연출 처리 (임시 튐은 유예시간동안 스무스하게 무시됨)
+                if (chatterTimer >= CHATTER_GRACE_TIME || !isConditionMet)
                 {
                     isActuallyCharging = false;
                     chatterTimer = 0f;
@@ -358,6 +358,7 @@ public class CursorController : MonoBehaviour
                     if (chargeTimer >= chargeDuration && !isDead && !isDrawBlocked)
                     {
                         ExecuteChargeAttack(mouseWorldPos);
+                        ResetCharge(); // [추가] 발사 즉시 차징 데이터를 리셋하여 빠른 재클릭(따닥) 연사 버그 방지
 
                         // 손을 뗄 때 투명해지며 확 커지는 코루틴 실행
                         if (releaseEffectCoroutine != null) StopCoroutine(releaseEffectCoroutine);
@@ -744,7 +745,6 @@ public class CursorController : MonoBehaviour
         }
 
         chargeEffectSprite.gameObject.SetActive(false);
-        chargeTimer = 0f;
         releaseEffectCoroutine = null;
     }
 

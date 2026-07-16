@@ -146,13 +146,20 @@ public class NormalMonster : MonoBehaviour
         if (srSelf != null) srSelf.color = currentColor;
 
         // 제외할 공격 관련 키워드 (총알, 이펙트, 경고 이미지 등)
-        string[] ignoreKeywords = { "telegraph", "projectile", "bullet", "shot", "warn", "indicator", "attack", "effect", "danger", "marker" };
+        string[] ignoreKeywords = { "telegraph", "projectile", "bullet", "shot", "warn", "indicator", "attack", "effect", "danger", "marker", "minimap" };
 
         // 2. 모든 자식 SpriteRenderer 색상 변경 (단, 제외 대상은 변경하지 않음)
         SpriteRenderer[] childSRs = GetComponentsInChildren<SpriteRenderer>(true);
         foreach (var sr in childSRs)
         {
             if (sr == srSelf) continue;
+
+            // [추가] 미니맵 아이콘 레이어에 속한 경우 강제 색상 변경 제외
+            int minimapLayer = LayerMask.NameToLayer("MinimapIcon");
+            if (sr.gameObject.layer == minimapLayer)
+            {
+                continue;
+            }
 
             string fullPath = GetGameObjectPath(sr.gameObject).ToLower();
             bool shouldIgnore = false;
