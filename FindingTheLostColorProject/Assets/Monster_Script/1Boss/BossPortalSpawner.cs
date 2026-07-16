@@ -1,8 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BossPortalSpawner : MonoBehaviour
 {
+    [Header("보스 페이즈 연동")]
+    [Tooltip("2페이즈로 전환되면 이 소환 패턴을 멈추기 위해 참조하는 BossAttack (비워두면 자동으로 같은 오브젝트에서 검색)")]
+    public BossAttack bossAttack;
+
+    // 지금까지 소환한 몬스터들을 추적 (2페이즈 전환 시 한 번에 정리하기 위함)
+    private List<GameObject> activeSpawnedMonsters = new List<GameObject>();
+    private Coroutine activeSpawnCoroutine;
     [Header("스폰 몬스터 설정")]
     [Tooltip("첫번째 소환 패턴 시 양쪽 포탈에서 소환될 잡몹 프리팹 목록 (각각 1마리씩 스폰)")]
     public GameObject[] spawnMonsterPrefabs1;
@@ -43,6 +51,52 @@ public class BossPortalSpawner : MonoBehaviour
         // 초기에 포탈 오브젝트들이 지정되어 있다면 비활성화
         if (leftPortalObject != null) leftPortalObject.SetActive(false);
         if (rightPortalObject != null) rightPortalObject.SetActive(false);
+
+        if (bossAttack == null) bossAttack = GetComponent<BossAttack>();
+        if (bossAttack == null) bossAttack = GetComponentInParent<BossAttack>();
+
+        if (bossAttack != null)
+        {
+            bossAttack.OnPhase2Started += HandlePhase2Started;
+        }
+        else
+        {
+            Debug.LogWarning("[BossPortalSpawner] BossAttack을 찾지 못해 2페이즈 전환에 반응할 수 없습니다. Inspector에서 직접 연결해주세요.");
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (bossAttack != null)
+        {
+            bossAttack.OnPhase2Started -= HandlePhase2Started;
+        }
+    }
+
+    /// <summary>
+    /// BossAttack이 2페이즈로 전환되는 순간 호출됨.
+    /// 소환 스케줄러를 멈추고, 진행 중이던 소환 연출을 중단하고, 이미 소환된 몬스터들을 모두 정리함.
+    /// </summary>
+    private void HandlePhase2Started()
+    {
+        isBossBattleStarted = false;
+
+        if (activeSpawnCoroutine != null)
+        {
+            StopCoroutine(activeSpawnCoroutine);
+            activeSpawnCoroutine = null;
+        }
+
+        if (leftPortalObject != null) leftPortalObject.SetActive(false);
+        if (rightPortalObject != null) rightPortalObject.SetActive(false);
+
+        foreach (var monster in activeSpawnedMonsters)
+        {
+            if (monster != null) Destroy(monster);
+        }
+        activeSpawnedMonsters.Clear();
+
+        Debug.Log("[BossPortalSpawner] 2페이즈 전환 감지: 포탈 소환을 중단하고 소환된 몬스터를 정리했습니다.");
     }
 
     void Update()
@@ -67,7 +121,7 @@ public class BossPortalSpawner : MonoBehaviour
         if (Time.time - lastSpawnTime >= spawnInterval)
         {
             lastSpawnTime = Time.time;
-            StartCoroutine(SpawnSequence());
+            activeSpawnCoroutine = StartCoroutine(SpawnSequence());
         }
     }
 
@@ -132,6 +186,7 @@ public class BossPortalSpawner : MonoBehaviour
         Vector3 spawnPos = portal.position + spawnOffset;
 
         GameObject monster = Instantiate(prefab, spawnPos, Quaternion.identity);
+        activeSpawnedMonsters.Add(monster);
 
         // 정화되었을 때 생성 포탈로 회귀하는 연출 스크립트 연결
         PortalMonsterLinger linger = monster.GetComponent<PortalMonsterLinger>();
