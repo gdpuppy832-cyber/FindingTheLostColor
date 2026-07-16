@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7efe0c5dc38905c4c80461b2ef1d8fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patrolRange: 10
+  patrolRange: 4
   moveSpeed: 1.5
   startMovingRight: 1
   trailPrefab: {fileID: 6060694035351487940, guid: a279126c55b5bb44fa82d390cd92d06e, type: 3}
@@ -136,7 +136,6 @@ MonoBehaviour:
   playerContactBoxScale: 1
   turnPauseDuration: 0.5
   groundCheckDistance: 1
-  wallCheckDistance: 0.2
   trailFadeStartTime: 3
   trailFullyGoneTime: 4
 --- !u!114 &8028923761643352352

@@ -3,7 +3,7 @@ using UnityEngine;
 public class S_MonsterMove : MonoBehaviour
 {
     [Header("Move")]
-    [Tooltip("좌우 순찰 범위 (시작 지점 기준 X축 이동 반경)")]
+    [Tooltip("현재 위치 기준 좌우 이동 거리")]
     public float patrolRange = 3f;
 
     [Tooltip("이동 속도")]
@@ -59,6 +59,7 @@ public class S_MonsterMove : MonoBehaviour
     void Start()
     {
         startX = transform.position.x;
+
         movingRight = startMovingRight;
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -127,29 +128,7 @@ public class S_MonsterMove : MonoBehaviour
         CheckPlayerContactDamage();
     }
 
-    /// <summary>
-    /// 좌우 발밑 바닥 유무를 검사해서 groundedLeft/groundedRight를 갱신합니다.
-    /// (EnemyMove.cs와 동일한 방식: 콜라이더 좌/우 지점에서 아래로 레이캐스트)
-    /// </summary>
-    private void CheckGrounded()
-    {
-        if (selfColCached == null) return;
-
-        float halfWidth = selfColCached.bounds.extents.x;
-        float oneThird = halfWidth * 2f / 3f;
-        Vector2 leftPoint = (Vector2)selfColCached.bounds.center + Vector2.left * oneThird;
-        Vector2 rightPoint = (Vector2)selfColCached.bounds.center + Vector2.right * oneThird;
-
-        Debug.DrawRay(leftPoint, Vector2.down * groundCheckDistance, Color.red);
-        Debug.DrawRay(rightPoint, Vector2.down * groundCheckDistance, Color.blue);
-
-        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, groundCheckDistance, platformLayers);
-        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, groundCheckDistance, platformLayers);
-
-        groundedLeft = leftHit.collider != null;
-        groundedRight = rightHit.collider != null;
-    }
-
+   
     // excludeLayers 설정으로 인해 물리 충돌/트리거 이벤트 자체가 발생하지 않으므로,
     // 별도의 오버랩 검사로 플레이어와의 접촉을 직접 확인해서 피해를 줌
     private void CheckPlayerContactDamage()
@@ -205,7 +184,6 @@ public class S_MonsterMove : MonoBehaviour
         }
     }
 
-    public float wallCheckDistance = 0.2f;
 
     private void UpdateMovement()
     {
@@ -228,34 +206,8 @@ public class S_MonsterMove : MonoBehaviour
         float moveDir = movingRight ? 1f : -1f;
 
 
-        // 이동 방향 앞에 벽(platformLayers)이 있는지 검사 -> 있으면 0.5초 멈췄다가 반대로 전환
-        Collider2D selfCol = selfColCached;
+        
 
-        if (selfCol != null)
-        {
-            RaycastHit2D wallHit = Physics2D.BoxCast(
-                selfCol.bounds.center,
-                selfCol.bounds.size * 0.9f,
-                0f,
-                Vector2.right * moveDir,
-                wallCheckDistance,
-                platformLayers
-            );
-
-            if (wallHit.collider != null &&
-    wallHit.collider != selfCol &&
-    !wallHit.collider.transform.IsChildOf(transform) &&
-    !isPausedForTurn)
-            {
-                if (animator != null)
-                    animator.SetBool("IsWalking", false);
-
-                StartCoroutine(PauseThenTurn(!movingRight));
-                return;
-            }
-        }
-
-        // 방향 전환 감지: 즉시 방향을 바꾸지 않고, 잠깐 멈췄다가 전환하도록 코루틴 시작 (기존 순찰 범위 기준)
         if (movingRight && deltaX >= patrolRange)
         {
             if (animator != null)
@@ -264,7 +216,8 @@ public class S_MonsterMove : MonoBehaviour
             StartCoroutine(PauseThenTurn(false));
             return;
         }
-        else if (!movingRight && deltaX <= -patrolRange)
+
+        if (!movingRight && deltaX <= -patrolRange)
         {
             if (animator != null)
                 animator.SetBool("IsWalking", false);
@@ -449,17 +402,17 @@ public class S_MonsterMove : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        // 씬 뷰에서 좌우 순찰 범위를 시각적으로 확인하기 위한 기즈모 선 드로잉
         Gizmos.color = Color.magenta;
-        Vector3 start = transform.position;
+
+        Vector3 center = transform.position;
 
         if (Application.isPlaying)
         {
-            start.x = startX;
+            center.x = startX;
         }
 
-        Vector3 left = start + Vector3.left * patrolRange;
-        Vector3 right = start + Vector3.right * patrolRange;
+        Vector3 left = center + Vector3.left * patrolRange;
+        Vector3 right = center + Vector3.right * patrolRange;
 
         Gizmos.DrawLine(left, right);
         Gizmos.DrawWireSphere(left, 0.2f);
