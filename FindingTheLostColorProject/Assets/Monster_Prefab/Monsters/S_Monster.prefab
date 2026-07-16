@@ -132,7 +132,7 @@ MonoBehaviour:
   invertSpriteDirection: 1
   platformLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   playerContactBoxScale: 1
   turnPauseDuration: 0.5
   groundCheckDistance: 1
