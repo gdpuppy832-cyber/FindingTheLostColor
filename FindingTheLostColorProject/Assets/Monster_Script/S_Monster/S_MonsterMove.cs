@@ -86,12 +86,7 @@ public class S_MonsterMove : MonoBehaviour
             platformLayers = mask;
         }
 
-        // 플랫폼을 제외한 모든 레이어를 물리 충돌에서 제외(Exclude)시킴으로써 관통 이동 구현
-        Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
-        foreach (var col in colliders)
-        {
-            col.excludeLayers = ~platformLayers;
-        }
+        
 
         selfColCached = GetComponent<Collider2D>();
         if (selfColCached == null) selfColCached = GetComponentInChildren<Collider2D>();
@@ -190,11 +185,6 @@ public class S_MonsterMove : MonoBehaviour
         // 방향 전환 때문에 멈춰있는 동안에는 이동을 시도하지 않음
         if (isPausedForTurn)
         {
-            if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
-            {
-                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            }
-
             if (animator != null)
                 animator.SetBool("IsWalking", false);
 
@@ -229,15 +219,7 @@ public class S_MonsterMove : MonoBehaviour
         if (animator != null)
             animator.SetBool("IsWalking", true);
 
-        // 물리 엔진(Rigidbody2D)이 달려있으면 속도를 제어하고, 없으면 transform을 직접 이동
-        if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
-        {
-            rb.linearVelocity = new Vector2(moveDir * moveSpeed, rb.linearVelocity.y);
-        }
-        else
-        {
-            transform.Translate(Vector2.right * moveDir * moveSpeed * Time.fixedDeltaTime);
-        }
+        transform.position += Vector3.right * moveDir * moveSpeed * Time.deltaTime;
     }
 
     /// <summary>
@@ -247,10 +229,7 @@ public class S_MonsterMove : MonoBehaviour
     {
         isPausedForTurn = true;
 
-        if (rb != null && rb.bodyType == RigidbodyType2D.Dynamic)
-        {
-            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-        }
+
 
         yield return new WaitForSeconds(turnPauseDuration);
 
