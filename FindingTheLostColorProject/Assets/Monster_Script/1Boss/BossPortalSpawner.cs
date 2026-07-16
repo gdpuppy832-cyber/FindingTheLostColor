@@ -30,9 +30,13 @@ public class BossPortalSpawner : MonoBehaviour
 
     private float lastSpawnTime = 0f;
     private int spawnGroupIndex = 0; // 0: 1차 소환 프리팹, 1: 2차 소환 프리팹
+    private BossAttack bossAttack;   // 보스 패턴 제어 스크립트 참조 (2페이즈 감지용)
 
     void Start()
     {
+        // 씬에서 보스 공격 컴포넌트 자동 탐색 및 참조
+        bossAttack = FindFirstObjectByType<BossAttack>();
+
         // 보스가 활성화된 시점부터 60초 카운트다운 시작
         lastSpawnTime = Time.time;
 
@@ -44,6 +48,20 @@ public class BossPortalSpawner : MonoBehaviour
     void Update()
     {
         if (!isBossBattleStarted) return;
+
+        // [신규] 보스가 2페이즈에 진입했는지 실시간 체크 ➔ 진입 시 소환 완전 중단 및 포탈 닫기
+        if (bossAttack != null && bossAttack.IsPhase2)
+        {
+            isBossBattleStarted = false; // 소환 스케줄러 자체를 종료
+            StopAllCoroutines();         // 이미 진행 중인 소환 시퀀스 코루틴 정지
+            
+            // 열려 있던 포탈 오브젝트 강제 차단
+            if (leftPortalObject != null) leftPortalObject.SetActive(false);
+            if (rightPortalObject != null) rightPortalObject.SetActive(false);
+            
+            Debug.Log("[BossPortalSpawner] 보스 2페이즈 진입 감지! 포탈 소환 스케줄러를 완전히 영구 종료합니다.");
+            return;
+        }
 
         // 보스전 시작 후 spawnInterval 주기마다 포탈 소환 시전
         if (Time.time - lastSpawnTime >= spawnInterval)
