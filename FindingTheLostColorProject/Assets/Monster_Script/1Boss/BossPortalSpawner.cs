@@ -38,7 +38,6 @@ public class BossPortalSpawner : MonoBehaviour
 
     private float lastSpawnTime = 0f;
     private int spawnGroupIndex = 0; // 0: 1차 소환 프리팹, 1: 2차 소환 프리팹
-    private BossAttack bossAttack;   // 보스 패턴 제어 스크립트 참조 (2페이즈 감지용)
 
     void Start()
     {

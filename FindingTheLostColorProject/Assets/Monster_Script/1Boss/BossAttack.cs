@@ -17,7 +17,8 @@ public class BossAttack : MonoBehaviour
     Vector3 contactHitboxOffset; // 보스 계층에서 분리된 후에도 위치를 따라가기 위한 오프셋 (보스 기준 상대 위치)
 
 
-    public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
+    public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결
+    public System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
 
     [Header("Color Orb")]
     public GameObject colorOrbPrefab;          // 색채 구슬 프리팹 (ColorOrb 컴포넌트 자동 부착됨, 비워두면 임시 생성)
@@ -312,6 +313,7 @@ public class BossAttack : MonoBehaviour
         if (destroyedCrystalCount >= crystals.Count)
         {
             phase2Unlocked = true;
+            OnPhase2Started?.Invoke(); // [신규] 2페이즈 진입 이벤트 발송!
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
             // 소용돌이와 동반 패턴은 메인 공격(isAttacking)과 독립적으로 살아있을 수 있으므로
