@@ -91,8 +91,6 @@ public class BossPortalSpawner : MonoBehaviour
             if (monster != null) Destroy(monster);
         }
         activeSpawnedMonsters.Clear();
-
-        Debug.Log("[BossPortalSpawner] 2페이즈 전환 감지: 포탈 소환을 중단하고 소환된 몬스터를 정리했습니다.");
     }
 
     void Update()

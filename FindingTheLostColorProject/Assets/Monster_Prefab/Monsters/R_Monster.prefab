@@ -422,6 +422,8 @@ MonoBehaviour:
   chaseRange: 10
   attackStopDistance: 0.1
   safeDropDistance: 7
+  jumpForce: 4.25
+  climbableWallHeight: 0.5
   chaseAnimSpeedMultiplier: 1.5
 --- !u!50 &5328816977903137336
 Rigidbody2D:

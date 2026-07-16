@@ -93,6 +93,14 @@ public class S_MonsterMove : MonoBehaviour
 
         // 초기 방향 스프라이트 셋업
         UpdateSpriteDirection();
+
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int monsterLayer = gameObject.layer;
+
+        if (playerLayer != -1)
+        {
+            Physics2D.IgnoreLayerCollision(monsterLayer, playerLayer, true);
+        }
     }
 
     void Update()

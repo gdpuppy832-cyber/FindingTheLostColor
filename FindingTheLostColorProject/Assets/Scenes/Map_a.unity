@@ -1848,7 +1848,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7589212873005784190, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: patrolRange
-      value: 6.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7839831197760986700, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17343,7 +17343,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7839831197760986700, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.44
+      value: 2.65
       objectReference: {fileID: 0}
     - target: {fileID: 7839831197760986700, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18034,6 +18034,10 @@ PrefabInstance:
     - target: {fileID: 1639313505367669230, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: m_Name
       value: S_Monster (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7589212873005784190, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
+      propertyPath: patrolRange
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7839831197760986700, guid: 59069e7ccd75e16489fc612a5e037659, type: 3}
       propertyPath: m_LocalPosition.x

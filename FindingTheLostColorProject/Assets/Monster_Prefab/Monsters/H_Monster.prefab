@@ -198,6 +198,8 @@ MonoBehaviour:
   chaseRange: 8
   attackStopDistance: 0.1
   safeDropDistance: 7
+  jumpForce: 4.25
+  climbableWallHeight: 0.5
   detectionRange: 6
   ambushAnimBool: isAmbushed
   ambushYOffset: 0
