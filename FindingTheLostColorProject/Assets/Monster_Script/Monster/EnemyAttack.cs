@@ -60,6 +60,9 @@ public class EnemyAttack : MonoBehaviour
 
     void Update()
     {
+        if (enemyMove != null && enemyMove.IsStateDelay)
+            return;
+
         if (isAttacking || !canAttack) return;
 
         float dir = -Mathf.Sign(transform.localScale.x);

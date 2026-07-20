@@ -29,6 +29,7 @@ public class EnemyMove : MonoBehaviour
     float stateDelayTimer = 0f;
     bool pendingChaseState = false;
     bool isChasing = false;
+    public bool IsStateDelay => isStateDelay;
     public float attackStopDistance = 1.5f;
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 아래로 착지 허용)")]
