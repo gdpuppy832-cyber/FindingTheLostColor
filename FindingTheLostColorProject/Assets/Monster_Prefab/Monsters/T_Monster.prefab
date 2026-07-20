@@ -157,6 +157,8 @@ MonoBehaviour:
   chaseRange: 8
   attackStopDistance: 0.1
   safeDropDistance: 7
+  jumpForce: 4.25
+  climbableWallHeight: 0.5
 --- !u!114 &7268727226851208348
 MonoBehaviour:
   m_ObjectHideFlags: 0

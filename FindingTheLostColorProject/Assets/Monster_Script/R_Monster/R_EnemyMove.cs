@@ -11,6 +11,7 @@ public class R_EnemyMove : MonoBehaviour
     Collider2D col;
     bool groundedLeft = true;
     bool groundedRight = true;
+    bool isGrounded = false;
     bool isStopped = false;
     float stopTimer = 0f;
     float ignoreEdgeTimer = 0f;
@@ -21,6 +22,9 @@ public class R_EnemyMove : MonoBehaviour
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
     public float safeDropDistance = 3f;
+    [Header("점프 설정")]
+    public float jumpForce = 5f;
+    public float climbableWallHeight = 1.2f;
 
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
@@ -151,6 +155,11 @@ public class R_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            if (isGrounded && CanClimbWall(desiredDir))
+            {
+                Jump();
+                return;
+            }
             if (animator != null) animator.SetBool("IsWalking", false);
 
             // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
@@ -178,6 +187,39 @@ public class R_EnemyMove : MonoBehaviour
 
         prevposition = transform.position;
     }
+    private bool CanClimbWall(float dir)
+    {
+        Vector2 frontPos = (Vector2)transform.position +
+                           Vector2.right * dir *
+                           (col.bounds.extents.x + 0.1f);
+
+        RaycastHit2D lowHit = Physics2D.Raycast(
+            frontPos,
+            Vector2.right * dir,
+            0.2f,
+            LayerMask.GetMask("Platform"));
+
+        if (lowHit.collider == null)
+            return false;
+
+        Vector2 upperPos = frontPos + Vector2.up * climbableWallHeight;
+
+        RaycastHit2D upperHit = Physics2D.Raycast(
+            upperPos,
+            Vector2.right * dir,
+            0.2f,
+            LayerMask.GetMask("Platform"));
+
+        return upperHit.collider == null;
+    }
+    private void Jump()
+    {
+        if (!isGrounded)
+            return;
+
+        rigid.linearVelocity =
+            new Vector2(rigid.linearVelocity.x, jumpForce);
+    }
     void FixedUpdate()
     {
         float halfWidth = col.bounds.extents.x;
@@ -194,5 +236,6 @@ public class R_EnemyMove : MonoBehaviour
 
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
+        isGrounded = groundedLeft || groundedRight;
     }
 }

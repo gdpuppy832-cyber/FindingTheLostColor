@@ -12,16 +12,28 @@ public class B_EnemyMove : MonoBehaviour
     Collider2D col;
     bool groundedLeft = true;
     bool groundedRight = true;
+    bool isGrounded = false;
     bool isStopped = false;
     float stopTimer = 0f;
     float ignoreEdgeTimer = 0f;
     float moveDir = -1f;
     public float chaseRange;
+    public GameObject chaseStartPrefab;
+    public GameObject chaseEndPrefab;
+
+    GameObject currentAlert;
+
+    bool isStateDelay = false;
+    float stateDelayTimer = 0f;
+    bool pendingChaseState = false;
     bool isChasing = false;
     public float attackStopDistance = 1.5f;
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
     public float safeDropDistance = 3f;
+    [Header("점프 설정")]
+    public float jumpForce = 5f;
+    public float climbableWallHeight = 1.2f;
 
     void Start()
     {
@@ -35,20 +47,58 @@ public class B_EnemyMove : MonoBehaviour
     void Update()
     {
         float distance = Vector3.Distance(transform.position, target.position);
+        if (isStateDelay)
+        {
+            stateDelayTimer += Time.deltaTime;
 
+            if (stateDelayTimer >= 1.5f)
+            {
+                isStateDelay = false;
+                stateDelayTimer = 0f;
+
+                if (currentAlert != null)
+                {
+                    Destroy(currentAlert);
+                    currentAlert = null;
+                }
+
+                isChasing = pendingChaseState;
+
+                if (!isChasing)
+                    timer = 0f;
+            }
+
+            return;
+        }
         if (ignoreEdgeTimer > 0f)//방향 전환 직후 보호 시간
             ignoreEdgeTimer -= Time.deltaTime;
 
-        if (!isChasing && distance <= range)//추적 시작
+        if (!isChasing && distance <= range)
         {
-            isChasing = true;
-        }
-        else if (isChasing && distance > chaseRange)//추적 종료 (더 넓은 범위를 벗어나야 그만둠)
-        {
-            isChasing = false;
-            timer = 0f;
+            FaceTarget();
 
-            if (isStopped) stopTimer = 0f;
+            isStateDelay = true;
+            stateDelayTimer = 0f;
+            pendingChaseState = true;
+
+            ShowAlert(chaseStartPrefab);
+
+            return;
+        }
+        else if (isChasing && distance > chaseRange)
+        {
+            FaceTarget();
+
+            isStateDelay = true;
+            stateDelayTimer = 0f;
+            pendingChaseState = false;
+
+            ShowAlert(chaseEndPrefab);
+
+            if (isStopped)
+                stopTimer = 0f;
+
+            return;
         }
 
         if (isStopped)//절벽 끝에서 멈춘 상태
@@ -134,6 +184,11 @@ public class B_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            if (isGrounded && CanClimbWall(desiredDir))
+            {
+                Jump();
+                return;
+            }
             // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
             if (!isChasing)
             {
@@ -157,6 +212,39 @@ public class B_EnemyMove : MonoBehaviour
 
         prevposition = transform.position;
     }
+    private bool CanClimbWall(float dir)
+    {
+        Vector2 frontPos = (Vector2)transform.position +
+                           Vector2.right * dir *
+                           (col.bounds.extents.x + 0.1f);
+
+        RaycastHit2D lowHit = Physics2D.Raycast(
+            frontPos,
+            Vector2.right * dir,
+            0.2f,
+            LayerMask.GetMask("Platform"));
+
+        if (lowHit.collider == null)
+            return false;
+
+        Vector2 upperPos = frontPos + Vector2.up * climbableWallHeight;
+
+        RaycastHit2D upperHit = Physics2D.Raycast(
+            upperPos,
+            Vector2.right * dir,
+            0.2f,
+            LayerMask.GetMask("Platform"));
+
+        return upperHit.collider == null;
+    }
+    private void Jump()
+    {
+        if (!isGrounded)
+            return;
+
+        rigid.linearVelocity =
+            new Vector2(rigid.linearVelocity.x, jumpForce);
+    }
     void FixedUpdate()
     {
         float halfWidth = col.bounds.extents.x;
@@ -173,5 +261,36 @@ public class B_EnemyMove : MonoBehaviour
 
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
+        isGrounded = groundedLeft || groundedRight;
+    }
+    private void FaceTarget()
+    {
+        if (target == null)
+            return;
+
+        float dir = Mathf.Sign(target.position.x - transform.position.x);
+
+        if (dir != 0)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * -dir;
+            transform.localScale = scale;
+        }
+    }
+    private void ShowAlert(GameObject prefab)
+    {
+        if (prefab == null)
+            return;
+
+        if (currentAlert != null)
+            Destroy(currentAlert);
+
+        currentAlert = Instantiate(
+            prefab,
+            transform.position + Vector3.up * 2f,
+            Quaternion.identity
+        );
+
+        currentAlert.transform.SetParent(transform);
     }
 }
