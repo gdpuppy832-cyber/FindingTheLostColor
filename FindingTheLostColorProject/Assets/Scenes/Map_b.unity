@@ -21720,6 +21720,38 @@ PrefabInstance:
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 1368834622}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -22390,11 +22422,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4069443327461862371, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 104.93
+      value: -7.5
       objectReference: {fileID: 0}
     - target: {fileID: 4069443327461862371, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.9999998
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 4069443327461862371, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: m_LocalPosition.z
@@ -22428,6 +22460,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4153830355641892431, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 2039
+      objectReference: {fileID: 0}
     - target: {fileID: 5369543279568600009, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: m_RenderMode
       value: 2
@@ -22438,7 +22474,7 @@ PrefabInstance:
       objectReference: {fileID: 1368834621}
     - target: {fileID: 5750622499374078052, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: maxCameraPos.x
-      value: 700
+      value: 335
       objectReference: {fileID: 0}
     - target: {fileID: 5750622499374078052, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: maxCameraPos.y
@@ -22446,7 +22482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5750622499374078052, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: minCameraPos.x
-      value: -2
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 5954394021346789506, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: m_Pivot.x
@@ -22873,9 +22909,21 @@ PrefabInstance:
       value: minimap_camera
       objectReference: {fileID: 0}
     - target: {fileID: 3218289683194456399, guid: 22aca10e5511f734f9d5add4f5d2548b, type: 3}
+      propertyPath: maxX
+      value: 335
+      objectReference: {fileID: 0}
+    - target: {fileID: 3218289683194456399, guid: 22aca10e5511f734f9d5add4f5d2548b, type: 3}
+      propertyPath: minX
+      value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3218289683194456399, guid: 22aca10e5511f734f9d5add4f5d2548b, type: 3}
       propertyPath: target
       value: 
       objectReference: {fileID: 1368834621}
+    - target: {fileID: 3218289683194456399, guid: 22aca10e5511f734f9d5add4f5d2548b, type: 3}
+      propertyPath: useXBound
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4008808911919942926, guid: 22aca10e5511f734f9d5add4f5d2548b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

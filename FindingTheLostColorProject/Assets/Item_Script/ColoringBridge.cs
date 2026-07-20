@@ -90,7 +90,6 @@ public class ColoringBridge : MonoBehaviour
         // 시작 시 색상 초기화 및 충돌 판정 비활성화 (IsTrigger = true 상태로 통과하게 함)
         UpdateVisualColor();
         UpdateSprite(); // 초기 스프라이트 셋업
-        UpdateMinimapIcon(); // 미니맵 아이콘 초기 색상 셋업
         SetSolidState(false);
     }
 
@@ -264,7 +263,6 @@ public class ColoringBridge : MonoBehaviour
 
         UpdateVisualColor();
         UpdateSprite(); // 완성 시 스프라이트 이미지 교체
-        UpdateMinimapIcon(); // [신규] 미니맵 아이콘 완성 색상(빛나는 하늘색)으로 변환
         SetSolidState(true); // 이제 단단해져서 건널 수 있는 다리가 됨
 
         // 레이어를 "Platform"으로 승격시켜 몬스터들의 바닥/벽 감지 레이캐스트에 걸리도록 함
@@ -272,24 +270,6 @@ public class ColoringBridge : MonoBehaviour
         if (platformLayer != -1)
         {
             SetLayerRecursively(gameObject, platformLayer);
-        }
-    }
-
-    /// <summary>
-    /// [신규] 색칠 다리의 완성/미완성 상태에 따라 미니맵 아이콘의 색상을 다르게 스왑해 주는 함수
-    /// (미완성: 어두운 회색 / 완성: 빛나는 하늘색)
-    /// </summary>
-    private void UpdateMinimapIcon()
-    {
-        int minimapLayer = LayerMask.NameToLayer("MinimapIcon");
-        SpriteRenderer[] childSRs = GetComponentsInChildren<SpriteRenderer>(true);
-        foreach (var sr in childSRs)
-        {
-            if (sr.gameObject.layer == minimapLayer || sr.gameObject.name.ToLower().Contains("minimap"))
-            {
-                // 정화 완료 시 빛나는 하늘색 (Cyan), 미완성 시 어두운 회색
-                sr.color = isPurified ? new Color(0.2f, 0.9f, 1f, 1f) : new Color(0.35f, 0.35f, 0.35f, 0.7f);
-            }
         }
     }
 
