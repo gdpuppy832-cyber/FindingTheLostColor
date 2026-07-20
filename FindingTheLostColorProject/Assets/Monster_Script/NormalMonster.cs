@@ -264,6 +264,17 @@ public class NormalMonster : MonoBehaviour
         isPurified = true;
         currentHealth = maxHealth;
 
+        // [추가] 정화 완료 시 미니맵 아이콘 자동 제거 (비활성화)
+        int minimapLayer = LayerMask.NameToLayer("MinimapIcon");
+        SpriteRenderer[] childSRs = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var sr in childSRs)
+        {
+            if (sr.gameObject.layer == minimapLayer || sr.gameObject.name.ToLower().Contains("minimap"))
+            {
+                sr.gameObject.SetActive(false);
+            }
+        }
+
         // 정화 완료 효과음 재생 (3D 입체 음향)
         if (SoundManager.Instance != null)
         {

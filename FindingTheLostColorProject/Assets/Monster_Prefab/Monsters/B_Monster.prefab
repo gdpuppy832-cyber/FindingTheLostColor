@@ -146,6 +146,8 @@ MonoBehaviour:
   speed: 1
   range: 6
   chaseRange: 8
+  chaseStartPrefab: {fileID: 0}
+  chaseEndPrefab: {fileID: 0}
   attackStopDistance: 0.1
   safeDropDistance: 7
   jumpForce: 4.25
@@ -539,7 +541,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.7509433, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.2603773, g: 0.2603773, b: 0.2603773, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

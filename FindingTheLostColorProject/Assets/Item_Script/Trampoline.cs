@@ -61,6 +61,7 @@ public class Trampoline : MonoBehaviour
 
         UpdateVisualColor();
         UpdateSprite(); // 초기 기본 이미지 적용
+        UpdateMinimapIcon(); // 미니맵 아이콘 초기 색상 적용
 
         // 트램펄린은 시작할 때 일반적인 충돌 판정을 지니고 있어야 하므로, trigger는 꺼둡니다.
         Collider2D col = GetComponent<Collider2D>();
@@ -167,7 +168,26 @@ public class Trampoline : MonoBehaviour
 
         UpdateVisualColor();
         UpdateSprite(); // 정화 완료 스프라이트로 변경
+        UpdateMinimapIcon(); // [신규] 미니맵 아이콘 정화 완료 색상(빛나는 연두/노랑)으로 변환
         Debug.Log($"[Trampoline] {gameObject.name} 트램펄린 활성화! 이제 밟으면 점프력의 2배를 얻습니다.");
+    }
+
+    /// <summary>
+    /// [신규] 트램펄린의 정화 여부에 따라 미니맵 아이콘의 색상을 스왑해 주는 함수
+    /// (미완성: 어두운 회색 / 완충 가동 시: 빛나는 노란색)
+    /// </summary>
+    private void UpdateMinimapIcon()
+    {
+        int minimapLayer = LayerMask.NameToLayer("MinimapIcon");
+        SpriteRenderer[] childSRs = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var sr in childSRs)
+        {
+            if (sr.gameObject.layer == minimapLayer || sr.gameObject.name.ToLower().Contains("minimap"))
+            {
+                // 정화 완료 및 가동 시 빛나는 노란색 (Yellow), 미완성 시 어두운 회색
+                sr.color = isPurified ? new Color(1f, 0.9f, 0.2f, 1f) : new Color(0.35f, 0.35f, 0.35f, 0.7f);
+            }
+        }
     }
 
     private void UpdateSprite()
