@@ -59,7 +59,10 @@ public class F_EnemyMove : MonoBehaviour
         if (isStateDelay)
         {
             if (animator != null)
+            {
                 animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
 
             stateDelayTimer += Time.deltaTime;
 
@@ -117,12 +120,10 @@ public class F_EnemyMove : MonoBehaviour
         if (isStopped) // Àýº® ³¡¿¡¼­ ¸ØÃá »óÅÂ
         {
             if (animator != null)
-                animator.SetBool("IsWalking", false);
-            if (animator != null)
             {
                 animator.SetBool("IsWalking", false);
-                animator.speed = 1f;
             }
+            UpdateAnimatorSpeed(false);
             if (isChasing)
             {
                 float xDiff = target.position.x - transform.position.x;
@@ -179,6 +180,7 @@ public class F_EnemyMove : MonoBehaviour
             {
                 animator.SetBool("IsWalking", false);
             }
+            UpdateAnimatorSpeed(false);
 
             prevposition = transform.position;
             return;
@@ -209,8 +211,11 @@ public class F_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if(animator != null)
+            if (animator != null)
+            {
                 animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
 
             if (isChasing && isGrounded && CanClimbWall(desiredDir))
             {
@@ -228,7 +233,10 @@ public class F_EnemyMove : MonoBehaviour
             return;
         }
         if (animator != null)
+        {
             animator.SetBool("IsWalking", true);
+        }
+        UpdateAnimatorSpeed(isChasing);
 
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
@@ -274,6 +282,21 @@ public class F_EnemyMove : MonoBehaviour
 
         rigid.linearVelocity =
             new Vector2(rigid.linearVelocity.x, jumpForce);
+    }
+
+    void UpdateAnimatorSpeed(bool wantFast)
+    {
+        if (animator == null) return;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        if (wantFast && state.IsTag("Walk"))
+        {
+            animator.speed = 1.5f;
+        }
+        else
+        {
+            animator.speed = 1f;
+        }
     }
     void FixedUpdate()
     {
