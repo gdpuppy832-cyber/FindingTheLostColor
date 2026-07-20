@@ -121,7 +121,14 @@ public class EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
 
         // 공격 및 데미지 전달
-        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(attackWidth, attackHeight), 0f, targetLayer);
+        Vector2 finalAttackCenter = attackCenter;
+
+        if (telegraphSprite != null)
+        {
+            finalAttackCenter = telegraphSprite.transform.position;
+        }
+
+        Collider2D hit = Physics2D.OverlapBox(finalAttackCenter, new Vector2(attackWidth, attackHeight), 0f, targetLayer); 
         if (hit != null)
         {
             Debug.Log("피격: " + hit.name);

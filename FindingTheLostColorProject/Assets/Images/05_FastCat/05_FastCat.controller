@@ -58,7 +58,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 05_FastCat_IDEL
-  m_Speed: 0.6
+  m_Speed: 0.8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8126484813296879544}
@@ -211,7 +211,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 05_FastCat_Success
-  m_Speed: 0.6
+  m_Speed: 0.8
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []

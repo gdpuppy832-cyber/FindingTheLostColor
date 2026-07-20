@@ -202,7 +202,18 @@ public class H_MonsterAttack : MonoBehaviour
         if (meleeTelegraphSprite != null)
             meleeTelegraphSprite.enabled = false;
 
-        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer);
+        Vector2 finalAttackCenter = attackCenter;
+
+        if (meleeTelegraphSprite != null)
+        {
+            finalAttackCenter = meleeTelegraphSprite.transform.position;
+        }
+
+        Collider2D hit = Physics2D.OverlapBox(
+            finalAttackCenter,
+            new Vector2(meleeWidth, meleeHeight),
+            0f,
+            targetLayer);
         if (hit != null)
         {
             PlayerHealth player = hit.GetComponent<PlayerHealth>();

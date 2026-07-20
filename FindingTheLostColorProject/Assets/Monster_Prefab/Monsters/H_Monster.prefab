@@ -34,11 +34,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3980493488151533180}
   - {fileID: 979619615391075920}
   - {fileID: 6610024000864131882}
   - {fileID: 3578836585171922218}
   - {fileID: 7366294639529799502}
+  - {fileID: 3980493488151533180}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &3560403494720659426
@@ -209,7 +209,7 @@ MonoBehaviour:
   ambushColliderSize: {x: 1, y: 0.75}
   ambushColliderOffset: {x: 0, y: 0}
   ambushSprite: {fileID: 8580089753507832943, guid: c89fdd431f3ceda4f948e0fe34e04b59, type: 3}
-  activeSprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
+  activeSprite: {fileID: 0}
 --- !u!1 &5304574252343096175
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +237,7 @@ Transform:
   m_GameObject: {fileID: 5304574252343096175}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0, y: -0.10000038, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

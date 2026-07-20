@@ -329,7 +329,7 @@ public class J_EnemyMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 2f,
+            transform.position + Vector3.up * 1.25f,
             Quaternion.identity
         );
 

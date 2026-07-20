@@ -12,7 +12,7 @@ public class T_EnemyAttack : MonoBehaviour
 
     bool isAttacking = false;
     bool canAttack = true;
-
+    Vector2 fixedMeleeAttackCenter;
     enum AttackType { Melee, Ranged, Jump }
     AttackType? chosenAttack = null;    // 이번 사이클에 뽑힌 공격
 
@@ -196,7 +196,10 @@ public class T_EnemyAttack : MonoBehaviour
     {
         float dir = -Mathf.Sign(transform.localScale.x);
         if (dir == 0f) dir = 1f;
-        float edgeOffset = bodyCollider != null ? bodyCollider.bounds.extents.x : 0f;
+
+        Collider2D selfCol = GetComponent<Collider2D>();
+        float edgeOffset = selfCol != null ? selfCol.bounds.extents.x : 0f;
+
         Vector2 attackCenter = (Vector2)transform.position
             + new Vector2(dir * edgeOffset, 0f)
             + new Vector2(dir * meleeWidth / 2f, 0f);
@@ -211,28 +214,31 @@ public class T_EnemyAttack : MonoBehaviour
 
         float dir = -Mathf.Sign(transform.localScale.x);
         if (dir == 0f) dir = 1f;
+
         float edgeOffset = bodyCollider != null ? bodyCollider.bounds.extents.x : 0f;
-        Vector2 attackCenter = (Vector2)transform.position
+
+        fixedMeleeAttackCenter = (Vector2)transform.position
             + new Vector2(dir * edgeOffset, 0f)
             + new Vector2(dir * meleeWidth / 2f, 0f);
 
         if (meleeTelegraphSprite != null)
         {
             meleeTelegraphSprite.enabled = true;
-            meleeTelegraphSprite.transform.position = new Vector3(attackCenter.x, attackCenter.y, meleeTelegraphSprite.transform.position.z);
+            meleeTelegraphSprite.transform.position = fixedMeleeAttackCenter;
 
-            float parentFlip = Mathf.Sign(transform.lossyScale.x);
-            Vector3 ts = meleeTelegraphSprite.transform.localScale;
-            meleeTelegraphSprite.transform.localScale = new Vector3(Mathf.Abs(ts.x) * parentFlip, ts.y, ts.z);
-
-            meleeTelegraphSprite.size = new Vector2(meleeWidth, meleeHeight);
+            meleeTelegraphSprite.size =
+                new Vector2(meleeWidth, meleeHeight);
         }
 
         yield return new WaitForSeconds(meleeTelegraphTime);
 
         if (meleeTelegraphSprite != null) meleeTelegraphSprite.enabled = false;
 
-        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(meleeWidth, meleeHeight), 0f, targetLayer);
+        Collider2D hit = Physics2D.OverlapBox(
+            fixedMeleeAttackCenter,
+            new Vector2(meleeWidth, meleeHeight),
+            0f,
+            targetLayer);
         if (hit != null)
         {
             PlayerHealth player = hit.GetComponent<PlayerHealth>();

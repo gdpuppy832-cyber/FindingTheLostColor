@@ -99,10 +99,40 @@ public class B_EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
 
         // 공격 판정
-        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(attackWidth, attackHeight), 0f, targetLayer);
+        Vector2 finalAttackCenter = attackCenter;
+
+        if (telegraphSprite != null)
+        {
+            finalAttackCenter = telegraphSprite.transform.position;
+        }
+
+        Collider2D hit = Physics2D.OverlapBox(
+      finalAttackCenter,
+      new Vector2(attackWidth, attackHeight),
+      0f,
+      targetLayer);
+
         if (hit != null)
         {
             Debug.Log("공격 적중: " + hit.name);
+
+            PlayerHealth player = hit.GetComponent<PlayerHealth>();
+            if (player == null)
+                player = hit.GetComponentInParent<PlayerHealth>();
+
+            if (player != null)
+            {
+                float damage = 0.5f;
+
+                NormalMonster nm = GetComponent<NormalMonster>();
+                if (nm == null)
+                    nm = GetComponentInParent<NormalMonster>();
+
+                if (nm != null)
+                    damage = nm.attackDamage;
+
+                player.TakeDamage(damage);
+            }
         }
 
         //후딜레이 

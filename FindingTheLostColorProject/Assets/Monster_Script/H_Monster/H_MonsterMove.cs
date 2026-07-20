@@ -67,8 +67,7 @@ public class H_MonsterMove : MonoBehaviour
     [Tooltip("잠복 상태일 때 보여줄 이미지 (모습 1)")]
     public Sprite ambushSprite;
 
-    [Tooltip("잠복 해제 후 활동할 때 보여줄 이미지 (모습 2)")]
-    public Sprite activeSprite;
+    private Sprite originalSprite;
 
     private Animator animator;
     private bool isAmbushed = true;
@@ -91,7 +90,11 @@ public class H_MonsterMove : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
+        
+        if (spriteRenderer != null)
+        {
+            originalSprite = spriteRenderer.sprite;
+        }
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
 
@@ -261,7 +264,7 @@ public class H_MonsterMove : MonoBehaviour
                 isStopped = false;
                 stopTimer = 0f;
                 moveDir = -moveDir; // 반대 방향으로 전환 (배회 모드 전용)
-                ignoreEdgeTimer = 1.3f; // 전환 직후 짧게 재감지 무시
+                ignoreEdgeTimer = 0f; // 전환 직후 짧게 재감지 무시
                 timer = moveDir < 0f ? 0f : 3.5f; // 배회 타이머도 반전된 방향에 맞게 재설정
             }
             return;
@@ -433,10 +436,10 @@ public class H_MonsterMove : MonoBehaviour
             animator.SetBool(ambushAnimBool, false);
         }
 
-        // 3. 스프라이트 이미지 대체 적용 (모습 2)
-        if (activeSprite != null && spriteRenderer != null)
+        // 3. 원래 몬스터 본체 이미지 복원
+        if (originalSprite != null && spriteRenderer != null)
         {
-            spriteRenderer.sprite = activeSprite;
+            spriteRenderer.sprite = originalSprite;
         }
     }
 
@@ -577,7 +580,7 @@ public class H_MonsterMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 2f,
+            transform.position + Vector3.up * 1.25f,
             Quaternion.identity
         );
 
