@@ -93,6 +93,9 @@ public class J_EnemyAttack : MonoBehaviour
         }
         if (isAttacking || !canAttack) return;
 
+        // 추적 시작/종료 시 J_EnemyMove가 잠시 멈춰있는 동안(isStateDelay)에는 공격을 시도하지 않음
+        if (enemyMove != null && enemyMove.IsStateDelay) return;
+
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
         float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
 
@@ -120,7 +123,7 @@ public class J_EnemyAttack : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
+            animator.SetBool("IsWalking", false);
             animator.SetBool("IsAttacking", true);
         }
 

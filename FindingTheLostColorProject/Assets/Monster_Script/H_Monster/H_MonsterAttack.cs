@@ -146,6 +146,9 @@ public class H_MonsterAttack : MonoBehaviour
         if (enemyMove != null && enemyMove.IsAmbushed) return;
         if (isAttacking || !canAttack) return;
 
+        // 추적 시작/종료 대기 시간 동안 공격 금지
+        if (enemyMove != null && enemyMove.IsStateDelay) return;
+
         // 최초 덮치기(점프) 이후부터는 일반 몬스터와 동일한 근접 공격 판정을 사용
         if (IsMeleeInRange() && activeMeleeCoroutine == null)
         {
@@ -234,6 +237,11 @@ public class H_MonsterAttack : MonoBehaviour
     public void TriggerPounce()
     {
         if (isAttacking)
+        {
+            return;
+        }
+
+        if (enemyMove != null && enemyMove.IsStateDelay)
         {
             return;
         }

@@ -45,6 +45,9 @@ public class B_EnemyAttack : MonoBehaviour
 
     void Update()
     {
+        if (B_enemyMove != null && B_enemyMove.IsStateDelay)
+            return;
+
         if (isAttacking || !canAttack) return;
 
         float dir = -Mathf.Sign(transform.localScale.x);

@@ -256,6 +256,8 @@ MonoBehaviour:
   speed: 1.5
   range: 6
   chaseRange: 8
+  chaseStartPrefab: {fileID: 4436323823734731653, guid: afb5e56e020ab7e4b8c1c7ecf347b0ea, type: 3}
+  chaseEndPrefab: {fileID: 3597663053260774016, guid: 4f86ddaeb6f91314a8fdb69ff6bb8bb5, type: 3}
   attackStopDistance: 0.1
   safeDropDistance: 7
   jumpForce: 4.25

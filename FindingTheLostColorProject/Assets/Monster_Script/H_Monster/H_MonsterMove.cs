@@ -35,6 +35,15 @@ public class H_MonsterMove : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D col;
     bool isChasing = false;
+    public GameObject chaseStartPrefab;
+    public GameObject chaseEndPrefab;
+
+    GameObject currentAlert;
+
+    bool isStateDelay = false;
+    public bool IsStateDelay => isStateDelay;
+    float stateDelayTimer = 0f;
+    bool pendingChaseState = false;
 
     [Header("잠복(Ambushed) 설정")]
     [Tooltip("플레이어가 이 거리 이내로 들어오면 잠복에서 깨어납니다.")]
@@ -127,10 +136,33 @@ public class H_MonsterMove : MonoBehaviour
         if (target == null) return;
 
         float distance = Vector3.Distance(transform.position, target.position);
+        if (isStateDelay)
+        {
+            stateDelayTimer += Time.deltaTime;
 
-    // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
-    // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
-    if (isAmbushed && !isPouncing)
+            if (stateDelayTimer >= 1.5f)
+            {
+                isStateDelay = false;
+                stateDelayTimer = 0f;
+
+                if (currentAlert != null)
+                {
+                    Destroy(currentAlert);
+                    currentAlert = null;
+                }
+
+                isChasing = pendingChaseState;
+
+                if (!isChasing)
+                    timer = 0f;
+            }
+
+            return;
+        }
+
+        // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
+        // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
+        if (isAmbushed && !isPouncing)
     {
         bool inRange;
         if (attackScript != null)
@@ -177,14 +209,30 @@ public class H_MonsterMove : MonoBehaviour
         //  플레이어가 멀어져도 isChasing이 계속 true로 남는 문제가 있었음)
         if (!isChasing && distance <= range)
         {
-            isChasing = true;
+            FaceTarget();
+
+            isStateDelay = true;
+            stateDelayTimer = 0f;
+            pendingChaseState = true;
+
+            ShowAlert(chaseStartPrefab);
+
+            return;
         }
         else if (isChasing && distance > chaseRange)
         {
-            isChasing = false;
-            timer = 0f; // 배회 모드로 깨끗하게 복귀하도록 타이머 리셋
+            FaceTarget();
 
-            if (isStopped) stopTimer = 0f; // 절벽에서 대기 중이었다면 배회 반전 흐름으로 자연스럽게 이어지도록 리셋
+            isStateDelay = true;
+            stateDelayTimer = 0f;
+            pendingChaseState = false;
+
+            ShowAlert(chaseEndPrefab);
+
+            if (isStopped)
+                stopTimer = 0f;
+
+            return;
         }
 
         if (isStopped)
@@ -276,7 +324,9 @@ public class H_MonsterMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isGrounded && CanClimbWall(desiredDir))
+            if (isChasing &&
+                isGrounded &&
+                CanClimbWall(desiredDir))
             {
                 Jump();
                 return;
@@ -501,5 +551,36 @@ public class H_MonsterMove : MonoBehaviour
                 capCol.size = originalColliderSize;
             }
         }
+    }
+    private void FaceTarget()
+    {
+        if (target == null)
+            return;
+
+        float dir = Mathf.Sign(target.position.x - transform.position.x);
+
+        if (dir != 0)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * -dir;
+            transform.localScale = scale;
+        }
+    }
+
+    private void ShowAlert(GameObject prefab)
+    {
+        if (prefab == null)
+            return;
+
+        if (currentAlert != null)
+            Destroy(currentAlert);
+
+        currentAlert = Instantiate(
+            prefab,
+            transform.position + Vector3.up * 2f,
+            Quaternion.identity
+        );
+
+        currentAlert.transform.SetParent(transform);
     }
 }
