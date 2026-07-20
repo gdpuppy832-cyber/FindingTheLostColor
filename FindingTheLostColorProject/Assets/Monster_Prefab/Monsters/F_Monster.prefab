@@ -75,7 +75,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0074596405, y: -0.02984476}
+  m_Offset: {x: -0.030003548, y: 0.119217634}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -85,7 +85,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2705193, y: 1.6660624}
+  m_Size: {x: 0.699419, y: 1.3679376}
   m_EdgeRadius: 0
 --- !u!50 &3942307000133411523
 Rigidbody2D:
@@ -171,7 +171,7 @@ MonoBehaviour:
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
-  purificationIndicatorPrefab: {fileID: 0}
+  purificationIndicatorPrefab: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
@@ -242,7 +242,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.019512177, y: -0.040949225}
+  m_Offset: {x: 0.044361115, y: -0.018405676}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -252,7 +252,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.89463806, y: 1.4399936}
+  m_Size: {x: 0.54145813, y: 1.1544433}
   m_EdgeRadius: 0
 --- !u!114 &6644610838333317147
 MonoBehaviour:
@@ -293,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 2870042121644237442}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.78, z: 0}
   m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -343,9 +343,9 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
-  m_Color: {r: 1, g: 0.88830286, b: 0.5330188, a: 1}
-  m_FlipX: 0
+  m_Sprite: {fileID: -8593503528899088889, guid: 6f0f4179974d8de4295e5a216f1cb21a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -364,7 +364,7 @@ Animator:
   m_GameObject: {fileID: 2870042121644237442}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6813bd848c7e2ef48ad95d24cb34777b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

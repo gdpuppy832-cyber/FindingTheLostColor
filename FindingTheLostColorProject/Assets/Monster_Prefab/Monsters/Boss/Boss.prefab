@@ -233,6 +233,15 @@ MonoBehaviour:
   bossAttackDamage: 1
   contactHitbox: {fileID: 4047836205825665637}
   contactDamage: 1
+  laserSFX: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
+  shadowBarrierSFX: {fileID: 8300000, guid: bb8ad69cc288f9848b4316abe52f5c42, type: 3}
+  thunderSFX: {fileID: 8300000, guid: 3779cb7e038a1f94199a05cab125b676, type: 3}
+  spikeSFX: {fileID: 8300000, guid: 25d1af2aa632a0d43b88de0af1f46830, type: 3}
+  colorWhirlpoolSFX: {fileID: 8300000, guid: 9dd975469202bd44b85e5bb5c90f8eed, type: 3}
+  sfxAudioSource: {fileID: 0}
+  bossBGM1: {fileID: 8300000, guid: 15abfcf8c8377b645ab8b45cb8e780d9, type: 3}
+  bossBGM2: {fileID: 8300000, guid: adfd5c999dd5d124babcb852ff53f7fc, type: 3}
+  bgmAudioSource: {fileID: 0}
   crystals:
   - {fileID: 0}
   - {fileID: 0}

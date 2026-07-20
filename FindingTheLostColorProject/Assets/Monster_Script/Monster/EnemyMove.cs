@@ -67,7 +67,7 @@ public class EnemyMove : MonoBehaviour
 
             stateDelayTimer += Time.deltaTime;
 
-            if (stateDelayTimer >= 1.5f)
+            if (stateDelayTimer >= 0.5f)
             {
                 isStateDelay = false;
                 stateDelayTimer = 0f;

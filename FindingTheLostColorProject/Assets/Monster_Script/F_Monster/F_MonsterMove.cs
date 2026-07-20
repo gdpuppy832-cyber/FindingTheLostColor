@@ -25,7 +25,7 @@ public class F_EnemyMove : MonoBehaviour
     GameObject currentAlert;
 
     bool isStateDelay = false;
-    float stateDelayTimer = 0f;
+    float stateDelayTimer;
     bool pendingChaseState = false;
     bool isChasing = false;
     public bool IsStateDelay => isStateDelay;
@@ -36,12 +36,17 @@ public class F_EnemyMove : MonoBehaviour
     [Header("점프 설정")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
+    Animator animator;
 
     void Start()
     {
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -53,9 +58,12 @@ public class F_EnemyMove : MonoBehaviour
         float distance = Vector3.Distance(transform.position, target.position);
         if (isStateDelay)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             stateDelayTimer += Time.deltaTime;
 
-            if (stateDelayTimer >= 1.5f)
+            if (stateDelayTimer >= 0.5f)
             {
                 isStateDelay = false;
                 stateDelayTimer = 0f;
@@ -108,6 +116,13 @@ public class F_EnemyMove : MonoBehaviour
 
         if (isStopped) // 절벽 끝에서 멈춘 상태
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+                animator.speed = 1f;
+            }
             if (isChasing)
             {
                 float xDiff = target.position.x - transform.position.x;
@@ -160,6 +175,11 @@ public class F_EnemyMove : MonoBehaviour
 
         if (desiredDir == 0f)
         {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+
             prevposition = transform.position;
             return;
         }
@@ -189,6 +209,9 @@ public class F_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            if(animator != null)
+                animator.SetBool("IsWalking", false);
+
             if (isChasing && isGrounded && CanClimbWall(desiredDir))
             {
                 Jump();
@@ -204,6 +227,8 @@ public class F_EnemyMove : MonoBehaviour
             prevposition = transform.position;
             return;
         }
+        if (animator != null)
+            animator.SetBool("IsWalking", true);
 
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
