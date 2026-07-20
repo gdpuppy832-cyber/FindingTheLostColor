@@ -228,7 +228,7 @@ public class EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isGrounded && CanClimbWall(desiredDir))
+            if (isChasing && isGrounded && CanClimbWall(desiredDir))
             {
                 Jump();
                 return;
