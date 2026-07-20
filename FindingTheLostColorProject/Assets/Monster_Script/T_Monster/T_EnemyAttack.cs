@@ -8,7 +8,7 @@ public class T_EnemyAttack : MonoBehaviour
     public LayerMask targetLayer;
     public ContactHit contactHitbox;
     public MonoBehaviour moveScript;    // 이 몬스터가 쓰는 이동 스크립트 (인스펙터 연결)
-
+    T_EnemyMove enemyMove;
 
     bool isAttacking = false;
     bool canAttack = true;
@@ -63,6 +63,7 @@ public class T_EnemyAttack : MonoBehaviour
     void Start()
     {
         bodyCollider = GetComponent<Collider2D>();
+        enemyMove = moveScript as T_EnemyMove;
 
         if (target == null)
         {
@@ -141,6 +142,9 @@ public class T_EnemyAttack : MonoBehaviour
         }
 
         if (isAttacking || !canAttack) return;
+
+        // 추적 시작/종료 대기 시간 동안은 공격 금지
+        if (enemyMove != null && enemyMove.IsStateDelay) return;
 
         // 이번 사이클에 아직 공격을 안 뽑았으면 무작위로 하나 선택
         if (chosenAttack == null)

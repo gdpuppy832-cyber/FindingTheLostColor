@@ -92,6 +92,9 @@ public class R_EnemyAttack : MonoBehaviour
 
         if (isAttacking || !canAttack || target == null) return;
 
+        // 추적 시작/종료 연출 중에는 공격 금지
+        if (enemyMove != null && enemyMove.IsStateDelay) return;
+
         float distance = Vector2.Distance(transform.position, target.position);
         if (distance <= attackRange)
         {

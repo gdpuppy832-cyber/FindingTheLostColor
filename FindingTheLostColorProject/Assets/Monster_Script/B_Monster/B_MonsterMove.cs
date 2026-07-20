@@ -27,6 +27,7 @@ public class B_EnemyMove : MonoBehaviour
     float stateDelayTimer = 0f;
     bool pendingChaseState = false;
     bool isChasing = false;
+    public bool IsStateDelay => isStateDelay;
     public float attackStopDistance = 1.5f;
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
@@ -184,7 +185,7 @@ public class B_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isGrounded && CanClimbWall(desiredDir))
+            if (isChasing && isGrounded && CanClimbWall(desiredDir))
             {
                 Jump();
                 return;
