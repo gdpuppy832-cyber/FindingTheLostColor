@@ -348,6 +348,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bossAttack: {fileID: 0}
+  spawnSFX: {fileID: 8300000, guid: dd50bfd7db9908a4d97c6476ddb109ba, type: 3}
+  sfxAudioSource: {fileID: 0}
   spawnMonsterPrefabs1:
   - {fileID: 946412894994910540, guid: 0c03a8999f3178144a705ce901686007, type: 3}
   spawnMonsterPrefabs2:
