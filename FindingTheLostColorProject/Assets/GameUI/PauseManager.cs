@@ -13,6 +13,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private string titleSceneName = "TitleScene"; // 타이틀 씬 이름
 
     private bool isPaused = false;
+    public static bool IsPaused => (Time.timeScale == 0f);
 
     [Header("Developer Mode Settings (신규)")]
     [Tooltip("숨겨져 있다가 커맨드로 나타날 개발자 모드 진입 버튼")]
