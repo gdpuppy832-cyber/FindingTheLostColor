@@ -14,8 +14,6 @@ public class BossPortalSpawner : MonoBehaviour
     [Header("소환 효과음")]
     [Tooltip("몬스터가 포탈에서 소환될 때마다 재생할 효과음")]
     public AudioClip spawnSFX;
-    [Tooltip("효과음을 재생할 AudioSource (비워두면 자동으로 같은 오브젝트에서 찾거나 추가함)")]
-    public AudioSource sfxAudioSource;
 
     [Header("스폰 몬스터 설정")]
     [Tooltip("첫번째 소환 패턴 시 양쪽 포탈에서 소환될 잡몹 프리팹 목록 (각각 1마리씩 스폰)")]
@@ -49,10 +47,6 @@ public class BossPortalSpawner : MonoBehaviour
     {
         // 씬에서 보스 공격 컴포넌트 자동 탐색 및 참조
         bossAttack = FindFirstObjectByType<BossAttack>();
-
-        if (sfxAudioSource == null) sfxAudioSource = GetComponent<AudioSource>();
-        if (sfxAudioSource == null) sfxAudioSource = gameObject.AddComponent<AudioSource>();
-        sfxAudioSource.playOnAwake = false;
 
         // 보스가 활성화된 시점부터 60초 카운트다운 시작
         lastSpawnTime = Time.time;
@@ -195,9 +189,9 @@ public class BossPortalSpawner : MonoBehaviour
         GameObject monster = Instantiate(prefab, spawnPos, Quaternion.identity);
         activeSpawnedMonsters.Add(monster);
 
-        if (spawnSFX != null && sfxAudioSource != null)
+        if (spawnSFX != null && SoundManager.Instance != null)
         {
-            sfxAudioSource.PlayOneShot(spawnSFX);
+            SoundManager.Instance.PlaySFX(spawnSFX);
         }
 
         // 정화되었을 때 생성 포탈로 회귀하는 연출 스크립트 연결

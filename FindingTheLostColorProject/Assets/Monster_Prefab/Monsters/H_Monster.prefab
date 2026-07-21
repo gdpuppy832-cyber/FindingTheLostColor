@@ -157,11 +157,11 @@ MonoBehaviour:
   landRadius: 1.5
   postDelay: 0.5
   attackCooldown: 2
-  initialTelegraphTime: 1.8
+  initialTelegraphTime: 1
   initialJumpHeight: 2.8
   initialJumpDuration: 0.6
   stunDuration: 3
-  wakeUpDelay: 0.4
+  wakeUpDelay: 0
   contactHitbox: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -181,7 +181,7 @@ MonoBehaviour:
   meleeCooldown: 2
   missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
   missIndicatorOffset: {x: 0, y: 1, z: 0}
-  missIndicatorDelay: 0.1
+  missIndicatorDelay: 0.235
   contactDamageCooldown: 1
   fallAcceleration: 20
   maxFallTime: 3
@@ -205,6 +205,8 @@ MonoBehaviour:
   safeDropDistance: 7
   jumpForce: 4.4
   climbableWallHeight: 0.6
+  inPlayerToHuntingDelay: 0.75
+  huntingToPounceDelay: 0.5
   chaseStartPrefab: {fileID: 4436323823734731653, guid: afb5e56e020ab7e4b8c1c7ecf347b0ea, type: 3}
   chaseEndPrefab: {fileID: 3597663053260774016, guid: 4f86ddaeb6f91314a8fdb69ff6bb8bb5, type: 3}
   detectionRange: 6
@@ -213,6 +215,7 @@ MonoBehaviour:
   ambushColliderSize: {x: 1, y: 0.75}
   ambushColliderOffset: {x: 0, y: 0}
   ambushBushPrefab: {fileID: 5596693869449837199, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+  bushHuntIndicator: {fileID: 482784319693232354, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
 --- !u!1 &5304574252343096175
 GameObject:
   m_ObjectHideFlags: 0

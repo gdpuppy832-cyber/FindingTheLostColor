@@ -404,7 +404,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41c3aac4091152b4698a78dc77fd0110, type: 3}
---- !u!1001 &243645823
+--- !u!1001 &259419875
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -416,13 +416,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: H_Monster
       objectReference: {fileID: 0}
+    - target: {fileID: 2775475658047793911, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: wakeUpDelay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2775475658047793911, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: missIndicatorDelay
+      value: 0.235
+      objectReference: {fileID: 0}
+    - target: {fileID: 2775475658047793911, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: initialTelegraphTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6751853423434323122, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: bushIndicator
+      value: 
+      objectReference: {fileID: 482784319693232354, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+    - target: {fileID: 6751853423434323122, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
+      propertyPath: bushHuntIndicator
+      value: 
+      objectReference: {fileID: 482784319693232354, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
     - target: {fileID: 7626104859796593790, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -46.783035
+      value: -44.868767
       objectReference: {fileID: 0}
     - target: {fileID: 7626104859796593790, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.569848
+      value: 11.492792
       objectReference: {fileID: 0}
     - target: {fileID: 7626104859796593790, guid: bf120e6b8f0be4f40bab421cffa506f9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -488,7 +508,7 @@ Transform:
   m_GameObject: {fileID: 287673108}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 27.58, y: 21.633, z: 0}
+  m_LocalPosition: {x: 30.35, y: 21.53, z: 0}
   m_LocalScale: {x: 0.06826476, y: 2.175786, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5298,6 +5318,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 491727761603663900, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+      propertyPath: m_Size.x
+      value: 3.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 491727761603663900, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+      propertyPath: m_Size.y
+      value: 3.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 491727761603663900, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7607381848659537431, guid: a8251d0b44b98f74e8332b83821dc5e5, type: 3}
+    - target: {fileID: 491727761603663900, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5596693869449837199, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
       propertyPath: m_Name
       value: ambush_0
@@ -5494,4 +5530,4 @@ SceneRoots:
   - {fileID: 2055177544}
   - {fileID: 2033628760}
   - {fileID: 3207933366247830414}
-  - {fileID: 243645823}
+  - {fileID: 259419875}
