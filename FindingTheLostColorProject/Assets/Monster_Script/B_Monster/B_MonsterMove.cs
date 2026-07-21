@@ -278,6 +278,17 @@ public class B_EnemyMove : MonoBehaviour
             transform.localScale = scale;
         }
     }
+    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
+    // 그 시점에 Update() 루프(isStateDelay 처리)가 멈춰서 currentAlert가 정리되지 못하므로,
+    // 여기서 확실하게 파괴함
+    void OnDisable()
+    {
+        if (currentAlert != null)
+        {
+            Destroy(currentAlert);
+            currentAlert = null;
+        }
+    }
     private void ShowAlert(GameObject prefab)
     {
         if (prefab == null)

@@ -24,9 +24,11 @@ public class H_MonsterAttack : MonoBehaviour
 
     [Tooltip("최초 덮치기 공격 실패(착지) 시 기절 대기 시간 (초)")]
     public float stunDuration = 3.0f;
+    [Tooltip("플레이어 감지 직후, 풀숲에서 본모습으로 깨어나며 IsHunting 애니메이션이 발동되기까지의 지연 시간 (초). ...")]
+    public float wakeUpDelay = 0f;
 
     [Header("기타 물리 및 필터링 설정")]
-    public ContactHit contactHitbox;  
+    public ContactHit contactHitbox;
     public LayerMask groundLayer;
     public LayerMask obstacleLayer;
     Transform target;
@@ -47,9 +49,22 @@ public class H_MonsterAttack : MonoBehaviour
 
     H_MonsterMove enemyMove;
     private Rigidbody2D rigid;
+    private Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
     // 최초 덮치기 도중 플레이어 타격 성공 여부 플래그
     private bool initialPounceHitPlayer = false;
+
+    GameObject activeMissIndicator;
+
+    [Header("공격 실패(기절) 표시 오브젝트")]
+    [Tooltip("점프 공격 실패로 기절하는 동안 몬스터 머리 위에 띄울, 자체 애니메이션이 있는 프리팹 (비워두면 생성 안 함)")]
+    public GameObject missIndicatorPrefab;
+
+    [Tooltip("몬스터 기준 표시 오브젝트가 생성될 위치 오프셋")]
+    public Vector3 missIndicatorOffset = new Vector3(0f, 1.5f, 0f);
+
+    [Tooltip("기절이 시작되고 나서, 표시 오브젝트가 실제로 나타나기까지 대기하는 시간(초)")]
+    public float missIndicatorDelay = 0.2f;
 
     [Header("몸통 접촉(ContactHit) 피해 쿨타임")]
     [Tooltip("몬스터 몸에 플레이어가 닿아있을 때 반복 피해를 주는 간격 (초). 없으면 매 프레임 데미지가 들어가 사실상 쿨타임이 없는 것처럼 보임")]
@@ -60,6 +75,8 @@ public class H_MonsterAttack : MonoBehaviour
     {
         enemyMove = GetComponent<H_MonsterMove>();
         rigid = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         // 게임 시작 시 텔레그래프가 그대로 보이는 문제 방지 (일반 몬스터 EnemyAttack.cs와 동일하게 처음부터 꺼둠)
         if (meleeTelegraphSprite != null)
@@ -69,7 +86,7 @@ public class H_MonsterAttack : MonoBehaviour
         if (groundLayer.value == 0)
         {
             groundLayer = LayerMask.GetMask("Platform");
-            
+
         }
 
         // targetLayer가 Nothing(0)으로 풀려있으면 근접/점프 판정(OverlapBox 등)이 항상 실패하므로
@@ -77,14 +94,14 @@ public class H_MonsterAttack : MonoBehaviour
         if (targetLayer.value == 0)
         {
             targetLayer = LayerMask.GetMask("Player");
-            
+
         }
 
         // contactHitbox 슬롯이 비어있으면 자식 오브젝트에서 자동으로 찾아 연결 (인스펙터 실수 방지)
         if (contactHitbox == null)
         {
             contactHitbox = GetComponentInChildren<ContactHit>();
-            
+
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -177,6 +194,12 @@ public class H_MonsterAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsAttacking", true);
+        }
+
         if (enemyMove != null)
             enemyMove.enabled = false;
 
@@ -231,6 +254,9 @@ public class H_MonsterAttack : MonoBehaviour
 
         yield return new WaitForSeconds(meleePostDelay);
 
+        if (animator != null)
+            animator.SetBool("IsAttacking", false);
+
         if (enemyMove != null)
             enemyMove.enabled = true;
 
@@ -245,7 +271,9 @@ public class H_MonsterAttack : MonoBehaviour
     /// <summary>
     /// H_MonsterMove가 플레이어를 첫 포착해 숨겨진 상태에서 점프 덮치기 공격을 가할 때 호출됩니다.
     /// </summary>
-    public void TriggerPounce()
+    private Vector2? pendingDetectedPos; // ★ 최초 감지 좌표 저장용
+
+    public void TriggerPounce(Vector2? detectedPos = null)
     {
         if (isAttacking)
         {
@@ -257,6 +285,7 @@ public class H_MonsterAttack : MonoBehaviour
             return;
         }
         initialPounceHitPlayer = false; // 타격 플래그 리셋
+        pendingDetectedPos = detectedPos;
         StartCoroutine(JumpAttackRoutine(true));
     }
 
@@ -269,13 +298,21 @@ public class H_MonsterAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        // 풀숲의 IsHunting은 H_MonsterMove에서 감지 즉시 발동됨.
+        // 몬스터 자신의 IsHunting은 시차를 두고(huntingAnimDelay) 아래에서 별도로 발동시킴
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false);
+        }
+
         if (enemyMove != null)
             enemyMove.enabled = false;
 
         // 점프 시작/착지 지점 고정 (최초 감지 시점의 플레이어 위치를 기준으로 착지 지점을 정하고,
         // 이후 텔레그래프 대기 시간 동안 플레이어가 움직여도 재계산하지 않음)
         Vector2 startPos = transform.position;
-        Vector2 desiredLandPos = target.position;
+        // ★ 최초 감지 시점 좌표가 있으면 그걸 사용하고, 없으면(일반 근접 상황 등) 기존처럼 현재 위치 사용
+        Vector2 desiredLandPos = isInitialPounce && pendingDetectedPos.HasValue ? pendingDetectedPos.Value : (Vector2)target.position;
         Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);
 
         float jumpDistance = Vector2.Distance(startPos, landPos);
@@ -287,6 +324,8 @@ public class H_MonsterAttack : MonoBehaviour
         {
             string reason = isCliff ? "낭떠러지로 인해 착지 지점이 잘림" : $"도약 거리 {jumpDistance}가 최소 거리 {minJumpDistance}보다 작음";
 
+            if (animator != null)
+                animator.SetBool("IsHunting", false);
 
             isAttacking = false;
             if (enemyMove != null)
@@ -305,9 +344,11 @@ public class H_MonsterAttack : MonoBehaviour
 
         // [핵심 요구사항] 최초 돌진일 경우 설정된 별도의 대기시간(initialTelegraphTime)을 사용합니다.
         float activeTelegraphTime = isInitialPounce ? initialTelegraphTime : telegraphTime;
-        yield return new WaitForSeconds(activeTelegraphTime);
 
-        // ★ [핵심 요구사항] 위장상태에서 공중으로 몸을 던져 날아가는 순간, 모습을 바꾸고 점프 방향을 바라봅니다.
+        float delayBeforeWakeUp = Mathf.Clamp(wakeUpDelay, 0f, activeTelegraphTime);
+        yield return new WaitForSeconds(delayBeforeWakeUp);
+
+        // ★ 위장 상태에서 본모습으로 깨어나며(WakeUp), 동시에 몬스터 자신의 IsHunting을 발동시킵니다.
         if (isInitialPounce && enemyMove != null)
         {
             enemyMove.WakeUp();
@@ -315,6 +356,15 @@ public class H_MonsterAttack : MonoBehaviour
             Vector3 scale = transform.localScale;
             scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1 : -1);
             transform.localScale = scale;
+        }
+
+        if (animator != null)
+            animator.SetBool("IsHunting", true);
+
+        float remainingTelegraphTime = activeTelegraphTime - delayBeforeWakeUp;
+        if (remainingTelegraphTime > 0f)
+        {
+            yield return new WaitForSeconds(remainingTelegraphTime);
         }
 
         // [핵심 요구사항] 최초 돌진일 경우 설정된 돌진 사양(높이/공중 시간)을 사용합니다.
@@ -367,22 +417,66 @@ public class H_MonsterAttack : MonoBehaviour
             transform.position = landPos; // 정확히 착지 지점에 정렬 (J_EnemyAttack과 동일)
         }
 
+        // 착지했으므로 사냥(점프) 애니메이션 종료
+        if (animator != null)
+            animator.SetBool("IsHunting", false);
+
         // [핵심 요구사항] 최초 돌진 완료 시 기절 시간 계산
         // 플레이어를 성공적으로 가격했다면 0.5초만 기절하고, 빗나갔다면(실패했다면) 풀 타임인 stunDuration(3초) 동안 기절합니다.
         if (isInitialPounce)
         {
             float activeStunDuration = initialPounceHitPlayer ? 0.5f : stunDuration;
-            
+
             // 기절용 애니메이터 매개변수가 있을 시 호출 (Animator "Stun" Trigger)
-            Animator anim = GetComponent<Animator>();
-            if (anim == null) anim = GetComponentInChildren<Animator>();
-            if (anim != null)
+            if (animator != null)
             {
-                anim.SetTrigger("Stun");
+                animator.SetTrigger("Stun");
             }
 
-            yield return new WaitForSeconds(activeStunDuration);
-            
+            if (initialPounceHitPlayer)
+            {
+                // 타격에 성공한 경우는 짧은 기절이라 실패 표시는 띄우지 않음 (J_EnemyAttack의 hitPostDelay와 동일한 취급)
+                yield return new WaitForSeconds(activeStunDuration);
+            }
+            else
+            {
+                // NormalMonster는 수정하지 않는 전제이므로, 정화 여부(IsPurified)는 참조만 해서 확인
+                NormalMonster nm = GetComponent<NormalMonster>();
+                if (nm == null) nm = GetComponentInParent<NormalMonster>();
+
+                bool indicatorSpawned = false;
+                float waitElapsed = 0f;
+
+                // activeStunDuration(실패 시 stunDuration) 동안 매 프레임 진행하면서,
+                // 1) missIndicatorDelay가 지나면 그때 표시 오브젝트를 생성하고
+                // 2) 표시 중에 몬스터가 정화되면 즉시 파괴함
+                // (참고: 정화로 인해 이 스크립트 자체가 비활성화되면 이 루프도 함께 멈추는데,
+                //  그 경우를 대비한 정리는 OnDisable에서 별도로 처리함)
+                while (waitElapsed < activeStunDuration)
+                {
+                    waitElapsed += Time.deltaTime;
+
+                    if (!indicatorSpawned && waitElapsed >= missIndicatorDelay)
+                    {
+                        activeMissIndicator = SpawnMissIndicator();
+                        indicatorSpawned = true;
+                    }
+
+                    if (activeMissIndicator != null && nm != null && nm.IsPurified)
+                    {
+                        Destroy(activeMissIndicator);
+                        activeMissIndicator = null;
+                    }
+
+                    yield return null;
+                }
+
+                if (activeMissIndicator != null)
+                {
+                    Destroy(activeMissIndicator);
+                    activeMissIndicator = null;
+                }
+            }
         }
         else
         {
@@ -402,6 +496,24 @@ public class H_MonsterAttack : MonoBehaviour
     public float fallAcceleration = 20f;   // 낙하 가속도
     public float maxFallTime = 3f;         // 안전장치
 
+    void OnDisable()
+    {
+        if (activeMissIndicator != null)
+        {
+            Destroy(activeMissIndicator);
+            activeMissIndicator = null;
+        }
+    }
+
+    GameObject SpawnMissIndicator()
+    {
+        if (missIndicatorPrefab == null) return null;
+
+        GameObject indicator = Instantiate(missIndicatorPrefab, transform);
+        indicator.transform.localPosition = missIndicatorOffset;
+        indicator.transform.localRotation = Quaternion.identity;
+        return indicator;
+    }
     System.Collections.IEnumerator FallToGround()
     {
         Collider2D selfCol = GetComponent<Collider2D>();

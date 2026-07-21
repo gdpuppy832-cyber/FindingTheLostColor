@@ -75,7 +75,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.027134895, y: -0.03042686}
+  m_Offset: {x: 0.03740883, y: 0.17661154}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -85,7 +85,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.5159378, y: 1.7330735}
+  m_Size: {x: 0.64043427, y: 1.3065736}
   m_EdgeRadius: 0
 --- !u!50 &2872678043283075810
 Rigidbody2D:
@@ -133,7 +133,7 @@ MonoBehaviour:
   purifiedTriggerName: Purified
   hitTextFont: {fileID: 0}
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
-  purificationIndicatorPrefab: {fileID: 0}
+  purificationIndicatorPrefab: {fileID: 7622590262133960315, guid: 0ab80fd0cd81b6047879ab2001235165, type: 3}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
@@ -161,6 +161,7 @@ MonoBehaviour:
   initialJumpHeight: 2.8
   initialJumpDuration: 0.6
   stunDuration: 3
+  wakeUpDelay: 0.4
   contactHitbox: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -178,6 +179,9 @@ MonoBehaviour:
   meleeTelegraphSprite: {fileID: 1240629702977576825}
   meleePostDelay: 0.5
   meleeCooldown: 2
+  missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
+  missIndicatorOffset: {x: 0, y: 1, z: 0}
+  missIndicatorDelay: 0.1
   contactDamageCooldown: 1
   fallAcceleration: 20
   maxFallTime: 3
@@ -205,11 +209,10 @@ MonoBehaviour:
   chaseEndPrefab: {fileID: 3597663053260774016, guid: 4f86ddaeb6f91314a8fdb69ff6bb8bb5, type: 3}
   detectionRange: 6
   ambushAnimBool: isAmbushed
-  ambushYOffset: 0
+  ambushYOffset: -1
   ambushColliderSize: {x: 1, y: 0.75}
   ambushColliderOffset: {x: 0, y: 0}
-  ambushSprite: {fileID: 8580089753507832943, guid: c89fdd431f3ceda4f948e0fe34e04b59, type: 3}
-  activeSprite: {fileID: 0}
+  ambushBushPrefab: {fileID: 5596693869449837199, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
 --- !u!1 &5304574252343096175
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,7 +340,7 @@ Transform:
   m_GameObject: {fileID: 6938718601996975543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.858, z: 0}
   m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -387,12 +390,12 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
-  m_Color: {r: 0.6603774, g: 0.33953366, b: 0.33953366, a: 1}
-  m_FlipX: 0
+  m_Sprite: {fileID: -438074681693249320, guid: b5ae48d513da5a443927c5bdc2be81f2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.39, y: 2.11}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -408,7 +411,7 @@ Animator:
   m_GameObject: {fileID: 6938718601996975543}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 725ff8d5081ba0f489403fd587b7a205, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -574,7 +577,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.068846226, y: 0.0012920499}
+  m_Offset: {x: 0.009936333, y: 0.10226983}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -584,7 +587,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.86038494, y: 1.3366333}
+  m_Size: {x: 0.5768585, y: 1.1143545}
   m_EdgeRadius: 0
 --- !u!114 &8636611221195537033
 MonoBehaviour:

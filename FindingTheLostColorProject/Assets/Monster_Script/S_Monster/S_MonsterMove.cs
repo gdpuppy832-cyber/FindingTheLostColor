@@ -53,8 +53,7 @@ public class S_MonsterMove : MonoBehaviour
     public float groundCheckDistance = 2f;
 
     private Collider2D selfColCached; // 매 프레임 GetComponent 호출 방지용 캐시
-    private bool groundedLeft = true;
-    private bool groundedRight = true;
+
 
     void Start()
     {

@@ -21,6 +21,13 @@ public class H_MonsterMove : MonoBehaviour
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
 
+    [Header("잠복 → 덮치기 연출 타이밍")]
+    [Tooltip("풀숲의 InPlayer 파라미터 발동 후, IsHunting 파라미터가 발동되기까지 대기 시간 (초)")]
+    public float inPlayerToHuntingDelay = 0.75f;
+
+    [Tooltip("풀숲의 IsHunting 파라미터 발동 후, 몬스터 본체가 나오며 점프 공격 시퀀스가 시작되기까지 대기 시간 (초)")]
+    public float huntingToPounceDelay = 0.5f;
+
     Transform target;
     float timer = 0;
     Vector3 prevposition;
@@ -63,16 +70,19 @@ public class H_MonsterMove : MonoBehaviour
     [Tooltip("잠복(수풀) 상태일 때 사용할 콜라이더 오프셋")]
     public Vector2 ambushColliderOffset = new Vector2(0f, 0f);
 
-    [Header("스프라이트 폴백 설정 (애니메이션이 없는 경우 대비)")]
-    [Tooltip("잠복 상태일 때 보여줄 이미지 (모습 1)")]
-    public Sprite ambushSprite;
+    [Header("풀숲 오브젝트 설정")]
+    [Tooltip("잠복 상태일 때 몬스터 대신 보여줄 풀숲 오브젝트 프리팹 (BushHuntIndicator 컴포넌트 포함)")]
+    public GameObject ambushBushPrefab;
 
-    private Sprite originalSprite;
+    GameObject activeBushInstance; // 현재 씬에 소환되어 있는 풀숲 오브젝트
+    BushHuntIndicator activeBushIndicator; // 위 오브젝트의 애니메이션 제어용 참조
 
     private Animator animator;
     private bool isAmbushed = true;
     private bool isPouncing = false; // 최초 덮치기 점프 실행 중 여부
-    private H_MonsterAttack attackScript; // 덮치기 발동 범위(lineWidth/attackRange)를 여기서 읽어옴
+    private H_MonsterAttack attackScript;
+
+    public BushHuntIndicator bushHuntIndicator;
 
     private Vector3 originalSpriteLocalPos;
     private Vector2 originalColliderOffset;
@@ -90,11 +100,7 @@ public class H_MonsterMove : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        
-        if (spriteRenderer != null)
-        {
-            originalSprite = spriteRenderer.sprite;
-        }
+
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
 
@@ -141,6 +147,9 @@ public class H_MonsterMove : MonoBehaviour
         float distance = Vector3.Distance(transform.position, target.position);
         if (isStateDelay)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             stateDelayTimer += Time.deltaTime;
 
             if (stateDelayTimer >= 0.5f)
@@ -166,39 +175,32 @@ public class H_MonsterMove : MonoBehaviour
         // 1. 플레이어 거리 기반 잠복(Ambush) 해제 & 최초 덮치기 점프 공격 트리거
         // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
         if (isAmbushed && !isPouncing)
-    {
-        bool inRange;
-        if (attackScript != null)
         {
-            float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
-            float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
-            inRange = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
-        }
-        else
-        {
-            // H_MonsterAttack을 못 찾았을 때를 대비한 안전장치용 폴백 (기존 원형 판정)
-            inRange = distance <= detectionRange;
-        }
-
-        if (inRange)
-        {
-            isPouncing = true;
-
+            bool inRange;
             if (attackScript != null)
             {
-                attackScript.TriggerPounce();
+                float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
+                float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
+                inRange = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
             }
             else
             {
-                // 공격 스크립트가 없을 시 즉시 강제 기상
-                WakeUp();
+                // H_MonsterAttack을 못 찾았을 때를 대비한 안전장치용 폴백 (기존 원형 판정)
+                inRange = distance <= detectionRange;
+            }
+
+            if (inRange)
+            {
+                isPouncing = true; // 재진입(코루틴 중복 실행) 방지를 위해 즉시 설정
+
+                Vector2 detectedPos = target.position; // ★ 최초 감지 시점의 플레이어 좌표를 고정 캡처
+                StartCoroutine(PounceSequenceRoutine(detectedPos));
             }
         }
-    }
-    // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
+        // ★ [요구사항] 한 번 잠복에서 일어난 이후에는 플레이어가 멀어져도 다시 위장으로 잠들지 않습니다. (GoToSleep 호출 제거)
 
-    // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
-    if (isAmbushed)
+        // 잠복(기상 대기/최초 덮치기 도약 대기) 중일 때는 정찰 이동 및 좌우 회전 등의 자체 이동 로직 완전 차단
+        if (isAmbushed)
         {
             return;
         }
@@ -220,6 +222,9 @@ public class H_MonsterMove : MonoBehaviour
 
             ShowAlert(chaseStartPrefab);
 
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             return;
         }
         else if (isChasing && distance > chaseRange)
@@ -232,6 +237,9 @@ public class H_MonsterMove : MonoBehaviour
 
             ShowAlert(chaseEndPrefab);
 
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             if (isStopped)
                 stopTimer = 0f;
 
@@ -240,6 +248,9 @@ public class H_MonsterMove : MonoBehaviour
 
         if (isStopped)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             // 추적 중이었다면: 매 프레임 플레이어 방향을 다시 계산해서,
             // 그 방향이 절벽이 아니면(반대쪽으로 갔거나 안전해지면) 즉시 대기 해제
             if (isChasing)
@@ -295,6 +306,9 @@ public class H_MonsterMove : MonoBehaviour
 
         if (desiredDir == 0f)
         {
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             prevposition = transform.position;
             return;
         }
@@ -334,6 +348,10 @@ public class H_MonsterMove : MonoBehaviour
                 Jump();
                 return;
             }
+
+            if (animator != null)
+                animator.SetBool("IsWalking", false);
+
             // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
             // (추적 모드에서는 낭떠러지 처리와 마찬가지로 절벽/벽 회피를 강제로 걸지 않음 - 플레이어를 계속 쫓아가려는 의도 유지)
             if (!isChasing)
@@ -345,6 +363,9 @@ public class H_MonsterMove : MonoBehaviour
             prevposition = transform.position;
             return;
         }
+
+        if (animator != null)
+            animator.SetBool("IsWalking", true);
 
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
@@ -436,11 +457,12 @@ public class H_MonsterMove : MonoBehaviour
             animator.SetBool(ambushAnimBool, false);
         }
 
-        // 3. 원래 몬스터 본체 이미지 복원
-        if (originalSprite != null && spriteRenderer != null)
+        // 3. 몬스터 본체를 다시 보여주고, 풀숲 오브젝트는 제거
+        if (spriteRenderer != null)
         {
-            spriteRenderer.sprite = originalSprite;
+            spriteRenderer.enabled = true;
         }
+        HideBush();
     }
 
     /// <summary>
@@ -462,11 +484,12 @@ public class H_MonsterMove : MonoBehaviour
             animator.SetBool(ambushAnimBool, true);
         }
 
-        // 3. 스프라이트 이미지 대체 적용 (모습 1)
-        if (ambushSprite != null && spriteRenderer != null)
+        // 3. 몬스터 본체를 숨기고, 대신 풀숲 오브젝트를 보여줌
+        if (spriteRenderer != null)
         {
-            spriteRenderer.sprite = ambushSprite;
+            spriteRenderer.enabled = false;
         }
+        ShowBush();
 
         // 4. 움직임 정지
         if (rigid != null)
@@ -484,8 +507,42 @@ public class H_MonsterMove : MonoBehaviour
         GoToSleep();
     }
 
+    // 풀숲 오브젝트를 소환하거나(없을 경우) 다시 보이게 함
+    private void ShowBush()
+    {
+        if (ambushBushPrefab == null) return;
+
+        if (activeBushInstance == null)
+        {
+            Vector3 spawnPos = transform.position + Vector3.up * ambushYOffset;
+            activeBushInstance = Instantiate(ambushBushPrefab, spawnPos, Quaternion.identity, transform);
+            activeBushIndicator = activeBushInstance.GetComponent<BushHuntIndicator>();
+            if (activeBushIndicator == null) activeBushIndicator = activeBushInstance.GetComponentInChildren<BushHuntIndicator>();
+        }
+
+        // 원본 프리팹이 비활성 상태로 저장되어 있거나, 이전에 꺼진 채로 재사용되는 경우를 모두 대비해
+        // Instantiate 직후든 재사용이든 상관없이 항상 명시적으로 켜줌
+        activeBushInstance.SetActive(true);
+
+        // 다시 잠복 상태로 돌아온 것이므로(예: CancelPounce), 사냥 긴장 애니메이션은 꺼둠
+        if (activeBushIndicator != null)
+            activeBushIndicator.SetHunting(false);
+    }
+
+    // 풀숲 오브젝트를 파괴/제거
+    private void HideBush()
+    {
+        if (activeBushInstance != null)
+        {
+            Destroy(activeBushInstance);
+            activeBushInstance = null;
+            activeBushIndicator = null;
+        }
+    }
+
     /// <summary>
     /// 잠복 상태에 따른 스프라이트/본체 Y 오프셋을 처리합니다.
+    /// (풀숲이 별도 오브젝트로 분리되었으므로, 여기서는 콜라이더 오프셋만 다룹니다)
     /// </summary>
     private void ApplyVisualOffset(bool apply)
     {
@@ -493,21 +550,9 @@ public class H_MonsterMove : MonoBehaviour
 
         if (apply)
         {
-            if (spriteRenderer != null)
+            if (col != null)
             {
-                if (spriteRenderer.transform != transform)
-                {
-                    // 스프라이트 렌더러가 자식 오브젝트인 경우 로컬 Y 위치만 조절
-                    spriteRenderer.transform.localPosition = originalSpriteLocalPos + Vector3.up * ambushYOffset;
-                }
-                else
-                {
-                    // 본체에 직접 붙어있는 경우, 본체 콜라이더 오프셋만 조절
-                    if (col != null)
-                    {
-                        col.offset = originalColliderOffset - new Vector2(0f, ambushYOffset);
-                    }
-                }
+                col.offset = originalColliderOffset - new Vector2(0f, ambushYOffset);
             }
         }
         else
@@ -569,7 +614,17 @@ public class H_MonsterMove : MonoBehaviour
             transform.localScale = scale;
         }
     }
-
+    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
+    // 그 시점에 Update() 루프(isStateDelay 처리)가 멈춰서 currentAlert가 정리되지 못하므로,
+    // 여기서 확실하게 파괴함
+    void OnDisable()
+    {
+        if (currentAlert != null)
+        {
+            Destroy(currentAlert);
+            currentAlert = null;
+        }
+    }
     private void ShowAlert(GameObject prefab)
     {
         if (prefab == null)
@@ -585,5 +640,30 @@ public class H_MonsterMove : MonoBehaviour
         );
 
         currentAlert.transform.SetParent(transform);
+    }
+    System.Collections.IEnumerator PounceSequenceRoutine(Vector2 detectedPos)
+    {
+        if (activeBushIndicator != null)
+        {
+            activeBushIndicator.SetInPlayer();
+        }
+
+        yield return new WaitForSeconds(inPlayerToHuntingDelay);
+
+        if (activeBushIndicator != null)
+        {
+            activeBushIndicator.SetHunting(true);
+        }
+
+        yield return new WaitForSeconds(huntingToPounceDelay);
+
+        if (attackScript != null)
+        {
+            attackScript.TriggerPounce(detectedPos); // ★ 감지 시점 좌표 전달
+        }
+        else
+        {
+            WakeUp();
+        }
     }
 }
