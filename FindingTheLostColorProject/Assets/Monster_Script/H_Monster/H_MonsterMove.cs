@@ -176,12 +176,18 @@ public class H_MonsterMove : MonoBehaviour
         // (H_MonsterAttack의 lineWidth/attackRange 사각형 범위를 그대로 사용 - J_EnemyAttack과 동일한 판정 방식)
         if (isAmbushed && !isPouncing)
         {
+            Vector2 detectedPos = target.position; // ★ 최초 감지 시점의 플레이어 좌표를 고정 캡처
             bool inRange;
+
             if (attackScript != null)
             {
                 float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
                 float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
-                inRange = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
+                bool insideBox = horizontalDist <= attackScript.lineWidth && verticalDist <= attackScript.attackRange;
+
+                // ★ 범위 안에 들어온 것만으로는 부족하고, 실제 점프 공격(착지 지점 계산)이
+                //   최소 거리/낭떠러지 조건을 통과해야만 InPlayer 연출을 시작함
+                inRange = insideBox && attackScript.CanPounceTo(transform.position, detectedPos);
             }
             else
             {
@@ -193,7 +199,6 @@ public class H_MonsterMove : MonoBehaviour
             {
                 isPouncing = true; // 재진입(코루틴 중복 실행) 방지를 위해 즉시 설정
 
-                Vector2 detectedPos = target.position; // ★ 최초 감지 시점의 플레이어 좌표를 고정 캡처
                 StartCoroutine(PounceSequenceRoutine(detectedPos));
             }
         }

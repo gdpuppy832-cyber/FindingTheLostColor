@@ -269,6 +269,18 @@ public class H_MonsterAttack : MonoBehaviour
 
 
     /// <summary>
+    /// 지정된 시작/목표 좌표로 실제 점프 공격(덮치기)이 가능한지 미리 판정합니다.
+    /// (착지 지점 계산 결과가 minJumpDistance 미달이거나 낭떠러지면 false)
+    /// H_MonsterMove가 InPlayer 연출을 트리거하기 전, "진짜 점프 공격 조건"을 확인하는 용도로 사용합니다.
+    /// </summary>
+    public bool CanPounceTo(Vector2 startPos, Vector2 desiredLandPos)
+    {
+        Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);
+        float jumpDistance = Vector2.Distance(startPos, landPos);
+        return jumpDistance >= minJumpDistance && !isCliff;
+    }
+
+    /// <summary>
     /// H_MonsterMove가 플레이어를 첫 포착해 숨겨진 상태에서 점프 덮치기 공격을 가할 때 호출됩니다.
     /// </summary>
     private Vector2? pendingDetectedPos; // ★ 최초 감지 좌표 저장용
