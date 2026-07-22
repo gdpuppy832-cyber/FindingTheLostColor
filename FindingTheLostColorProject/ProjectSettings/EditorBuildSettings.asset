@@ -23,6 +23,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Boss123.unity
     guid: f8f2538e89a7f28438611f8aa9863d6c
+  - enabled: 1
+    path: Assets/Scenes/Map_b.unity
+    guid: 36ce1cdc974937d4eb4a25f6248ba73f
+  - enabled: 1
+    path: Assets/Scenes/Map_c.unity
+    guid: 4a23a6a91cf68024b836ad321935bf0d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
