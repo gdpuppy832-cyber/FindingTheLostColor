@@ -26,10 +26,15 @@ public class DarkCloudHazard : MonoBehaviour
     PlayerHealth playerHealth; // 사망/피격 상태 확인용
     CursorController cursorController; // 차징 공격(2번 모드) 자체 감지용
 
+    [Header("피격 시 부드러운 투명화 설정")]
+    [Tooltip("체력이 깎였을 때, 실제 알파값이 목표 알파값을 따라가는 속도 (초당 변화율). 클수록 빠르게 투명해짐")]
+    public float alphaSmoothSpeed = 3f;
+
     float elapsed = 0f;
     bool erased = false;
     bool finished = false;
     bool fadeInLogged = false; // 페이드인 완료 로그를 한 번만 찍기 위한 플래그
+    float currentDisplayAlpha = 0f; // ★ 실제로 화면에 표시 중인 알파값 (목표치를 향해 서서히 이동)
 
     public bool IsErased => erased;
     public bool IsReadyToStrike { get; private set; } = false;
@@ -96,17 +101,21 @@ public class DarkCloudHazard : MonoBehaviour
         if (currentHealth <= 0f)
         {
             erased = true;
-            SetAlpha(0f);
-            Destroy(gameObject);
+            StartCoroutine(FadeOutAndDestroyOnErase()); // ★ 완전히 지워질 때도 즉시 사라지지 않고 부드럽게 페이드아웃 후 파괴
             return;
         }
 
-        // 알파값 = 페이드인 진행도(0~1) x 남은 체력 비율(1~0).
+        // 목표 알파값 = 페이드인 진행도(0~1) x 남은 체력 비율(1~0).
         // 안개가 나타나는 도중에도 실시간으로 데미지를 받을 수 있으면서,
         // 체력이 줄어든 만큼만 옅어지고 회복 전까지는 다시 짙어지지 않음
         float fadeInProgress = Mathf.Clamp01(elapsed / fadeInDuration);
         float healthProgress = Mathf.Clamp01(currentHealth / maxHealth);
-        SetAlpha(fadeInProgress * healthProgress);
+        float targetAlpha = fadeInProgress * healthProgress;
+
+        // ★ 즉시 대입하지 않고, 목표 알파값을 향해 서서히 보간
+        // (차징 샷처럼 체력이 한 번에 크게 깎여도 알파값이 뚝 떨어지지 않고 부드럽게 옅어짐)
+        currentDisplayAlpha = Mathf.MoveTowards(currentDisplayAlpha, targetAlpha, alphaSmoothSpeed * Time.deltaTime);
+        SetAlpha(currentDisplayAlpha);
 
         // ���̵����� �Ϸ�Ǿ� ������ ��Ÿ�� ������ �� ���� �α׷� ǥ��
         if (!fadeInLogged && elapsed >= fadeInDuration)
@@ -158,6 +167,24 @@ public class DarkCloudHazard : MonoBehaviour
             t += Time.deltaTime;
             float ratio = fadeOutDuration > 0f ? Mathf.Clamp01(t / fadeOutDuration) : 1f;
             SetAlpha(Mathf.Lerp(startAlpha, 0f, ratio));
+            yield return null;
+        }
+
+        SetAlpha(0f);
+        Destroy(gameObject);
+    }
+    // 붓질로 완전히 지워졌을 때(erased) 사용하는 페이드아웃. 기존 FadeOutRoutine과 동일한 로직을 재사용.
+    IEnumerator FadeOutAndDestroyOnErase()
+    {
+        float startAlpha = currentDisplayAlpha;
+        float t = 0f;
+
+        while (t < fadeOutDuration)
+        {
+            t += Time.deltaTime;
+            float ratio = fadeOutDuration > 0f ? Mathf.Clamp01(t / fadeOutDuration) : 1f;
+            currentDisplayAlpha = Mathf.Lerp(startAlpha, 0f, ratio);
+            SetAlpha(currentDisplayAlpha);
             yield return null;
         }
 
