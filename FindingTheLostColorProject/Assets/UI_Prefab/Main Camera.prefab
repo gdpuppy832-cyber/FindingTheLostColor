@@ -151,7 +151,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2039
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -234,6 +234,11 @@ MonoBehaviour:
   maxDistance: 15
   minCameraPos: {x: -14, y: -1}
   maxCameraPos: {x: 30, y: 10}
+  isBossStageCamera: 0
+  bossIntroDelay: 3
+  zoomDuration: 1
+  startCameraSize: 5
+  targetCameraSize: 8
 --- !u!1 &4664412667489271536
 GameObject:
   m_ObjectHideFlags: 0

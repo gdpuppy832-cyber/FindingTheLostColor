@@ -1055,6 +1055,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8312294644764417343, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 271903559776438446, guid: 91878d847b6faa943995e0f61d20442b, type: 3}
@@ -18626,6 +18630,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 484192897982048044, guid: 29f35ed79ba70a747859bfea13334e0c, type: 3}
+      propertyPath: nextSceneName
+      value: Map_b
+      objectReference: {fileID: 0}
     - target: {fileID: 484192897982048044, guid: 29f35ed79ba70a747859bfea13334e0c, type: 3}
       propertyPath: statusTmpText
       value: 
