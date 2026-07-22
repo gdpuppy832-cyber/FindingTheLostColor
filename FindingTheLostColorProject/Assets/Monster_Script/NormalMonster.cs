@@ -314,13 +314,8 @@ public class NormalMonster : MonoBehaviour
             {
                 child.gameObject.layer = gameObject.layer;
             }
-
-            Debug.Log($"[NormalMonster] 정화 둥둥이 생성 성공: {indicator.name}, 로컬 좌표: {indicator.transform.localPosition}, 레이어: {LayerMask.LayerToName(indicator.layer)}, 월드 위치: {indicator.transform.position}");
         }
-        else
-        {
-            Debug.Log($"[NormalMonster] '{gameObject.name}'의 머리 위 정화 둥둥이 프리팹(Purification Indicator Prefab) 슬롯이 비어있습니다(None)! 인스펙터창에서 에셋을 할당해 주세요.");
-        }
+       
 
         // 정화 카운트 매니저가 존재하면 카운트 증가 알림 (즉시 UI에 반영)
         if (PurificationManager.Instance != null)

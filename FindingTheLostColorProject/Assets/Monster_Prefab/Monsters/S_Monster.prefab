@@ -200,7 +200,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.004965782, y: 0.02979654}
+  m_Offset: {x: 0.004965782, y: 0.00819546}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -210,7 +210,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6912041, y: 1.2210001}
+  m_Size: {x: 0.6912041, y: 1.2642022}
   m_EdgeRadius: 0
 --- !u!114 &7589212873005784190
 MonoBehaviour:
@@ -229,8 +229,8 @@ MonoBehaviour:
   startMovingRight: 1
   trailPrefab: {fileID: 6060694035351487940, guid: a279126c55b5bb44fa82d390cd92d06e, type: 3}
   spawnInterval: 0.5
-  useSpriteFlip: 1
-  invertSpriteDirection: 1
+  useSpriteFlip: 0
+  invertSpriteDirection: 0
   platformLayers:
     serializedVersion: 2
     m_Bits: 64
@@ -288,13 +288,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3155161680955769485}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -0.78, z: 0}
   m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7839831197760986700}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!212 &8861426788149407013
 SpriteRenderer:
   m_ObjectHideFlags: 0

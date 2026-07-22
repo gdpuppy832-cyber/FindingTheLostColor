@@ -11,6 +11,10 @@ public class BossPortalSpawner : MonoBehaviour
     // 지금까지 소환한 몬스터들을 추적 (2페이즈 전환 시 한 번에 정리하기 위함)
     private List<GameObject> activeSpawnedMonsters = new List<GameObject>();
     private Coroutine activeSpawnCoroutine;
+    [Header("소환 효과음")]
+    [Tooltip("몬스터가 포탈에서 소환될 때마다 재생할 효과음")]
+    public AudioClip spawnSFX;
+
     [Header("스폰 몬스터 설정")]
     [Tooltip("첫번째 소환 패턴 시 양쪽 포탈에서 소환될 잡몹 프리팹 목록 (각각 1마리씩 스폰)")]
     public GameObject[] spawnMonsterPrefabs1;
@@ -184,6 +188,11 @@ public class BossPortalSpawner : MonoBehaviour
 
         GameObject monster = Instantiate(prefab, spawnPos, Quaternion.identity);
         activeSpawnedMonsters.Add(monster);
+
+        if (spawnSFX != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(spawnSFX);
+        }
 
         // 정화되었을 때 생성 포탈로 회귀하는 연출 스크립트 연결
         PortalMonsterLinger linger = monster.GetComponent<PortalMonsterLinger>();

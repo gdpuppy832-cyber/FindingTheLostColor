@@ -16,6 +16,25 @@ public class BossAttack : MonoBehaviour
     public float contactDamage = 1f;        // 몸통 충돌 시 입히는 피해량
     Vector3 contactHitboxOffset; // 보스 계층에서 분리된 후에도 위치를 따라가기 위한 오프셋 (보스 기준 상대 위치)
 
+    [Header("Attack SFX")]
+    [Tooltip("레이저 발사 순간 재생할 효과음")]
+    public AudioClip laserSFX;
+    [Tooltip("암영 결계 판정 영역이 생성되는 순간 재생할 효과음")]
+    public AudioClip shadowBarrierSFX;
+    [Tooltip("먹구름 번개가 치는 순간 재생할 효과음")]
+    public AudioClip thunderSFX;
+    [Tooltip("가시가 솟아나는 순간 재생할 효과음")]
+    public AudioClip spikeSFX;
+    [Tooltip("색채 소용돌이가 생성되는 순간 재생할 효과음")]
+    public AudioClip colorWhirlpoolSFX;
+
+
+    [Header("Boss BGM")]
+    [Tooltip("1페이즈(크리스탈 페이즈) 동안 재생할 배경음악")]
+    public AudioClip bossBGM1;
+    [Tooltip("2페이즈 진입 시 전환될 배경음악")]
+    public AudioClip bossBGM2;
+
 
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결
     public System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
@@ -116,6 +135,11 @@ public class BossAttack : MonoBehaviour
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null) target = player.transform;
+        }
+
+        if (SoundManager.Instance != null && bossBGM1 != null)
+        {
+            SoundManager.Instance.PlayBGM(bossBGM1, true);
         }
 
 
@@ -316,11 +340,12 @@ public class BossAttack : MonoBehaviour
             OnPhase2Started?.Invoke(); // [신규] 2페이즈 진입 이벤트 발송!
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
-            // 소용돌이와 동반 패턴은 메인 공격(isAttacking)과 독립적으로 살아있을 수 있으므로
-            // (예: 메인 공격은 이미 끝나 쿨다운 중인데 소용돌이만 계속 떠 있는 경우),
-            // isAttacking 여부와 무관하게 항상 확인해서 정리함.
-            // (기존에는 이 정리가 "isAttacking && currentAttackCoroutine != null" 블록 안에 있어서,
-            //  마침 쿨다운 중일 때 크리스탈이 깨지면 소용돌이가 정리되지 않고 남는 문제가 있었음)
+            // 2페이즈 BGM으로 전환
+            if (SoundManager.Instance != null && bossBGM2 != null)
+            {
+                SoundManager.Instance.PlayBGM(bossBGM2, true);
+            }
+
             if (activeWhirlpoolCoroutine != null)
             {
                 StopCoroutine(activeWhirlpoolCoroutine);
@@ -690,6 +715,11 @@ public class BossAttack : MonoBehaviour
     // 주어진 위치들에 실제 가시를 생성 (텔레그래프 단계와 분리되어, 원하는 타이밍에 독립적으로 호출 가능)
     void SpawnSpikesAtPositions(List<Vector2> positions)
     {
+        if (positions.Count > 0)
+        {
+            PlayAttackSFX(spikeSFX);
+        }
+
         foreach (var pos in positions)
         {
             GameObject spike = SpawnSpike(pos);
@@ -771,6 +801,8 @@ public class BossAttack : MonoBehaviour
         activeTelegraphMarkers.Remove(marker);
 
         // 4. 레이저 발사 후 5초 유지
+        PlayAttackSFX(laserSFX);
+
         GameObject laser = SpawnLaser(laserPos);
         if (laser != null) activeLaserObjects.Add(laser);
 
@@ -1141,6 +1173,8 @@ public class BossAttack : MonoBehaviour
         Vector3 cloudPos = cloudSpawnPos; // 먹구름이 생성됐던 그 위치 (오프셋 반영)
         if (cloud != null) hazard.StartFadeOutAndDestroy(); // 번개가 치는 순간 즉시 사라지지 않고 서서히 페이드아웃
 
+        PlayAttackSFX(thunderSFX);
+
         Vector3 strikePos = target != null ? target.position : transform.position;
         GameObject lightning = SpawnLightning(cloudPos, strikePos);
         activeLightning = lightning;
@@ -1330,6 +1364,8 @@ public class BossAttack : MonoBehaviour
         }
 
         // 4. 실제 피해 판정 영역 생성 (컬럼마다)
+        PlayAttackSFX(shadowBarrierSFX);
+
         List<GameObject> barriers = new List<GameObject>();
         foreach (var centerX in columnCenters)
         {
@@ -1426,6 +1462,8 @@ public class BossAttack : MonoBehaviour
 
     GameObject SpawnColorWhirlpool(Vector3 pos)
     {
+        PlayAttackSFX(colorWhirlpoolSFX);
+
         GameObject whirlpool;
         if (colorWhirlpoolTemplate != null)
         {
@@ -1674,6 +1712,12 @@ public class BossAttack : MonoBehaviour
         {
             SetLayerRecursively(child.gameObject, layer);
         }
+    }
+    // 지정된 AudioClip을 SoundManager를 통해 한 번 재생 (클립이 비어있으면 조용히 무시)
+    void PlayAttackSFX(AudioClip clip)
+    {
+        if (clip == null || SoundManager.Instance == null) return;
+        SoundManager.Instance.PlaySFX(clip);
     }
 
     Sprite CreateTempSquareSprite()

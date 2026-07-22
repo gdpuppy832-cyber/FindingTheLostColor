@@ -16,11 +16,15 @@ public class F_EnemyAttack : MonoBehaviour
     bool canAttack = true;     // 쿨타임 여부
 
     F_EnemyMove F_enemyMove;
+    Animator animator;
     public ContactHit contactHitbox; // 자식 오브젝트(ContactHitbox)의 ContactRelay 연결
 
     void Start()
     {
         F_enemyMove = GetComponent<F_EnemyMove>();
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
         if (telegraphSprite != null)
             telegraphSprite.enabled = false;
 
@@ -81,6 +85,12 @@ public class F_EnemyAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsAttacking", true);
+        }
+
         if (F_enemyMove != null)
             F_enemyMove.enabled = false;
 
@@ -108,7 +118,18 @@ public class F_EnemyAttack : MonoBehaviour
             telegraphSprite.enabled = false;
 
         // 공격 및 데미지 전달
-        Collider2D hit = Physics2D.OverlapBox(attackCenter, new Vector2(attackWidth, attackHeight), 0f, targetLayer);
+        Vector2 finalAttackCenter = attackCenter;
+
+        if (telegraphSprite != null)
+        {
+            finalAttackCenter = telegraphSprite.transform.position;
+        }
+
+        Collider2D hit = Physics2D.OverlapBox(
+            finalAttackCenter,
+            new Vector2(attackWidth, attackHeight),
+            0f,
+            targetLayer);
         if (hit != null)
         {
             Debug.Log("피격: " + hit.name);
@@ -130,6 +151,9 @@ public class F_EnemyAttack : MonoBehaviour
 
         if (F_enemyMove != null)
             F_enemyMove.enabled = true;
+
+        if (animator != null)
+            animator.SetBool("IsAttacking", false);
 
         isAttacking = false;
 

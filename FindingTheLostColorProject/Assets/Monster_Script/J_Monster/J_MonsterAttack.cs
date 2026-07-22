@@ -130,10 +130,10 @@ public class J_EnemyAttack : MonoBehaviour
         if (enemyMove != null)
             enemyMove.enabled = false;
 
-        Vector2 startPos = transform.position;
+        Vector2 attackStartPos = transform.position;
 
         // 낭떠러지가 아니어도 착지 지점이 너무 가까우면(제자리 수준) 안전장치로 취소
-        if (Vector2.Distance(startPos, landPos) < minJumpDistance)
+        if (Vector2.Distance(attackStartPos, landPos) < minJumpDistance)
         {
             isAttacking = false;
             canAttack = true;
@@ -146,6 +146,7 @@ public class J_EnemyAttack : MonoBehaviour
             yield break;
         }
         yield return new WaitForSeconds(telegraphTime);
+        Vector2 startPos = transform.position;
 
         // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
         if (landPos.x != startPos.x)

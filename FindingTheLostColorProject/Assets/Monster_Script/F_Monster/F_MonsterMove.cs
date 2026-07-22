@@ -25,7 +25,7 @@ public class F_EnemyMove : MonoBehaviour
     GameObject currentAlert;
 
     bool isStateDelay = false;
-    float stateDelayTimer = 0f;
+    float stateDelayTimer;
     bool pendingChaseState = false;
     bool isChasing = false;
     public bool IsStateDelay => isStateDelay;
@@ -36,12 +36,17 @@ public class F_EnemyMove : MonoBehaviour
     [Header("점프 설정")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
+    Animator animator;
 
     void Start()
     {
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -53,9 +58,15 @@ public class F_EnemyMove : MonoBehaviour
         float distance = Vector3.Distance(transform.position, target.position);
         if (isStateDelay)
         {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
+
             stateDelayTimer += Time.deltaTime;
 
-            if (stateDelayTimer >= 1.5f)
+            if (stateDelayTimer >= 0.5f)
             {
                 isStateDelay = false;
                 stateDelayTimer = 0f;
@@ -108,6 +119,11 @@ public class F_EnemyMove : MonoBehaviour
 
         if (isStopped) // 절벽 끝에서 멈춘 상태
         {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
             if (isChasing)
             {
                 float xDiff = target.position.x - transform.position.x;
@@ -160,6 +176,12 @@ public class F_EnemyMove : MonoBehaviour
 
         if (desiredDir == 0f)
         {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
+
             prevposition = transform.position;
             return;
         }
@@ -189,6 +211,12 @@ public class F_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+            UpdateAnimatorSpeed(false);
+
             if (isChasing && isGrounded && CanClimbWall(desiredDir))
             {
                 Jump();
@@ -204,6 +232,11 @@ public class F_EnemyMove : MonoBehaviour
             prevposition = transform.position;
             return;
         }
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", true);
+        }
+        UpdateAnimatorSpeed(isChasing);
 
         transform.Translate(moveSpeed * desiredDir * Time.deltaTime, 0f, 0f);
         moveDir = desiredDir;
@@ -250,6 +283,21 @@ public class F_EnemyMove : MonoBehaviour
         rigid.linearVelocity =
             new Vector2(rigid.linearVelocity.x, jumpForce);
     }
+
+    void UpdateAnimatorSpeed(bool wantFast)
+    {
+        if (animator == null) return;
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+        if (wantFast && state.IsTag("Walk"))
+        {
+            animator.speed = 1.5f;
+        }
+        else
+        {
+            animator.speed = 1f;
+        }
+    }
     void FixedUpdate()
     {
         float halfWidth = col.bounds.extents.x;
@@ -282,6 +330,17 @@ public class F_EnemyMove : MonoBehaviour
             transform.localScale = scale;
         }
     }
+    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
+    // 그 시점에 Update() 루프(isStateDelay 처리)가 멈춰서 currentAlert가 정리되지 못하므로,
+    // 여기서 확실하게 파괴함
+    void OnDisable()
+    {
+        if (currentAlert != null)
+        {
+            Destroy(currentAlert);
+            currentAlert = null;
+        }
+    }
     private void ShowAlert(GameObject prefab)
     {
         if (prefab == null)
@@ -292,7 +351,7 @@ public class F_EnemyMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 2f,
+            transform.position + Vector3.up * 1.25f,
             Quaternion.identity
         );
 
