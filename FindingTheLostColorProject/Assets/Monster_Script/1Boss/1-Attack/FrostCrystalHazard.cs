@@ -22,14 +22,23 @@ public class FrostCrystalHazard : MonoBehaviour
     [Tooltip("이 레이어에 닿으면 바닥으로 판정해 부서짐(파괴)")]
     public LayerMask groundLayer;
 
+    [Tooltip("바닥에 부딪힌 후 파괴 애니메이션 재생 시간 (초). 이 시간이 지나면 오브젝트가 사라짐")]
+    public float destroyDelay = 1f;
+
     float currentSpeed;
     bool hasDealtDamage = false; // 한 번만 피해를 주기 위한 플래그
     ContactHit hitboxRelay;    // 별도 히트박스 오브젝트 (BossAttack이 생성 직후 연결해줌)
     Quaternion fixedRotation;    // 스폰 시점의 회전값 (디자인된 기울기) - 이후 계속 이 값으로 고정
+    bool isDestroying = false; // ★ 파괴 애니메이션 재생 중 여부 (중복 처리 및 낙하 정지에 사용)
+    Animator animator;
+    Collider2D selfCollider;
     void Start()
     {
         currentSpeed = initialSpeed;
         fixedRotation = transform.rotation; // 스폰 시점(프리팹이 원래 갖고 있던) 회전을 기억해둠
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+        selfCollider = GetComponent<Collider2D>();
         Destroy(gameObject, maxLifetime);
     }
 
@@ -45,20 +54,22 @@ public class FrostCrystalHazard : MonoBehaviour
 
     void Update()
     {
+        if (isDestroying) return; // ★ 파괴 애니메이션 재생 중에는 더 이상 낙하하지 않고 제자리에 멈춤
+
         currentSpeed += acceleration * Time.deltaTime;
         transform.position += Vector3.down * currentSpeed * Time.deltaTime;
         transform.rotation = fixedRotation; // 스폰 시점 회전(디자인된 기울기)으로 매 프레임 고정 - 낙하 중 도는 것만 방지
     }
-
     void OnTriggerEnter2D(Collider2D other)
     {
-        // 바닥/발판에 닿으면 부서짐
+        if (isDestroying) return; // ★ 이미 파괴 처리 중이면 추가 판정 무시
+
+        // 바닥/발판에 닿으면 부서짐(파괴 애니메이션 시작)
         if (((1 << other.gameObject.layer) & groundLayer) != 0)
         {
-            Destroy(gameObject);
+            StartDestroying();
             return;
         }
-
         // 별도 히트박스가 연결되어 있지 않을 때만 자기 콜라이더로 직접 피격 판정
         if (hitboxRelay == null)
         {
@@ -77,5 +88,29 @@ public class FrostCrystalHazard : MonoBehaviour
             player.TakeDamage(damage);
             hasDealtDamage = true;
         }
+    }
+    // 바닥에 부딪혔을 때 호출: 파괴 애니메이션을 재생하고, 충돌 판정을 끈 뒤, destroyDelay 후 파괴
+    void StartDestroying()
+    {
+        isDestroying = true;
+
+        if (animator != null)
+        {
+            animator.SetBool("IsDestroying", true);
+        }
+
+        // ★ 파괴 중에는 충돌 판정이 없어야 하므로 콜라이더를 꺼서 추가 피해/트리거를 막음
+        if (selfCollider != null)
+        {
+            selfCollider.enabled = false;
+        }
+
+        // 별도 히트박스가 연결되어 있었다면 더 이상 피격 판정이 들어오지 않도록 콜백 해제
+        if (hitboxRelay != null)
+        {
+            hitboxRelay.onTriggerEnter -= TryDamagePlayer;
+        }
+
+        Destroy(gameObject, destroyDelay);
     }
 }
