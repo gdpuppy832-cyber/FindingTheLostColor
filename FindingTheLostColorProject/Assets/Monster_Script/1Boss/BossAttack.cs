@@ -1213,7 +1213,14 @@ public class BossAttack : MonoBehaviour
         if (hazard == null) hazard = cloud.AddComponent<DarkCloudHazard>();
         hazard.fadeInDuration = darkCloudFadeInDuration;
         hazard.holdDuration = darkCloudHoldDuration;
-        hazard.paintEraseDuration = darkCloudPaintEraseDuration;
+        // ★ paintEraseDuration은 더 이상 존재하지 않음 (DarkCloudHazard가 체력제로 변경됨)
+        // darkCloudPaintEraseDuration(누적 붓질 시간 개념)을 그대로 유지하고 싶다면,
+        // "1초당 깎이는 체력 = maxHealth / darkCloudPaintEraseDuration"으로 역산해서
+        // paintDamagePerSecond에 대입하면 기존과 동일하게 "이 시간 동안 붓질하면 지워짐" 효과를 낼 수 있음
+        if (darkCloudPaintEraseDuration > 0f)
+        {
+            hazard.paintDamagePerSecond = hazard.maxHealth / darkCloudPaintEraseDuration;
+        }
 
         return cloud;
     }
