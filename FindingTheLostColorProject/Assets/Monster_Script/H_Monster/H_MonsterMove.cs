@@ -28,6 +28,9 @@ public class H_MonsterMove : MonoBehaviour
     [Tooltip("풀숲의 IsHunting 파라미터 발동 후, 몬스터 본체가 나오며 점프 공격 시퀀스가 시작되기까지 대기 시간 (초)")]
     public float huntingToPounceDelay = 0.5f;
 
+    [Tooltip("InPlayer 발동 직후(= IsHunting으로 넘어가기 전) 재생할 효과음")]
+    public AudioClip inPlayerSFX;
+
     Transform target;
     float timer = 0;
     Vector3 prevposition;
@@ -651,6 +654,12 @@ public class H_MonsterMove : MonoBehaviour
         if (activeBushIndicator != null)
         {
             activeBushIndicator.SetInPlayer();
+        }
+
+        // ★ InPlayer 발동 직후, IsHunting으로 넘어가기 전에 효과음 재생
+        if (SoundManager.Instance != null && inPlayerSFX != null)
+        {
+            SoundManager.Instance.PlaySFX(inPlayerSFX);
         }
 
         yield return new WaitForSeconds(inPlayerToHuntingDelay);
