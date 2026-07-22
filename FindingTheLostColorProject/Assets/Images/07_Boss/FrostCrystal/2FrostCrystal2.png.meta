@@ -112,12 +112,12 @@ TextureImporter:
       name: 2FrostCrystal2_0
       rect:
         serializedVersion: 2
-        x: 77
-        y: 25
-        width: 107
-        height: 56
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 260
+        height: 232
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -130,77 +130,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 2FrostCrystal2_1
-      rect:
-        serializedVersion: 2
-        x: 147
-        y: 59
-        width: 17
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 96b5712c978e87a70800000000000000
-      internalID: 8825059079477484393
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 2FrostCrystal2_2
-      rect:
-        serializedVersion: 2
-        x: 63
-        y: 46
-        width: 14
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4e12ceb1d69d188e0800000000000000
-      internalID: -1692832922271473180
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 2FrostCrystal2_3
-      rect:
-        serializedVersion: 2
-        x: 176
-        y: 40
-        width: 16
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ee5c3e2f185c17ea0800000000000000
-      internalID: -5876698876825319954
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: fdb321d143dbfc240a03aa97db5723be
     internalID: 0
     vertices: []
     indices: 
@@ -208,12 +142,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":260.0,"y":232.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       2FrostCrystal2_0: -8170986620939396504
-      2FrostCrystal2_1: 8825059079477484393
-      2FrostCrystal2_2: -1692832922271473180
-      2FrostCrystal2_3: -5876698876825319954
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

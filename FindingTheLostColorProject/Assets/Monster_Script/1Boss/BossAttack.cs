@@ -179,12 +179,20 @@ public class BossAttack : MonoBehaviour
             laserTelegraphPrefab.SetActive(false);
         }
 
-        if (frostCrystalPrefab != null)
+        if (frostCrystalPrefabs != null && frostCrystalPrefabs.Length > 0)
         {
-            frostCrystalTemplate = Instantiate(frostCrystalPrefab, frostCrystalPrefab.transform.position, frostCrystalPrefab.transform.rotation);
-            frostCrystalTemplate.transform.SetParent(null);
-            frostCrystalTemplate.SetActive(false);
-            frostCrystalPrefab.SetActive(false);
+            frostCrystalTemplates = new GameObject[frostCrystalPrefabs.Length];
+            for (int i = 0; i < frostCrystalPrefabs.Length; i++)
+            {
+                GameObject prefab = frostCrystalPrefabs[i];
+                if (prefab == null) continue;
+
+                GameObject template = Instantiate(prefab, prefab.transform.position, prefab.transform.rotation);
+                template.transform.SetParent(null);
+                template.SetActive(false);
+                prefab.SetActive(false); // 원본은 그냥 숨겨만 두고 다시는 건드리지 않음
+                frostCrystalTemplates[i] = template;
+            }
         }
 
         if (frostTelegraphMarkerPrefab != null)
@@ -868,8 +876,9 @@ public class BossAttack : MonoBehaviour
 
     // ================= 서리비 공격 (1페이즈) =================
     [Header("1P FrostCrystal")]
-    public GameObject frostCrystalPrefab;            // 서리 수정 프리팹 (비워두면 임시 생성)
-    GameObject frostCrystalTemplate;                  // frostCrystalPrefab의 런타임 복제 템플릿 (원본 보호용)
+    [Tooltip("서로 다르게 생긴 서리 수정 프리팹들 (비워두면 임시 생성). 스폰 시점마다 이 중 하나를 무작위로 골라 사용합니다.")]
+    public GameObject[] frostCrystalPrefabs;          // 서리 수정 프리팹 배열
+    GameObject[] frostCrystalTemplates;                // frostCrystalPrefabs 각각의 런타임 복제 템플릿 (원본 보호용)
     [Tooltip("보스기준 프리즘 샤워 Y좌표")]
     public float frostRangrY = 6f;      // 보스보다 이만큼 높은 Y좌표에서 생성
     [Tooltip("보스기준 프리즘 샤워 X좌표")]
@@ -1539,14 +1548,29 @@ public class BossAttack : MonoBehaviour
         return orb;
     }
 
+    // 등록된 서리 수정 템플릿 중 유효한 것 하나를 무작위로 골라 반환 (없으면 null)
+    GameObject GetRandomFrostCrystalTemplate()
+    {
+        if (frostCrystalTemplates == null || frostCrystalTemplates.Length == 0) return null;
+
+        List<GameObject> valid = new List<GameObject>();
+        foreach (var t in frostCrystalTemplates)
+        {
+            if (t != null) valid.Add(t);
+        }
+        if (valid.Count == 0) return null;
+
+        return valid[Random.Range(0, valid.Count)];
+    }
     GameObject SpawnFrostCrystal(Vector2 pos)
     {
         GameObject crystal;
-        if (frostCrystalTemplate != null)
+        GameObject chosenTemplate = GetRandomFrostCrystalTemplate();
+        if (chosenTemplate != null)
         {
             // 프리팹 원본을 그대로 복제 (위치, 회전, 크기, 자식 구조 등 모든 게 원본과 동일하게 유지됨)
             // 이후 위치만 원하는 스폰 지점으로 옮김
-            crystal = Instantiate(frostCrystalTemplate);
+            crystal = Instantiate(chosenTemplate);
             crystal.transform.position = pos;
             crystal.SetActive(true);
         }

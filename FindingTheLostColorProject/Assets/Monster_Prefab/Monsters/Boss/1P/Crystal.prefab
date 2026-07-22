@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3690797216815920063}
   - component: {fileID: 294778310356344967}
   - component: {fileID: 6388202000045335899}
-  - component: {fileID: 8609072320213553891}
   - component: {fileID: 4627690519435609107}
+  - component: {fileID: 3469704005990995944}
+  - component: {fileID: -225886135183288560}
   m_Layer: 10
   m_Name: Crystal
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6641084922904838977}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.47, y: 5.33, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.6099, y: 1.6099, z: 1.6099}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -80,8 +81,8 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.48584908, b: 0.9771456, a: 1}
+  m_Sprite: {fileID: 5293031974318352618, guid: 9cec5988e2ed6e744a57579de2b9736e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -118,8 +119,32 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &8609072320213553891
-BoxCollider2D:
+--- !u!114 &4627690519435609107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6641084922904838977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72fbba66a6286e642955a0d311a4fe1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 25
+  currentHealth: 0
+  attackDamage: 0.5
+  attackCooldown: 1
+  purifiedTriggerName: Purified
+  hitTextFont: {fileID: 0}
+  hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
+  purificationIndicatorPrefab: {fileID: 0}
+  indicatorOffset: {x: 0, y: 1.5, z: 0}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
+  targetColor: {r: 1, g: 1, b: 1, a: 1}
+  crystalDestroySFX: {fileID: 8300000, guid: 444a56966490a7e45958beaaaec92807, type: 3}
+--- !u!68 &3469704005990995944
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -153,41 +178,49 @@ BoxCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4627690519435609107
-MonoBehaviour:
+  m_Points:
+  - {x: 0.473316, y: 0.8031757}
+  - {x: 0.020261176, y: 1.1574378}
+  - {x: -0.44164917, y: 0.8296623}
+  - {x: -0.3521834, y: 0.40080643}
+  - {x: -0.42609307, y: 0.43733793}
+  - {x: -0.4646191, y: 0.4062075}
+  - {x: -0.4098461, y: 0.2201646}
+  - {x: -0.5630101, y: 0.28857204}
+  - {x: -0.6053108, y: 0.14216295}
+  - {x: 0.6722556, y: 0.13886064}
+  - {x: 0.43045488, y: 0.21169166}
+  - {x: 0.43082806, y: 0.2863424}
+  - {x: 0.38932365, y: 0.30721638}
+  - {x: 0.34633404, y: 0.2757809}
+  - {x: 0.472651, y: 0.7931598}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
+--- !u!95 &-225886135183288560
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6641084922904838977}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72fbba66a6286e642955a0d311a4fe1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 25
-  currentHealth: 0
-  attackDamage: 0.5
-  attackCooldown: 1
-  purifiedTriggerName: Purified
-  hitTextFont: {fileID: 0}
-  hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
-  purificationIndicatorPrefab: {fileID: 0}
-  indicatorOffset: {x: 0, y: 1.5, z: 0}
-  startColor: {r: 1, g: 0.3915094, b: 0.78431374, a: 1}
-  targetColor: {r: 1, g: 0.39215687, b: 0.78431374, a: 1}
-  crystalDestroySFX: {fileID: 8300000, guid: 444a56966490a7e45958beaaaec92807, type: 3}
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 562f15483298c454c904bf248616c19a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &5569276861517661201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -270,7 +303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1
+      value: 1.617
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

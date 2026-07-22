@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5525985110957521975
 Transform:
   m_ObjectHideFlags: 0
@@ -238,10 +238,8 @@ MonoBehaviour:
   thunderSFX: {fileID: 8300000, guid: 3779cb7e038a1f94199a05cab125b676, type: 3}
   spikeSFX: {fileID: 8300000, guid: 25d1af2aa632a0d43b88de0af1f46830, type: 3}
   colorWhirlpoolSFX: {fileID: 8300000, guid: 9dd975469202bd44b85e5bb5c90f8eed, type: 3}
-  sfxAudioSource: {fileID: 0}
   bossBGM1: {fileID: 8300000, guid: 15abfcf8c8377b645ab8b45cb8e780d9, type: 3}
   bossBGM2: {fileID: 8300000, guid: adfd5c999dd5d124babcb852ff53f7fc, type: 3}
-  bgmAudioSource: {fileID: 0}
   crystals:
   - {fileID: 0}
   - {fileID: 0}
@@ -262,7 +260,7 @@ MonoBehaviour:
   colorWhirlpoolMaxPullSpeed: 8
   colorWhirlpoolDuration: 7.5
   fallbackColorWhirlpoolSize: 5
-  colorWhirlpoolTriggerCount: 1
+  colorWhirlpoolTriggerCount: 2
   telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
   spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
   spikeTelegraphDuration: 1.5
@@ -279,12 +277,16 @@ MonoBehaviour:
   laserPrefab: {fileID: 4371630478863771354, guid: 817fd6c7639bda64fabe240522c3ba53, type: 3}
   laserTelegraphDuration: 1.5
   laserTelegraphBlinkInterval: 0.25
-  laserActiveDuration: 0.75
+  laserActiveDuration: 1
   laserFollowSpeed: 1.25
   fallbackLaserWidth: 20
   fallbackLaserThickness: 0.6
-  frostCrystalPrefab: {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
-  frostRangrY: 7
+  frostCrystalPrefabs:
+  - {fileID: 2129274666916119979, guid: b4ca3ed960f126e4e9a1eb3c59fc5531, type: 3}
+  - {fileID: 2129274666916119979, guid: 7dad21d5ca515fe40b3ca829f2a916bb, type: 3}
+  - {fileID: 2129274666916119979, guid: 09aacff3e5fc82d459304d4f1c8d5622, type: 3}
+  - {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
+  frostRangrY: 5.5
   frostRangeX: 30
   frostRainDuration: 5
   frostSpawnInterval: 0.3
@@ -349,7 +351,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossAttack: {fileID: 0}
   spawnSFX: {fileID: 8300000, guid: dd50bfd7db9908a4d97c6476ddb109ba, type: 3}
-  sfxAudioSource: {fileID: 0}
   spawnMonsterPrefabs1:
   - {fileID: 6765033659729166290, guid: d8a617ec3a4e5134b8b38dc247545788, type: 3}
   spawnMonsterPrefabs2:

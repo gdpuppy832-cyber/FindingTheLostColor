@@ -103,12 +103,12 @@ TextureImporter:
       name: 1FrostCrystal_0
       rect:
         serializedVersion: 2
-        x: 111
-        y: 25
-        width: 40
-        height: 154
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 260
+        height: 232
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 597fbcf7ee06a2e42af898a0b6991f75
     internalID: 0
     vertices: []
     indices: 

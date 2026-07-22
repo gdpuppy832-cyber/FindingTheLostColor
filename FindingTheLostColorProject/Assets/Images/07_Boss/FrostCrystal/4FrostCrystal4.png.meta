@@ -118,12 +118,12 @@ TextureImporter:
       name: 4FrostCrystal4_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 135
-        width: 11
-        height: 13
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 260
+        height: 232
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -136,121 +136,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 4FrostCrystal4_1
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 137
-        width: 9
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 60acd5d678908c9a0800000000000000
-      internalID: -6212705208697501178
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 4FrostCrystal4_2
-      rect:
-        serializedVersion: 2
-        x: 21
-        y: 85
-        width: 17
-        height: 13
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: eaaf12d880f795d80800000000000000
-      internalID: -8261432366730184018
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 4FrostCrystal4_3
-      rect:
-        serializedVersion: 2
-        x: 69
-        y: 63
-        width: 25
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: df5b90fe71c3e0cb0800000000000000
-      internalID: -4895909671412845059
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 4FrostCrystal4_4
-      rect:
-        serializedVersion: 2
-        x: 188
-        y: 75
-        width: 20
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 80df76eb721c5c940800000000000000
-      internalID: 5315867311623109896
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 4FrostCrystal4_5
-      rect:
-        serializedVersion: 2
-        x: 227
-        y: 85
-        width: 9
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f0e1d361e21ab3df0800000000000000
-      internalID: -199388539174183409
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 26bdb56526360054595d11ba598150e1
     internalID: 0
     vertices: []
     indices: 
@@ -258,14 +148,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":260.0,"y":232.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       4FrostCrystal4_0: 3434696674603796892
-      4FrostCrystal4_1: -6212705208697501178
-      4FrostCrystal4_2: -8261432366730184018
-      4FrostCrystal4_3: -4895909671412845059
-      4FrostCrystal4_4: 5315867311623109896
-      4FrostCrystal4_5: -199388539174183409
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
