@@ -528,7 +528,7 @@ MonoBehaviour:
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
   jumpForce: 4.25
-  climbableWallHeight: 0.5
+  climbableWallHeight: 0.65
   chaseAnimSpeedMultiplier: 1.5
 --- !u!50 &5328816977903137336
 Rigidbody2D:
