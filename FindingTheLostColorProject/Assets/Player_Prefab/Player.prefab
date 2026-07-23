@@ -292,7 +292,7 @@ SpriteRenderer:
   m_SortingLayerID: -897715971
   m_SortingLayer: 5
   m_SortingOrder: 2
-  m_Sprite: {fileID: -5873331033001879359, guid: 192b4c19628494a488e330d937e391e2, type: 3}
+  m_Sprite: {fileID: 3713999571166106265, guid: 2eeef8d64c71a62478cd2a1116f7c286, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -318,7 +318,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 2.7
+  m_GravityScale: 2.6
   m_Material: {fileID: 6200000, guid: cbef0de1c9826c24390e08ecd5775866, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
-  jumpForce: 10
+  jumpForce: 10.2
   jumpDelay: 0.1
   dashSpeed: 17
   dashDuration: 0.2
@@ -449,8 +449,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.013479676, y: 0.111146554}
-  m_Size: {x: 2.1716895, y: 2.578761}
+  m_Offset: {x: -0.065204926, y: -0.18946278}
+  m_Size: {x: 1.0974765, y: 2.0742197}
   m_Direction: 0
 --- !u!95 &-8305801689409952958
 Animator:
