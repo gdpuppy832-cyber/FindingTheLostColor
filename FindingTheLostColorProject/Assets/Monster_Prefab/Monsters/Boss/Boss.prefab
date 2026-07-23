@@ -229,7 +229,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackCooldown: 3
+  attackCooldown: 0
   bossAttackDamage: 1
   contactHitbox: {fileID: 4047836205825665637}
   contactDamage: 1
@@ -278,7 +278,7 @@ MonoBehaviour:
   laserTelegraphDuration: 1.5
   laserTelegraphBlinkInterval: 0.25
   laserActiveDuration: 1
-  laserFollowSpeed: 1.25
+  laserFollowSpeed: 1
   fallbackLaserWidth: 20
   fallbackLaserThickness: 0.6
   frostCrystalPrefabs:
@@ -320,11 +320,11 @@ MonoBehaviour:
   fallbackDarkOrbSize: 0.6
   darkCloudPrefab: {fileID: 0}
   lightningPrefab: {fileID: 0}
-  darkCloudSpawnOffset: {x: 0, y: 1.5}
+  darkCloudSpawnOffset: {x: 0, y: 6}
   darkCloudFadeInDuration: 2
   darkCloudHoldDuration: 6
   darkCloudPaintEraseDuration: 3
-  lightningLifetime: 0.4
+  lightningLifetime: 1
   lightningLength: 100
   fallbackDarkCloudSize: 4
   fallbackLightningWidth: 0.6

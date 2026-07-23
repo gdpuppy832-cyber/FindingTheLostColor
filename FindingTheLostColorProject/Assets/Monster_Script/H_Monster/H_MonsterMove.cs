@@ -17,6 +17,9 @@ public class H_MonsterMove : MonoBehaviour
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
     public float safeDropDistance = 3f;
+
+    [Tooltip("배회(순찰) 모드일 때 절벽을 감지하는 레이캐스트 거리")]
+    public float wanderEdgeCheckDistance = 2f;
     [Header("점프 설정")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
@@ -434,7 +437,7 @@ public class H_MonsterMove : MonoBehaviour
         Vector2 leftPoint = (Vector2)rigid.position + Vector2.left * oneThird;
         Vector2 rightPoint = (Vector2)rigid.position + Vector2.right * oneThird;
 
-        float checkDistance = isChasing ? safeDropDistance : 2f;
+        float checkDistance = isChasing ? safeDropDistance : wanderEdgeCheckDistance;
 
         Debug.DrawRay(leftPoint, Vector2.down * checkDistance, Color.red);
         Debug.DrawRay(rightPoint, Vector2.down * checkDistance, Color.blue);
