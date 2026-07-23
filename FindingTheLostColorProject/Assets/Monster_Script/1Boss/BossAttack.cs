@@ -1184,8 +1184,10 @@ public class BossAttack : MonoBehaviour
 
         PlayAttackSFX(thunderSFX);
 
+        // ★ 플레이어 위치가 아니라, 플레이어 x좌표 기준으로 땅(지면)에 닿는 지점을 계산해서 그 지점에서 번개가 끝나도록 함
         Vector3 strikePos = target != null ? target.position : transform.position;
-        GameObject lightning = SpawnLightning(cloudPos, strikePos);
+        Vector2 groundStrikePos = GetGroundPositionBelow(strikePos);
+        GameObject lightning = SpawnLightning(cloudPos, groundStrikePos);
         activeLightning = lightning;
 
         yield return new WaitForSeconds(lightningLifetime);

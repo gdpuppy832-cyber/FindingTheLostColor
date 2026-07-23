@@ -14,21 +14,11 @@ public class LightningHazard : MonoBehaviour
     /// </summary>
     public void Init(Vector3 fromPos, Vector3 toPos, float length)
     {
-        Vector3 direction = (toPos - fromPos).normalized;
-
-        // 스프라이트가 세로(Y축)로 긴 막대라고 가정: "위쪽"이 toPos 방향을 향하도록 회전
-        float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg * -1f;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
-        float baseHeight = sr != null && sr.sprite != null ? sr.sprite.bounds.size.y : 1f;
-
-        Vector3 scale = transform.localScale;
-        scale.y = length / Mathf.Max(baseHeight, 0.001f);
-        transform.localScale = scale;
-
-        // 피벗이 중앙이라고 가정: 시작점이 고정되도록, "위쪽" 방향으로 절반 길이만큼 이동한 지점을 중심으로 삼음
-        transform.position = fromPos + transform.up * (length * 0.5f);
+        // ★ 크기는 더 이상 계산하지 않음 - 프리팹에 설정된 localScale을 그대로 사용함
+        // 회전은 항상 수직(위→아래)으로 고정
+        // toPos: 플레이어 x좌표 기준으로 땅에 닿는 지점 (BossAttack에서 미리 계산해서 넘겨줌)
+        transform.rotation = Quaternion.identity;
+        transform.position = toPos;
     }
 
     void Start()
