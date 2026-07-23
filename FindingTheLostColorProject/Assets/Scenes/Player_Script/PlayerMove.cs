@@ -85,6 +85,20 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        // [추가] 일시정지(Pause) 상태일 때는 키 입력을 완전히 차단하고, 잔여 속도를 동결하여 미끄러짐 방지
+        if (PauseManager.IsPaused)
+        {
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+            }
+            return;
+        }
+
         float moveInput = 0f;
         bool jumpPressed = false;
         bool dashPressed = false;

@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 public class CaveEntrance : InteractableObject
 {
     [Header("동굴 진입 설정")]
-    [Tooltip("이동할 보스 스테이지 씬 이름 (기본값: BossStage)")]
-    public string bossSceneName = "BossStage";
+    [Tooltip("이동할 목적지 씬의 이름 (예: Stage2, BossStage 등)")]
+    public string targetSceneName = "Stage2";
 
     [Tooltip("화면 전환 페이드 아웃 연출 시간 (초)")]
     public float fadeDuration = 1.5f;
@@ -232,68 +232,19 @@ public class CaveEntrance : InteractableObject
     /// </summary>
     private IEnumerator TransitionToBossStage()
     {
-        Image targetFadeImage = customFadeImage;
-        GameObject spawnedFadeObj = null;
+        isTransitioning = true;
 
-        if (targetFadeImage == null)
+        if (ScreenFader.Instance != null)
         {
-            // 사용자가 페이드용 이미지를 직접 연결하지 않은 경우, 런타임에 자동 생성
-            Canvas targetCanvas = hudCanvas != null ? hudCanvas : FindFirstObjectByType<Canvas>();
-
-            // 만약 자동 검색된 캔버스가 월드 스페이스(예: 몬스터 체력바)라면, 스크린 스페이스 캔버스를 찾기 위해 필터링
-            if (targetCanvas != null && targetCanvas.renderMode == RenderMode.WorldSpace)
-            {
-                Canvas[] allCanvases = FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-                foreach (var c in allCanvases)
-                {
-                    if (c.renderMode != RenderMode.WorldSpace)
-                    {
-                        targetCanvas = c;
-                        break;
-                    }
-                }
-            }
-
-            if (targetCanvas != null)
-            {
-                spawnedFadeObj = new GameObject("CaveEntrance_FadeOverlay");
-                spawnedFadeObj.transform.SetParent(targetCanvas.transform, false);
-
-                RectTransform rect = spawnedFadeObj.AddComponent<RectTransform>();
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.sizeDelta = Vector2.zero;
-
-                targetFadeImage = spawnedFadeObj.AddComponent<Image>();
-                targetFadeImage.color = new Color(0f, 0f, 0f, 0f);
-            }
-        }
-
-        if (targetFadeImage != null)
-        {
-            targetFadeImage.gameObject.SetActive(true);
-
-            // 페이드 아웃 연출 (투명 -> 검정)
-            float elapsed = 0f;
-            Color baseColor = targetFadeImage.color;
-            while (elapsed < fadeDuration)
-            {
-                elapsed += Time.deltaTime;
-                float alpha = Mathf.Clamp01(elapsed / fadeDuration);
-                targetFadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
-                yield return null;
-            }
-            // 최종적으로 완전한 알파 1 확인
-            targetFadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
+            ScreenFader.Instance.FadeToScene(targetSceneName, fadeDuration);
         }
         else
         {
-            // 캔버스를 아예 찾을 수 없는 경우 시간 대기만 처리
-            yield return new WaitForSeconds(fadeDuration);
+            // ScreenFader가 없는 경우 기존 즉시 로드 처리
+            SceneManager.LoadScene(targetSceneName);
         }
 
-        // 보스 스테이지 씬 로딩
-        SceneManager.LoadScene(bossSceneName);
+        yield return null;
     }
 
     /// <summary>

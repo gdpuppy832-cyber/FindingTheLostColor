@@ -89,17 +89,23 @@ public class PlayerHeartUI : MonoBehaviour
             shakeCoroutines = new Coroutine[heartImages.Length];
         }
 
-        // 실시간으로 씬에서 플레이어 컴포넌트 검색 시도
+        // 실시간으로 플레이어 컴포넌트 검사
         if (playerHealth == null)
         {
             playerHealth = FindFirstObjectByType<PlayerHealth>();
         }
 
-        // 플레이어 체력 컴포넌트가 존재하면 해당 체력을 사용하고, 없으면 기본 프리뷰 체력(최대치)으로 강제 렌더링하여 흰색 네모 방지
+        // [추가] 일시정지 상태인 경우, 작동 중이던 모든 하트 진동을 즉시 강제 종료하고 원래 크기/회전으로 복구!
+        if (PauseManager.IsPaused)
+        {
+            StopAllHeartShakes();
+        }
+
+        // 플레이어 체력 컴포넌트가 존재하면 해당 체력을 사용하고, 없으면 기본 프리뷰 체력 최댓값으로 강제 설정
         float maxHp = (playerHealth != null) ? playerHealth.maxHealth : (float)heartImages.Length;
         float currentHp = (playerHealth != null) ? playerHealth.currentHealth : maxHp;
 
-        // 7개의 하트 상태를 체력 값에 따라 개별적으로 계산하여 이미지 변경 및 흔들림 트리거
+        // 7개의 하트 상태를 체력 값에 따라 개별적으로 계산하고 이미지 변경 및 흔들림 트리거
         for (int i = 0; i < heartImages.Length; i++)
         {
             if (heartImages[i] == null) continue;
@@ -107,8 +113,8 @@ public class PlayerHeartUI : MonoBehaviour
             int currentState = GetHeartState(currentHp, i);
             int prevState = previousStates[i];
 
-            // 체력이 깎이거나 회복되어서 하트 상태 수치가 변한 경우 (화면 흔들림 없음)
-            if (currentState != prevState && Application.isPlaying)
+            // 체력이 깎이거나 회복되어서 하트 상태 수치가 변한 경우 (화면 흔들림 효과)
+            if (currentState != prevState && Application.isPlaying && !PauseManager.IsPaused)
             {
                 // 해당 하트 흔들림 연출 개별 트리거
                 if (shakeCoroutines[i] != null)
@@ -183,6 +189,29 @@ public class PlayerHeartUI : MonoBehaviour
         img.transform.localRotation = Quaternion.identity;
         img.transform.localScale = originalScale;
         shakeCoroutines[index] = null;
+    }
+
+    /// <summary>
+    /// 작동 중인 모든 하트의 진동 코루틴을 중지하고 회전/크기를 원상복구합니다.
+    /// </summary>
+    private void StopAllHeartShakes()
+    {
+        if (shakeCoroutines != null)
+        {
+            for (int i = 0; i < shakeCoroutines.Length; i++)
+            {
+                if (shakeCoroutines[i] != null)
+                {
+                    StopCoroutine(shakeCoroutines[i]);
+                    shakeCoroutines[i] = null;
+                }
+                if (heartImages != null && i < heartImages.Length && heartImages[i] != null)
+                {
+                    heartImages[i].transform.localRotation = Quaternion.identity;
+                    heartImages[i].transform.localScale = Vector3.one;
+                }
+            }
+        }
     }
 
     void OnDisable()

@@ -60,14 +60,24 @@ public class TitleUI : MonoBehaviour
     {
         isTransitioning = true;
 
-        // 페이드아웃 효과 (알파값 0 -> 1로 어두워짐)
+        // 1. 자체 페이드아웃 효과가 존재하면 먼저 적용
         if (fadeImage != null)
         {
             yield return StartCoroutine(FadeRoutine(1f));
         }
 
-        // 씬 로드
-        SceneManager.LoadScene(nextSceneName);
+        // 2. 씬을 넘어갈 때 ScreenFader에 씬 전환을 위임하여 다음 씬 페이드인까지 자연스럽게 연동!
+        if (ScreenFader.Instance != null)
+        {
+            // 이미 타이틀에서 페이드 아웃을 마친 상태이므로, 0초 딜레이로 즉시 어두운 상태에서 로드 후 페이드인하도록 전달합니다.
+            ScreenFader.Instance.FadeToScene(nextSceneName, 0f);
+        }
+        else
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+
+        yield return null;
     }
 
     // 2. 옵션 버튼 클릭 시 호출할 함수

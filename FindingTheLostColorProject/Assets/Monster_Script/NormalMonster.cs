@@ -264,6 +264,20 @@ public class NormalMonster : MonoBehaviour
         isPurified = true;
         currentHealth = maxHealth;
 
+        // [추가] 부모와 모든 자식 계층의 NormalMonster 컴포넌트들도 함께 정화 완료 상태로 동기화 (계층 꼬임 버그 방지)
+        NormalMonster[] siblingMonsters = GetComponentsInChildren<NormalMonster>(true);
+        foreach (var m in siblingMonsters)
+        {
+            m.isPurified = true;
+            m.currentHealth = m.maxHealth;
+        }
+        NormalMonster[] parentMonsters = GetComponentsInParent<NormalMonster>();
+        foreach (var m in parentMonsters)
+        {
+            m.isPurified = true;
+            m.currentHealth = m.maxHealth;
+        }
+
         // [추가] 정화 완료 시 미니맵 아이콘 자동 제거 (비활성화)
         int minimapLayer = LayerMask.NameToLayer("MinimapIcon");
         SpriteRenderer[] childSRs = GetComponentsInChildren<SpriteRenderer>(true);

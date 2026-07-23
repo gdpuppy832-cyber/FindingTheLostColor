@@ -605,6 +605,10 @@ PrefabInstance:
       value: Boss123
       objectReference: {fileID: 0}
     - target: {fileID: 788346720072464778, guid: b082dbd0f70a44d46b06013c28964426, type: 3}
+      propertyPath: targetSceneName
+      value: Boss123
+      objectReference: {fileID: 0}
+    - target: {fileID: 788346720072464778, guid: b082dbd0f70a44d46b06013c28964426, type: 3}
       propertyPath: warningPanelObj
       value: 
       objectReference: {fileID: 0}

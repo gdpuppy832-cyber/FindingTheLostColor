@@ -102,7 +102,8 @@ public class PauseManager : MonoBehaviour
             bool currentlyPaused = (pausePanel != null && pausePanel.activeSelf) ||
                                    (optionPanel != null && optionPanel.activeSelf) ||
                                    (quitConfirmPanel != null && quitConfirmPanel.activeSelf) ||
-                                   (titleConfirmPanel != null && titleConfirmPanel.activeSelf);
+                                   (titleConfirmPanel != null && titleConfirmPanel.activeSelf) ||
+                                   (devModePanel != null && devModePanel.activeSelf);
 
             if (currentlyPaused)
             {
@@ -116,12 +117,17 @@ public class PauseManager : MonoBehaviour
                 {
                     CloseTitleConfirm();
                 }
-                // 3순위: 옵션 패널이 열려있다면 그것부터 닫습니다.
+                // 3순위: 개발자 모드 창이 켜져있다면 그것부터 닫습니다.
+                else if (devModePanel != null && devModePanel.activeSelf)
+                {
+                    CloseDevPanel();
+                }
+                // 4순위: 옵션 패널이 열려있다면 그것부터 닫습니다.
                 else if (optionPanel != null && optionPanel.activeSelf)
                 {
                     CloseOption();
                 }
-                // 4순위: 그 외 일반 일시정지 상태라면 일시정지를 해제합니다.
+                // 5순위: 그 외 일반 일시정지 상태라면 일시정지를 해제합니다.
                 else
                 {
                     Resume();
@@ -318,5 +324,27 @@ public class PauseManager : MonoBehaviour
         {
             infiniteSuperText.text = "궁극기 무한: " + (isInfiniteSuper ? "<color=#00FF00>ON</color>" : "<color=#FF0000>OFF</color>");
         }
+    }
+
+    /// <summary>
+    /// [치트] 현재 씬의 모든 일반 몬스터를 즉시 정화 완료 처리합니다.
+    /// </summary>
+    public void PurifyAllMonsters()
+    {
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsSortMode.None);
+        int count = 0;
+        foreach (var m in monsters)
+        {
+            if (m != null && !m.IsPurified && m.gameObject.activeInHierarchy)
+            {
+                m.Purify();
+                count++;
+            }
+        }
+
+        if (SoundManager.Instance != null) 
+            SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
+
+        Debug.Log($"[DevMode] 치트 작동: 씬 내의 {count}마리 몬스터를 즉시 전체 정화했습니다.");
     }
 }

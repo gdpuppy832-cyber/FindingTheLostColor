@@ -47,12 +47,28 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null) return;
 
-        // 1. 이상적인 카메라 목표 위치 계산
+        // 1. 이상적인 카메라 목표 위치 계산 (NaN 감지 보호막)
         Vector3 idealTargetPos = new Vector3(target.position.x, target.position.y + yOffset, transform.position.z);
+        if (float.IsNaN(idealTargetPos.x) || float.IsNaN(idealTargetPos.y))
+        {
+            idealTargetPos = transform.position;
+        }
 
         // 2. X축 Y축 분리하여 SmoothDamp 적용
         float nextX = Mathf.SmoothDamp(transform.position.x, idealTargetPos.x, ref velocityX, smoothTimeX);
         float nextY = Mathf.SmoothDamp(transform.position.y, idealTargetPos.y, ref velocityY, smoothTimeY);
+
+        // [핵심 해결] 만약 연산 오차 등으로 NaN이 튀었을 경우, 이전 프레임 위치로 백업하고 속도 오염(NaN) 강제 리셋
+        if (float.IsNaN(nextX) || float.IsNaN(velocityX))
+        {
+            nextX = transform.position.x;
+            velocityX = 0f;
+        }
+        if (float.IsNaN(nextY) || float.IsNaN(velocityY))
+        {
+            nextY = transform.position.y;
+            velocityY = 0f;
+        }
 
         Vector3 nextPos = new Vector3(nextX, nextY, transform.position.z);
 
@@ -64,9 +80,12 @@ public class CameraFollow : MonoBehaviour
             nextPos = new Vector3(idealTargetPos.x + offsetFromTarget.x, idealTargetPos.y + offsetFromTarget.y, transform.position.z);
         }
 
-        // 4. 카메라 한계선 Clamping
+        // 4. 카메라 한계선 Clamping (한계선 위치 역시 NaN 예방)
         float clampedX = Mathf.Clamp(nextPos.x, minCameraPos.x, maxCameraPos.x);
         float clampedY = Mathf.Clamp(nextPos.y, minCameraPos.y, maxCameraPos.y);
+
+        if (float.IsNaN(clampedX)) clampedX = transform.position.x;
+        if (float.IsNaN(clampedY)) clampedY = transform.position.y;
 
         // 5. 카메라 흔들림(Shake) 오프셋 계산 (일시정지 중 멈춤 처리)
         if (Time.timeScale == 0f)
@@ -97,6 +116,7 @@ public class CameraFollow : MonoBehaviour
     /// <param name="duration">흔들림 지속 시간</param>
     public void TriggerShake(float intensity, float duration)
     {
+        if (Time.timeScale == 0f || PauseManager.IsPaused) return; // 일시정지 중 진동 차단
         shakeIntensity = intensity;
         shakeTimeRemaining = duration;
     }
