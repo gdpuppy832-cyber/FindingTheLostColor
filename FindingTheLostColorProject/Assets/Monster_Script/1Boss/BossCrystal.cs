@@ -8,12 +8,12 @@ public class BossCrystal : NormalMonster
     public AudioClip crystalDestroySFX;
     private bool crystalDestroyed = false;
     private bool halfHealthTriggered = false; // ★ 체력 50% 파라미터 중복 발동 방지
-    private Animator animator;
+    private Animator crystalAnimator; // ★ 부모(NormalMonster)의 animator 필드와 이름이 겹치지 않도록 별도 이름 사용
 
     void Start()
     {
-        animator = GetComponent<Animator>();
-        if (animator == null) animator = GetComponentInChildren<Animator>();
+        crystalAnimator = GetComponent<Animator>();
+        if (crystalAnimator == null) crystalAnimator = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -22,9 +22,9 @@ public class BossCrystal : NormalMonster
         if (!halfHealthTriggered && currentHealth >= maxHealth * 0.5f)
         {
             halfHealthTriggered = true;
-            if (animator != null)
+            if (crystalAnimator != null)
             {
-                animator.SetTrigger("50");
+                crystalAnimator.SetTrigger("50");
             }
         }
 
@@ -39,9 +39,9 @@ public class BossCrystal : NormalMonster
             }
 
             // ★ 파괴 애니메이션 트리거 발동 (오브젝트 자체는 파괴하지 않음)
-            if (animator != null)
+            if (crystalAnimator != null)
             {
-                animator.SetTrigger("Destroy");
+                crystalAnimator.SetTrigger("Destroy");
             }
 
             OnCrystalDestroyed?.Invoke();
