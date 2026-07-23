@@ -22,6 +22,10 @@ public class J_EnemyAttack : MonoBehaviour
     bool isAttacking = false;
     bool canAttack = true;
 
+    [Tooltip("착지 지점이 낭떠러지로 판정되어 공격을 시도하지 못했을 때, 다시 시도하기까지 대기하는 시간(초). 값이 없으면 매 프레임 재계산되어 플레이어가 공중에 살짝 움직일 때마다 판정이 오락가락하며 공격 시작이 미묘하게 늦어짐")]
+    public float landingCheckRetryInterval = 0.15f;
+    float nextLandingCheckTime = 0f;
+
     J_EnemyMove enemyMove;
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
@@ -101,12 +105,23 @@ public class J_EnemyAttack : MonoBehaviour
 
         if (horizontalDist <= lineWidth && verticalDist <= attackRange)
         {
+            // 낭떠러지 판정에 실패한 직후에는 재계산 자체를 잠깐 쉬어감.
+            // (매 프레임 즉시 재계산하면, 플레이어가 점프 중일 때처럼 목표 위치가
+            //  프레임마다 미세하게 흔들리는 구간에서 판정이 성공/실패를 오가며
+            //  실제 공격 시작이 몇 프레임씩 미뤄지는 것처럼 보이는 문제가 있었음)
+            if (Time.time < nextLandingCheckTime) return;
+
             Vector2 startPos = transform.position;
             Vector2 desiredLandPos = target.position;
             Vector2 landPos = FindValidLandingSpot(startPos, desiredLandPos, out bool isCliff);
 
-            // 착지 지점이 낭떠러지 때문에 잘린 경우, 점프 자체를 시도하지 않음 (텔레그래프도 안 뜨고 상태 변화 없음)
-            if (isCliff) return;
+            // 착지 지점이 낭떠러지 때문에 잘린 경우, 점프 자체를 시도하지 않고
+            // 다음 재시도까지 짧게 대기 시간을 둠
+            if (isCliff)
+            {
+                nextLandingCheckTime = Time.time + landingCheckRetryInterval;
+                return;
+            }
 
             StartCoroutine(JumpAttackRoutine(landPos));
         }
