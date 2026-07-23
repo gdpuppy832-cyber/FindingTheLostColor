@@ -15,11 +15,18 @@ public class ColorOrb : MonoBehaviour
     [Tooltip("파괴될 때 재생할 이펙트 프리팹 (선택 사항, 비워두면 이펙트 없이 그냥 사라짐)")]
     public GameObject destroyEffectPrefab;
 
+    [Header("체력바")]
+    public Transform hpBarFill;
+    public float lerpSpeed = 5f;
+
+    float currentFill = 1f;
     bool isDestroyed = false;
 
     void Awake()
     {
         currentHealth = maxHealth;
+
+        currentFill = 1f;
     }
 
     /// <summary>
@@ -34,12 +41,29 @@ public class ColorOrb : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0f);
 
+
+
         if (currentHealth <= 0f)
         {
             DestroyOrb();
         }
     }
+    void Update()
+    {
+        if (hpBarFill == null) return;
 
+        float targetFill = currentHealth / maxHealth;
+
+        currentFill = Mathf.Lerp(
+            currentFill,
+            targetFill,
+            Time.deltaTime * lerpSpeed
+        );
+
+        Vector3 scale = hpBarFill.localScale;
+        scale.x = currentFill;
+        hpBarFill.localScale = scale;
+    }
     void DestroyOrb()
     {
         if (isDestroyed) return;
@@ -49,6 +73,7 @@ public class ColorOrb : MonoBehaviour
         {
             Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
         }
+
 
         Destroy(gameObject);
     }

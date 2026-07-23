@@ -249,12 +249,16 @@ public class R_EnemyMove : MonoBehaviour
     }
     private bool CanClimbWall(float dir)
     {
-        Vector2 frontPos = (Vector2)transform.position +
+        // 기존에는 frontPos가 몸통 중앙(transform.position) 높이에서 시작해서,
+        // 몸통 중앙보다 낮은 벽은 lowHit이 아예 아무것도 맞히지 못해 항상 false(오르기 불가)로
+        // 판정되는 문제가 있었음. 감지 기준점을 발밑(콜라이더 하단)으로 낮춰서
+        // 어떤 높이의 벽이든 lowHit이 정상적으로 감지되도록 함
+        Vector2 feetPos = new Vector2(transform.position.x, col.bounds.min.y + 0.05f) +
                            Vector2.right * dir *
                            (col.bounds.extents.x + 0.1f);
 
         RaycastHit2D lowHit = Physics2D.Raycast(
-            frontPos,
+            feetPos,
             Vector2.right * dir,
             0.2f,
             LayerMask.GetMask("Platform"));
@@ -262,7 +266,9 @@ public class R_EnemyMove : MonoBehaviour
         if (lowHit.collider == null)
             return false;
 
-        Vector2 upperPos = frontPos + Vector2.up * climbableWallHeight;
+        // 발밑 기준으로 climbableWallHeight만큼 위에서도 벽이 계속 이어지는지 검사.
+        // 그 높이에서 벽이 없다면(=낮은 벽이라면) 오를 수 있다고 판정
+        Vector2 upperPos = feetPos + Vector2.up * climbableWallHeight;
 
         RaycastHit2D upperHit = Physics2D.Raycast(
             upperPos,

@@ -120,34 +120,53 @@ public class Boss_NormalMonster : MonoBehaviour
         scale.x = Mathf.Abs(scale.x) * -moveDir;
         transform.localScale = scale;
     }
+    // 씬의 BossPortalSpawner가 가진 좌/우 포탈 위치 중, 정화된 지점에서 더 가까운 쪽 방향(1: 오른쪽, -1: 왼쪽)을 반환
+    float GetDirectionToNearestPortal()
+    {
+        BossPortalSpawner spawner = FindFirstObjectByType<BossPortalSpawner>();
+        if (spawner != null && spawner.leftPortalTransform != null && spawner.rightPortalTransform != null)
+        {
+            float distToLeft = Mathf.Abs(transform.position.x - spawner.leftPortalTransform.position.x);
+            float distToRight = Mathf.Abs(transform.position.x - spawner.rightPortalTransform.position.x);
 
+            if (distToLeft <= distToRight)
+            {
+                return -1f; // 왼쪽 포탈이 더 가까움
+            }
+            else
+            {
+                return 1f; // 오른쪽 포탈이 더 가까움
+            }
+        }
+
+        // 포탈 스포너나 포탈 위치를 못 찾았을 때를 대비한 안전장치 (기존 플레이어 반대 방향 로직으로 폴백)
+        PlayerHealth player = FindFirstObjectByType<PlayerHealth>();
+        if (player != null)
+        {
+            return transform.position.x >= player.transform.position.x ? 1f : -1f;
+        }
+
+        float scaleSign = Mathf.Sign(transform.localScale.x);
+        return scaleSign != 0f ? scaleSign : 1f;
+    }
     System.Collections.IEnumerator FleeRoutine()
-                {
-                    // 도망칠 방향 결정
-                    if (direction == FleeDirection.Right)
-                    {
-                        moveDir = 1f;
-                    }
-                    else if (direction == FleeDirection.Left)
-                    {
-                        moveDir = -1f;
-                    }
-                    else
-                    {
-                        // Auto: 플레이어 반대쪽으로 도망
-                        PlayerHealth player = FindFirstObjectByType<PlayerHealth>();
-                        if (player != null)
-                        {
-                            moveDir = transform.position.x >= player.transform.position.x ? 1f : -1f;
-                        }
-                        else
-                        {
-                            float scaleSign = Mathf.Sign(transform.localScale.x);
-                            moveDir = scaleSign != 0f ? scaleSign : 1f;
-                        }
-                    }
+    {
+        // 도망칠 방향 결정
+        if (direction == FleeDirection.Right)
+        {
+            moveDir = 1f;
+        }
+        else if (direction == FleeDirection.Left)
+        {
+            moveDir = -1f;
+        }
+        else
+        {
+            // Auto: 정화된 위치에서 더 가까운 포탈 쪽으로 이동
+            moveDir = GetDirectionToNearestPortal();
+        }
 
-                    yield return new WaitForSeconds(pauseDuration);
+        yield return new WaitForSeconds(pauseDuration);
 
                     // Kinematic으로 전환하면 물리 충돌(밀림)을 전혀 받지 않게 되어 벽을 그대로 통과함.
                     // 바닥은 아래에서 별도의 레이캐스트로 직접 감지해서 착지 상태를 유지시킴 (FixedUpdate 참고)

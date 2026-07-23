@@ -204,8 +204,8 @@ MonoBehaviour:
   attackStopDistance: 0.1
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
-  jumpForce: 4.4
-  climbableWallHeight: 0.6
+  jumpForce: 3.15
+  climbableWallHeight: 1.1
   inPlayerToHuntingDelay: 0.75
   huntingToPounceDelay: 0.5
   inPlayerSFX: {fileID: 0}
