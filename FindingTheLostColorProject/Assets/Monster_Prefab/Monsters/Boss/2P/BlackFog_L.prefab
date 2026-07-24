@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 51744735742554442}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -70.48, y: 8.79, z: 0}
-  m_LocalScale: {x: 20, y: 10, z: 1.9546}
+  m_LocalPosition: {x: -71, y: 8.79, z: 0}
+  m_LocalScale: {x: 0.72347736, y: 1.9, z: 1.9546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: -485289909
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.49019608, g: 0.49019608, b: 0.49019608, a: 0.4627451}
+  m_Sprite: {fileID: -5853769327775776115, guid: c9c919aabbda8564485c38ce700df39b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -103,10 +103,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   side: 0
-  spawnDistanceX: 32
+  spawnDistanceX: 28
   travelDuration: 10
   pushBackSpeed: 4
   damagePerSecond: 1
+  velocitySmoothTime: 0.3
+  explosionPushLerpSpeed: 5
 --- !u!61 &7256797858801568076
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -141,15 +143,15 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.027834892, y: -0.29565144}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 30.216393, y: 10.8}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 30.38109, y: 10.559389}
   m_EdgeRadius: 0
