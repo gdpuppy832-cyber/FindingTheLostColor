@@ -19,14 +19,26 @@ public class ColorOrb : MonoBehaviour
     public Transform hpBarFill;
     public float lerpSpeed = 5f;
 
+    [Header("Floating")]
+    public float floatingSpeed = 1f;
+    public float floatingDistance = 0.3f;
+
+    [Header("Glow")]
+    public SpriteRenderer glowSprite;
+    public float glowFadeSpeed = 2f;
+
     float currentFill = 1f;
     bool isDestroyed = false;
+
+    Vector3 startPosition;
 
     void Awake()
     {
         currentHealth = maxHealth;
 
         currentFill = 1f;
+
+        startPosition = transform.position;
     }
 
     /// <summary>
@@ -50,19 +62,33 @@ public class ColorOrb : MonoBehaviour
     }
     void Update()
     {
-        if (hpBarFill == null) return;
+        // 체력바
+        if (hpBarFill != null)
+        {
+            float targetFill = currentHealth / maxHealth;
 
-        float targetFill = currentHealth / maxHealth;
+            currentFill = Mathf.Lerp(
+                currentFill,
+                targetFill,
+                Time.deltaTime * lerpSpeed
+            );
 
-        currentFill = Mathf.Lerp(
-            currentFill,
-            targetFill,
-            Time.deltaTime * lerpSpeed
-        );
+            Vector3 scale = hpBarFill.localScale;
+            scale.x = currentFill;
+            hpBarFill.localScale = scale;
+        }
 
-        Vector3 scale = hpBarFill.localScale;
-        scale.x = currentFill;
-        hpBarFill.localScale = scale;
+        // 상하 부유
+        transform.position = startPosition +
+            Vector3.up * Mathf.Sin(Time.time * floatingSpeed) * floatingDistance;
+
+        // Glow 페이드
+        if (glowSprite != null)
+        {
+            Color color = glowSprite.color;
+            color.a = (Mathf.Sin(Time.time * glowFadeSpeed) + 1f) * 0.5f;
+            glowSprite.color = color;
+        }
     }
     void DestroyOrb()
     {

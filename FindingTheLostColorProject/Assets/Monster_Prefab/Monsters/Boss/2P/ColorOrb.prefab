@@ -180,8 +180,8 @@ SpriteRenderer:
   m_SortingLayerID: -485289909
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0.013520718, b: 1, a: 1}
+  m_Sprite: {fileID: -238276301662938623, guid: 504bb2ad73f0caa428ba8bc571d1fed9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -208,6 +208,10 @@ MonoBehaviour:
   destroyEffectPrefab: {fileID: 0}
   hpBarFill: {fileID: 3997754085115011911}
   lerpSpeed: 5
+  floatingSpeed: 1
+  floatingDistance: 0.3
+  glowSprite: {fileID: 2828353893169882318, guid: 13cae122ebd5de549810733c2ba1dba8, type: 3}
+  glowFadeSpeed: 2
 --- !u!1 &8335021924054451699
 GameObject:
   m_ObjectHideFlags: 0
