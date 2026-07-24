@@ -620,6 +620,17 @@ public class BossAttack : MonoBehaviour
     public float spikeMinDistance = 1.5f;           // 가시끼리 최소 간격 (겹침 방지)
     public float spikeMaxHeightAboveBoss = 3f;      // 보스 기준 이 값보다 높은 땅에는 가시 생성 안 함 (여유 허용치)
 
+    [Header("Player Spike Full-Contact Search")]
+    [Tooltip("가시 아래쪽 면이 바닥에 닿는지 검사할 때 폭 방향으로 몇 개 지점을 샘플링할지")]
+    public int spikeContactSampleCount = 5;
+    [Tooltip("샘플 지점의 바닥 높이가 기준 Y와 이 값 이내로 차이나면 '닿아 있다'고 판정")]
+    public float spikeContactTolerance = 0.05f;
+    [Tooltip("X축 탐색 시 한 번에 이동할 간격")]
+    public float spikeContactSearchStep = 0.5f;
+    [Tooltip("X축 탐색 최대 거리 (이 거리 안에서 못 찾으면 원래 위치 그대로 사용)")]
+    public float spikeContactSearchMaxDistance = 8f;
+    public float fallbackSpikeHalfWidth = 0.3f; // spikeTemplate에서 폭을 못 구했을 때 사용할 기본 반폭
+
     [Tooltip("두 번째 공격 시작 전 대기 시간 (첫 번째 가시가 사라진 뒤)")]
     public float spikeSecondWaveDelay = 0.5f;
 
@@ -666,15 +677,33 @@ public class BossAttack : MonoBehaviour
     IEnumerator RunSpikeTelegraphPhase(List<Vector2> resultPositions, List<Vector2> avoidPositions)
     {
         // 1. 위치 4곳 결정: 플레이어 위치 1곳 + 랜덤 바닥 위치 3곳
-        resultPositions.Add(GetGroundPositionBelow(target.position));
+        resultPositions.Add(FindPlayerSpikePosition(target.position));
 
         int found = 0;
         int attempts = 0;
+
+        // 1단계 (엄격): 가시 폭 전체가 바닥에 닿는 위치를 우선적으로 탐색
         while (found < 3 && attempts < spikeMaxSearchAttempts)
         {
             attempts++;
             Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
             Vector2? groundPos = TryFindGroundPosition(randomPoint);
+            if (groundPos.HasValue
+                && IsFarEnough(groundPos.Value, resultPositions)
+                && (avoidPositions == null || IsFarEnough(groundPos.Value, avoidPositions)))
+            {
+                resultPositions.Add(groundPos.Value);
+                found++;
+            }
+        }
+
+        int relaxedAttempts = 0;
+        int relaxedMaxAttempts = spikeMaxSearchAttempts * 4; // 완화 탐색은 조건이 널널한 만큼 더 여유 있게 시도
+        while (found < 3 && relaxedAttempts < relaxedMaxAttempts)
+        {
+            relaxedAttempts++;
+            Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
+            Vector2? groundPos = TryFindGroundPositionBasic(randomPoint);
             if (groundPos.HasValue
                 && IsFarEnough(groundPos.Value, resultPositions)
                 && (avoidPositions == null || IsFarEnough(groundPos.Value, avoidPositions)))
@@ -1302,58 +1331,41 @@ public class BossAttack : MonoBehaviour
     [Tooltip("공격 지속 시간")]
     public float shadowBarrierActiveDuration = 1.5f;           // 텔레그래프 종료 후 실제 피해 판정이 유지되는 시간
 
-    public float fallbackShadowBarrierWidth = 3f;              // 프리팹 없을 때 컬럼 하나의 가로 크기
+    public float fallbackShadowBarrierWidth = 3f;              // 프리팹 없을 때 컬럼 하나의 가로 크기 (attackWidth 기반 계산으로 대체되어 더 이상 사용되지 않음)
     public float fallbackShadowBarrierHeight = 10f;            // 프리팹 없을 때 컬럼 하나의 세로 크기
+
+    [Tooltip("전체 공격 폭 (X 방향). 이 값을 5등분해서 각 칸의 위치와 X 스케일이 자동 계산됩니다 (예: 20 -> 칸당 4)")]
+    public float shadowBarrierAttackWidth = 20f;
 
     public Vector2 shadowBarrierSpawnOffset = Vector2.zero;    // 보스의 처음 배치 위치(initialPosition) 기준으로 이 값만큼 이동해서 생성
 
     IEnumerator ShadowBarrierAttackRoutine()
     {
-        // 컬럼 하나의 실제 가로 크기를 오브젝트(프리팹) 기준으로 읽어와서,
-        // 5칸을 그 크기 그대로 나란히 배치함 (강제 스케일 조정 없음)
-        float columnWidth = GetShadowBarrierColumnWidth();
+        // attackWidth를 5등분해서 칸 하나의 폭을 계산 (예: attackWidth=20 -> segmentWidth=4)
+        float segmentWidth = shadowBarrierAttackWidth / 5f;
         Vector3 basePos = initialPosition + (Vector3)shadowBarrierSpawnOffset; // 보스 초기 위치 + 인스펙터에서 조절 가능한 오프셋
-        float leftX = basePos.x - (columnWidth * 5f) / 2f;
         float centerY = basePos.y;
 
         // 왼쪽부터 1~5번째 컬럼 기준: 짝(2,4) 먼저 -> 홀(1,3,5) 나중
         int[] evenColumns = { 2, 4 };
         int[] oddColumns = { 1, 3, 5 };
 
-        yield return RunShadowBarrierGroup(evenColumns, leftX, columnWidth, centerY);
-        yield return RunShadowBarrierGroup(oddColumns, leftX, columnWidth, centerY);
-    }
-    float GetShadowBarrierColumnWidth()
-    {
-        GameObject reference = shadowBarrierHazardTemplate != null ? shadowBarrierHazardTemplate : shadowBarrierTelegraphTemplate;
-        if (reference != null)
-        {
-            BoxCollider2D box = reference.GetComponentInChildren<BoxCollider2D>(true);
-            if (box != null && box.size.x > 0.001f)
-                return box.size.x * box.transform.lossyScale.x;
-
-            Collider2D anyCol = reference.GetComponentInChildren<Collider2D>(true);
-            if (anyCol != null && anyCol.bounds.size.x > 0.001f)
-                return anyCol.bounds.size.x;
-
-            SpriteRenderer sr = reference.GetComponentInChildren<SpriteRenderer>(true);
-            if (sr != null && sr.sprite != null)
-                return sr.sprite.bounds.size.x * sr.transform.lossyScale.x;
-        }
-        return fallbackShadowBarrierWidth;
+        yield return RunShadowBarrierGroup(evenColumns, basePos.x, segmentWidth, centerY);
+        yield return RunShadowBarrierGroup(oddColumns, basePos.x, segmentWidth, centerY);
     }
 
-    IEnumerator RunShadowBarrierGroup(int[] columns, float leftX, float columnWidth, float centerY)
+    IEnumerator RunShadowBarrierGroup(int[] columns, float attackCenterX, float segmentWidth, float centerY)
     {
         // 1. 해당 그룹(짝 또는 홀)의 컬럼마다 텔레그래프 생성
         List<GameObject> markers = new List<GameObject>();
         List<float> columnCenters = new List<float>();
         foreach (int col in columns)
         {
-            float centerX = leftX + columnWidth * (col - 0.5f); // 1-indexed 컬럼의 중심 X좌표
+            // 전체 공격 중심(attackCenterX) 기준 -2,-1,0,+1,+2칸 오프셋 (col=1~5 -> offset=col-3)
+            float centerX = attackCenterX + (col - 3) * segmentWidth;
             columnCenters.Add(centerX);
 
-            GameObject marker = SpawnShadowBarrierTelegraph(new Vector2(centerX, centerY));
+            GameObject marker = SpawnShadowBarrierTelegraph(new Vector2(centerX, centerY), segmentWidth);
             if (marker != null) markers.Add(marker);
         }
         activeTelegraphMarkers.AddRange(markers);
@@ -1387,7 +1399,7 @@ public class BossAttack : MonoBehaviour
         List<GameObject> barriers = new List<GameObject>();
         foreach (var centerX in columnCenters)
         {
-            GameObject barrier = SpawnShadowBarrierHazard(new Vector2(centerX, centerY));
+            GameObject barrier = SpawnShadowBarrierHazard(new Vector2(centerX, centerY), segmentWidth);
             if (barrier != null) barriers.Add(barrier);
         }
 
@@ -1400,12 +1412,12 @@ public class BossAttack : MonoBehaviour
         }
     }
 
-    GameObject SpawnShadowBarrierTelegraph(Vector2 center)
+    GameObject SpawnShadowBarrierTelegraph(Vector2 center, float segmentWidth)
     {
         GameObject marker;
         if (shadowBarrierTelegraphTemplate != null)
         {
-            // 프리팹 원본 크기를 그대로 사용 (스케일 강제 조정 없음)
+            // 프리팹 원본을 그대로 복제. Scale은 프리팹/인스펙터에 설정된 값을 그대로 유지하고 코드에서 건드리지 않음
             marker = Instantiate(shadowBarrierTelegraphTemplate, center, Quaternion.identity);
             marker.SetActive(true);
         }
@@ -1416,18 +1428,17 @@ public class BossAttack : MonoBehaviour
             SpriteRenderer sr = marker.AddComponent<SpriteRenderer>();
             sr.color = new Color(1f, 0.3f, 0.3f, 0.4f);
             sr.sprite = CreateTempSquareSprite();
-            marker.transform.localScale = new Vector3(fallbackShadowBarrierWidth, fallbackShadowBarrierHeight, 1f);
         }
 
         return marker;
     }
 
-    GameObject SpawnShadowBarrierHazard(Vector2 center)
+    GameObject SpawnShadowBarrierHazard(Vector2 center, float segmentWidth)
     {
         GameObject barrier;
         if (shadowBarrierHazardTemplate != null)
         {
-            // 프리팹 원본 크기를 그대로 사용 (스케일 강제 조정 없음)
+            // 프리팹 원본을 그대로 복제. Scale은 프리팹/인스펙터에 설정된 값을 그대로 유지하고 코드에서 건드리지 않음
             barrier = Instantiate(shadowBarrierHazardTemplate, center, Quaternion.identity);
             barrier.SetActive(true);
         }
@@ -1438,7 +1449,6 @@ public class BossAttack : MonoBehaviour
             SpriteRenderer sr = barrier.AddComponent<SpriteRenderer>();
             sr.color = new Color(1f, 0f, 0f, 0.6f);
             sr.sprite = CreateTempSquareSprite();
-            barrier.transform.localScale = new Vector3(fallbackShadowBarrierWidth, fallbackShadowBarrierHeight, 1f);
 
             BoxCollider2D col = barrier.AddComponent<BoxCollider2D>();
             col.isTrigger = true;
@@ -1616,7 +1626,116 @@ public class BossAttack : MonoBehaviour
         return hit.collider != null ? hit.point : fromPos;
     }
 
+    // 플레이어 위치 기준 가시 스폰 위치를 결정.
+    // 1) 우선 플레이어 X에서 바로 아래 바닥의 Y를 구해 "고정 Y"로 삼는다.
+    // 2) 그 Y에서 가시 폭 전체가 바닥에 닿는지 검사한다.
+    // 3) 안 닿으면 Y는 절대 바꾸지 않고 X만 좌우로 넓혀가며 재검사한다.
+    // 4) 플레이어와 가장 가까운 유효 X를 찾으면 그 지점을, 못 찾으면 기존 위치를 그대로 반환한다.
+    Vector2 FindPlayerSpikePosition(Vector2 playerPos)
+    {
+        Vector2 basePos = GetGroundPositionBelow(playerPos); // X = 플레이어 X, Y = 그 지점의 바닥 높이 (이후 절대 변경 안 함)
+        float halfWidth = GetSpikeHalfWidth();
+        float fixedY = basePos.y;
+
+        // 3-1. 플레이어 위치에서 바로 검사
+        if (HasFullGroundContact(basePos.x, fixedY, halfWidth))
+            return basePos;
+
+        // 3-2. X축으로만 좌우 탐색 (Y는 fixedY로 고정)
+        for (float offset = spikeContactSearchStep; offset <= spikeContactSearchMaxDistance; offset += spikeContactSearchStep)
+        {
+            float xRight = basePos.x + offset;
+            if (HasFullGroundContact(xRight, fixedY, halfWidth))
+                return new Vector2(xRight, fixedY);
+
+            float xLeft = basePos.x - offset;
+            if (HasFullGroundContact(xLeft, fixedY, halfWidth))
+                return new Vector2(xLeft, fixedY);
+        }
+
+        // 유효한 위치를 못 찾은 경우, 안전하게 기존 위치 그대로 사용
+        return basePos;
+    }
+
+    // centerX를 중심으로 halfWidth만큼의 가시 아래쪽 면 전체가 targetY 높이에서
+    // 빈틈 없이 바닥에 닿아 있는지 검사 (샘플 지점 여러 개를 아래로 레이캐스트)
+    bool HasFullGroundContact(float centerX, float targetY, float halfWidth)
+    {
+        int sampleCount = Mathf.Max(2, spikeContactSampleCount);
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            float t = (float)i / (sampleCount - 1); // 0 ~ 1
+            float sampleX = centerX - halfWidth + halfWidth * 2f * t;
+
+            RaycastHit2D hit = Physics2D.Raycast(
+                new Vector2(sampleX, targetY + 0.5f),
+                Vector2.down,
+                spikeGroundRaycastDistance,
+                groundLayer
+            );
+
+            // 바닥이 아예 없음 (구멍/낭떠러지)
+            if (hit.collider == null) return false;
+
+            // 바닥이 있어도 기준 Y와 높이가 다르면 (턱, 경사, 다른 층 등)
+            // 전체 면이 같은 평면에 닿는다고 볼 수 없으므로 실패 처리
+            if (Mathf.Abs(hit.point.y - targetY) > spikeContactTolerance) return false;
+        }
+
+        return true;
+    }
+
+    float GetSpikeHalfWidth()
+    {
+        if (spikeTemplate != null)
+        {
+            BoxCollider2D box = spikeTemplate.GetComponentInChildren<BoxCollider2D>(true);
+            if (box != null && box.size.x > 0.001f)
+                return (box.size.x * box.transform.lossyScale.x) * 0.5f;
+
+            // 삼각형 등 뾰족한 형태의 가시는 보통 PolygonCollider2D를 사용함.
+            // points는 로컬 좌표로 직렬화되어 있어 비활성 상태에서도 항상 정확함.
+            PolygonCollider2D poly = spikeTemplate.GetComponentInChildren<PolygonCollider2D>(true);
+            if (poly != null && poly.points != null && poly.points.Length > 0)
+            {
+                float minX = float.MaxValue;
+                float maxX = float.MinValue;
+                foreach (var p in poly.points)
+                {
+                    if (p.x < minX) minX = p.x;
+                    if (p.x > maxX) maxX = p.x;
+                }
+                float localWidth = maxX - minX;
+                if (localWidth > 0.001f)
+                    return (localWidth * poly.transform.lossyScale.x) * 0.5f;
+            }
+
+            // 콜라이더에서 폭을 못 구했다면 스프라이트 자체의 폭을 사용 (에셋 데이터라 항상 정확)
+            SpriteRenderer sr = spikeTemplate.GetComponentInChildren<SpriteRenderer>(true);
+            if (sr != null && sr.sprite != null)
+                return (sr.sprite.bounds.size.x * sr.transform.lossyScale.x) * 0.5f;
+        }
+
+        return fallbackSpikeHalfWidth;
+    }
+
+    // 가시 폭 전체가 바닥에 닿는지까지 검사하는 엄격 버전.
+    // 개수를 반드시 채워야 하므로, 이 버전이 실패해도 즉시 개수를 포기하지 않고
+    // RunSpikeTelegraphPhase의 2단계(완화 탐색)에서 보완함.
     Vector2? TryFindGroundPosition(Vector2 randomPoint)
+    {
+        Vector2? basic = TryFindGroundPositionBasic(randomPoint);
+        if (!basic.HasValue) return null;
+
+        float halfWidth = GetSpikeHalfWidth();
+        if (!HasFullGroundContact(basic.Value.x, basic.Value.y, halfWidth)) return null;
+
+        return basic;
+    }
+
+
+    Vector2? TryFindGroundPositionBasic(Vector2 randomPoint)
     {
         // 보스는 항상 바닥과 천장 사이(빈 공간)에 떠 있다고 가정하고,
         // 보스 자신의 y좌표에서 바로 아래로 쏨 (천장을 뚫고 지나갈 일이 없음)
@@ -1696,7 +1815,7 @@ public class BossAttack : MonoBehaviour
         // (본체 + 자식 오브젝트 포함) 모든 콜라이더를 트리거로 강제 설정
         ForceAllCollidersToTrigger(spike);
 
-        AlignBottomToGround(spike, pos); // 가시 바닥이 땅 표면에 닿도록 보정
+        AlignSpikeBottomToGround(spike, pos); // 가시의 Bounds.min.y가 Ground Layer 바닥에 정확히 닿도록 보정
 
         SpikeHazard hazard = spike.GetComponent<SpikeHazard>();
         if (hazard == null) hazard = spike.AddComponent<SpikeHazard>();
@@ -1725,6 +1844,37 @@ public class BossAttack : MonoBehaviour
         float bottomOffset = spike.transform.position.y - bounds.min.y; // 피벗이 바닥보다 얼마나 위에 있는지
         spike.transform.position = new Vector3(groundPos.x, groundPos.y + bottomOffset, spike.transform.position.z);
     }
+    void AlignSpikeBottomToGround(GameObject spike, Vector2 plannedPos)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(
+            plannedPos + Vector2.up * 0.5f, // 지형 내부에서 시작하지 않도록 살짝 위에서 발사
+            Vector2.down,
+            spikeGroundRaycastDistance,
+            groundLayer
+        );
+
+        // 바닥을 못 찾았다면 기존 계획된 위치를 그대로 유지 (요구사항: 위치 변경 없음)
+        if (hit.collider == null) return;
+
+        Bounds bounds;
+        Collider2D col = spike.GetComponentInChildren<Collider2D>();
+        if (col != null)
+        {
+            bounds = col.bounds;
+        }
+        else
+        {
+            SpriteRenderer sr = spike.GetComponentInChildren<SpriteRenderer>();
+            if (sr == null) return; // 기준 삼을 게 없으면 보정하지 않음
+            bounds = sr.bounds;
+        }
+
+        // 현재 Bounds.min.y와 바닥 지점(hit.point.y)의 차이만큼만 Y축 이동
+        float correction = hit.point.y - bounds.min.y;
+        Vector3 currentPos = spike.transform.position;
+        spike.transform.position = new Vector3(currentPos.x, currentPos.y + correction, currentPos.z);
+    }
+
 
     // spike 본체와 모든 자식 오브젝트의 콜라이더를 트리거로 강제 설정
     // (플레이어가 가시를 물리적으로 밀어내거나 막히지 않고 그대로 통과하게 하기 위함)

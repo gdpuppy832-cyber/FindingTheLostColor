@@ -83,7 +83,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 04_FullpupilCat_IDEL
+  m_Name: 04_FullpupilCat_IDLE
   m_Speed: 0.6
   m_CycleOffset: 0
   m_Transitions:

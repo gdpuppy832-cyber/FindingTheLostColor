@@ -522,8 +522,12 @@ MonoBehaviour:
   speed: 1.5
   range: 999
   chaseRange: 999
+  chaseStartPrefab: {fileID: 0}
+  chaseEndPrefab: {fileID: 0}
+  currentAlertPrefab: {fileID: 0}
   attackStopDistance: 0.1
   safeDropDistance: 7
+  wanderEdgeCheckDistance: 2
   jumpForce: 5
   climbableWallHeight: 1.2
   chaseAnimSpeedMultiplier: 1.5
@@ -636,7 +640,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseDuration: 0.5
-  moveSpeed: 1.5
+  moveSpeed: 4.5
   direction: 2
   offScreenMargin: 0.1
   groundLayer:

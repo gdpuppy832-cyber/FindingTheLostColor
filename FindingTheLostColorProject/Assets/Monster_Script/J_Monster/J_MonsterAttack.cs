@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-50)]
 public class J_EnemyAttack : MonoBehaviour
 {
     public float attackRange = 4f;        // y축 범위
@@ -26,8 +27,21 @@ public class J_EnemyAttack : MonoBehaviour
     public float landingCheckRetryInterval = 0.15f;
     float nextLandingCheckTime = 0f;
 
+    [Tooltip("추적 시작/종료(isStateDelay)가 끝난 직후, 공격이 실제로 가능해지기까지 추가로 대기하는 시간(초)")]
+    public float postChaseTransitionAttackDelay = 0.1f;
+    bool wasStateDelay = false;      // 직전 프레임의 IsStateDelay 값 (true->false 전환 감지용)
+    float attackAllowedTime = 0f;    // 이 시간이 지나야 공격 시작 가능
+
     J_EnemyMove enemyMove;
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+
+    [Header("Attack Animation (Deterministic Transition)")]
+    [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
+             "서브 스테이트 머신 안에 있다면 \"SubStateMachineName.StateName\" 형식으로 입력해야 함. " +
+             "이 값이 실제 컨트롤러의 상태 이름과 정확히 일치하지 않으면 Animator.Play()가 아무 동작도 하지 않으니 주의.")]
+    public string attackStateName = "Attack";
+    [Tooltip("공격 상태가 위치한 Animator 레이어 인덱스 (보통 0 = Base Layer)")]
+    public int attackAnimatorLayer = 0;
 
     // 이번 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
     bool hitPlayerThisJump = false;
@@ -98,7 +112,19 @@ public class J_EnemyAttack : MonoBehaviour
         if (isAttacking || !canAttack) return;
 
         // 추적 시작/종료 시 J_EnemyMove가 잠시 멈춰있는 동안(isStateDelay)에는 공격을 시도하지 않음
-        if (enemyMove != null && enemyMove.IsStateDelay) return;
+        bool currentStateDelay = enemyMove != null && enemyMove.IsStateDelay;
+
+
+        if (wasStateDelay && !currentStateDelay)
+        {
+            attackAllowedTime = Time.time + postChaseTransitionAttackDelay;
+        }
+        wasStateDelay = currentStateDelay;
+
+        if (currentStateDelay) return;
+
+        // 전환 직후 추가 대기 시간이 아직 안 지났으면 공격 보류
+        if (Time.time < attackAllowedTime) return;
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
         float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
@@ -123,27 +149,39 @@ public class J_EnemyAttack : MonoBehaviour
                 return;
             }
 
-            StartCoroutine(JumpAttackRoutine(landPos));
+            // ★ 공격이 확정된 바로 이 프레임에, 애니메이터 전환을 포함한 "공격 시작" 처리를
+            //   동기적으로 즉시 실행함. 텔레그래프 대기 이후의 점프 이동만 코루틴이 이어서 담당하므로,
+            //   점프 공격이 시작되는 프레임과 애니메이터가 공격 상태로 진입하는 프레임이 절대 어긋나지 않음.
+            BeginJumpAttack(landPos);
         }
+    }
+
+    void BeginJumpAttack(Vector2 landPos)
+    {
+        isAttacking = true;
+        canAttack = false;
+        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
+
+        if (enemyMove != null)
+            enemyMove.enabled = false;
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsAttacking", true);
+            animator.Play(attackStateName, attackAnimatorLayer, 0f);
+            animator.Update(0f);
+        }
+
+        StartCoroutine(JumpAttackRoutine(landPos));
     }
 
     System.Collections.IEnumerator JumpAttackRoutine(Vector2 landPos)
     {
         Collider2D selfColForJump = GetComponent<Collider2D>();
         Vector2 jumpColliderSize = selfColForJump != null ? selfColForJump.bounds.size * 0.95f : Vector2.one * 0.5f;
-
-        isAttacking = true;
-        canAttack = false;
-        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
-
-        if (animator != null)
-        {
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsAttacking", true);
-        }
-
-        if (enemyMove != null)
-            enemyMove.enabled = false;
 
         Vector2 attackStartPos = transform.position;
 
@@ -286,8 +324,6 @@ public class J_EnemyAttack : MonoBehaviour
     [Tooltip("경로 중간 지점 아래로 이 거리 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함 (계단/턱 아래로 착지 허용)")]
     public float safeDropDistance = 3f;
 
-    // isCliff: 경로 중간에 (safeDropDistance 안에서도) 바닥을 전혀 못 찾거나,
-    // 시작 지점보다 착지 지점이 safeDropDistance 이상 훨씬 낮아서 (진짜 낭떠러지로 추정되어) 취소된 경우 true
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
@@ -298,51 +334,16 @@ public class J_EnemyAttack : MonoBehaviour
         float rayStartY = desired.y + 1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
         RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
-        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
-        // 안전장치 1: 시작 지점 기준 착지 지점이 safeDropDistance보다 훨씬 더 아래(진짜 낭떠러지 낙차)면
-        // 애초에 점프 자체를 취소함. 계단 정도의 낙차(safeDropDistance 이내)만 허용.
-        float startGroundY = start.y - footOffset;
-        float landGroundY = targetLandPos.y - footOffset;
-        if (startGroundY - landGroundY > safeDropDistance)
+        if (hit.collider == null)
         {
+            // 50f 범위 안에서도 바닥을 전혀 못 찾음 -> 착지할 곳이 없는 진짜 허공/구멍이므로 점프 취소
             isCliff = true;
-            return start;
+            return desired;
         }
 
-        int steps = 10;
-        Vector2 lastGroundPos = start;
-        float lastGroundY = startGroundY; // 급격한 단차(중간에 툭 떨어지는 진짜 낭떠러지) 감지용
-
-        for (int i = 0; i <= steps; i++)
-        {
-            float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-
-            // 바로 아래(footOffset)만 검사하는 대신, safeDropDistance만큼 더 깊게 검사해서
-            // 그 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함
-            RaycastHit2D dropHit = Physics2D.Raycast(checkPos, Vector2.down, footOffset + safeDropDistance, groundLayer);
-
-            if (dropHit.collider == null)
-            {
-                // safeDropDistance 안에서도 땅을 전혀 못 찾음 -> 진짜 낭떠러지
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            // 안전장치 2: 직전 검사 지점의 땅보다 이번 지점의 땅이 safeDropDistance 이상 갑자기 낮아지면
-            // (경로 중간에 급격한 단차/낭떠러지가 있다는 뜻이므로) 취소
-            if (lastGroundY - dropHit.point.y > safeDropDistance)
-            {
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            lastGroundPos = checkPos;
-            lastGroundY = dropHit.point.y;
-        }
-
-        return targetLandPos;
+        // 착지 목표 = (플레이어 감지 당시 X, 바닥 표면 Y + 콜라이더 반높이)
+        return hit.point + Vector2.up * footOffset;
     }
 
     void OnDrawGizmosSelected()

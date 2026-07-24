@@ -14,6 +14,25 @@ public class DarkOrbHazard : MonoBehaviour
     bool tracking = false;
     float trackTimer = 0f;
     Vector2 currentDirection;
+
+    Animator animator;
+    Collider2D[] colliders;
+    Rigidbody2D rb;
+
+    bool isDestroying = false;
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        colliders = GetComponentsInChildren<Collider2D>();
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+            rb = GetComponentInChildren<Rigidbody2D>();
+    }
+
     public void Launch(Transform target, float trackDuration, float speed)
     {
         this.trackTarget = target;
@@ -30,12 +49,12 @@ public class DarkOrbHazard : MonoBehaviour
         launched = true;
         trackTimer = 0f;
 
-        Destroy(gameObject, maxLifetime);
+        StartCoroutine(DestroyAfterLifetime());
     }
 
     void Update()
     {
-        if (!launched) return; // 아직 궤도 회전 중이면 BossAttack이 위치를 직접 제어하므로 여기선 아무것도 안 함
+        if (!launched || isDestroying) return;
 
         if (tracking)
         {
@@ -73,7 +92,61 @@ public class DarkOrbHazard : MonoBehaviour
         if (player != null)
         {
             player.TakeDamage(damage);
-            Destroy(gameObject); // 닿으면 구슬은 사라짐
+            BeginDestroy();
         }
+    }
+    System.Collections.IEnumerator DestroyAfterLifetime()
+    {
+        yield return new WaitForSeconds(maxLifetime);
+
+        BeginDestroy();
+    }
+
+    void BeginDestroy()
+    {
+        if (isDestroying)
+            return;
+
+        isDestroying = true;
+
+        launched = false;
+        tracking = false;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.simulated = false;
+        }
+
+        if (colliders != null)
+        {
+            foreach (Collider2D c in colliders)
+            {
+                if (c != null)
+                    c.enabled = false;
+            }
+        }
+
+        StartCoroutine(DestroyRoutine());
+    }
+
+    System.Collections.IEnumerator DestroyRoutine()
+    {
+        float animLength = 0f;
+
+        if (animator != null)
+        {
+            animator.SetTrigger("IsDestroying");
+
+            yield return null;
+
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            animLength = state.length;
+        }
+
+        if (animLength > 0f)
+            yield return new WaitForSeconds(animLength);
+
+        Destroy(gameObject);
     }
 }
