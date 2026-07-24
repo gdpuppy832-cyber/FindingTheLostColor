@@ -17895,6 +17895,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PauseManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6841567340925199102, guid: bb9d5cee0becdc44a9c29931c9a8d38d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6841567340925199102, guid: bb9d5cee0becdc44a9c29931c9a8d38d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.7462158
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1059568041710212994, guid: bb9d5cee0becdc44a9c29931c9a8d38d, type: 3}
     m_RemovedGameObjects: []
