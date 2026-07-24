@@ -111,16 +111,9 @@ public class GaugeController : MonoBehaviour
         isLeftClickHeld = Input.GetMouseButton(0);
 #endif
 
-        // [신규] R키 집중 충전 가동 및 공격/대쉬/사망 시 캔슬 조건 실시간 조율
-        bool rKeyHeld = false;
-#if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null)
-        {
-            rKeyHeld = Keyboard.current.rKey.isPressed;
-        }
-#else
-        rKeyHeld = Input.GetKey(KeyCode.R);
-#endif
+        // [신규] R키 집중 충전 가동 (KeyBindManager 연동)
+        KeyCode recoverPaintKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.RecoverPaintKey : KeyCode.R;
+        bool rKeyHeld = Input.GetKey(recoverPaintKey);
 
         bool isDashing = playerMove != null && playerMove.IsDashing;
         bool isAttacking = isLeftClickHeld && currentPaint > minPaintToDraw && !needsReclick;

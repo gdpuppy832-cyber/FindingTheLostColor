@@ -93,11 +93,62 @@ public class PlayerInteraction : MonoBehaviour
         if (closestInteractable != null)
         {
             string message = closestInteractable.promptMessage;
-
             // 메시지가 유효할 때만 발밑 안내 UI를 켜고 갱신 (커스텀 텍스트 사용 시 빈 문자열 대응)
-            if (!string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(closestInteractable.promptMessage))
             {
                 if (promptUIObj != null) promptUIObj.SetActive(true);
+
+                // 기물 상호작용 프롬프트 메시지 텍스트 갱신 (W/E/R 키를 현재 할당된 실제 단축키명으로 실시간 자동 치환)
+                if (KeyBindManager.Instance != null)
+                {
+                    // 1. W (상호작용 키) 치환
+                    string wKeyName = KeyBindManager.Instance.InteractKey.ToString().ToUpper();
+                    if (wKeyName == "LEFTSHIFT") wKeyName = "L_SHIFT";
+                    else if (wKeyName == "SPACE") wKeyName = "SPACE";
+
+                    message = message.Replace("W키", $"{wKeyName}키")
+                                     .Replace("W 키", $"{wKeyName} 키")
+                                     .Replace("W를", $"{wKeyName}를")
+                                     .Replace("W로", $"{wKeyName}로")
+                                     .Replace("W ", $"{wKeyName} ")
+                                     .Replace("w키", $"{wKeyName}키")
+                                     .Replace("w 키", $"{wKeyName} 키")
+                                     .Replace("w를", $"{wKeyName}를")
+                                     .Replace("w로", $"{wKeyName}로")
+                                     .Replace("w ", $"{wKeyName} ");
+
+                    // 2. E (공격방식 전환 키) 치환
+                    string eKeyName = KeyBindManager.Instance.ChangeAttackKey.ToString().ToUpper();
+                    if (eKeyName == "LEFTSHIFT") eKeyName = "L_SHIFT";
+                    else if (eKeyName == "SPACE") eKeyName = "SPACE";
+
+                    message = message.Replace("E키", $"{eKeyName}키")
+                                     .Replace("E 키", $"{eKeyName} 키")
+                                     .Replace("E를", $"{eKeyName}를")
+                                     .Replace("E로", $"{eKeyName}로")
+                                     .Replace("E ", $"{eKeyName} ")
+                                     .Replace("e키", $"{eKeyName}키")
+                                     .Replace("e 키", $"{eKeyName} 키")
+                                     .Replace("e를", $"{eKeyName}를")
+                                     .Replace("e로", $"{eKeyName}로")
+                                     .Replace("e ", $"{eKeyName} ");
+
+                    // 3. R (물감 재충전 키) 치환
+                    string rKeyName = KeyBindManager.Instance.RecoverPaintKey.ToString().ToUpper();
+                    if (rKeyName == "LEFTSHIFT") rKeyName = "L_SHIFT";
+                    else if (rKeyName == "SPACE") rKeyName = "SPACE";
+
+                    message = message.Replace("R키", $"{rKeyName}키")
+                                     .Replace("R 키", $"{rKeyName} 키")
+                                     .Replace("R를", $"{rKeyName}를")
+                                     .Replace("R로", $"{rKeyName}로")
+                                     .Replace("R ", $"{rKeyName} ")
+                                     .Replace("r키", $"{rKeyName}키")
+                                     .Replace("r 키", $"{rKeyName} 키")
+                                     .Replace("r를", $"{rKeyName}를")
+                                     .Replace("r로", $"{rKeyName}로")
+                                     .Replace("r ", $"{rKeyName} ");
+                }
 
                 if (promptText != null) promptText.text = message;
                 if (promptTmpText != null) promptTmpText.text = message;
@@ -109,16 +160,9 @@ public class PlayerInteraction : MonoBehaviour
                 if (promptUIObj != null) promptUIObj.SetActive(false);
             }
 
-            // W키 입력 감지 (WasPressedThisFrame 검사로 꾹 눌러도 1회만 트리거되게 설정)
-            bool wPressed = false;
-#if ENABLE_INPUT_SYSTEM
-            if (Keyboard.current != null)
-            {
-                wPressed = Keyboard.current.wKey.wasPressedThisFrame;
-            }
-#else
-            wPressed = Input.GetKeyDown(KeyCode.W);
-#endif
+            // 상호작용 입력 감지 (KeyBindManager 연동)
+            KeyCode interactKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.InteractKey : KeyCode.W;
+            bool wPressed = Input.GetKeyDown(interactKey);
 
             if (wPressed)
             {

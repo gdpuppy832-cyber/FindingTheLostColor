@@ -107,22 +107,16 @@ public class PlayerMove : MonoBehaviour
         // 조작 가능한 상태일 때만 키보드 입력 허용
         if (canControl && !isDashing)
         {
-#if ENABLE_INPUT_SYSTEM
-            // New Input System 사용 시
-            if (Keyboard.current != null)
-            {
-                if (Keyboard.current.aKey.isPressed) moveInput -= 1f;
-                if (Keyboard.current.dKey.isPressed) moveInput += 1f;
-                if (Keyboard.current.spaceKey.wasPressedThisFrame) jumpPressed = true;
-                if (Keyboard.current.leftShiftKey.wasPressedThisFrame) dashPressed = true;
-            }
-#else
-            // Legacy Input Manager 사용 시
-            if (Input.GetKey(KeyCode.A)) moveInput -= 1f;
-            if (Input.GetKey(KeyCode.D)) moveInput += 1f;
-            if (Input.GetKeyDown(KeyCode.Space)) jumpPressed = true;
-            if (Input.GetKeyDown(KeyCode.LeftShift)) dashPressed = true;
-#endif
+            // KeyBindManager 동적 단축키 연동 적용
+            KeyCode leftKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.LeftKey : KeyCode.A;
+            KeyCode rightKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.RightKey : KeyCode.D;
+            KeyCode jumpKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.JumpKey : KeyCode.Space;
+            KeyCode dashKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.DashKey : KeyCode.LeftShift;
+
+            if (Input.GetKey(leftKey)) moveInput -= 1f;
+            if (Input.GetKey(rightKey)) moveInput += 1f;
+            if (Input.GetKeyDown(jumpKey)) jumpPressed = true;
+            if (Input.GetKeyDown(dashKey)) dashPressed = true;
 
             // [신규] 지면 근접 판정 전처리 (상승 중이거나 점프 직후 0.15초 이내는 스킵하여 3단 점프 오작동 원천 방지)
             bool isAscending = rb != null && rb.linearVelocity.y > 0.01f;

@@ -328,6 +328,11 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            // [즉시 차단] 0.35초 대기 도중 추가 피격이 중복 발생하는 것을 완벽 차단하기 위해
+            // 체력이 0이 되는 즉시 사망(isDead) 및 무적(isInvincible) 상태를 켭니다.
+            isDead = true;
+            isInvincible = true;
+
             // [수정] 피격 직후 사망 연출을 위해 코루틴 실행 (피격모션 -> 대기 -> 사망모션)
             StartCoroutine(HurtThenDieRoutine());
         }

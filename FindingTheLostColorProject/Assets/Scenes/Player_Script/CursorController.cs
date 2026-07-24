@@ -185,16 +185,9 @@ public class CursorController : MonoBehaviour
             currentCursorIndex = nextIndex;
         }
 
-        // 5. 공격 모드 스와핑 감지 (E키 입력)
-        bool isEKeyPressed = false;
-#if ENABLE_INPUT_SYSTEM
-        if (Keyboard.current != null)
-        {
-            isEKeyPressed = Keyboard.current.eKey.wasPressedThisFrame;
-        }
-#else
-        isEKeyPressed = Input.GetKeyDown(KeyCode.E);
-#endif
+        // 5. 공격 모드 스와핑 감지 (KeyBindManager 연동)
+        KeyCode changeAttackKey = (KeyBindManager.Instance != null) ? KeyBindManager.Instance.ChangeAttackKey : KeyCode.E;
+        bool isEKeyPressed = Input.GetKeyDown(changeAttackKey);
         if (isEKeyPressed)
         {
             attackMode = (attackMode == 1) ? 2 : 1;
