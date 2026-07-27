@@ -12,8 +12,8 @@ public class PaintRegenZone : MonoBehaviour
     public float activeRadius = 3f;
 
     [Header("Regeneration Boost Settings")]
-    [Tooltip("플레이어가 가까이 있을 때 물감 재생 속도 배율 (기본값: 3.0 -> 3배 빠르게 재생)")]
-    public float regenMultiplier = 3f;
+    [Tooltip("플레이어가 가까이 있을 때 물감 재생 속도 배율(기본값: 4.0 -> 4배 빠르게 재생)")]
+    public float regenMultiplier = 4f;
 
     [Header("Visual & Effects")]
     [Tooltip("플레이어가 버프를 받는 동안 재생할 파티클 시스템 (옵션)")]

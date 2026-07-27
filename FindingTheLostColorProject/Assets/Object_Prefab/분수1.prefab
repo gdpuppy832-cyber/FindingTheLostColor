@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionMode: 0
   activeRadius: 3
-  regenMultiplier: 3
+  regenMultiplier: 4
   activeParticles: {fileID: 0}
   rotationSpeed: 0
 --- !u!70 &2813643104574694840

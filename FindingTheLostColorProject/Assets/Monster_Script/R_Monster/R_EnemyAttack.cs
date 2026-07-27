@@ -154,8 +154,14 @@ public class R_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(telegraphTime); // 1초 대기 (멈춰있는 상태)
 
+        if (muzzle != null)
+            muzzle.position = (Vector2)transform.position + fireDir * GetEdgeDistance(fireDir);
+
         if (telegraphSprite != null)
             telegraphSprite.enabled = false;
+
+        // 발사 직전 현재 몬스터 위치에서 발사 위치를 다시 계산
+        startPoint = (Vector2)transform.position + fireDir * GetEdgeDistance(fireDir);
 
         // 투사체 생성
         SpawnProjectile(fireDir, angle, startPoint);

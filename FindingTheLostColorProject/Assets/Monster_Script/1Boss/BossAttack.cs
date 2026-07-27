@@ -1,6 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Timeline;
 
 public class BossAttack : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class BossAttack : MonoBehaviour
 
     bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
     int destroyedCrystalCount = 0;
+    public event System.Action OnPhase2Started;
     Collider2D[] bossOwnColliders; // 크리스탈 페이즈 동안 붓질(OverlapCircleAll) 감지를 막기 위해 비활성화할 보스 콜라이더
 
     bool isAttacking = false;
@@ -312,11 +314,8 @@ public class BossAttack : MonoBehaviour
             phase2Unlocked = true;
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
 
-            // 소용돌이와 동반 패턴은 메인 공격(isAttacking)과 독립적으로 살아있을 수 있으므로
-            // (예: 메인 공격은 이미 끝나 쿨다운 중인데 소용돌이만 계속 떠 있는 경우),
-            // isAttacking 여부와 무관하게 항상 확인해서 정리함.
-            // (기존에는 이 정리가 "isAttacking && currentAttackCoroutine != null" 블록 안에 있어서,
-            //  마침 쿨다운 중일 때 크리스탈이 깨지면 소용돌이가 정리되지 않고 남는 문제가 있었음)
+            // 2페이즈 전환을 외부 시스템에 알림 (예: BossPortalSpawner가 이 시점에 소환을 멈추고 정리함)
+            OnPhase2Started?.Invoke();
             if (activeWhirlpoolCoroutine != null)
             {
                 StopCoroutine(activeWhirlpoolCoroutine);
@@ -703,7 +702,8 @@ public class BossAttack : MonoBehaviour
     public float laserTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     [Tooltip("레이저 지속 시간")]
     public float laserActiveDuration = 5f;          // 레이저 발동 유지 시간
-    
+    [Tooltip("텔레그래프가 플레이어를 따라가는 속도")]
+    public float laserFollowSpeed = 2f;
 
     public float fallbackLaserWidth = 20f;           // 프리팹 없을 때 임시 레이저 가로 길이
     public float fallbackLaserThickness = 0.6f;      // 프리팹 없을 때 임시 레이저 두께
@@ -722,16 +722,43 @@ public class BossAttack : MonoBehaviour
         // 2. 2초 동안 0.5초 간격으로 투명해졌다 돌아오는 깜빡임
         float elapsed = 0f;
         bool visible = true;
+
+
         while (elapsed < laserTelegraphDuration)
         {
-            yield return new WaitForSeconds(laserTelegraphBlinkInterval);
-            elapsed += laserTelegraphBlinkInterval;
-            visible = !visible;
-            if (marker != null)
+            // 텔레그래프 동안 플레이어의 Y축을 천천히 따라감
+            if (target != null)
             {
-                SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                laserPos.y = Mathf.MoveTowards(
+                    laserPos.y,
+                    target.position.y,
+                    laserFollowSpeed * Time.deltaTime
+                );
+
+                if (marker != null)
+                {
+                    Vector3 pos = marker.transform.position;
+                    pos.y = laserPos.y;
+                    marker.transform.position = pos;
+                }
             }
+
+            elapsed += Time.deltaTime;
+
+            if (Mathf.FloorToInt(elapsed / laserTelegraphBlinkInterval) !=
+                Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
+            {
+                visible = !visible;
+
+                if (marker != null)
+                {
+                    SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                        sr.enabled = visible;
+                }
+            }
+
+            yield return null;
         }
 
         // 3. 텔레그래프 제거

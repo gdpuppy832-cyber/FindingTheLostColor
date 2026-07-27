@@ -345,10 +345,11 @@ public class NormalMonster : MonoBehaviour
         }
 
         // 4. 본체와 자식/부모에 붙어있는 모든 움직임/AI 스크립트 비활성화 및 코루틴 정지
+        // (단, 정화 후 도망 이동을 담당하는 PurifiedFleeMovement는 여기서 꺼버리면 안 되므로 예외 처리)
         MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
         foreach (var script in scripts)
         {
-            if (script != this)
+            if (script != this && !(script is Boss_NormalMonster))
             {
                 script.StopAllCoroutines();
                 script.enabled = false;
@@ -358,7 +359,7 @@ public class NormalMonster : MonoBehaviour
         MonoBehaviour[] parentScripts = GetComponentsInParent<MonoBehaviour>();
         foreach (var script in parentScripts)
         {
-            if (script != this && !(script is NormalMonster))
+            if (script != this && !(script is NormalMonster) && !(script is Boss_NormalMonster))
             {
                 script.StopAllCoroutines();
                 script.enabled = false;
@@ -368,8 +369,9 @@ public class NormalMonster : MonoBehaviour
         MonoBehaviour[] childScripts = GetComponentsInChildren<MonoBehaviour>(true);
         foreach (var script in childScripts)
         {
-            // ⚠️ 중요: 머리 위에 띄워둔 둥둥이 스크립트(FloatingIndicator)는 비활성화 대상에서 안전하게 제외합니다.
-            if (script != this && !(script is NormalMonster) && !(script is FloatingIndicator))
+            // ⚠️ 중요: 머리 위에 띄워둔 둥둥이 스크립트(FloatingIndicator)와,
+            // 정화 후 도망 이동을 담당하는 PurifiedFleeMovement는 비활성화 대상에서 안전하게 제외합니다.
+            if (script != this && !(script is NormalMonster) && !(script is FloatingIndicator) && !(script is Boss_NormalMonster))
             {
                 script.StopAllCoroutines();
                 script.enabled = false;

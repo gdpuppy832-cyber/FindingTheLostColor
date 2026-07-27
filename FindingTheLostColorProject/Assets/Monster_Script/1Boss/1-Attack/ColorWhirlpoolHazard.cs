@@ -79,10 +79,10 @@ public class ColorWhirlpoolHazard : MonoBehaviour
         // 페이드 인이 끝나기 전(등장 연출 중)에는 끌어당기지 않음
         if (fadeElapsed < fadeInDuration) return;
 
-        // 끌어당김/둔화 계산은 반드시 물리 스텝(FixedUpdate)에서만 처리해야 함.
-        // Update()에서 처리하면 한 물리 스텝에 힘이 여러 번 중복 적용되어
-        // 프레임레이트가 높을 때 플레이어가 순간적으로 튕겨나가는 문제가 있었음
         if (cachedPlayer == null) return;
+
+        // 피격 무적 시간에는 소용돌이가 끌어당기지 않음
+        if (cachedPlayer.IsInvincible) return;
 
         float dist = Vector2.Distance(transform.position, cachedPlayer.transform.position);
         if (dist > pullRadius) return;
@@ -91,24 +91,18 @@ public class ColorWhirlpoolHazard : MonoBehaviour
         if (playerRb == null) playerRb = cachedPlayer.GetComponentInParent<Rigidbody2D>();
         if (playerRb == null) return;
 
-        // 현재 수평 속도가 비정상적으로 빠르면(대쉬 등 특수 이동 중으로 추정) 이번 스텝은 개입하지 않음
-        // -> PlayerMove를 직접 참조하지 않고, 속도 크기만으로 간접 판별
+
         if (Mathf.Abs(playerRb.linearVelocity.x) >= dashVelocityThreshold) return;
 
-        // 점프(Y축)는 PlayerMove와 중력에만 맡기고, 소용돌이는 수평(X축)에만 개입해서
-        // 끌려가는 도중에도 점프 궤적이 원래와 동일하게 유지되도록 함
         if (dist <= minEffectiveDistance)
         {
-            // 중앙 구역: 끌어당기지 않고, 수평 속도만 매 물리 스텝마다 깎아서
-            // "붙잡혀서 둔해진" 느낌을 연출 (수직 속도는 그대로 둬서 점프에 영향 없음)
+
             float slowedX = playerRb.linearVelocity.x * centerSlowMultiplier;
             playerRb.linearVelocity = new Vector2(slowedX, playerRb.linearVelocity.y);
         }
         else
         {
-            // 중앙 구역이 아니면 중심 방향(수평)으로 힘을 가해 끌어당김.
-            // 거리가 멀수록(minEffectiveDistance ~ pullRadius 구간에서) 힘이 선형으로 약해짐:
-            // 중앙 구역 경계(minEffectiveDistance)에서는 100%, 바깥 경계(pullRadius)에서는 0%에 가까워짐
+
             float distanceRatio = Mathf.InverseLerp(pullRadius, minEffectiveDistance, dist);
             float appliedForce = pullForce * distanceRatio;
 
@@ -116,16 +110,13 @@ public class ColorWhirlpoolHazard : MonoBehaviour
             float horizontalDir = Mathf.Abs(dx) > 0.001f ? Mathf.Sign(dx) : 0f;
             playerRb.AddForce(new Vector2(horizontalDir * appliedForce, 0f), ForceMode2D.Force);
 
-            // 무적 시간 등으로 인해 다른 곳에서 속도가 리셋되지 않고 여러 물리 스텝 동안
-            // Force가 계속 누적되더라도, 끌려가는 수평 속도가 이 이상으로는 빨라지지 않도록 제한
-            // (Y축 속도는 건드리지 않아 점프 속도는 그대로 보존됨)
+
             float clampedX = Mathf.Clamp(playerRb.linearVelocity.x, -maxPullSpeed, maxPullSpeed);
             playerRb.linearVelocity = new Vector2(clampedX, playerRb.linearVelocity.y);
         }
     }
 
-    // 프리팹에 붙은 실제 콜라이더 모양 그대로 피해 판정 (원형 거리 계산 대신)
-    // SpikeHazard와 동일한 방식: 겹쳐 있는 동안 매 프레임 damage 값을 그대로(deltaTime 배율 없이) 적용
+    
     void OnTriggerStay2D(Collider2D other)
     {
         TryDamage(other.gameObject);
