@@ -34,7 +34,7 @@ public class J_EnemyAttack : MonoBehaviour
 
     J_EnemyMove enemyMove;
     Animator animator;
-
+    NormalMonster nm;
 
     [Header("Attack Animation (Deterministic Transition)")]
     [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
@@ -67,6 +67,9 @@ public class J_EnemyAttack : MonoBehaviour
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
@@ -86,6 +89,9 @@ public class J_EnemyAttack : MonoBehaviour
 
     void TryContactDamage(Collider2D other)
     {
+        // 정화된 이후에는 점프 도중 남은 히트박스가 트리거되더라도 데미지를 주지 않음
+        if (nm != null && nm.IsPurified) return;
+
         if (!other.CompareTag("Player")) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -197,49 +203,29 @@ public class J_EnemyAttack : MonoBehaviour
                 enemyMove.enabled = true;
             yield break;
         }
-        yield return new WaitForSeconds(telegraphTime);
-        Vector2 startPos = transform.position;
 
-        // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
-        if (landPos.x != startPos.x)
+        Coroutine movementRoutine = (nm != null)
+            ? nm.StartCoroutine(JumpMovementRoutine(landPos))
+            : StartCoroutine(JumpMovementRoutine(landPos));
+
+        yield return movementRoutine;
+
+        if (nm != null && nm.IsPurified)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1f : -1f);
-            transform.localScale = scale;
+            yield break;
         }
-
-        // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
-        float elapsed = 0f;
-
-        while (elapsed < jumpDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / jumpDuration);
-            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
-            float heightOffset = 4f * jumpHeight * t * (1f - t);
-
-            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
-
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            yield return null;
-        }
-
-        transform.position = landPos;
 
         // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
         // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
         yield return new WaitForFixedUpdate();
 
-        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했는지에 따라 후딜 시간을 다르게 적용
-        // 성공: hitPostDelay(기본 0.25초, 조정 가능) / 실패: postDelay(기본 0.5초)
+
         if (hitPlayerThisJump)
         {
             yield return new WaitForSeconds(hitPostDelay);
         }
         else
         {
-            // ★ 공격 실패(postDelay) 구간이 시작되는 순간 IsDelaying을 켬.
-            //   IsAttacking은 이 시점에도 여전히 true로 유지되며, 이 아래 로직에서 건드리지 않음.
             if (animator != null)
                 animator.SetBool("IsDelaying", true);
 
@@ -294,9 +280,38 @@ public class J_EnemyAttack : MonoBehaviour
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
     }
-    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
-    // 그 시점에 코루틴이 멈춰서 위 while 루프의 정리 로직이 실행되지 못하므로,
-    // 여기서 확실하게 표시 오브젝트를 파괴함
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 landPos)
+    {
+        yield return new WaitForSeconds(telegraphTime);
+        Vector2 startPos = transform.position;
+
+        // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
+        if (landPos.x != startPos.x)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1f : -1f);
+            transform.localScale = scale;
+        }
+
+        // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
+        float elapsed = 0f;
+
+        while (elapsed < jumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / jumpDuration);
+            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
+            float heightOffset = 4f * jumpHeight * t * (1f - t);
+
+            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
+
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            yield return null;
+        }
+
+        transform.position = landPos;
+    }
+
     void OnDisable()
     {
         if (activeMissIndicator != null)

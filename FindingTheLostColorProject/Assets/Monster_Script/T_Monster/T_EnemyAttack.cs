@@ -64,10 +64,14 @@ public class T_EnemyAttack : MonoBehaviour
 
     // 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
     bool hitPlayerThisJump = false;
+    NormalMonster nm;
     void Start()
     {
         bodyCollider = GetComponent<Collider2D>();
         enemyMove = moveScript as T_EnemyMove;
+
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
 
         if (target == null)
         {
@@ -107,6 +111,9 @@ public class T_EnemyAttack : MonoBehaviour
 
     void TryContactDamage(Collider2D other)
     {
+        // 정화된 이후에는 점프 도중 남은 히트박스가 트리거되더라도 데미지를 주지 않음
+        if (nm != null && nm.IsPurified) return;
+
         if (!other.CompareTag("Player")) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -442,23 +449,16 @@ public class T_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(jumpTelegraphTime);
 
-        // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
-        float elapsed = 0f;
+        Coroutine movementRoutine = (nm != null)
+            ? nm.StartCoroutine(JumpMovementRoutine(startPos, landPos))
+            : StartCoroutine(JumpMovementRoutine(startPos, landPos));
 
-        while (elapsed < jumpDuration)
+        yield return movementRoutine;
+
+        if (nm != null && nm.IsPurified)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / jumpDuration);
-            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
-            float heightOffset = 4f * jumpHeight * t * (1f - t);
-
-            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
-
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            yield return null;
+            yield break;
         }
-
-        transform.position = landPos;
 
         // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
         // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
@@ -475,6 +475,26 @@ public class T_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(jumpCooldown);
         canAttack = true;
+    }
+
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 startPos, Vector2 landPos)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < jumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / jumpDuration);
+            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
+            float heightOffset = 4f * jumpHeight * t * (1f - t);
+
+            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
+
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            yield return null;
+        }
+
+        transform.position = landPos;
     }
 
     System.Collections.IEnumerator FallToGround()
