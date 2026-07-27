@@ -229,7 +229,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackCooldown: 0
+  attackCooldown: 3
   bossAttackDamage: 1
   contactHitbox: {fileID: 4047836205825665637}
   contactDamage: 1
@@ -271,6 +271,11 @@ MonoBehaviour:
   spikeMaxSearchAttempts: 20
   spikeMinDistance: 1.7
   spikeMaxHeightAboveBoss: 10
+  spikeContactSampleCount: 5
+  spikeContactTolerance: 0.05
+  spikeContactSearchStep: 0.5
+  spikeContactSearchMaxDistance: 8
+  fallbackSpikeHalfWidth: 0.3
   spikeSecondWaveDelay: 0.5
   frostRainCompanionChance: 1
   laserTelegraphPrefab: {fileID: 1014840232707358376, guid: 9422e8006b9ae53419523c3ecbf12b24, type: 3}
@@ -310,7 +315,7 @@ MonoBehaviour:
   frostTelegraphCheckDistance: 30
   frostTelegraphLineLength: 15
   frostTelegraphLineThickness: 0.3
-  darkOrbPrefab: {fileID: 0}
+  darkOrbPrefab: {fileID: 266052320498548891, guid: a13f7480368e19b428816077405700bc, type: 3}
   darkOrbCount: 3
   darkOrbOrbitRadius: 2
   darkOrbOrbitDuration: 2
@@ -318,8 +323,8 @@ MonoBehaviour:
   darkOrbTrackDuration: 2
   darkOrbSpeedMultiplier: 0.8
   fallbackDarkOrbSize: 0.6
-  darkCloudPrefab: {fileID: 0}
-  lightningPrefab: {fileID: 0}
+  darkCloudPrefab: {fileID: 6254425877237160721, guid: 77d976ba74a1c8149b58eaa5664fcebd, type: 3}
+  lightningPrefab: {fileID: 3224362926502252807, guid: 457e3adcaffe4f3428d3bbb6af82c7eb, type: 3}
   darkCloudSpawnOffset: {x: 0, y: 6}
   darkCloudFadeInDuration: 2
   darkCloudHoldDuration: 6
@@ -333,9 +338,10 @@ MonoBehaviour:
   shadowBarrierHazardPrefab: {fileID: 1923042159831812501, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
   shadowBarrierTelegraphDuration: 1.5
   shadowBarrierTelegraphBlinkInterval: 0.25
-  shadowBarrierActiveDuration: 1
+  shadowBarrierActiveDuration: 1.17
   fallbackShadowBarrierWidth: 3
   fallbackShadowBarrierHeight: 10
+  shadowBarrierAttackWidth: 31.69737
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
 --- !u!114 &2434699336844069180
 MonoBehaviour:

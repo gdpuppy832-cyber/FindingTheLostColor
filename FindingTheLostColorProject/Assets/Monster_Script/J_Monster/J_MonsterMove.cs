@@ -45,7 +45,7 @@ public class J_EnemyMove : MonoBehaviour
     [Header("Idle Animation (Deterministic Transition)")]
     [Tooltip("Animator Controller 안의 Idle 상태(State) 이름. 추적 시작/종료로 멈추는 순간 이 상태로 즉시 강제 전환하여, " +
              "Walk 애니메이션의 잔여 트랜지션이 이후 공격 애니메이션과 겹쳐 보이는 문제를 방지함.")]
-    public string idleStateName = "Idle";
+    public string idleStateName = "04_FullpulpiCat_IDLE";
     [Tooltip("Idle 상태가 위치한 Animator 레이어 인덱스 (보통 0 = Base Layer)")]
     public int idleAnimatorLayer = 0;
 

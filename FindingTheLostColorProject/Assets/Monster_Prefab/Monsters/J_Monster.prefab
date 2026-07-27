@@ -237,6 +237,9 @@ MonoBehaviour:
     m_Bits: 128
   minJumpDistance: 1
   landingCheckRetryInterval: 0.15
+  postChaseTransitionAttackDelay: 0.1
+  attackStateName: Attack
+  attackAnimatorLayer: 0
   missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
   missIndicatorOffset: {x: 0, y: 1, z: 0}
   missIndicatorDelay: 0.375
@@ -264,6 +267,8 @@ MonoBehaviour:
   wanderEdgeCheckDistance: 1
   jumpForce: 3.15
   climbableWallHeight: 1.1
+  idleStateName: 04_FullpupilCat_IDLE
+  idleAnimatorLayer: 0
 --- !u!114 &-6962878910128233073
 MonoBehaviour:
   m_ObjectHideFlags: 0
