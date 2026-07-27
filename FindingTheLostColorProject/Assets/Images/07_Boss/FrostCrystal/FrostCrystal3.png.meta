@@ -1,25 +1,10 @@
 fileFormatVersion: 2
-guid: 2a1c1941e7ea41e43992aa40a476d0ed
+guid: f06c874ee650a064e9059414c8620152
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5118621142927073664
-    second: 2FrostCrystal4_0
-  - first:
-      213: -2163241256315472119
-    second: 2FrostCrystal4_1
-  - first:
-      213: -5994387099275556763
-    second: 2FrostCrystal4_2
-  - first:
-      213: 5544225842559896922
-    second: 2FrostCrystal4_3
-  - first:
-      213: 3490823646983780079
-    second: 2FrostCrystal4_4
-  - first:
-      213: -1333287879815110503
-    second: 2FrostCrystal4_5
+      213: -668333651767365080
+    second: FrostCrystal3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 2FrostCrystal4_0
+      name: FrostCrystal3_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 186
-        width: 260
-        height: 46
+        y: 0
+        width: 188
+        height: 208
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 08e170ca03107f8b0800000000000000
-      internalID: -5118621142927073664
+      spriteID: 82277fea51a99b6f0800000000000000
+      internalID: -668333651767365080
       vertices: []
       indices: 
       edges: []
@@ -140,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 9866eefd3784abd41b83fbc6866a4228
+    spriteID: 65156ab23d00877458fa0a85d69171f5
     internalID: 0
     vertices: []
     indices: 
@@ -150,9 +135,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":260.0,"y":232.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":188.0,"y":208.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      2FrostCrystal4_0: -5118621142927073664
+      FrostCrystal3_0: -668333651767365080
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

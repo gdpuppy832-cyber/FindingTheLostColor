@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 744704341641192422}
   - component: {fileID: 3398929528843967667}
   m_Layer: 0
-  m_Name: FrostCrystal 1
+  m_Name: FrostCrystal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7371975781892190172, guid: 009573d232405e94e975d38e904d359d, type: 3}
+  m_Sprite: {fileID: -8663238558960814592, guid: b2a186489e47a0043ac8736d8fed182b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 0.5}
+  m_Size: {x: 1.36, y: 1.82}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -166,15 +166,15 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.009930603, y: 1.0266335}
+  m_Offset: {x: -0.0055027828, y: 0.757067}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
-    oldSize: {x: 2.6, y: 2.32}
-    newSize: {x: 1, y: 0.5}
+    oldSize: {x: 1.88, y: 2.08}
+    newSize: {x: 1.36, y: 1.82}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2683096, y: 1.4896798}
+  m_Size: {x: 0.2374428, y: 1.4455353}
   m_EdgeRadius: 0

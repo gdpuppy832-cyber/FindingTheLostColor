@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 009573d232405e94e975d38e904d359d
+guid: 9418a8c215fb2be4cb4a9d458f24b151
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7371975781892190172
-    second: 1FrostCrystal_0
+      213: 3142044267544594662
+    second: FrostCrystal2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1FrostCrystal_0
+      name: FrostCrystal2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 260
-        height: 232
+        width: 188
+        height: 208
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cdf677c4ae48e4660800000000000000
-      internalID: 7371975781892190172
+      spriteID: 6e84c833d98ca9b20800000000000000
+      internalID: 3142044267544594662
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 597fbcf7ee06a2e42af898a0b6991f75
+    spriteID: 7cc52a283d2f41d4fad22aae966b20fd
     internalID: 0
     vertices: []
     indices: 
@@ -133,9 +133,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":188.0,"y":208.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      1FrostCrystal_0: 7371975781892190172
+      FrostCrystal2_0: 3142044267544594662
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
