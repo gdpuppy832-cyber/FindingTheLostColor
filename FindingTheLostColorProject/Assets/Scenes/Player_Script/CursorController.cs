@@ -192,6 +192,13 @@ public class CursorController : MonoBehaviour
         {
             attackMode = (attackMode == 1) ? 2 : 1;
             ResetCharge();
+
+            // [추가] 무기 UI 슬롯 아펠리오스 스타일 스왑 연출 가동
+            if (WeaponSlotUI.Instance != null)
+            {
+                WeaponSlotUI.Instance.OnAttackModeChanged(attackMode);
+            }
+
             Debug.Log($"[공격 모드 스왑] 현재 모드: {attackMode}번 (1: 일반 브러시, 2: 차징 샷)");
         }
 

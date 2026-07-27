@@ -44,8 +44,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5176b0795b5820429b3d9a799326b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftCatSprite: {fileID: 8957324059118975939, guid: 8d7fe3f976c2e6e4188ff323b3beff08, type: 3}
-  rightCatSprite: {fileID: 8957324059118975939, guid: 8d7fe3f976c2e6e4188ff323b3beff08, type: 3}
+  arrowSprite: {fileID: 8586039808192981590, guid: fc42f45fea77bd94f9a432a1d605c8ca, type: 3}
+  catFaceSprite: {fileID: -1993363093203858423, guid: fc42f45fea77bd94f9a432a1d605c8ca, type: 3}
+  arrowPivot: {x: 0.4, y: 0.5}
+  leftArrowImageSize: {x: 45, y: 45}
+  leftCatFaceImageSize: {x: 65, y: 65}
+  leftGapBetweenImages: 50
+  leftTextOffset: {x: 0, y: -2}
+  leftFontSize: 32
+  rightArrowImageSize: {x: 45, y: 45}
+  rightCatFaceImageSize: {x: 65, y: 65}
+  rightGapBetweenImages: -50
+  rightTextOffset: {x: 0, y: -2}
+  rightFontSize: 32
   targetCanvas: {fileID: 0}
   fontAsset: {fileID: 11400000, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
   edgePadding: 50
