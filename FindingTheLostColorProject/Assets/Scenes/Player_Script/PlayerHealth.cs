@@ -96,6 +96,7 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvincible = false;
     private bool isDead = false;
     private bool isDrawBlocked = false;
+    private bool hasDiedExecuted = false;
 
     public bool IsDead => isDead;
     public bool IsDrawBlocked => isDrawBlocked;
@@ -105,6 +106,7 @@ public class PlayerHealth : MonoBehaviour
     {
         // 시작 시 체력을 최대 체력으로 초기화
         currentHealth = maxHealth;
+        hasDiedExecuted = false;
 
         // SpriteRenderer 자동 감지
         if (spriteRenderer == null)
@@ -392,12 +394,21 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="isFalling">추락사 여부</param>
     private void Die(bool isFalling)
     {
-        // 이미 사망 체크 완료되었으면 중복 진입 방지 (HurtThenDie 연계 시 필요)
-        if (isDead) return;
+        // 이미 실제 사망 처리 연출이 돌았다면 중복 진입 차단
+        if (hasDiedExecuted) return;
+        hasDiedExecuted = true;
+        
         isDead = true;
         isInvincible = false;
 
         Debug.LogWarning(isFalling ? "[PlayerHealth] 플레이어가 낭떠러지로 추락하여 사망했습니다!" : "[PlayerHealth] 플레이어 체력이 0이 되어 사망했습니다!");
+
+        // [세이브포인트 연동] 사망 직전 궁극기 게이지 및 정화 완료 몬스터 목록 실시간 수집 백업
+        if (SavePointManager.Instance != null)
+        {
+            float currentSuper = (SuperGaugeController.Instance != null) ? SuperGaugeController.Instance.currentSuper : 0f;
+            SavePointManager.Instance.PrepareRespawn(currentSuper);
+        }
 
         // 1. 플레이어 조작 차단 (마우스 제외 키보드 입력 및 물리 속도 제어)
         PlayerMove playerMove = GetComponent<PlayerMove>();

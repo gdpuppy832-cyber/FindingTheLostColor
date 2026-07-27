@@ -29,7 +29,6 @@ public class PlayerInteraction : MonoBehaviour
     public Font customFont;
 
     private bool isInteractionLocked = false;
-    private bool isDynamicUI = false;
 
     void Start()
     {
@@ -37,7 +36,6 @@ public class PlayerInteraction : MonoBehaviour
         if (promptText == null && promptTmpText == null && promptTmp3DText == null && promptLegacyTextMesh == null)
         {
             CreateDefaultPromptUI();
-            isDynamicUI = true;
         }
         else
         {

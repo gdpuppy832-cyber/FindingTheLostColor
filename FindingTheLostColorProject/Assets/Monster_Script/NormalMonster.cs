@@ -48,11 +48,15 @@ public class NormalMonster : MonoBehaviour
     private Animator animator;
     private bool isPurified = false;
     private float lastAttackTime = 0f;
+    private Vector3 spawnPosition;
 
     public bool IsPurified => isPurified;
+    public Vector3 SpawnPosition => spawnPosition;
 
     void Awake()
     {
+        spawnPosition = transform.position; // 최초 배치 좌표 박제 (세이브/부활 매칭용 고유 ID 생성 기준값)
+
         rb = GetComponent<Rigidbody2D>();
         if (rb == null) rb = GetComponentInParent<Rigidbody2D>();
         if (rb == null) rb = GetComponentInChildren<Rigidbody2D>();
@@ -85,11 +89,19 @@ public class NormalMonster : MonoBehaviour
             }
         }
 
-        // 요구사항: 스폰될 때 현재 체력을 0으로 시작
-        currentHealth = 0f;
+        // [추가] 만약 씬 로드 시 이미 정화 복구 처리가 완료되었다면, 초기화(0 체력 및 회색)를 스킵하고 비주얼을 바로 복구합니다.
+        if (isPurified)
+        {
+            RestorePurificationState();
+        }
+        else
+        {
+            // 요구사항: 스폰될 때 현재 체력을 0으로 시작
+            currentHealth = 0f;
 
-        // 비주얼 색상 초기화 (어두운 무채색 톤)
-        UpdateVisualColor();
+            // 비주얼 색상 초기화 (어두운 무채색 톤)
+            UpdateVisualColor();
+        }
     }
 
     /// <summary>
@@ -256,11 +268,19 @@ public class NormalMonster : MonoBehaviour
     }
 
     /// <summary>
-    /// 체력이 가득 차서 고양이가 정화되었을 때의 처리
+    /// 세이브포인트 부활 시, 효과음이나 팝업 연출 없이 조용히 완전한 정화 상태(채색 100%, 이동 정지, 애니메이션)로 복구합니다.
     /// </summary>
-    public void Purify()
+    public void RestorePurificationState()
     {
-        if (isPurified) return;
+        Purify(playSound: false, isRestoring: true);
+    }
+
+    /// <summary>
+    /// 체력이 가득 차서 고양이(몬스터)가 정화되었을 때의 종합 처리
+    /// </summary>
+    public void Purify(bool playSound = true, bool isRestoring = false)
+    {
+        if (isPurified && !isRestoring) return;
         isPurified = true;
         currentHealth = maxHealth;
 
@@ -289,8 +309,8 @@ public class NormalMonster : MonoBehaviour
             }
         }
 
-        // 정화 완료 효과음 재생 (3D 입체 음향)
-        if (SoundManager.Instance != null)
+        // 정화 완료 효과음 재생 (복구 모드가 아닐 때만 재생)
+        if (playSound && SoundManager.Instance != null)
         {
             SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
         }
@@ -301,32 +321,46 @@ public class NormalMonster : MonoBehaviour
         // [추가] 정화 완료 시 머리 위에 둥둥 떠다니는 아이콘 이미지 소환
         if (purificationIndicatorPrefab != null)
         {
-            Debug.Log($"[NormalMonster] '{gameObject.name}' 정화 둥둥이 프리팹 확인 완료. 머리 위 소환을 가동합니다. (오프셋: {indicatorOffset})");
-            // 몬스터의 자식으로 즉시 소환
-            GameObject indicator = Instantiate(purificationIndicatorPrefab, transform);
-            
-            // ⚠️ 프리팹 내부에 원래 들어있던 자식 스프라이트들의 엉뚱한 X, Y 오프셋을 완전히 초기화(0,0,0)하여 
-            // 우주 먼 곳에 잘못 생성되는 오동작을 원천 봉쇄합니다.
-            foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+            // [중복 방지 가드] "내 자식 오브젝트들" 중에 이미 정화 완료 표시 아이콘이 존재하는지 확인!
+            bool alreadyExists = false;
+            foreach (Transform child in GetComponentsInChildren<Transform>(true))
             {
-                if (child != indicator.transform)
+                if (child.name == "PurifiedSignObject")
                 {
-                    child.localPosition = Vector3.zero;
+                    alreadyExists = true;
+                    break;
                 }
             }
 
-            indicator.transform.localPosition = indicatorOffset; // 부모 머리 위 정확한 오프셋 좌표 대입
-            indicator.transform.localRotation = Quaternion.identity;
-            
-            // ⚠️ 중요: 이름에 "indicator", "effect" 등이 들어가면 하단의 자식 오브젝트 정리(비활성화) 필터에 걸려 
-            // 스폰되자마자 파괴되거나 꺼지므로, 해당 키워드가 전혀 섞이지 않은 안전한 이름으로 명명합니다.
-            indicator.name = "PurifiedSignObject"; 
-            
-            // [추가] 부모 몬스터의 물리 레이어(Layer)를 그대로 상속하여 카메라 컬링에 가려지는 버그 원천 방지
-            indicator.layer = gameObject.layer;
-            foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+            if (!alreadyExists)
             {
-                child.gameObject.layer = gameObject.layer;
+                Debug.Log($"[NormalMonster] '{gameObject.name}' 정화 둥둥이 프리팹 확인 완료. 머리 위 소환을 가동합니다. (오프셋: {indicatorOffset})");
+                // 몬스터의 자식으로 즉시 소환
+                GameObject indicator = Instantiate(purificationIndicatorPrefab, transform);
+                
+                // ⚠️ 프리팹 내부에 원래 들어있던 자식 스프라이트들의 엉뚱한 X, Y 오프셋을 완전히 초기화(0,0,0)하여 
+                // 우주 먼 곳에 잘못 생성되는 오동작을 원천 봉쇄합니다.
+                foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+                {
+                    if (child != indicator.transform)
+                    {
+                        child.localPosition = Vector3.zero;
+                    }
+                }
+
+                indicator.transform.localPosition = indicatorOffset; // 부모 머리 위 정확한 오프셋 좌표 대입
+                indicator.transform.localRotation = Quaternion.identity;
+                
+                // ⚠️ 중요: 이름에 "indicator", "effect" 등이 들어가면 하단의 자식 오브젝트 정리(비활성화) 필터에 걸려 
+                // 스폰되자마자 파괴되거나 꺼지므로, 해당 키워드가 전혀 섞이지 않은 안전한 이름으로 명명합니다.
+                indicator.name = "PurifiedSignObject"; 
+                
+                // [추가] 부모 몬스터의 물리 레이어(Layer)를 그대로 상속하여 카메라 컬링에 가려지는 버그 원천 방지
+                indicator.layer = gameObject.layer;
+                foreach (Transform child in indicator.GetComponentsInChildren<Transform>(true))
+                {
+                    child.gameObject.layer = gameObject.layer;
+                }
             }
         }
        
