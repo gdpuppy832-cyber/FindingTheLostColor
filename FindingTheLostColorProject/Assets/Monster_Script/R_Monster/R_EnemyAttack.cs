@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-50)]
 public class R_EnemyAttack : MonoBehaviour
 {
     public float attackRange = 6f;       // 이 범위 안에 타겟이 들어오면 공격 시작
@@ -19,6 +20,11 @@ public class R_EnemyAttack : MonoBehaviour
 
     bool isAttacking = false;
     bool canAttack = true;
+    bool wasStateDelay = false;
+
+    [Header("Attack Animation")]
+    public string attackStateName = "03_Furcat_Attack";
+    public int attackAnimatorLayer = 0;
 
     public Transform muzzle; 
     public float muzzleOrbitDistance = 1f; // 콜라이더가 없을 때 사용할 기본 거리 
@@ -92,14 +98,37 @@ public class R_EnemyAttack : MonoBehaviour
 
         if (isAttacking || !canAttack || target == null) return;
 
-        // 추적 시작/종료 연출 중에는 공격 금지
-        if (enemyMove != null && enemyMove.IsStateDelay) return;
+        bool currentStateDelay = enemyMove != null && enemyMove.IsStateDelay;
+        // 추적 시작/종료 연출 중에는 공격 금지, 연출이 끝난 바로 그 프레임도 아직 보류
+        if (currentStateDelay) { wasStateDelay = true; return; }
+        if (wasStateDelay) { wasStateDelay = false; return; }
 
         float distance = Vector2.Distance(transform.position, target.position);
         if (distance <= attackRange)
         {
-            StartCoroutine(AttackRoutine());
+            BeginAttack();
         }
+    }
+
+    void BeginAttack()
+    {
+        isAttacking = true;
+        canAttack = false;
+
+        if (animator != null)
+        {
+            animator.SetBool("IsAttacking", true);
+            animator.SetBool("IsWalking", false);
+
+            // SetBool 대신 Play+Update(0)로 그 자리에서 즉시 상태 확정, 전환 지연 방지
+            animator.Play(attackStateName, attackAnimatorLayer, 0f);
+            animator.Update(0f);
+        }
+
+        if (enemyMove != null)
+            enemyMove.enabled = false;
+
+        StartCoroutine(AttackRoutine());
     }
 
     void UpdateMuzzlePosition()
@@ -125,17 +154,7 @@ public class R_EnemyAttack : MonoBehaviour
 
     System.Collections.IEnumerator AttackRoutine()
     {
-        isAttacking = true;
-        canAttack = false;
-
-        if (animator != null)
-        {
-            animator.SetBool("IsWalking", false); // 공격 시작 시 걷기 상태를 확실히 꺼서 Walk 애니메이션과 충돌 방지
-            animator.SetBool("IsAttacking", true);
-        }
-
-        if (enemyMove != null)
-            enemyMove.enabled = false; // 텔레그래프 시작과 동시에 이동 정지
+        // isAttacking/canAttack/animator/enemyMove 처리는 BeginAttack()으로 이동함
 
         // 발사 시점 타겟 방향 고정
         Vector2 fireDir = ((Vector2)target.position - (Vector2)transform.position).normalized;

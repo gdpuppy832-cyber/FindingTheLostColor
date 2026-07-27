@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
 public class R_EnemyMove : MonoBehaviour
 {
     public float speed = 1.5f;
