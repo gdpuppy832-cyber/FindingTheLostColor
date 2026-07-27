@@ -6,9 +6,13 @@ public class ShadowBarrierHazard : MonoBehaviour
     public float damage = 1f;
     [Tooltip("이 영역이 유지되는 시간, 지나면 자동 파괴")]
     public float lifetime = 3f;
-    float lastDamageTime = -999f;
+    [Tooltip("생성 후 실제 피해가 시작되기까지의 시간")]
+    public float hitDelay = 0.3f;
+
+    float spawnTime;
     void Start()
     {
+        spawnTime = Time.time;
         Destroy(gameObject, lifetime);
     }
     void OnTriggerStay2D(Collider2D other)
@@ -21,12 +25,15 @@ public class ShadowBarrierHazard : MonoBehaviour
     }
     void TryDamage(GameObject obj)
     {
+        if (Time.time - spawnTime < hitDelay)
+            return;
+
         PlayerHealth player = obj.GetComponent<PlayerHealth>();
         if (player == null) player = obj.GetComponentInParent<PlayerHealth>();
+
         if (player != null)
         {
             player.TakeDamage(damage);
-            lastDamageTime = Time.time;
         }
     }
 }
