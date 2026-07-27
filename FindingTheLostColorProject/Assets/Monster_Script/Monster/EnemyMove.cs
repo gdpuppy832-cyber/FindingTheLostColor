@@ -41,6 +41,18 @@ public class EnemyMove : MonoBehaviour
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
 
+    [Header("벽 점프 안정성 설정")]
+    [Tooltip("isGrounded는 FixedUpdate에서만 갱신되기 때문에, Update() 타이밍과 어긋나 실제로는 접지 중인데도 " +
+             "한 프레임 동안 false로 읽혀 Jump()가 무시되는 경우가 있음. 마지막으로 접지했던 시점부터 " +
+             "이 시간(초) 안이면 여전히 접지 상태로 간주해서 점프가 씹히지 않도록 함 (코요테 타임)")]
+    public float groundedBufferDuration = 0.15f;
+    float lastGroundedTime = -999f; // FixedUpdate에서 isGrounded가 true였던 마지막 시각
+
+    [Tooltip("추적 중 벽(1칸 벽 등)에 막혔을 때, 점프 조건(isGrounded/CanClimbWall)이 한 프레임 실패하더라도 " +
+             "즉시 포기하지 않고 이 시간(초) 동안은 매 프레임 계속 점프를 재시도함")]
+    public float wallJumpRetryDuration = 0.3f;
+    float wallBlockStartTime = -1f; // 현재 방향의 벽에 처음 막힌 시각 (-1이면 막힌 적 없음/이미 벗어남)
+
     Animator animator; // 자식 오브젝트에 있는 Animator (스프라이트가 자식으로 분리된 구조 대비 GetComponentInChildren 사용)
 
     void Start()
@@ -232,11 +244,34 @@ public class EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isChasing && isGrounded && CanClimbWall(desiredDir))
+            if (isChasing)
             {
-                Jump();
-                return;
+                if (wallBlockStartTime < 0f)
+                    wallBlockStartTime = Time.time;
+
+                // isGrounded 자체가 아니라 Jump() 내부에서 버퍼(코요테 타임)까지 감안해서
+                // 판정하므로, 여기서는 그냥 시도만 하면 됨.
+                if (CanClimbWall(desiredDir))
+                {
+                    Jump();
+                    // 점프 시도가 성공적으로 들어갔으므로 이번 벽에 대한 재시도 상태 초기화
+                    wallBlockStartTime = -1f;
+                    return;
+                }
+
+                if (Time.time - wallBlockStartTime < wallJumpRetryDuration)
+                {
+                    if (animator != null)
+                    {
+                        animator.SetBool("IsWalking", false);
+                        animator.speed = 1f;
+                    }
+                    prevposition = transform.position;
+                    return;
+                }
+                // 재시도 시간을 넘겼다면 아래의 기존 처리(정지 유지)로 자연스럽게 넘어감
             }
+
             if (animator != null)
             {
                 animator.SetBool("IsWalking", false);
@@ -253,6 +288,10 @@ public class EnemyMove : MonoBehaviour
 
             prevposition = transform.position;
             return;
+        }
+        else
+        {
+            wallBlockStartTime = -1f;
         }
 
         if (animator != null)
@@ -293,6 +332,9 @@ public class EnemyMove : MonoBehaviour
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
         isGrounded = groundedLeft || groundedRight;
+
+        if (isGrounded)
+            lastGroundedTime = Time.time;
     }
     private bool CanClimbWall(float dir)
     {
@@ -327,15 +369,14 @@ public class EnemyMove : MonoBehaviour
     }
     private void Jump()
     {
-        if (!isGrounded)
+        bool groundedRecently = isGrounded || (Time.time - lastGroundedTime <= groundedBufferDuration);
+        if (!groundedRecently)
             return;
 
         rigid.linearVelocity =
             new Vector2(rigid.linearVelocity.x, jumpForce);
     }
-    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
-    // 그 시점에 Update() 루프(isStateDelay 처리)가 멈춰서 currentAlert가 정리되지 못하므로,
-    // 여기서 확실하게 파괴함
+
     void OnDisable()
     {
         if (currentAlert != null)

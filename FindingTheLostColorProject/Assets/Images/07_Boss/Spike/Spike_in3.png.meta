@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: af14b84661491764499e9be567f528f0
+guid: 9d27a4bfd1860b646a8e6d0857823863
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7903856655371551018
-    second: 07_Laser3_0
+      213: -8004619095995892229
+    second: Spike_in3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,27 +100,26 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 07_Laser3_0
+      name: Spike_in3_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1920
-        height: 587
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 324
+        height: 466
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape:
-      - - {x: -960, y: 51.5}
-        - {x: 960, y: 25.5}
-        - {x: 960, y: -95.5}
-        - {x: -960, y: -73.5}
+      - - {x: 8, y: -233}
+        - {x: 0, y: -233}
+        - {x: 18, y: -233}
       tessellationDetail: 0
       bones: []
-      spriteID: 6deb8f49f3cdf4290800000000000000
-      internalID: -7903856655371551018
+      spriteID: bfd3bdca751e9e090800000000000000
+      internalID: -8004619095995892229
       vertices: []
       indices: 
       edges: []
@@ -129,7 +128,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ec8b6e5c490f5f84aab31fd2b3bd0c6d
+    spriteID: 2064795e3723ac940b858c50a6a6051b
     internalID: 0
     vertices: []
     indices: 
@@ -139,9 +138,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":1920.0,"y":587.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":324.0,"y":466.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      07_Laser3_0: -7903856655371551018
+      Spike_in3_0: -8004619095995892229
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
