@@ -157,12 +157,29 @@ public class BlackFog : MonoBehaviour
 
             transform.position += new Vector3(currentVelocityX * Time.deltaTime, 0f, 0f);
 
-            float halfWidth = hitCollider != null ? hitCollider.bounds.extents.x : 0f;
-            float pivotStopX = target.position.x + dir * halfWidth;
-            float minX = Mathf.Min(pivotStopX, spawnPosition.x);
-            float maxX = Mathf.Max(pivotStopX, spawnPosition.x);
-            float clampedX = Mathf.Clamp(transform.position.x, minX, maxX);
-            transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
+            if (hitCollider != null)
+            {
+                if (side == FogSide.Left)
+                {
+                    float overshoot = hitCollider.bounds.max.x - target.position.x;
+                    if (overshoot > 0f)
+                    {
+                        // 초과한 만큼만 되돌려서, Collider 오른쪽 끝이 Pivot에 정확히 닿는 위치로 보정
+                        transform.position = new Vector3(transform.position.x - overshoot, transform.position.y, transform.position.z);
+                        currentVelocityX = 0f;
+                    }
+                }
+                else // FogSide.Right
+                {
+                    float overshoot = target.position.x - hitCollider.bounds.min.x;
+                    if (overshoot > 0f)
+                    {
+                        // 초과한 만큼만 되돌려서, Collider 왼쪽 끝이 Pivot에 정확히 닿는 위치로 보정
+                        transform.position = new Vector3(transform.position.x + overshoot, transform.position.y, transform.position.z);
+                        currentVelocityX = 0f;
+                    }
+                }
+            }
         }
 
         if (orbTarget != null && hitCollider != null)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SpikeHazard : MonoBehaviour
 {
@@ -9,9 +10,20 @@ public class SpikeHazard : MonoBehaviour
     public float lifetime = 3f;
 
     float lastDamageTime = -999f;
+    EdgeCollider2D edge;
+    SpriteRenderer spriteRenderer;
+
+    Sprite lastSprite;
+
+    readonly List<Vector2> physicsShape = new List<Vector2>();
 
     void Start()
     {
+        edge = GetComponent<EdgeCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        UpdateCollider();
+
         Destroy(gameObject, lifetime);
     }
 
@@ -23,6 +35,13 @@ public class SpikeHazard : MonoBehaviour
     void OnCollisionStay2D(Collision2D collision)
     {
         TryDamage(collision.gameObject);
+    }
+    void Update()
+    {
+        if (spriteRenderer.sprite != lastSprite)
+        {
+            UpdateCollider();
+        }
     }
 
     void TryDamage(GameObject obj)
@@ -37,5 +56,23 @@ public class SpikeHazard : MonoBehaviour
             player.TakeDamage(damage);
             lastDamageTime = Time.time;
         }
+    }
+    void UpdateCollider()
+    {
+        if (edge == null || spriteRenderer == null || spriteRenderer.sprite == null)
+            return;
+
+        lastSprite = spriteRenderer.sprite;
+
+        physicsShape.Clear();
+
+        int shapeCount = lastSprite.GetPhysicsShapeCount();
+
+        if (shapeCount == 0)
+            return;
+
+        lastSprite.GetPhysicsShape(0, physicsShape);
+
+        edge.SetPoints(physicsShape);
     }
 }

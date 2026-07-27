@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-50)]
 public class J_EnemyAttack : MonoBehaviour
 {
     public float attackRange = 4f;        // y축 범위
@@ -26,8 +27,22 @@ public class J_EnemyAttack : MonoBehaviour
     public float landingCheckRetryInterval = 0.15f;
     float nextLandingCheckTime = 0f;
 
+    [Tooltip("추적 시작/종료(isStateDelay)가 끝난 직후, 공격이 실제로 가능해지기까지 추가로 대기하는 시간(초)")]
+    public float postChaseTransitionAttackDelay = 0.1f;
+    bool wasStateDelay = false;      // 직전 프레임의 IsStateDelay 값 (true->false 전환 감지용)
+    float attackAllowedTime = 0f;    // 이 시간이 지나야 공격 시작 가능
+
     J_EnemyMove enemyMove;
-    Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+    Animator animator;
+    NormalMonster nm;
+
+    [Header("Attack Animation (Deterministic Transition)")]
+    [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
+             "서브 스테이트 머신 안에 있다면 \"SubStateMachineName.StateName\" 형식으로 입력해야 함. " +
+             "이 값이 실제 컨트롤러의 상태 이름과 정확히 일치하지 않으면 Animator.Play()가 아무 동작도 하지 않으니 주의.")]
+    public string attackStateName = "Attack";
+    [Tooltip("공격 상태가 위치한 Animator 레이어 인덱스 (보통 0 = Base Layer)")]
+    public int attackAnimatorLayer = 0;
 
     // 이번 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
     bool hitPlayerThisJump = false;
@@ -47,10 +62,16 @@ public class J_EnemyAttack : MonoBehaviour
     void Start()
     {
         enemyMove = GetComponent<J_EnemyMove>();
+
         animator = GetComponent<Animator>();
-        if (animator == null) animator = GetComponentInChildren<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
+
         if (player != null)
             target = player.transform;
         int playerLayer = LayerMask.NameToLayer("Player");
@@ -68,6 +89,9 @@ public class J_EnemyAttack : MonoBehaviour
 
     void TryContactDamage(Collider2D other)
     {
+        // 정화된 이후에는 점프 도중 남은 히트박스가 트리거되더라도 데미지를 주지 않음
+        if (nm != null && nm.IsPurified) return;
+
         if (!other.CompareTag("Player")) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -98,7 +122,19 @@ public class J_EnemyAttack : MonoBehaviour
         if (isAttacking || !canAttack) return;
 
         // 추적 시작/종료 시 J_EnemyMove가 잠시 멈춰있는 동안(isStateDelay)에는 공격을 시도하지 않음
-        if (enemyMove != null && enemyMove.IsStateDelay) return;
+        bool currentStateDelay = enemyMove != null && enemyMove.IsStateDelay;
+
+
+        if (wasStateDelay && !currentStateDelay)
+        {
+            attackAllowedTime = Time.time + postChaseTransitionAttackDelay;
+        }
+        wasStateDelay = currentStateDelay;
+
+        if (currentStateDelay) return;
+
+        // 전환 직후 추가 대기 시간이 아직 안 지났으면 공격 보류
+        if (Time.time < attackAllowedTime) return;
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
         float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
@@ -123,27 +159,34 @@ public class J_EnemyAttack : MonoBehaviour
                 return;
             }
 
-            StartCoroutine(JumpAttackRoutine(landPos));
+            // ★ 공격이 확정된 바로 이 프레임에, 애니메이터 전환을 포함한 "공격 시작" 처리를
+            //   동기적으로 즉시 실행함. 텔레그래프 대기 이후의 점프 이동만 코루틴이 이어서 담당하므로,
+            //   점프 공격이 시작되는 프레임과 애니메이터가 공격 상태로 진입하는 프레임이 절대 어긋나지 않음.
+            BeginJumpAttack(landPos);
         }
+    }
+
+    void BeginJumpAttack(Vector2 landPos)
+    {
+        isAttacking = true;
+        canAttack = false;
+        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
+
+        if (animator != null)
+            animator.SetBool("IsAttacking", true);
+
+        if (enemyMove != null)
+            enemyMove.enabled = false;
+
+
+
+        StartCoroutine(JumpAttackRoutine(landPos));
     }
 
     System.Collections.IEnumerator JumpAttackRoutine(Vector2 landPos)
     {
         Collider2D selfColForJump = GetComponent<Collider2D>();
         Vector2 jumpColliderSize = selfColForJump != null ? selfColForJump.bounds.size * 0.95f : Vector2.one * 0.5f;
-
-        isAttacking = true;
-        canAttack = false;
-        hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
-
-        if (animator != null)
-        {
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsAttacking", true);
-        }
-
-        if (enemyMove != null)
-            enemyMove.enabled = false;
 
         Vector2 attackStartPos = transform.position;
 
@@ -160,6 +203,85 @@ public class J_EnemyAttack : MonoBehaviour
                 enemyMove.enabled = true;
             yield break;
         }
+
+        Coroutine movementRoutine = (nm != null)
+            ? nm.StartCoroutine(JumpMovementRoutine(landPos))
+            : StartCoroutine(JumpMovementRoutine(landPos));
+
+        yield return movementRoutine;
+
+        if (nm != null && nm.IsPurified)
+        {
+            yield break;
+        }
+
+        // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
+        // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
+        yield return new WaitForFixedUpdate();
+
+
+        if (hitPlayerThisJump)
+        {
+            yield return new WaitForSeconds(hitPostDelay);
+        }
+        else
+        {
+            if (animator != null)
+                animator.SetBool("IsDelaying", true);
+
+            // NormalMonster는 수정하지 않는 전제이므로, 정화 여부(IsPurified)는 참조만 해서 확인
+            NormalMonster nm = GetComponent<NormalMonster>();
+            if (nm == null) nm = GetComponentInParent<NormalMonster>();
+
+            bool indicatorSpawned = false;
+            float waitElapsed = 0f;
+
+            while (waitElapsed < postDelay)
+            {
+                waitElapsed += Time.deltaTime;
+
+                if (!indicatorSpawned && waitElapsed >= missIndicatorDelay)
+                {
+                    activeMissIndicator = SpawnMissIndicator();
+                    indicatorSpawned = true;
+                }
+
+                if (activeMissIndicator != null && nm != null && nm.IsPurified)
+                {
+                    Destroy(activeMissIndicator);
+                    activeMissIndicator = null;
+                }
+
+                yield return null;
+            }
+
+            // ★ postDelay가 끝나는 순간(= while 루프를 빠져나온 직후) IsDelaying을 다시 끔.
+            if (animator != null)
+                animator.SetBool("IsDelaying", false);
+
+            if (activeMissIndicator != null)
+            {
+                Destroy(activeMissIndicator);
+                activeMissIndicator = null;
+            }
+        }
+
+
+        isAttacking = false;
+
+        if (animator != null)
+            animator.SetBool("IsAttacking", false);
+
+        // enemyMove를 IsAttacking을 끈 다음에 활성화해서,
+        // 같은 프레임에 IsWalking이 급하게 바뀌어 트랜지션이 꼬이는 걸 방지
+        if (enemyMove != null)
+            enemyMove.enabled = true;
+
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true;
+    }
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 landPos)
+    {
         yield return new WaitForSeconds(telegraphTime);
         Vector2 startPos = transform.position;
 
@@ -188,77 +310,8 @@ public class J_EnemyAttack : MonoBehaviour
         }
 
         transform.position = landPos;
-
-        // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
-        // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
-        yield return new WaitForFixedUpdate();
-
-        // 점프 도중 실제로 플레이어와 충돌(TryContactDamage 발동)했는지에 따라 후딜 시간을 다르게 적용
-        // 성공: hitPostDelay(기본 0.25초, 조정 가능) / 실패: postDelay(기본 0.5초)
-        if (hitPlayerThisJump)
-        {
-            yield return new WaitForSeconds(hitPostDelay);
-        }
-        else
-        {
-            // 공격 실패 시에만 IsDelaying 애니메이션 파라미터를 켬
-            if (animator != null) animator.SetBool("IsDelaying", true);
-
-            // NormalMonster는 수정하지 않는 전제이므로, 정화 여부(IsPurified)는 참조만 해서 확인
-            NormalMonster nm = GetComponent<NormalMonster>();
-            if (nm == null) nm = GetComponentInParent<NormalMonster>();
-
-            bool indicatorSpawned = false;
-            float waitElapsed = 0f;
-
-            // postDelay 동안 매 프레임 진행하면서,
-            // 1) missIndicatorDelay가 지나면 그때 표시 오브젝트를 생성하고
-            // 2) 표시 중에 몬스터가 정화되면 즉시 파괴함
-            // (참고: 정화로 인해 이 스크립트 자체가 비활성화되면 이 루프도 함께 멈추는데,
-            //  그 경우를 대비한 정리는 OnDisable에서 별도로 처리함)
-            while (waitElapsed < postDelay)
-            {
-                waitElapsed += Time.deltaTime;
-
-                if (!indicatorSpawned && waitElapsed >= missIndicatorDelay)
-                {
-                    activeMissIndicator = SpawnMissIndicator();
-                    indicatorSpawned = true;
-                }
-
-                if (activeMissIndicator != null && nm != null && nm.IsPurified)
-                {
-                    Destroy(activeMissIndicator);
-                    activeMissIndicator = null;
-                }
-
-                yield return null;
-            }
-
-            if (animator != null) animator.SetBool("IsDelaying", false);
-
-            if (activeMissIndicator != null)
-            {
-                Destroy(activeMissIndicator);
-                activeMissIndicator = null;
-            }
-        }
-
-        if (animator != null) animator.SetBool("IsAttacking", false);
-
-        isAttacking = false;
-
-        // enemyMove를 IsAttacking을 끈 다음에 활성화해서,
-        // 같은 프레임에 IsWalking이 급하게 바뀌어 트랜지션이 꼬이는 걸 방지
-        if (enemyMove != null)
-            enemyMove.enabled = true;
-
-        yield return new WaitForSeconds(attackCooldown);
-        canAttack = true;
     }
-    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
-    // 그 시점에 코루틴이 멈춰서 위 while 루프의 정리 로직이 실행되지 못하므로,
-    // 여기서 확실하게 표시 오브젝트를 파괴함
+
     void OnDisable()
     {
         if (activeMissIndicator != null)
@@ -286,8 +339,11 @@ public class J_EnemyAttack : MonoBehaviour
     [Tooltip("경로 중간 지점 아래로 이 거리 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함 (계단/턱 아래로 착지 허용)")]
     public float safeDropDistance = 3f;
 
-    // isCliff: 경로 중간에 (safeDropDistance 안에서도) 바닥을 전혀 못 찾거나,
-    // 시작 지점보다 착지 지점이 safeDropDistance 이상 훨씬 낮아서 (진짜 낭떠러지로 추정되어) 취소된 경우 true
+    [Tooltip("J 몬스터 현재 발 위치 기준, 착지 지점이 이 값보다 더 아래층이면 점프 공격 자체를 시작하지 않음 (기존 낭떠러지 판정과 동일하게 취소됨)")]
+    public float maxAllowedDropHeight = 5f;
+
+    const float ceilingExclusionEpsilon = 0.01f;
+
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
@@ -295,54 +351,44 @@ public class J_EnemyAttack : MonoBehaviour
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
-        float rayStartY = desired.y + 1f;
+        float rayStartY = desired.y - 0.1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
-        RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
-        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
-        // 안전장치 1: 시작 지점 기준 착지 지점이 safeDropDistance보다 훨씬 더 아래(진짜 낭떠러지 낙차)면
-        // 애초에 점프 자체를 취소함. 계단 정도의 낙차(safeDropDistance 이내)만 허용.
-        float startGroundY = start.y - footOffset;
-        float landGroundY = targetLandPos.y - footOffset;
-        if (startGroundY - landGroundY > safeDropDistance)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, Vector2.down, 50f, groundLayer);
+
+        RaycastHit2D? bestHit = null;
+        foreach (var h in hits)
         {
+            // 요구사항 3, 4: 플레이어(desired.y)보다 높은 Ground는 후보에서 완전히 제외.
+            // 즉 "플레이어 아래에 있는 바닥"만 착지 지점으로 인정함.
+            if (h.point.y > desired.y + ceilingExclusionEpsilon) continue;
+
+            // 남은 후보 중 플레이어와 가장 가까운(=y가 가장 큰) 바닥을 선택
+            if (bestHit == null || h.point.y > bestHit.Value.point.y)
+                bestHit = h;
+        }
+
+        if (bestHit == null)
+        {
+            // 플레이어보다 낮은 위치에 유효한 Ground가 하나도 없음
+            // -> 착지할 곳이 없는 진짜 허공/구멍이므로 점프 취소
             isCliff = true;
-            return start;
+            return desired;
         }
 
-        int steps = 10;
-        Vector2 lastGroundPos = start;
-        float lastGroundY = startGroundY; // 급격한 단차(중간에 툭 떨어지는 진짜 낭떠러지) 감지용
+        float currentGroundY = start.y - footOffset;   // 몬스터 현재 발 위치(바닥 기준 Y)
+        float landingGroundY = bestHit.Value.point.y;  // 착지 지점의 바닥 표면 Y
 
-        for (int i = 0; i <= steps; i++)
+        if (currentGroundY - landingGroundY > maxAllowedDropHeight)
         {
-            float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-
-            // 바로 아래(footOffset)만 검사하는 대신, safeDropDistance만큼 더 깊게 검사해서
-            // 그 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함
-            RaycastHit2D dropHit = Physics2D.Raycast(checkPos, Vector2.down, footOffset + safeDropDistance, groundLayer);
-
-            if (dropHit.collider == null)
-            {
-                // safeDropDistance 안에서도 땅을 전혀 못 찾음 -> 진짜 낭떠러지
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            // 안전장치 2: 직전 검사 지점의 땅보다 이번 지점의 땅이 safeDropDistance 이상 갑자기 낮아지면
-            // (경로 중간에 급격한 단차/낭떠러지가 있다는 뜻이므로) 취소
-            if (lastGroundY - dropHit.point.y > safeDropDistance)
-            {
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            lastGroundPos = checkPos;
-            lastGroundY = dropHit.point.y;
+            // 요구사항 4, 5: 낙차가 허용치를 넘으면 기존 낭떠러지 판정과 동일하게 처리.
+            // 플레이어가 공격 범위 안에 있어도 점프를 시도하지 않음.
+            isCliff = true;
+            return desired;
         }
 
-        return targetLandPos;
+        // 착지 목표 = (플레이어 감지 당시 X, 바닥 표면 Y + 콜라이더 반높이)
+        return bestHit.Value.point + Vector2.up * footOffset;
     }
 
     void OnDrawGizmosSelected()

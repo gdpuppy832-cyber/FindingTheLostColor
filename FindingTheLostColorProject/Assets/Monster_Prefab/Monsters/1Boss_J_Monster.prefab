@@ -293,7 +293,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.057566047, y: 0.07732403}
+  m_Offset: {x: 0.008735791, y: 0.07732403}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -303,7 +303,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8006648, y: 1.2067051}
+  m_Size: {x: 0.66806114, y: 1.2067051}
   m_EdgeRadius: 0
 --- !u!114 &-9050995707131939983
 MonoBehaviour:
@@ -337,6 +337,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   minJumpDistance: 1
+  landingCheckRetryInterval: 0.15
   missIndicatorPrefab: {fileID: 2701784367635618374, guid: dd693a25eaac0a344bae396d6029aaad, type: 3}
   missIndicatorOffset: {x: 0, y: 1, z: 0}
   missIndicatorDelay: 0.375
@@ -357,8 +358,11 @@ MonoBehaviour:
   speed: 1.5
   range: 999
   chaseRange: 999
+  chaseStartPrefab: {fileID: 0}
+  chaseEndPrefab: {fileID: 0}
   attackStopDistance: 0.1
   safeDropDistance: 3
+  wanderEdgeCheckDistance: 2
   jumpForce: 5
   climbableWallHeight: 1.2
 --- !u!114 &-6962878910128233073
@@ -397,7 +401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseDuration: 0.5
-  moveSpeed: 1.5
+  moveSpeed: 4.5
   direction: 2
   offScreenMargin: 0.3
   groundLayer:

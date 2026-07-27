@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-100)]
+
 public class J_EnemyMove : MonoBehaviour
 {
     public float speed = 1.5f;
@@ -40,6 +42,15 @@ public class J_EnemyMove : MonoBehaviour
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
 
+    [Header("Idle Animation (Deterministic Transition)")]
+    [Tooltip("Animator Controller 안의 Idle 상태(State) 이름. 추적 시작/종료로 멈추는 순간 이 상태로 즉시 강제 전환하여, " +
+             "Walk 애니메이션의 잔여 트랜지션이 이후 공격 애니메이션과 겹쳐 보이는 문제를 방지함.")]
+    public string idleStateName = "04_FullpulpiCat_IDLE";
+    [Tooltip("Idle 상태가 위치한 Animator 레이어 인덱스 (보통 0 = Base Layer)")]
+    public int idleAnimatorLayer = 0;
+
+    bool idleForced = false; // 이번 멈춤(isStateDelay) 구간에서 이미 Idle을 강제 진입시켰는지 여부 (중복 Play 방지)
+
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
     void Start()
@@ -63,6 +74,14 @@ public class J_EnemyMove : MonoBehaviour
             {
                 animator.SetBool("IsWalking", false);
 
+                // ★ 이 멈춤 구간에 진입한 첫 프레임에만, Walk 애니메이션의 잔여 트랜지션을
+                //   완전히 끊어내기 위해 Idle 상태로 강제 진입시킴 (매 프레임 반복 호출 방지)
+                if (!idleForced)
+                {
+                    animator.Play(idleStateName, idleAnimatorLayer, 0f);
+                    animator.Update(0f);
+                    idleForced = true;
+                }
             }
 
             stateDelayTimer += Time.deltaTime;
@@ -86,6 +105,8 @@ public class J_EnemyMove : MonoBehaviour
 
             return;
         }
+
+        idleForced = false; // 멈춤 구간을 벗어났으므로 다음 멈춤을 위해 리셋
 
         if (ignoreEdgeTimer > 0f)//방향 전환 직후 보호 시간
             ignoreEdgeTimer -= Time.deltaTime;
@@ -259,12 +280,16 @@ public class J_EnemyMove : MonoBehaviour
     }
     private bool CanClimbWall(float dir)
     {
-        Vector2 frontPos = (Vector2)transform.position +
+        // 기존에는 frontPos가 몸통 중앙(transform.position) 높이에서 시작해서,
+        // 몸통 중앙보다 낮은 벽은 lowHit이 아예 아무것도 맞히지 못해 항상 false(오르기 불가)로
+        // 판정되는 문제가 있었음. 감지 기준점을 발밑(콜라이더 하단)으로 낮춰서
+        // 어떤 높이의 벽이든 lowHit이 정상적으로 감지되도록 함
+        Vector2 feetPos = new Vector2(transform.position.x, col.bounds.min.y + 0.05f) +
                            Vector2.right * dir *
                            (col.bounds.extents.x + 0.1f);
 
         RaycastHit2D lowHit = Physics2D.Raycast(
-            frontPos,
+            feetPos,
             Vector2.right * dir,
             0.2f,
             LayerMask.GetMask("Platform"));
@@ -272,7 +297,9 @@ public class J_EnemyMove : MonoBehaviour
         if (lowHit.collider == null)
             return false;
 
-        Vector2 upperPos = frontPos + Vector2.up * climbableWallHeight;
+        // 발밑 기준으로 climbableWallHeight만큼 위에서도 벽이 계속 이어지는지 검사.
+        // 그 높이에서 벽이 없다면(=낮은 벽이라면) 오를 수 있다고 판정
+        Vector2 upperPos = feetPos + Vector2.up * climbableWallHeight;
 
         RaycastHit2D upperHit = Physics2D.Raycast(
             upperPos,

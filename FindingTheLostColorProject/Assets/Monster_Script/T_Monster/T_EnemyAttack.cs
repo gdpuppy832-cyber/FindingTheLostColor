@@ -58,12 +58,20 @@ public class T_EnemyAttack : MonoBehaviour
     public float jumpCooldown = 2f;
     public float safeDropDistance = 3f;
 
+    [Tooltip("T 몬스터 현재 발 위치 기준, 착지 지점이 이 값보다 더 아래층이면 점프 공격 자체를 시작하지 않음 (J_EnemyAttack과 동일한 낭떠러지 판정)")]
+    public float maxAllowedDropHeight = 5f;
+    const float ceilingExclusionEpsilon = 0.01f;
+
     // 점프 공격 도중 플레이어와 실제로 충돌(ContactHit)했는지 여부 -> 후딜 결정에 사용
     bool hitPlayerThisJump = false;
+    NormalMonster nm;
     void Start()
     {
         bodyCollider = GetComponent<Collider2D>();
         enemyMove = moveScript as T_EnemyMove;
+
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
 
         if (target == null)
         {
@@ -103,6 +111,9 @@ public class T_EnemyAttack : MonoBehaviour
 
     void TryContactDamage(Collider2D other)
     {
+        // 정화된 이후에는 점프 도중 남은 히트박스가 트리거되더라도 데미지를 주지 않음
+        if (nm != null && nm.IsPurified) return;
+
         if (!other.CompareTag("Player")) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -438,23 +449,16 @@ public class T_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(jumpTelegraphTime);
 
-        // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
-        float elapsed = 0f;
+        Coroutine movementRoutine = (nm != null)
+            ? nm.StartCoroutine(JumpMovementRoutine(startPos, landPos))
+            : StartCoroutine(JumpMovementRoutine(startPos, landPos));
 
-        while (elapsed < jumpDuration)
+        yield return movementRoutine;
+
+        if (nm != null && nm.IsPurified)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / jumpDuration);
-            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
-            float heightOffset = 4f * jumpHeight * t * (1f - t);
-
-            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
-
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            yield return null;
+            yield break;
         }
-
-        transform.position = landPos;
 
         // 착지 후에도 아주 짧게 대기하며 충돌 판정이 들어올 기회를 줌
         // (ContactHit의 onTriggerEnter/onTriggerStay는 물리 프레임에 반응하므로, 착지 직후 한 프레임 정도는 필요)
@@ -471,6 +475,26 @@ public class T_EnemyAttack : MonoBehaviour
 
         yield return new WaitForSeconds(jumpCooldown);
         canAttack = true;
+    }
+
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 startPos, Vector2 landPos)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < jumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / jumpDuration);
+            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
+            float heightOffset = 4f * jumpHeight * t * (1f - t);
+
+            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
+
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            yield return null;
+        }
+
+        transform.position = landPos;
     }
 
     System.Collections.IEnumerator FallToGround()
@@ -503,62 +527,54 @@ public class T_EnemyAttack : MonoBehaviour
         }
     }
 
-    // isCliff: 경로 중간에 (safeDropDistance 안에서도) 바닥을 전혀 못 찾거나,
-    // 시작 지점보다 착지 지점이 safeDropDistance 이상 훨씬 낮아서 (진짜 낭떠러지로 추정되어) 취소된 경우 true
+    // J_EnemyAttack.FindValidLandingSpot과 동일한 방식:
+    // 플레이어(desired) 아래쪽에 있는 Ground만 후보로 삼아 그중 가장 가까운 바닥을 착지 지점으로 선택하고,
+    // 현재 위치 대비 낙차가 maxAllowedDropHeight를 넘으면 낭떠러지로 판정해 점프를 취소한다.
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
 
-        float footOffset = bodyCollider != null ? bodyCollider.bounds.extents.y : 0.5f;
+        Collider2D selfCol = GetComponent<Collider2D>();
+        float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
-        float rayStartY = desired.y + 1f;
+        float rayStartY = desired.y - 0.1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
-        RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
-        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
-        // 안전장치 1: 시작 지점 기준 착지 지점이 safeDropDistance보다 훨씬 더 아래(진짜 낭떠러지 낙차)면
-        // 애초에 점프 자체를 취소함. 계단 정도의 낙차(safeDropDistance 이내)만 허용.
-        float startGroundY = start.y - footOffset;
-        float landGroundY = targetLandPos.y - footOffset;
-        if (startGroundY - landGroundY > safeDropDistance)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, Vector2.down, 50f, groundLayer);
+
+        RaycastHit2D? bestHit = null;
+        foreach (var h in hits)
         {
+            // 플레이어(desired.y)보다 높은 Ground는 후보에서 완전히 제외.
+            // 즉 "플레이어 아래에 있는 바닥"만 착지 지점으로 인정함.
+            if (h.point.y > desired.y + ceilingExclusionEpsilon) continue;
+
+            // 남은 후보 중 플레이어와 가장 가까운(=y가 가장 큰) 바닥을 선택
+            if (bestHit == null || h.point.y > bestHit.Value.point.y)
+                bestHit = h;
+        }
+
+        if (bestHit == null)
+        {
+            // 플레이어보다 낮은 위치에 유효한 Ground가 하나도 없음
+            // -> 착지할 곳이 없는 진짜 허공/구멍이므로 점프 취소
             isCliff = true;
-            return start;
+            return desired;
         }
 
-        int steps = 10;
-        Vector2 lastGroundPos = start;
-        float lastGroundY = startGroundY; // 급격한 단차(중간에 툭 떨어지는 진짜 낭떠러지) 감지용
+        float currentGroundY = start.y - footOffset;   // 몬스터 현재 발 위치(바닥 기준 Y)
+        float landingGroundY = bestHit.Value.point.y;   // 착지 지점의 바닥 표면 Y
 
-        for (int i = 0; i <= steps; i++)
+        if (currentGroundY - landingGroundY > maxAllowedDropHeight)
         {
-            float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-
-            // 바로 아래(footOffset)만 검사하는 대신, safeDropDistance만큼 더 깊게 검사해서
-            // 그 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함
-            RaycastHit2D dropHit = Physics2D.Raycast(checkPos, Vector2.down, footOffset + safeDropDistance, groundLayer);
-
-            if (dropHit.collider == null)
-            {
-                // safeDropDistance 안에서도 땅을 전혀 못 찾음 -> 진짜 낭떠러지
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            // 안전장치 2: 직전 검사 지점의 땅보다 이번 지점의 땅이 safeDropDistance 이상 갑자기 낮아지면
-            // (경로 중간에 급격한 단차/낭떠러지가 있다는 뜻이므로) 취소
-            if (lastGroundY - dropHit.point.y > safeDropDistance)
-            {
-                isCliff = true;
-                return lastGroundPos;
-            }
-
-            lastGroundPos = checkPos;
-            lastGroundY = dropHit.point.y;
+            // 낙차가 허용치를 넘으면 기존 낭떠러지 판정과 동일하게 처리.
+            // 플레이어가 공격 범위 안에 있어도 점프를 시도하지 않음.
+            isCliff = true;
+            return desired;
         }
 
-        return targetLandPos;
+        // 착지 목표 = (플레이어 감지 당시 X, 바닥 표면 Y + 콜라이더 반높이)
+        return bestHit.Value.point + Vector2.up * footOffset;
     }
 
     void OnDrawGizmosSelected()
