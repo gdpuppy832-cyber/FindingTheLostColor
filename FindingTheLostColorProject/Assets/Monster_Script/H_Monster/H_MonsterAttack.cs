@@ -360,14 +360,11 @@ public class H_MonsterAttack : MonoBehaviour
         float delayBeforeWakeUp = Mathf.Clamp(wakeUpDelay, 0f, activeTelegraphTime);
         yield return new WaitForSeconds(delayBeforeWakeUp);
 
-        // ★ 위장 상태에서 본모습으로 깨어나며(WakeUp), 동시에 몬스터 자신의 IsHunting을 발동시킵니다.
-        if (isInitialPounce && enemyMove != null)
+          if (isInitialPounce && enemyMove != null)
         {
             enemyMove.WakeUp();
 
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1 : -1);
-            transform.localScale = scale;
+            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
         }
 
         if (animator != null)

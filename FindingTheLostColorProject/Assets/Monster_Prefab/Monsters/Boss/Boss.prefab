@@ -358,7 +358,7 @@ MonoBehaviour:
   rightPortalTransform: {fileID: 0}
   leftPortalObject: {fileID: 0}
   rightPortalObject: {fileID: 0}
-  spawnInterval: 30
+  spawnInterval: 10
   isBossBattleStarted: 1
 --- !u!1 &1138344273964104933
 GameObject:
