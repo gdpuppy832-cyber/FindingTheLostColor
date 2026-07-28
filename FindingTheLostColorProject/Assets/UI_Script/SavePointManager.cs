@@ -58,11 +58,9 @@ public class SavePointManager : MonoBehaviour
     /// </summary>
     public void PrepareRespawn(float currentSuperGauge)
     {
+        // 사망 시점에는 궁극기 게이지 수치만 백업 보관 (몬스터 정화 상태는 오직 깃발 세이브 시점에만 저장)
         SavedSuperGauge = currentSuperGauge;
         
-        // 사망하는 순간까지 정화 완료된 모든 몬스터 목록을 최종 수집
-        UpdatePurifiedMonstersList();
-
         Debug.Log($"[SavePointManager] 부활 준비 완료! 보관된 궁극기 게이지: {SavedSuperGauge}");
     }
 

@@ -18,6 +18,7 @@ public class ScreenFader : MonoBehaviour
     public Canvas fadeCanvas;
 
     private bool isFading = false;
+    private bool isFadingOutSequence = false;
     private float currentDuration = 1.0f;
 
     private void Awake()
@@ -93,6 +94,7 @@ public class ScreenFader : MonoBehaviour
     {
         if (isFading) return;
         
+        isFadingOutSequence = true; // 씬 전환 페이드 플래그 켜기
         currentDuration = duration > 0f ? duration : defaultDuration;
         StartCoroutine(FadeOutAndLoadScene(sceneName));
     }
@@ -132,12 +134,41 @@ public class ScreenFader : MonoBehaviour
     }
 
     /// <summary>
-    /// 2단계: 씬 로드 완료 이벤트 감지 시 자동으로 페이드 인 작동
+    /// 2단계: 씬 로드 완료 이벤트 감지 시 정식 씬 전환일 때만 페이드 인 작동
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 씬 로딩 완료 시 페이드 인 가동
-        StartCoroutine(FadeInScene());
+        InitializeUI();
+
+        // 씬 전환(포탈/타이틀) 절차를 경유한 경우에만 페이드 인 작동!
+        if (isFadingOutSequence)
+        {
+            isFadingOutSequence = false;
+
+            if (fadeImage != null)
+            {
+                fadeImage.gameObject.SetActive(true);
+                fadeImage.raycastTarget = true;
+
+                if (fadeImage.color.a < 0.1f)
+                {
+                    fadeImage.color = new Color(0f, 0f, 0f, 1f);
+                }
+            }
+
+            StartCoroutine(FadeInScene());
+        }
+        else
+        {
+            // 플레이어가 죽어서 씬이 부활 재로드된 경우에는 검은 화면 깜빡임 0% (완전 투명 유지!)
+            if (fadeImage != null)
+            {
+                fadeImage.color = new Color(0f, 0f, 0f, 0f);
+                fadeImage.raycastTarget = false;
+                fadeImage.gameObject.SetActive(false);
+            }
+            isFading = false;
+        }
     }
 
     /// <summary>

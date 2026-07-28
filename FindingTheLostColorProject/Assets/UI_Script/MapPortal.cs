@@ -208,7 +208,14 @@ public class MapPortal : InteractableObject
             SoundManager.Instance.PlaySFX(nextSceneSFX);
         }
 
-        // 화면 검은색 페이드 아웃
+        // ScreenFader 싱글톤이 활성화되어 있다면 통합 페이드아웃/인 시스템에 위임
+        if (ScreenFader.Instance != null)
+        {
+            ScreenFader.Instance.FadeToScene(nextSceneName, fadeDuration);
+            yield break;
+        }
+
+        // 차선책 개별 페이드 아웃 처리
         if (customFadeImage != null)
         {
             customFadeImage.gameObject.SetActive(true);
