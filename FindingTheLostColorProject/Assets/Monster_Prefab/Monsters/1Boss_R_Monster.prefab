@@ -668,6 +668,7 @@ MonoBehaviour:
   wanderEdgeCheckDistance: 2
   jumpForce: 5
   climbableWallHeight: 1.2
+  hpBar: {fileID: 6301831316783023479}
   chaseAnimSpeedMultiplier: 1.5
 --- !u!50 &5328816977903137336
 Rigidbody2D:

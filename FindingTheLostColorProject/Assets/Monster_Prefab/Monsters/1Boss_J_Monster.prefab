@@ -507,6 +507,7 @@ MonoBehaviour:
   climbableWallHeight: 1.2
   idleStateName: 04_FullpulpiCat_IDLE
   idleAnimatorLayer: 0
+  hpBar: {fileID: 7729095219242970518}
 --- !u!114 &-6962878910128233073
 MonoBehaviour:
   m_ObjectHideFlags: 0

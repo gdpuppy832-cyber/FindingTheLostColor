@@ -373,6 +373,7 @@ MonoBehaviour:
   playerContactBoxScale: 1
   turnPauseDuration: 0.5
   groundCheckDistance: 1
+  hpBar: {fileID: 6896728220507086969}
   trailFadeStartTime: 3
   trailFullyGoneTime: 4
 --- !u!114 &8028923761643352352

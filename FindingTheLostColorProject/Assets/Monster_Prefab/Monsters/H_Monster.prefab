@@ -218,6 +218,7 @@ MonoBehaviour:
   ambushColliderOffset: {x: 0, y: 0}
   ambushBushPrefab: {fileID: 5596693869449837199, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
   bushHuntIndicator: {fileID: 482784319693232354, guid: 092df1f35c1bab14d91ffb6cb308da0f, type: 3}
+  hpBar: {fileID: 7366294639529799502}
 --- !u!1 &3392442918134814514
 GameObject:
   m_ObjectHideFlags: 0

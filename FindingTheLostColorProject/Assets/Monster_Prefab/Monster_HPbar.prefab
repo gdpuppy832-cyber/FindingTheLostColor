@@ -181,7 +181,6 @@ GameObject:
   - component: {fileID: 1913637735496586061}
   - component: {fileID: 5223325601593235741}
   - component: {fileID: 7643177337473205459}
-  - component: {fileID: 9211959394301641628}
   m_Layer: 8
   m_Name: Monster_HPbar
   m_TagString: Untagged
@@ -281,15 +280,3 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7642267068386756628}
   m_CullTransparentMesh: 1
---- !u!114 &9211959394301641628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7642267068386756628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37e4b1438f689b34593f810a1f071595, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

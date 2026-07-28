@@ -162,6 +162,7 @@ MonoBehaviour:
   wanderEdgeCheckDistance: 1
   jumpForce: 3.15
   climbableWallHeight: 1.1
+  hpBar: {fileID: 1931599742186503558}
 --- !u!114 &7268727226851208348
 MonoBehaviour:
   m_ObjectHideFlags: 0

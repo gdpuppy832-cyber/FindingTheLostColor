@@ -54,6 +54,13 @@ public class S_MonsterMove : MonoBehaviour
 
     private Collider2D selfColCached; // 매 프레임 GetComponent 호출 방지용 캐시
 
+    [Header("HP Bar (좌우 반전 방지)")]
+    [Tooltip("몬스터의 자식으로 존재하는 World Space Canvas HP바. useSpriteFlip이 꺼져 있어 localScale.x를 직접 뒤집는 경우에도 부모 반전과 무관하게 항상 정방향으로 유지됨")]
+    public Transform hpBar;
+
+    Vector3 initialScale;           // 몬스터 자신의 초기 localScale (방향 기준값)
+    Vector3 hpBarInitialLocalScale; // HP바의 초기 localScale (보정 기준값)
+
 
     void Start()
     {
@@ -89,6 +96,10 @@ public class S_MonsterMove : MonoBehaviour
 
         selfColCached = GetComponent<Collider2D>();
         if (selfColCached == null) selfColCached = GetComponentInChildren<Collider2D>();
+
+        // 초기 방향 스프라이트 셋업
+        initialScale = transform.localScale;
+        if (hpBar != null) hpBarInitialLocalScale = hpBar.localScale;
 
         // 초기 방향 스프라이트 셋업
         UpdateSpriteDirection();
@@ -343,14 +354,34 @@ public class S_MonsterMove : MonoBehaviour
 
         if (useSpriteFlip && spriteRenderer != null)
         {
+            // flipX는 스프라이트 렌더링만 뒤집고 transform.localScale은 건드리지 않으므로
+            // 자식인 HP바에는 애초에 영향이 없음 (보정 불필요)
             spriteRenderer.flipX = !faceRight;
         }
         else
         {
             // localScale을 직접 뒤집는 방식 지원 
-            Vector3 scale = transform.localScale;
-            scale.x = faceRight ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-            transform.localScale = scale;
+            float sign = faceRight ? 1f : -1f;
+            ApplyFacing(sign);
+        }
+    }
+
+    // 몬스터의 localScale.x를 뒤집는 지점에서만 사용. 몬스터가 뒤집히는 그 순간,
+    // 자식인 HP바의 localScale.x도 함께 반대로 보정해서 부모의 반전을 상쇄시킴
+    // (매 프레임 보정이 아니라, 반전이 실제로 발생하는 시점에만 1회 처리)
+    private void ApplyFacing(float sign)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(initialScale.x) * sign;
+        transform.localScale = scale;
+
+        if (hpBar != null)
+        {
+            // 부모(this)의 X축 부호가 초기값 대비 뒤집혔는지에 따라 HP바 로컬 스케일의 부호를 반대로 걸어줌.
+            // 결과적으로 부모(월드) 스케일 * 자식(로컬) 스케일이 항상 초기 부호(정방향)로 유지됨.
+            Vector3 hpScale = hpBarInitialLocalScale;
+            hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
+            hpBar.localScale = hpScale;
         }
     }
 

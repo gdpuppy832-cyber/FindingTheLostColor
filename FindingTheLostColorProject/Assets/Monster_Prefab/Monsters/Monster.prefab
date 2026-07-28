@@ -159,6 +159,7 @@ MonoBehaviour:
   climbableWallHeight: 1.1
   groundedBufferDuration: 0.15
   wallJumpRetryDuration: 0.3
+  hpBar: {fileID: 1931599742186503558}
 --- !u!114 &2915333899100964050
 MonoBehaviour:
   m_ObjectHideFlags: 0
