@@ -10,10 +10,46 @@ public class ShadowBarrierHazard : MonoBehaviour
     public float hitDelay = 0.3f;
 
     float spawnTime;
+
+    private SpriteRenderer spriteRenderer;
+    private PolygonCollider2D polygonCollider;
+    private Sprite lastSprite;
     void Start()
     {
         spawnTime = Time.time;
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        polygonCollider = GetComponent<PolygonCollider2D>();
+        if (polygonCollider == null)
+            polygonCollider = GetComponentInChildren<PolygonCollider2D>();
+
+        if (spriteRenderer != null)
+            lastSprite = spriteRenderer.sprite;
+
         Destroy(gameObject, lifetime);
+    }
+    void Update()
+    {
+        if (spriteRenderer == null || polygonCollider == null)
+            return;
+
+        Sprite currentSprite = spriteRenderer.sprite;
+        if (currentSprite == null || currentSprite == lastSprite)
+            return;
+
+        lastSprite = currentSprite;
+        polygonCollider.autoTiling = false;
+        polygonCollider.pathCount = currentSprite.GetPhysicsShapeCount();
+        var points = new System.Collections.Generic.List<Vector2>();
+        for (int i = 0; i < polygonCollider.pathCount; i++)
+        {
+            points.Clear();
+            currentSprite.GetPhysicsShape(i, points);
+            polygonCollider.SetPath(i, points);
+        }
     }
     void OnTriggerStay2D(Collider2D other)
     {

@@ -20,10 +20,10 @@ public class SpikeHazard : MonoBehaviour
     void Start()
     {
         edge = GetComponent<EdgeCollider2D>();
+        if (edge == null) edge = GetComponentInChildren<EdgeCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
+        if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         UpdateCollider();
-
         Destroy(gameObject, lifetime);
     }
 
@@ -38,6 +38,7 @@ public class SpikeHazard : MonoBehaviour
     }
     void Update()
     {
+        if (spriteRenderer == null) return;
         if (spriteRenderer.sprite != lastSprite)
         {
             UpdateCollider();
