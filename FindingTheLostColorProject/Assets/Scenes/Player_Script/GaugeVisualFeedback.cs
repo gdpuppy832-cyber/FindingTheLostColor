@@ -72,11 +72,59 @@ public class GaugeVisualFeedback : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // 일시정지 상태(Time.timeScale == 0f 또는 PauseManager.IsPaused)일 때는 즉시 흔들림과 빨간색 피드백을 강제 정지하고 원복
+        if (Time.timeScale == 0f || PauseManager.IsPaused)
+        {
+            ResetFeedback();
+        }
+    }
+
+    /// <summary>
+    /// 진행 중인 흔들림/빨간색 경고 코루틴을 모두 멈추고 원본 위치와 색상으로 강제 리셋합니다.
+    /// </summary>
+    public void ResetFeedback()
+    {
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+        }
+
+        if (shakeCoroutine != null)
+        {
+            StopCoroutine(shakeCoroutine);
+            shakeCoroutine = null;
+        }
+
+        // 원본 색상 강제 복구
+        if (warningImages != null && originalColors != null)
+        {
+            for (int i = 0; i < warningImages.Length; i++)
+            {
+                if (warningImages[i] != null && i < originalColors.Length)
+                {
+                    warningImages[i].color = originalColors[i];
+                }
+            }
+        }
+
+        // 원본 위치 강제 복구
+        if (targetRect != null)
+        {
+            targetRect.anchoredPosition = originalPosition;
+        }
+    }
+
     /// <summary>
     /// 물감 부족 시 호출되어 빨간 점멸과 게이지 흔들림 연출을 시작합니다.
     /// </summary>
     public void TriggerFeedback()
     {
+        // 일시정지 중에는 물감 부족 피드백 연출을 가동하지 않음
+        if (Time.timeScale == 0f || PauseManager.IsPaused) return;
+
         // 1. 점멸 연출 시작
         if (flashCoroutine != null) StopCoroutine(flashCoroutine);
         flashCoroutine = StartCoroutine(FlashRoutine());

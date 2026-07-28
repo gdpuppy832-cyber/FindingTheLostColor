@@ -19,6 +19,8 @@ public class CursorController : MonoBehaviour
 
     [Tooltip("하위 호환용 기존 커서 텍스처 (mode1CursorTextures가 비어있을 경우 백업용 사용)")]
     public List<Texture2D> cursorTextures;
+    [Tooltip("마우스 커서 실제 출력 크기 (가로x세로 픽셀, 기본값: 32x32)")]
+    public Vector2 targetCursorSize = new Vector2(32, 32);
     public Vector2 hotSpot = new Vector2(16, 16);
 
     [Header("Distance Thresholds")]
@@ -937,9 +939,61 @@ public class CursorController : MonoBehaviour
         {
             if (activeList[index] != null)
             {
-                Cursor.SetCursor(activeList[index], hotSpot, CursorMode.Auto);
+                Texture2D finalTex = activeList[index];
+                
+                // 설정된 targetCursorSize로 크기 축소/리사이징
+                if (targetCursorSize.x > 0 && targetCursorSize.y > 0)
+                {
+                    finalTex = GetResizedCursorTexture(activeList[index], (int)targetCursorSize.x, (int)targetCursorSize.y);
+                }
+
+                // 축소된 크기에 맞춰 핫스팟(중심점) 비율 자동 보정
+                Vector2 scaledHotSpot = hotSpot;
+                if (activeList[index].width > 0 && activeList[index].height > 0)
+                {
+                    scaledHotSpot = new Vector2(
+                        hotSpot.x * ((float)finalTex.width / activeList[index].width),
+                        hotSpot.y * ((float)finalTex.height / activeList[index].height)
+                    );
+                }
+
+                Cursor.SetCursor(finalTex, scaledHotSpot, CursorMode.ForceSoftware);
             }
         }
+    }
+
+    private Dictionary<Texture2D, Texture2D> resizedTextureCache = new Dictionary<Texture2D, Texture2D>();
+
+    /// <summary>
+    /// 거대한 커서 텍스처를 지정한 픽셀 크기로 런타임에 리사이징합니다.
+    /// </summary>
+    private Texture2D GetResizedCursorTexture(Texture2D source, int targetWidth, int targetHeight)
+    {
+        if (source == null) return null;
+        if (source.width == targetWidth && source.height == targetHeight) return source;
+
+        if (resizedTextureCache.TryGetValue(source, out Texture2D cached) && cached != null)
+        {
+            if (cached.width == targetWidth && cached.height == targetHeight)
+            {
+                return cached;
+            }
+        }
+
+        RenderTexture rt = RenderTexture.GetTemporary(targetWidth, targetHeight, 0, RenderTextureFormat.ARGB32);
+        RenderTexture previous = RenderTexture.active;
+        RenderTexture.active = rt;
+
+        Graphics.Blit(source, rt);
+        Texture2D result = new Texture2D(targetWidth, targetHeight, TextureFormat.RGBA32, false);
+        result.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), 0, 0);
+        result.Apply();
+
+        RenderTexture.active = previous;
+        RenderTexture.ReleaseTemporary(rt);
+
+        resizedTextureCache[source] = result;
+        return result;
     }
 
     void UpdateTrailStyle(int index)
