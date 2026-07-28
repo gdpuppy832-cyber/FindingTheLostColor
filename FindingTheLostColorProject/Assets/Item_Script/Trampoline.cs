@@ -68,6 +68,14 @@ public class Trampoline : MonoBehaviour
         {
             col.isTrigger = false;
         }
+
+        // Monster 레이어와는 물리적으로 아예 충돌하지 않도록 런타임에 레이어 충돌을 무시
+        // (Physics Layer Collision Matrix 에셋 자체는 건드리지 않고, 코드에서만 처리)
+        int monsterLayer = LayerMask.NameToLayer("Monster");
+        if (monsterLayer != -1)
+        {
+            Physics2D.IgnoreLayerCollision(gameObject.layer, monsterLayer, true);
+        }
     }
 
     void Update()
@@ -195,6 +203,9 @@ public class Trampoline : MonoBehaviour
     /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Monster 레이어 오브젝트와는 절대 상호작용하지 않음 (IgnoreLayerCollision으로도 막히지만 이중 안전장치)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Monster")) return;
+
         // 정화된 상태(활성/소등 유실 도중 포함)에서만 작동
         if (!isPurified) return;
 

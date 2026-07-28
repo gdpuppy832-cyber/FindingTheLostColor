@@ -283,6 +283,12 @@ public class J_EnemyAttack : MonoBehaviour
     System.Collections.IEnumerator JumpMovementRoutine(Vector2 landPos)
     {
         yield return new WaitForSeconds(telegraphTime);
+
+        if (nm != null && nm.IsPurified)
+        {
+            yield break;
+        }
+
         Vector2 startPos = transform.position;
 
         // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
