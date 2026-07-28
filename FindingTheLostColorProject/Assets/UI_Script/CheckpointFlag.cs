@@ -74,6 +74,9 @@ public class CheckpointFlag : MonoBehaviour
 
     private void Start()
     {
+        // 씬 로드 및 세이브포인트 부활 직후 깃발 위에서 시작하더라도 2초간 세이브 재갱신 연출이 튀어나오지 않도록 쿨타임 가동
+        StartCoroutine(CooldownRoutine());
+
         // 만약 씬이 재로드되었을 때 이미 이 깃발이 저장된 부활 깃발이라면, 색깔 깃발로 자동 동기화 해 줍니다.
         if (SavePointManager.Instance != null && SavePointManager.Instance.HasSaveData)
         {

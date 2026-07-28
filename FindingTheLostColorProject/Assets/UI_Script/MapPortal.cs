@@ -97,20 +97,21 @@ public class MapPortal : InteractableObject
     {
         if (isTransitioning) return;
 
-        // 1. 맵 내 모든 고양이 몬스터의 정화 완료 상태 검사
-        bool isAllPurified = false;
-        if (PurificationManager.Instance != null)
+        // 1. 맵 내 미정화 고양이(!IsPurified) 몬스터가 남아있는지 실시간 직접 스캔
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        bool hasUnpurifiedCat = false;
+        foreach (var m in monsters)
         {
-            isAllPurified = PurificationManager.Instance.IsAllPurified;
+            if (m != null && !m.IsPurified)
+            {
+                hasUnpurifiedCat = true;
+                break;
+            }
         }
-        else
-        {
-            NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            isAllPurified = monsters.Length == 0;
-        }
+        bool isAllPurified = !hasUnpurifiedCat;
 
         // 2. 조건 충족 여부에 따라 다이내믹하게 상호작용 W키 팝업 문구 스왑
-        string message = isAllPurified ? "W를 눌러 다음 맵으로!" : "W를 눌러 시작지점으로 돌아가기";
+        string message = isAllPurified ? "W를 눌러 다음 맵으로!" : "W를 눌러 최근 저장지점으로 돌아가기";
 
         // 3. 플레이어와의 실시간 상호작용 범위 측정
         if (playerCache == null) playerCache = FindFirstObjectByType<PlayerMove>();
@@ -138,8 +139,8 @@ public class MapPortal : InteractableObject
             int total = 0;
             int purified = 0;
 
-            // 씬 상의 모든 몬스터를 스캔하여 정화 수치 파악
-            NormalMonster[] allMonsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            // 씬 상의 모든 몬스터(비활성화 오브젝트 포함)를 스캔하여 정화 수치 파악
+            NormalMonster[] allMonsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             total = allMonsters.Length;
             foreach (var m in allMonsters)
             {
@@ -162,17 +163,18 @@ public class MapPortal : InteractableObject
     {
         if (isTransitioning) return;
 
-        // 고양이 정화 완료 상태 재점검
-        bool isAllPurified = false;
-        if (PurificationManager.Instance != null)
+        // 고양이 정화 완료 상태 실시간 직접 스캔 (부활 및 복구 상태 100% 지원)
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        bool hasUnpurifiedCat = false;
+        foreach (var m in monsters)
         {
-            isAllPurified = PurificationManager.Instance.IsAllPurified;
+            if (m != null && !m.IsPurified)
+            {
+                hasUnpurifiedCat = true;
+                break;
+            }
         }
-        else
-        {
-            NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            isAllPurified = monsters.Length == 0;
-        }
+        bool isAllPurified = !hasUnpurifiedCat;
 
         if (isAllPurified)
         {
@@ -267,10 +269,16 @@ public class MapPortal : InteractableObject
             yield return new WaitForSeconds(0.4f);
         }
 
-        // 2. 플레이어 위치를 시작 지점으로 순간이동 및 낙하 속도 초기화
+        // 2. 플레이어 위치를 최근 저장지점(세이브포인트)으로 순간이동 및 낙하 속도 초기화
         if (playerMove != null)
         {
-            playerMove.transform.position = startSpawnPoint;
+            Vector3 targetPos = startSpawnPoint;
+            if (SavePointManager.Instance != null && SavePointManager.Instance.HasSaveData)
+            {
+                targetPos = SavePointManager.Instance.SavedPlayerPosition;
+            }
+
+            playerMove.transform.position = targetPos;
             Rigidbody2D rb = playerMove.GetComponent<Rigidbody2D>();
             if (rb != null)
             {

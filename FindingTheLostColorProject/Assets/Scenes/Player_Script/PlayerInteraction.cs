@@ -32,6 +32,9 @@ public class PlayerInteraction : MonoBehaviour
 
     void Start()
     {
+        // 씬 로드 및 세이브포인트 부활 시 상호작용 잠금을 즉시 해제하여 포탈 먹통 방지
+        isInteractionLocked = false;
+
         // 사용자가 아무 UI 텍스트 컴포넌트도 지정하지 않았을 때만 임시 안내 UI를 동적 생성
         if (promptText == null && promptTmpText == null && promptTmp3DText == null && promptLegacyTextMesh == null)
         {
