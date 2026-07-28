@@ -8,13 +8,49 @@ public class MonsterIndicatorManager : MonoBehaviour
     public static MonsterIndicatorManager Instance { get; private set; }
 
     [Header("UI Image Settings (이미지 슬롯 노출)")]
-    [Tooltip("왼쪽 인디케이터용 고양이 화살표 이미지 (비워두면 텍스트 ◀🐱 대체)")]
-    public Sprite leftCatSprite;
+    [Tooltip("가장 가까운 고양이 방향을 가리키는 화살표 이미지 스프라이트")]
+    public Sprite arrowSprite;
 
-    [Tooltip("오른쪽 인디케이터용 고양이 화살표 이미지 (비워두면 텍스트 🐱▶ 대체)")]
-    public Sprite rightCatSprite;
+    [Tooltip("남은 고양이 마리수가 표시될 고양이 얼굴 이미지 스프라이트")]
+    public Sprite catFaceSprite;
 
-    [Header("UI Layout & Font Settings")]
+    [Header("Arrow Pivot Settings (화살표 회전축 피벗)")]
+    [Tooltip("화살표 이미지의 회전축 피벗 좌표 (기본값: (0, 0.5) - 왼쪽 중앙 피벗)")]
+    public Vector2 arrowPivot = new Vector2(0f, 0.5f);
+
+    [Header("Left Indicator Settings (왼쪽 인디케이터 개별 튜닝)")]
+    [Tooltip("왼쪽 화살표 이미지 크기")]
+    public Vector2 leftArrowImageSize = new Vector2(60f, 60f);
+
+    [Tooltip("왼쪽 고양이 얼굴 이미지 크기")]
+    public Vector2 leftCatFaceImageSize = new Vector2(80f, 80f);
+
+    [Tooltip("왼쪽 화살표와 고양이 얼굴 사이의 간격 패딩")]
+    public float leftGapBetweenImages = 40f;
+
+    [Tooltip("왼쪽 고양이 얼굴 안쪽 수량 텍스트의 X, Y 위치 오프셋")]
+    public Vector2 leftTextOffset = Vector2.zero;
+
+    [Tooltip("왼쪽 수량 텍스트 폰트 크기")]
+    public float leftFontSize = 24f;
+
+    [Header("Right Indicator Settings (오른쪽 인디케이터 개별 튜닝)")]
+    [Tooltip("오른쪽 화살표 이미지 크기")]
+    public Vector2 rightArrowImageSize = new Vector2(60f, 60f);
+
+    [Tooltip("오른쪽 고양이 얼굴 이미지 크기")]
+    public Vector2 rightCatFaceImageSize = new Vector2(80f, 80f);
+
+    [Tooltip("오른쪽 화살표와 고양이 얼굴 사이의 간격 패딩")]
+    public float rightGapBetweenImages = 40f;
+
+    [Tooltip("오른쪽 고양이 얼굴 안쪽 수량 텍스트의 X, Y 위치 오프셋")]
+    public Vector2 rightTextOffset = Vector2.zero;
+
+    [Tooltip("오른쪽 수량 텍스트 폰트 크기")]
+    public float rightFontSize = 24f;
+
+    [Header("UI Canvas & Screen Settings")]
     [Tooltip("UI가 배치될 Canvas (비워두면 씬의 메인 Canvas 자동 탐색)")]
     public Canvas targetCanvas;
 
@@ -35,11 +71,23 @@ public class MonsterIndicatorManager : MonoBehaviour
     private GameObject leftContainer;
     private GameObject rightContainer;
 
-    private Image leftCatImageComponent;
-    private Image rightCatImageComponent;
+    private RectTransform leftArrowRt;
+    private RectTransform leftArrowImgRt;
+    private RectTransform leftCatFaceRt;
+    private RectTransform leftCatFaceImgRt;
+    private RectTransform leftCountRt;
 
-    private TextMeshProUGUI leftCatTextComponent;
-    private TextMeshProUGUI rightCatTextComponent;
+    private RectTransform rightArrowRt;
+    private RectTransform rightArrowImgRt;
+    private RectTransform rightCatFaceRt;
+    private RectTransform rightCatFaceImgRt;
+    private RectTransform rightCountRt;
+
+    private Image leftArrowImageComponent;
+    private Image rightArrowImageComponent;
+
+    private Image leftCatFaceImageComponent;
+    private Image rightCatFaceImageComponent;
 
     private TextMeshProUGUI leftCountText;
     private TextMeshProUGUI rightCountText;
@@ -67,16 +115,12 @@ public class MonsterIndicatorManager : MonoBehaviour
     {
         mainCamera = Camera.main;
 
-        // 씬에서 Canvas 자동 할당
         if (targetCanvas == null)
         {
             targetCanvas = FindFirstObjectByType<Canvas>();
         }
 
-        // 플레이어 자동 할당
         FindPlayer();
-
-        // UI 개체 자동 생성
         CreateUIElements();
     }
 
@@ -90,13 +134,15 @@ public class MonsterIndicatorManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 동적으로 좌/우 인디케이터 UI 요소를 Canvas 하위에 자동 셋업 (컴포넌트 독립 분리 적용)
+    /// 동적으로 좌/우 인디케이터 UI 요소를 Canvas 하위에 자동 셋업 (왼쪽 중앙 (0, 0.5) 피벗 기준적용)
     /// </summary>
     private void CreateUIElements()
     {
         if (targetCanvas == null) return;
 
+        // ----------------------------------------------------
         // 1. 왼쪽 인디케이터 루트 생성
+        // ----------------------------------------------------
         leftContainer = new GameObject("MonsterIndicator_Left");
         leftContainer.transform.SetParent(targetCanvas.transform, false);
         RectTransform leftRt = leftContainer.AddComponent<RectTransform>();
@@ -104,48 +150,70 @@ public class MonsterIndicatorManager : MonoBehaviour
         leftRt.anchorMax = new Vector2(0f, yCenterRatio);
         leftRt.pivot = new Vector2(0f, 0.5f);
         leftRt.anchoredPosition = new Vector2(edgePadding, 0f);
-        leftRt.sizeDelta = new Vector2(100f, 100f);
+        leftRt.sizeDelta = new Vector2(250f, 150f);
 
-        // 1-1. 왼쪽 화살표 회전 개체
+        // 1-1. [화살표 회전체] (Left Center 피벗 (0, 0.5) 적용!)
         GameObject leftArrowObj = new GameObject("ArrowHolder");
         leftArrowObj.transform.SetParent(leftContainer.transform, false);
-        RectTransform leftArrowRt = leftArrowObj.AddComponent<RectTransform>();
-        leftArrowRt.sizeDelta = new Vector2(60f, 60f);
+        leftArrowRt = leftArrowObj.AddComponent<RectTransform>();
+        leftArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
+        leftArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
+        leftArrowRt.pivot = arrowPivot; // 왼쪽 중앙 (0, 0.5) 피벗
         leftArrowTransform = leftArrowObj.transform;
 
-        // [핵심 수정] Image와 TextMeshProUGUI를 별도 자식 오브젝트로 분리하여 Graphic 컴포넌트 충돌을 완벽 차단!
-        GameObject leftCatImgObj = new GameObject("CatImage");
-        leftCatImgObj.transform.SetParent(leftArrowObj.transform, false);
-        RectTransform leftImgRt = leftCatImgObj.AddComponent<RectTransform>();
-        leftImgRt.sizeDelta = new Vector2(60f, 60f);
-        leftCatImageComponent = leftCatImgObj.AddComponent<Image>();
+        GameObject leftArrowImgObj = new GameObject("ArrowImage");
+        leftArrowImgObj.transform.SetParent(leftArrowObj.transform, false);
+        leftArrowImgRt = leftArrowImgObj.AddComponent<RectTransform>();
+        leftArrowImgRt.anchorMin = new Vector2(0.5f, 0.5f);
+        leftArrowImgRt.anchorMax = new Vector2(0.5f, 0.5f);
+        leftArrowImgRt.pivot = arrowPivot; // 왼쪽 중앙 (0, 0.5) 피벗
+        leftArrowImgRt.anchoredPosition = Vector2.zero;
+        leftArrowImageComponent = leftArrowImgObj.AddComponent<Image>();
+        leftArrowImageComponent.type = Image.Type.Simple;
+        leftArrowImageComponent.preserveAspect = true;
+        leftArrowImageComponent.raycastTarget = false;
 
-        GameObject leftCatTxtObj = new GameObject("CatText");
-        leftCatTxtObj.transform.SetParent(leftArrowObj.transform, false);
-        RectTransform leftTxtRt = leftCatTxtObj.AddComponent<RectTransform>();
-        leftTxtRt.sizeDelta = new Vector2(80f, 40f);
-        leftCatTextComponent = leftCatTxtObj.AddComponent<TextMeshProUGUI>();
-        leftCatTextComponent.text = "◀🐱";
-        leftCatTextComponent.fontSize = 32;
-        leftCatTextComponent.alignment = TextAlignmentOptions.Center;
-        if (fontAsset != null) leftCatTextComponent.font = fontAsset;
+        // 1-2. [고양이 얼굴 고정체]
+        GameObject leftCatFaceObj = new GameObject("CatFaceHolder");
+        leftCatFaceObj.transform.SetParent(leftContainer.transform, false);
+        leftCatFaceRt = leftCatFaceObj.AddComponent<RectTransform>();
+        leftCatFaceRt.anchorMin = new Vector2(0.5f, 0.5f);
+        leftCatFaceRt.anchorMax = new Vector2(0.5f, 0.5f);
+        leftCatFaceRt.pivot = new Vector2(0.5f, 0.5f);
 
-        // 1-2. 왼쪽 수량 텍스트 (회전과 독립적)
+        GameObject leftCatFaceImgObj = new GameObject("CatFaceImage");
+        leftCatFaceImgObj.transform.SetParent(leftCatFaceObj.transform, false);
+        leftCatFaceImgRt = leftCatFaceImgObj.AddComponent<RectTransform>();
+        leftCatFaceImgRt.anchorMin = new Vector2(0.5f, 0.5f);
+        leftCatFaceImgRt.anchorMax = new Vector2(0.5f, 0.5f);
+        leftCatFaceImgRt.pivot = new Vector2(0.5f, 0.5f);
+        leftCatFaceImgRt.anchoredPosition = Vector2.zero;
+        leftCatFaceImageComponent = leftCatFaceImgObj.AddComponent<Image>();
+        leftCatFaceImageComponent.type = Image.Type.Simple;
+        leftCatFaceImageComponent.preserveAspect = true;
+        leftCatFaceImageComponent.raycastTarget = false;
+
+        // 1-3. 수량 텍스트
         GameObject leftCountObj = new GameObject("CountText");
-        leftCountObj.transform.SetParent(leftContainer.transform, false);
-        RectTransform leftCountRt = leftCountObj.AddComponent<RectTransform>();
-        leftCountRt.anchoredPosition = new Vector2(0f, 40f);
-        leftCountRt.sizeDelta = new Vector2(100f, 35f);
+        leftCountObj.transform.SetParent(leftCatFaceObj.transform, false);
+        leftCountRt = leftCountObj.AddComponent<RectTransform>();
+        leftCountRt.anchorMin = new Vector2(0.5f, 0.5f);
+        leftCountRt.anchorMax = new Vector2(0.5f, 0.5f);
+        leftCountRt.pivot = new Vector2(0.5f, 0.5f);
         leftCountText = leftCountObj.AddComponent<TextMeshProUGUI>();
         leftCountText.text = "×1";
-        leftCountText.fontSize = 26;
         leftCountText.fontStyle = FontStyles.Bold;
         leftCountText.color = Color.yellow;
         leftCountText.alignment = TextAlignmentOptions.Center;
+        leftCountText.outlineWidth = 0.35f;
+        leftCountText.outlineColor = Color.black;
+        leftCountText.raycastTarget = false;
         if (fontAsset != null) leftCountText.font = fontAsset;
 
 
+        // ----------------------------------------------------
         // 2. 오른쪽 인디케이터 루트 생성
+        // ----------------------------------------------------
         rightContainer = new GameObject("MonsterIndicator_Right");
         rightContainer.transform.SetParent(targetCanvas.transform, false);
         RectTransform rightRt = rightContainer.AddComponent<RectTransform>();
@@ -153,191 +221,298 @@ public class MonsterIndicatorManager : MonoBehaviour
         rightRt.anchorMax = new Vector2(1f, yCenterRatio);
         rightRt.pivot = new Vector2(1f, 0.5f);
         rightRt.anchoredPosition = new Vector2(-edgePadding, 0f);
-        rightRt.sizeDelta = new Vector2(100f, 100f);
+        rightRt.sizeDelta = new Vector2(250f, 150f);
 
-        // 2-1. 오른쪽 화살표 회전 개체
+        // 2-1. [화살표 회전체] (Left Center 피벗 (0, 0.5) 적용!)
         GameObject rightArrowObj = new GameObject("ArrowHolder");
         rightArrowObj.transform.SetParent(rightContainer.transform, false);
-        RectTransform rightArrowRt = rightArrowObj.AddComponent<RectTransform>();
-        rightArrowRt.sizeDelta = new Vector2(60f, 60f);
+        rightArrowRt = rightArrowObj.AddComponent<RectTransform>();
+        rightArrowRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rightArrowRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rightArrowRt.pivot = arrowPivot; // 왼쪽 중앙 (0, 0.5) 피벗
         rightArrowTransform = rightArrowObj.transform;
 
-        // [핵심 수정] Image와 TextMeshProUGUI 분리
-        GameObject rightCatImgObj = new GameObject("CatImage");
-        rightCatImgObj.transform.SetParent(rightArrowObj.transform, false);
-        RectTransform rightImgRt = rightCatImgObj.AddComponent<RectTransform>();
-        rightImgRt.sizeDelta = new Vector2(60f, 60f);
-        rightCatImageComponent = rightCatImgObj.AddComponent<Image>();
+        GameObject rightArrowImgObj = new GameObject("ArrowImage");
+        rightArrowImgObj.transform.SetParent(rightArrowObj.transform, false);
+        rightArrowImgRt = rightArrowImgObj.AddComponent<RectTransform>();
+        rightArrowImgRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rightArrowImgRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rightArrowImgRt.pivot = arrowPivot; // 왼쪽 중앙 (0, 0.5) 피벗
+        rightArrowImgRt.anchoredPosition = Vector2.zero;
+        rightArrowImageComponent = rightArrowImgObj.AddComponent<Image>();
+        rightArrowImageComponent.type = Image.Type.Simple;
+        rightArrowImageComponent.preserveAspect = true;
+        rightArrowImageComponent.raycastTarget = false;
 
-        GameObject rightCatTxtObj = new GameObject("CatText");
-        rightCatTxtObj.transform.SetParent(rightArrowObj.transform, false);
-        RectTransform rightTxtRt = rightCatTxtObj.AddComponent<RectTransform>();
-        rightTxtRt.sizeDelta = new Vector2(80f, 40f);
-        rightCatTextComponent = rightCatTxtObj.AddComponent<TextMeshProUGUI>();
-        rightCatTextComponent.text = "🐱▶";
-        rightCatTextComponent.fontSize = 32;
-        rightCatTextComponent.alignment = TextAlignmentOptions.Center;
-        if (fontAsset != null) rightCatTextComponent.font = fontAsset;
+        // 2-2. [고양이 얼굴 고정체]
+        GameObject rightCatFaceObj = new GameObject("CatFaceHolder");
+        rightCatFaceObj.transform.SetParent(rightContainer.transform, false);
+        rightCatFaceRt = rightCatFaceObj.AddComponent<RectTransform>();
+        rightCatFaceRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rightCatFaceRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rightCatFaceRt.pivot = new Vector2(0.5f, 0.5f);
 
-        // 2-2. 오른쪽 수량 텍스트
+        GameObject rightCatFaceImgObj = new GameObject("CatFaceImage");
+        rightCatFaceImgObj.transform.SetParent(rightCatFaceObj.transform, false);
+        rightCatFaceImgRt = rightCatFaceImgObj.AddComponent<RectTransform>();
+        rightCatFaceImgRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rightCatFaceImgRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rightCatFaceImgRt.pivot = new Vector2(0.5f, 0.5f);
+        rightCatFaceImgRt.anchoredPosition = Vector2.zero;
+        rightCatFaceImageComponent = rightCatFaceImgObj.AddComponent<Image>();
+        rightCatFaceImageComponent.type = Image.Type.Simple;
+        rightCatFaceImageComponent.preserveAspect = true;
+        rightCatFaceImageComponent.raycastTarget = false;
+
+        // 2-3. 수량 텍스트
         GameObject rightCountObj = new GameObject("CountText");
-        rightCountObj.transform.SetParent(rightContainer.transform, false);
-        RectTransform rightCountRt = rightCountObj.AddComponent<RectTransform>();
-        rightCountRt.anchoredPosition = new Vector2(0f, 40f);
-        rightCountRt.sizeDelta = new Vector2(100f, 35f);
+        rightCountObj.transform.SetParent(rightCatFaceObj.transform, false);
+        rightCountRt = rightCountObj.AddComponent<RectTransform>();
+        rightCountRt.anchorMin = new Vector2(0.5f, 0.5f);
+        rightCountRt.anchorMax = new Vector2(0.5f, 0.5f);
+        rightCountRt.pivot = new Vector2(0.5f, 0.5f);
         rightCountText = rightCountObj.AddComponent<TextMeshProUGUI>();
         rightCountText.text = "×1";
-        rightCountText.fontSize = 26;
         rightCountText.fontStyle = FontStyles.Bold;
         rightCountText.color = Color.yellow;
         rightCountText.alignment = TextAlignmentOptions.Center;
+        rightCountText.outlineWidth = 0.35f;
+        rightCountText.outlineColor = Color.black;
+        rightCountText.raycastTarget = false;
         if (fontAsset != null) rightCountText.font = fontAsset;
 
+        // 레이아웃 적용
+        ApplyLayoutSettings();
         RefreshSpriteOrTextDisplay();
     }
 
     /// <summary>
-    /// Sprite 슬롯 할당 여부에 따라 이미지/텍스트 표시 모드를 동적으로 갱신
+    /// 피벗 수치 및 인스펙터의 개별 레이아웃을 실시간 적용
     /// </summary>
+    public void ApplyLayoutSettings()
+    {
+        // 0. 피벗 적용
+        if (leftArrowRt != null) leftArrowRt.pivot = arrowPivot;
+        if (leftArrowImgRt != null) leftArrowImgRt.pivot = arrowPivot;
+        if (rightArrowRt != null) rightArrowRt.pivot = arrowPivot;
+        if (rightArrowImgRt != null) rightArrowImgRt.pivot = arrowPivot;
+
+        // 1. 왼쪽 인디케이터 레이아웃 적용
+        if (leftArrowRt != null) leftArrowRt.sizeDelta = leftArrowImageSize;
+        if (leftArrowImgRt != null) leftArrowImgRt.sizeDelta = leftArrowImageSize;
+
+        if (leftCatFaceRt != null) leftCatFaceRt.sizeDelta = leftCatFaceImageSize;
+        if (leftCatFaceImgRt != null) leftCatFaceImgRt.sizeDelta = leftCatFaceImageSize;
+
+        float leftHalfGap = leftGapBetweenImages * 0.5f;
+        if (leftArrowRt != null) leftArrowRt.anchoredPosition = new Vector2(-leftHalfGap, 0f);
+        if (leftCatFaceRt != null) leftCatFaceRt.anchoredPosition = new Vector2(leftHalfGap, 0f);
+
+        if (leftCountRt != null)
+        {
+            leftCountRt.anchoredPosition = leftTextOffset;
+            leftCountRt.sizeDelta = leftCatFaceImageSize;
+        }
+        if (leftCountText != null) leftCountText.fontSize = leftFontSize;
+
+
+        // 2. 오른쪽 인디케이터 레이아웃 적용
+        if (rightArrowRt != null) rightArrowRt.sizeDelta = rightArrowImageSize;
+        if (rightArrowImgRt != null) rightArrowImgRt.sizeDelta = rightArrowImageSize;
+
+        if (rightCatFaceRt != null) rightCatFaceRt.sizeDelta = rightCatFaceImageSize;
+        if (rightCatFaceImgRt != null) rightCatFaceImgRt.sizeDelta = rightCatFaceImageSize;
+
+        float rightHalfGap = rightGapBetweenImages * 0.5f;
+        if (rightArrowRt != null) rightArrowRt.anchoredPosition = new Vector2(-rightHalfGap, 0f);
+        if (rightCatFaceRt != null) rightCatFaceRt.anchoredPosition = new Vector2(rightHalfGap, 0f);
+
+        if (rightCountRt != null)
+        {
+            rightCountRt.anchoredPosition = rightTextOffset;
+            rightCountRt.sizeDelta = rightCatFaceImageSize;
+        }
+        if (rightCountText != null) rightCountText.fontSize = rightFontSize;
+    }
+
+    private void OnValidate()
+    {
+        ApplyLayoutSettings();
+        RefreshSpriteOrTextDisplay();
+    }
+
     public void RefreshSpriteOrTextDisplay()
     {
-        if (leftCatImageComponent == null || rightCatImageComponent == null) return;
+        if (leftArrowImageComponent != null)
+        {
+            if (arrowSprite != null)
+            {
+                leftArrowImageComponent.sprite = arrowSprite;
+                leftArrowImageComponent.gameObject.SetActive(true);
+            }
+            else
+            {
+                leftArrowImageComponent.gameObject.SetActive(false);
+            }
+        }
 
-        if (leftCatSprite != null)
+        if (rightArrowImageComponent != null)
         {
-            leftCatImageComponent.gameObject.SetActive(true);
-            leftCatImageComponent.sprite = leftCatSprite;
-            if (leftCatTextComponent != null) leftCatTextComponent.gameObject.SetActive(false);
-        }
-        else
-        {
-            leftCatImageComponent.gameObject.SetActive(false);
-            if (leftCatTextComponent != null) leftCatTextComponent.gameObject.SetActive(true);
+            if (arrowSprite != null)
+            {
+                rightArrowImageComponent.sprite = arrowSprite;
+                rightArrowImageComponent.gameObject.SetActive(true);
+            }
+            else
+            {
+                rightArrowImageComponent.gameObject.SetActive(false);
+            }
         }
 
-        if (rightCatSprite != null)
+        if (leftCatFaceImageComponent != null)
         {
-            rightCatImageComponent.gameObject.SetActive(true);
-            rightCatImageComponent.sprite = rightCatSprite;
-            if (rightCatTextComponent != null) rightCatTextComponent.gameObject.SetActive(false);
+            if (catFaceSprite != null)
+            {
+                leftCatFaceImageComponent.sprite = catFaceSprite;
+                leftCatFaceImageComponent.gameObject.SetActive(true);
+            }
+            else
+            {
+                leftCatFaceImageComponent.gameObject.SetActive(false);
+            }
         }
-        else
+
+        if (rightCatFaceImageComponent != null)
         {
-            rightCatImageComponent.gameObject.SetActive(false);
-            if (rightCatTextComponent != null) rightCatTextComponent.gameObject.SetActive(true);
+            if (catFaceSprite != null)
+            {
+                rightCatFaceImageComponent.sprite = catFaceSprite;
+                rightCatFaceImageComponent.gameObject.SetActive(true);
+            }
+            else
+            {
+                rightCatFaceImageComponent.gameObject.SetActive(false);
+            }
         }
     }
 
     private void Update()
     {
-        // 1. Tab키 1회 클릭 시 토글 스위칭 (동일 프레임 연속 처리 방지)
+        // Tab 키 입력 시 인디케이터 토글
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             isIndicatorEnabled = !isIndicatorEnabled;
-            Debug.Log($"[MonsterIndicatorManager] Tab키 입력: 인디케이터 표시 상태 = {isIndicatorEnabled}");
+            Debug.Log($"[MonsterIndicator] 표시 상태 변경: {(isIndicatorEnabled ? "켜짐" : "꺼짐")}");
         }
 
-        // 2. 플레이어 재탐색 (null 대응)
-        if (playerTransform == null)
+        if (!isIndicatorEnabled)
         {
-            FindPlayer();
-        }
-
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-        }
-
-        UpdateIndicators();
-    }
-
-    private void UpdateIndicators()
-    {
-        // 예외 조건: 일시정지 중이거나, 토글이 꺼졌거나, 플레이어/카메라가 없으면 숨김
-        bool isPaused = PauseManager.IsPaused;
-        if (!isIndicatorEnabled || isPaused || playerTransform == null || mainCamera == null)
-        {
-            if (leftContainer != null) leftContainer.SetActive(false);
-            if (rightContainer != null) rightContainer.SetActive(false);
+            SetContainersActive(false, false);
             return;
         }
 
-        RefreshSpriteOrTextDisplay();
-
-        // 씬 내의 모든 몬스터 검색 (미정화 몬스터만 대상)
-        NormalMonster[] allMonsters = FindObjectsByType<NormalMonster>(FindObjectsSortMode.None);
-
-        int leftCount = 0;
-        int rightCount = 0;
-
-        Vector3 leftSumPos = Vector3.zero;
-        Vector3 rightSumPos = Vector3.zero;
-
-        foreach (var monster in allMonsters)
+        if (playerTransform == null)
         {
-            // 이미 정화되었거나 비활성화된 몬스터 제외
-            if (monster == null || monster.IsPurified || !monster.gameObject.activeInHierarchy) continue;
-
-            Vector3 monsterPos = monster.transform.position;
-            Vector3 viewportPos = mainCamera.WorldToViewportPoint(monsterPos);
-
-            // 카메라 뷰포트 범위 안(0.0 ~ 1.0)에 완전히 들어온 몬스터는 제외! (화면 밖 몬스터만 카운트)
-            bool isInsideScreen = (viewportPos.x >= 0f && viewportPos.x <= 1f && viewportPos.y >= 0f && viewportPos.y <= 1f && viewportPos.z > 0f);
-            if (isInsideScreen) continue;
-
-            // 플레이어 X좌표 기준으로 왼쪽 / 오른쪽 분류
-            if (monsterPos.x < playerTransform.position.x)
+            FindPlayer();
+            if (playerTransform == null)
             {
-                leftCount++;
-                leftSumPos += monsterPos;
-            }
-            else
-            {
-                rightCount++;
-                rightSumPos += monsterPos;
+                SetContainersActive(false, false);
+                return;
             }
         }
 
-        // --- 왼쪽 인디케이터 처리 ---
-        if (leftCount > 0)
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsSortMode.None);
+        List<NormalMonster> unpurifiedLeft = new List<NormalMonster>();
+        List<NormalMonster> unpurifiedRight = new List<NormalMonster>();
+
+        NormalMonster closestLeftMonster = null;
+        float minLeftDist = float.MaxValue;
+
+        NormalMonster closestRightMonster = null;
+        float minRightDist = float.MaxValue;
+
+        foreach (var monster in monsters)
         {
-            if (leftContainer != null) leftContainer.SetActive(true);
-            if (leftCountText != null) leftCountText.text = $"×{leftCount}";
+            if (monster == null || monster.IsPurified) continue;
 
-            // 몬스터 그룹 평균 위치를 향해 화살표 실시간 회전 (Look-at Angle)
-            Vector3 avgPos = leftSumPos / leftCount;
-            Vector2 dir = (avgPos - playerTransform.position).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            float dist = Vector2.Distance(playerTransform.position, monster.transform.position);
 
-            if (leftArrowTransform != null)
+            if (monster.transform.position.x < playerTransform.position.x)
             {
-                leftArrowTransform.rotation = Quaternion.Euler(0f, 0f, angle + 180f);
+                unpurifiedLeft.Add(monster);
+                if (dist < minLeftDist)
+                {
+                    minLeftDist = dist;
+                    closestLeftMonster = monster;
+                }
+            }
+            else
+            {
+                unpurifiedRight.Add(monster);
+                if (dist < minRightDist)
+                {
+                    minRightDist = dist;
+                    closestRightMonster = monster;
+                }
+            }
+        }
+
+        // 1. 왼쪽 인디케이터 갱신
+        if (unpurifiedLeft.Count > 0)
+        {
+            SetLeftContainerActive(true);
+            leftCountText.text = $"×{unpurifiedLeft.Count}";
+
+            if (closestLeftMonster != null && leftArrowTransform != null)
+            {
+                Vector3 dir = (closestLeftMonster.transform.position - playerTransform.position).normalized;
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                leftArrowTransform.rotation = Quaternion.Euler(0f, 0f, angle);
             }
         }
         else
         {
-            if (leftContainer != null) leftContainer.SetActive(false);
+            SetLeftContainerActive(false);
         }
 
-        // --- 오른쪽 인디케이터 처리 ---
-        if (rightCount > 0)
+        // 2. 오른쪽 인디케이터 갱신
+        if (unpurifiedRight.Count > 0)
         {
-            if (rightContainer != null) rightContainer.SetActive(true);
-            if (rightCountText != null) rightCountText.text = $"×{rightCount}";
+            SetRightContainerActive(true);
+            rightCountText.text = $"×{unpurifiedRight.Count}";
 
-            // 몬스터 그룹 평균 위치를 향해 화살표 실시간 회전
-            Vector3 avgPos = rightSumPos / rightCount;
-            Vector2 dir = (avgPos - playerTransform.position).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-            if (rightArrowTransform != null)
+            if (closestRightMonster != null && rightArrowTransform != null)
             {
+                Vector3 dir = (closestRightMonster.transform.position - playerTransform.position).normalized;
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
                 rightArrowTransform.rotation = Quaternion.Euler(0f, 0f, angle);
             }
         }
         else
         {
-            if (rightContainer != null) rightContainer.SetActive(false);
+            SetRightContainerActive(false);
+        }
+    }
+
+    private void SetContainersActive(bool left, bool right)
+    {
+        SetLeftContainerActive(left);
+        SetRightContainerActive(right);
+    }
+
+    private void SetLeftContainerActive(bool active)
+    {
+        if (leftContainer != null && leftContainer.activeSelf != active)
+        {
+            leftContainer.SetActive(active);
+        }
+    }
+
+    private void SetRightContainerActive(bool active)
+    {
+        if (rightContainer != null && rightContainer.activeSelf != active)
+        {
+            rightContainer.SetActive(active);
         }
     }
 }
