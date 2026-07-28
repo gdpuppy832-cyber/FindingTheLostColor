@@ -487,6 +487,12 @@ public class H_MonsterMove : MonoBehaviour
             spriteRenderer.enabled = true;
         }
         HideBush();
+
+        // 잠복 해제되었으므로 HP바를 다시 표시
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -519,6 +525,12 @@ public class H_MonsterMove : MonoBehaviour
         if (rigid != null)
         {
             rigid.linearVelocity = Vector2.zero;
+        }
+
+        // 잠복 상태에서는 HP바를 숨김
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(false);
         }
     }
 
@@ -637,10 +649,7 @@ public class H_MonsterMove : MonoBehaviour
         }
     }
 
-    // 몬스터의 localScale.x를 뒤집는 모든 지점에서 이 함수를 통해서만 처리.
-    // 몬스터가 뒤집히는 그 순간, 자식인 HP바의 localScale.x도 함께 반대로 보정해서
-    // 부모의 반전을 상쇄시킴 (매 프레임 보정이 아니라, 반전이 실제로 발생하는 시점에만 1회 처리)
-    private void ApplyFacing(float sign)
+    public void ApplyFacing(float sign)
     {
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(initialScale.x) * sign;
@@ -648,16 +657,11 @@ public class H_MonsterMove : MonoBehaviour
 
         if (hpBar != null)
         {
-            // 부모(this)의 X축 부호가 초기값 대비 뒤집혔는지에 따라 HP바 로컬 스케일의 부호를 반대로 걸어줌.
-            // 결과적으로 부모(월드) 스케일 * 자식(로컬) 스케일이 항상 초기 부호(정방향)로 유지됨.
             Vector3 hpScale = hpBarInitialLocalScale;
             hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
             hpBar.localScale = hpScale;
         }
     }
-    // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.
-    // 그 시점에 Update() 루프(isStateDelay 처리)가 멈춰서 currentAlert가 정리되지 못하므로,
-    // 여기서 확실하게 파괴함
     void OnDisable()
     {
         if (currentAlert != null)
