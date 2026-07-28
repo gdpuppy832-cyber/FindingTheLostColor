@@ -1331,8 +1331,6 @@ public class BossAttack : MonoBehaviour
     [Tooltip("공격 지속 시간")]
     public float shadowBarrierActiveDuration = 1.5f;           // 텔레그래프 종료 후 실제 피해 판정이 유지되는 시간
 
-    public float fallbackShadowBarrierWidth = 3f;              // 프리팹 없을 때 컬럼 하나의 가로 크기 (attackWidth 기반 계산으로 대체되어 더 이상 사용되지 않음)
-    public float fallbackShadowBarrierHeight = 10f;            // 프리팹 없을 때 컬럼 하나의 세로 크기
 
     [Tooltip("전체 공격 폭 (X 방향). 이 값을 5등분해서 각 칸의 위치와 X 스케일이 자동 계산됩니다 (예: 20 -> 칸당 4)")]
     public float shadowBarrierAttackWidth = 20f;
@@ -1365,7 +1363,7 @@ public class BossAttack : MonoBehaviour
             float centerX = attackCenterX + (col - 3) * segmentWidth;
             columnCenters.Add(centerX);
 
-            GameObject marker = SpawnShadowBarrierTelegraph(new Vector2(centerX, centerY), segmentWidth);
+            GameObject marker = SpawnShadowBarrierTelegraph(new Vector2(centerX, centerY));
             if (marker != null) markers.Add(marker);
         }
         activeTelegraphMarkers.AddRange(markers);
@@ -1399,7 +1397,7 @@ public class BossAttack : MonoBehaviour
         List<GameObject> barriers = new List<GameObject>();
         foreach (var centerX in columnCenters)
         {
-            GameObject barrier = SpawnShadowBarrierHazard(new Vector2(centerX, centerY), segmentWidth);
+            GameObject barrier = SpawnShadowBarrierHazard(new Vector2(centerX, centerY));
             if (barrier != null) barriers.Add(barrier);
         }
 
@@ -1412,12 +1410,12 @@ public class BossAttack : MonoBehaviour
         }
     }
 
-    GameObject SpawnShadowBarrierTelegraph(Vector2 center, float segmentWidth)
+    GameObject SpawnShadowBarrierTelegraph(Vector2 center)
     {
         GameObject marker;
         if (shadowBarrierTelegraphTemplate != null)
         {
-            // 프리팹 원본을 그대로 복제. Scale은 프리팹/인스펙터에 설정된 값을 그대로 유지하고 코드에서 건드리지 않음
+            // 프리팹 원본을 그대로 복제. 위치만 지정하고 크기는 절대 건드리지 않음
             marker = Instantiate(shadowBarrierTelegraphTemplate, center, Quaternion.identity);
             marker.SetActive(true);
         }
@@ -1433,12 +1431,12 @@ public class BossAttack : MonoBehaviour
         return marker;
     }
 
-    GameObject SpawnShadowBarrierHazard(Vector2 center, float segmentWidth)
+    GameObject SpawnShadowBarrierHazard(Vector2 center)
     {
         GameObject barrier;
         if (shadowBarrierHazardTemplate != null)
         {
-            // 프리팹 원본을 그대로 복제. Scale은 프리팹/인스펙터에 설정된 값을 그대로 유지하고 코드에서 건드리지 않음
+            // 프리팹 원본을 그대로 복제. 위치만 지정하고 크기는 절대 건드리지 않음
             barrier = Instantiate(shadowBarrierHazardTemplate, center, Quaternion.identity);
             barrier.SetActive(true);
         }
@@ -1945,6 +1943,7 @@ public class BossAttack : MonoBehaviour
         if (activeWhirlpoolCoroutine != null)
         {
             StopCoroutine(activeWhirlpoolCoroutine);
+            
             activeWhirlpoolCoroutine = null;
         }
         if (activeColorWhirlpool != null) Destroy(activeColorWhirlpool);

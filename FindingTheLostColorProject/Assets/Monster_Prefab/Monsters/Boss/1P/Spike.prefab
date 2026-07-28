@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7184749598055297410
 Transform:
   m_ObjectHideFlags: 0
@@ -127,10 +127,10 @@ EdgeCollider2D:
   m_Offset: {x: 0, y: 0}
   m_EdgeRadius: 0
   m_Points:
-  - {x: -0.736159, y: 0.005481273}
+  - {x: -0.73151433, y: 0.0000036548154}
   - {x: -0.02423203, y: 3.3027477}
   - {x: 0.70939994, y: 0.001113683}
-  - {x: -0.7300856, y: -0.001456352}
+  - {x: -0.7315111, y: -0.000001604385}
   m_AdjacentStartPoint: {x: 0, y: 0}
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 725d89d4af16df74ab3b8122a3e566ba
+guid: 1a18c60a12f39ae46a731247e4ea40ff
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 473966677320773766
-    second: ShadowBarrier11_0
+      213: 753705519880707723
+    second: Crystal_HP_0
+  - first:
+      213: -767049552855124869
+    second: Crystal_HP_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,27 +103,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ShadowBarrier11_0
+      name: Crystal_HP_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 884
-        height: 1918
+        x: 1
+        y: 10
+        width: 181
+        height: 14
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape:
-      - - {x: 185, y: 959}
-        - {x: -185, y: 959}
-        - {x: -171, y: -959}
-        - {x: 171, y: -959}
-      tessellationDetail: 0
+      physicsShape: []
+      tessellationDetail: -1
       bones: []
-      spriteID: 680b31d8e2ed39600800000000000000
-      internalID: 473966677320773766
+      spriteID: b74b2f4ee74ea55f0800000000000000
+      internalID: -767049552855124869
       vertices: []
       indices: 
       edges: []
@@ -129,7 +128,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cdde82a8c69fed54a9ce92ad8ef77cb7
+    spriteID: cc1b8a56aa5b7a541aa10e253859e8a5
     internalID: 0
     vertices: []
     indices: 
@@ -137,11 +136,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":884.0,"y":1918.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      ShadowBarrier11_0: 473966677320773766
+      Crystal_HP_0: 753705519880707723
+      Crystal_HP_1: -767049552855124869
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
