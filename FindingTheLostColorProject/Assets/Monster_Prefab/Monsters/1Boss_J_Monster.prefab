@@ -671,6 +671,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 6974230603188925989}
     m_Modifications:
     - target: {fileID: 201812551930480727, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 354283401
+      objectReference: {fileID: 0}
+    - target: {fileID: 201812551930480727, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}

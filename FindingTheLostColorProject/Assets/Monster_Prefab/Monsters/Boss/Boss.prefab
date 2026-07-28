@@ -86,7 +86,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
-  m_Color: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -190,7 +190,7 @@ MonoBehaviour:
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF
   purificationIndicatorPrefab: {fileID: 0}
   indicatorOffset: {x: 0, y: 1.5, z: 0}
-  startColor: {r: 0.14901961, g: 0.14901961, b: 0.14901961, a: 1}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-1984632610777454492
 MonoBehaviour:
@@ -247,7 +247,7 @@ MonoBehaviour:
   - {fileID: 0}
   colorOrbPrefab: {fileID: 0}
   colorOrbHealth: 15
-  colorOrbSpawnOffsetY: -5
+  colorOrbSpawnOffsetY: -3
   blackFogs:
   - {fileID: 0}
   - {fileID: 0}
@@ -288,11 +288,8 @@ MonoBehaviour:
   fallbackLaserThickness: 0.6
   frostCrystalPrefabs:
   - {fileID: 2129274666916119979, guid: b4ca3ed960f126e4e9a1eb3c59fc5531, type: 3}
-  - {fileID: 2129274666916119979, guid: 7dad21d5ca515fe40b3ca829f2a916bb, type: 3}
-  - {fileID: 2129274666916119979, guid: 09aacff3e5fc82d459304d4f1c8d5622, type: 3}
-  - {fileID: 2129274666916119979, guid: 9ad873ec55b0d8241bcd7a9fdefa581f, type: 3}
-  frostRangrY: 5.5
-  frostRangeX: 30
+  frostRangrY: 4.5
+  frostRangeX: 34
   frostRainDuration: 5
   frostSpawnInterval: 0.3
   frostSpawnCountPerTick: 3
@@ -307,8 +304,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 8065591121082918117}
   - {fileID: 6236711602578994689}
-  - {fileID: 0}
-  - {fileID: 0}
   frostTelegraphDuration: 1.5
   frostTelegraphBlinkInterval: 0.25
   frostTelegraphColumnCount: 10
@@ -325,7 +320,7 @@ MonoBehaviour:
   fallbackDarkOrbSize: 0.6
   darkCloudPrefab: {fileID: 6254425877237160721, guid: 77d976ba74a1c8149b58eaa5664fcebd, type: 3}
   lightningPrefab: {fileID: 3224362926502252807, guid: 457e3adcaffe4f3428d3bbb6af82c7eb, type: 3}
-  darkCloudSpawnOffset: {x: 0, y: 6}
+  darkCloudSpawnOffset: {x: 0, y: 5}
   darkCloudFadeInDuration: 2
   darkCloudHoldDuration: 6
   darkCloudPaintEraseDuration: 3
@@ -339,9 +334,7 @@ MonoBehaviour:
   shadowBarrierTelegraphDuration: 1.5
   shadowBarrierTelegraphBlinkInterval: 0.25
   shadowBarrierActiveDuration: 1.17
-  fallbackShadowBarrierWidth: 3
-  fallbackShadowBarrierHeight: 10
-  shadowBarrierAttackWidth: 31.69737
+  shadowBarrierAttackWidth: 34
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
 --- !u!114 &2434699336844069180
 MonoBehaviour:
@@ -655,7 +648,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5853419266408409693, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6017712332397744534, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalScale.x
@@ -675,7 +668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalScale.x
-      value: 35.030533
+      value: 34.94026
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalScale.y
@@ -683,7 +676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.0301
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 7945814098173492976, guid: 8ad3d86958bdf9d42bb61577fe0d9f47, type: 3}
       propertyPath: m_LocalPosition.y
