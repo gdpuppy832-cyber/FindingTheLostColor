@@ -16,10 +16,17 @@ public class TitleUI : MonoBehaviour
     [SerializeField] private float fadeDuration = 1.0f; // 페이드 시간
     [SerializeField] private bool useFadeInOnStart = false; // [추가] 씬이 처음 켜질 때 페이드인(검은화면->밝아짐)을 사용할지 여부
 
+    [Header("Full Screen Background Settings (신규)")]
+    [Tooltip("모든 해상도에서 화면을 꽉 채울 타이틀 배경 Image (비워 둘 시 런타임 자동 검색)")]
+    [SerializeField] private Image backgroundImage;
+
     private bool isTransitioning = false;
 
     private void Start()
     {
+        // 모든 해상도(16:9, 16:10, 21:9 등)에서 화면을 꽉 채우도록 레이아웃 및 캔버스 자동 세팅
+        SetupFullScreenLayout();
+
         // 시작할 때 옵션 패널은 닫아둡니다.
         if (optionPanel != null)
         {
@@ -45,6 +52,64 @@ public class TitleUI : MonoBehaviour
                 fadeImage.color = tempColor;
                 fadeImage.raycastTarget = false;
             }
+        }
+    }
+
+    /// <summary>
+    /// 16:10 및 모든 해상도 모니터에서 위아래 파란 여백 없이 화면 전체가 꽉 차도록 카메라 및 CanvasScaler를 자동 조율합니다.
+    /// </summary>
+    private void SetupFullScreenLayout()
+    {
+        // 1. 메인 카메라 기본 파란색 여백 박멸
+        Camera mainCam = Camera.main;
+        if (mainCam != null)
+        {
+            mainCam.clearFlags = CameraClearFlags.SolidColor;
+            mainCam.backgroundColor = Color.black; // 파란색 비침 원천 차단!
+        }
+
+        // 2. CanvasScaler -> Expand (확장) 모드로 설정하여 16:10 화면에서도 위아래 여백을 100% 가득 덮음
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) canvas = FindFirstObjectByType<Canvas>();
+
+        if (canvas != null)
+        {
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null) scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand; // Expand 모드는 16:10 해상도의 여백을 가득 덮어버림
+        }
+
+        // 3. 씬 내 모든 배경/패널 Image 검색하여 Preserve Aspect(비율 유지) 강제 해제 후 Full Stretch 적용
+        Image[] allImages = FindObjectsByType<Image>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var img in allImages)
+        {
+            if (img == null) continue;
+            string objName = img.gameObject.name.ToLower();
+
+            // 배경, 패널, 캔버스 관련 이미지의 경우 비율 유지 옵션을 꺼서 16:10 모니터 전체에 쫙 늘려줌
+            if (objName.Contains("bg") || objName.Contains("background") || objName.Contains("title") || objName.Contains("panel") || img == backgroundImage)
+            {
+                img.preserveAspect = false; // 비율 유지 강제 해제 (여백 방지!)
+                RectTransform rect = img.rectTransform;
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
+        }
+
+        // 4. 페이드 이미지도 Full Stretch로 꽉 채움 보장
+        if (fadeImage != null)
+        {
+            fadeImage.preserveAspect = false;
+            RectTransform rect = fadeImage.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
         }
     }
 
@@ -83,9 +148,33 @@ public class TitleUI : MonoBehaviour
     // 2. 옵션 버튼 클릭 시 호출할 함수
     public void OpenOptionPanel()
     {
+        // 1순위: TitleUI 인스펙터에 지정된 옵션 패널 활성화
         if (optionPanel != null)
         {
             optionPanel.SetActive(true);
+            return;
+        }
+
+        // 2순위: PauseManager 컴포넌트가 씬에 존재하는 경우 검색 후 OpenOption 호출
+        PauseManager pauseMgr = FindFirstObjectByType<PauseManager>();
+        if (pauseMgr != null)
+        {
+            pauseMgr.OpenOption();
+            return;
+        }
+
+        // 3순위: 씬 전체에서 OptionPanel / SettingsPanel 패널 자동 검색
+        GameObject foundPanel = GameObject.Find("OptionPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("SettingsPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("OptionCanvas");
+        
+        if (foundPanel != null)
+        {
+            foundPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("[TitleUI] 옵션 패널(optionPanel)을 찾을 수 없습니다. 타이틀 씬 Canvas 하위에 OptionPanel 프리팹을 배치하거나 TitleUI 인스펙터에 연결해 주세요.");
         }
     }
 
@@ -94,6 +183,23 @@ public class TitleUI : MonoBehaviour
         if (optionPanel != null)
         {
             optionPanel.SetActive(false);
+            return;
+        }
+
+        PauseManager pauseMgr = FindFirstObjectByType<PauseManager>();
+        if (pauseMgr != null)
+        {
+            pauseMgr.CloseOption();
+            return;
+        }
+
+        GameObject foundPanel = GameObject.Find("OptionPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("SettingsPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("OptionCanvas");
+
+        if (foundPanel != null)
+        {
+            foundPanel.SetActive(false);
         }
     }
 
