@@ -229,9 +229,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3690797216815920063}
     m_Modifications:
+    - target: {fileID: 1220977708041779859, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 8980664804852219419, guid: a8e428f2a30622f4b9ec811deef384d0, type: 3}
     - target: {fileID: 1913637735496586061, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3439168563695120251, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1.8273
+      objectReference: {fileID: 0}
+    - target: {fileID: 3439168563695120251, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3439168563695120251, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_Pivot.x
@@ -259,7 +275,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 2
+      value: 2.102
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_SizeDelta.y
@@ -295,11 +311,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.617
+      value: 1.49
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -313,10 +329,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1.30777
+      objectReference: {fileID: 0}
+    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0.1725
+      objectReference: {fileID: 0}
+    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.191
+      objectReference: {fileID: 0}
+    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.033
+      objectReference: {fileID: 0}
     - target: {fileID: 7642267068386756628, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_Name
       value: Monster_HPbar
       objectReference: {fileID: 0}
+    - target: {fileID: 8442562714766336365, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: monster
+      value: 
+      objectReference: {fileID: 4627690519435609107}
+    - target: {fileID: 8472198279424573598, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -767049552855124869, guid: 1a18c60a12f39ae46a731247e4ea40ff, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
