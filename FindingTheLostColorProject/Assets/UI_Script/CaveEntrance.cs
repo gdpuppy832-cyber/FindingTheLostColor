@@ -79,18 +79,18 @@ public class CaveEntrance : InteractableObject
         // 씬 로딩 전환이 시작되었다면 어떠한 상호작용도 차단
         if (isTransitioning) return;
 
-        // 1. 스테이지 내 모든 무채색 고양이가 정화되었는지 검사
-        bool isAllPurified = false;
-        if (PurificationManager.Instance != null)
+        // 1. 스테이지 내 미정화 고양이(!IsPurified) 몬스터가 남아있는지 실시간 직접 스캔
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        bool hasUnpurifiedCat = false;
+        foreach (var m in monsters)
         {
-            isAllPurified = PurificationManager.Instance.IsAllPurified;
+            if (m != null && !m.IsPurified)
+            {
+                hasUnpurifiedCat = true;
+                break;
+            }
         }
-        else
-        {
-            // 매니저가 씬에 없다면 기본적으로 정화 대상 몬스터가 없는 것으로 인지해 입장 가능하도록 허용
-            NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            isAllPurified = monsters.Length == 0;
-        }
+        bool isAllPurified = !hasUnpurifiedCat;
 
         // 2. 조건에 따른 분기 처리
         if (isAllPurified)

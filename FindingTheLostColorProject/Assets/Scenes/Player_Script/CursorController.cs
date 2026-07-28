@@ -10,7 +10,14 @@ public class CursorController : MonoBehaviour
     public Transform player; // 플레이어 오브젝트
     public TrailRenderer trail; // TrailRenderer 오브젝트
 
-    [Header("Cursor Settings")]
+    [Header("Cursor Settings (Attack Mode Specific)")]
+    [Tooltip("1번 모드 (일반 브러시) 사거리별 커서 텍스처 3종 (0: 근거리, 1: 중거리, 2: 원거리)")]
+    public List<Texture2D> mode1CursorTextures;
+
+    [Tooltip("2번 모드 (차징 샷) 사거리별 커서 텍스처 3종 (0: 근거리, 1: 중거리, 2: 원거리)")]
+    public List<Texture2D> mode2CursorTextures;
+
+    [Tooltip("하위 호환용 기존 커서 텍스처 (mode1CursorTextures가 비어있을 경우 백업용 사용)")]
     public List<Texture2D> cursorTextures;
     public Vector2 hotSpot = new Vector2(16, 16);
 
@@ -38,13 +45,23 @@ public class CursorController : MonoBehaviour
     [Tooltip("현재 공격 모드 (1: 일반 브러시, 2: 차징 샷)")]
     [Range(1, 2)] public int attackMode = 1;
 
-    [Header("Charge Attack Settings")]
+    [Header("Charge Attack Settings (Mode 2)")]
     [Tooltip("차징 완료에 필요한 시간 (초, 기본값: 1.0)")]
     public float chargeDuration = 1.0f;
     [Tooltip("차징 샷 폭발 반경 (범위, 기본값: 2.5)")]
     public float chargeAttackRadius = 2.5f;
-    [Tooltip("차징 샷 성공 시 정화/힐량 (기본값: 2.0)")]
-    public float chargeAttackHealAmount = 2.0f;
+
+    [Tooltip("2번 차징 샷 근거리(0단계) 정화/힐량 (기본값: 3.0)")]
+    public float chargeCloseHealAmount = 3.0f;
+
+    [Tooltip("2번 차징 샷 중거리(1단계) 정화/힐량 (기본값: 2.0)")]
+    public float chargeMediumHealAmount = 2.0f;
+
+    [Tooltip("2번 차징 샷 원거리(2단계) 정화/힐량 (기본값: 1.0)")]
+    public float chargeFarHealAmount = 1.0f;
+
+    [Tooltip("하위 호환용 기존 단일 정화량 변수")]
+    public float chargeAttackHealAmount = 3.0f;
     [Tooltip("차징 샷 발사 시 소모될 물감량 (기본값: 0.2, maxPaint는 1f)")]
     public float chargePaintCost = 0.2f;
     [Tooltip("차징 중 물감 소모 비율 (기존 소모량 대비 배율, 0.3 = 30% 소모)")]
@@ -87,6 +104,7 @@ public class CursorController : MonoBehaviour
     [SerializeField] private float diagonalHorizontalOffset = 4.0f;
 
     private int currentCursorIndex = -1;
+    private bool isModeJustSwapped = false;
     private GaugeController gaugeController; // 물감 게이지 스크립트 참조
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
     private GaugeVisualFeedback gaugeFeedback; // [추가] 물감 게이지 비주얼 피드백 참조
@@ -174,15 +192,13 @@ public class CursorController : MonoBehaviour
         // 3. 거리 단계 구분 (0:근, 1:중, 2:원)
         int nextIndex = (distance < mediumDistance) ? 0 : (distance < intenseDistance) ? 1 : 2;
 
-        // 4. 인덱스 변경 시 커서 변경 및 트레일 스타일 업데이트
-        if (nextIndex != currentCursorIndex)
+        // 4. 인덱스 변경 또는 공격 모드 변경 시 커서 아이콘 및 트레일 스타일 즉시 업데이트
+        if (nextIndex != currentCursorIndex || isModeJustSwapped)
         {
-            if (cursorTextures != null && nextIndex < cursorTextures.Count)
-            {
-                Cursor.SetCursor(cursorTextures[nextIndex], hotSpot, CursorMode.Auto);
-            }
+            UpdateCursorTexture(nextIndex);
             UpdateTrailStyle(nextIndex);
             currentCursorIndex = nextIndex;
+            isModeJustSwapped = false;
         }
 
         // 5. 공격 모드 스와핑 감지 (KeyBindManager 연동)
@@ -192,8 +208,9 @@ public class CursorController : MonoBehaviour
         {
             attackMode = (attackMode == 1) ? 2 : 1;
             ResetCharge();
+            isModeJustSwapped = true; // 커서 즉시 갱신 플래그
 
-            // [추가] 무기 UI 슬롯 아펠리오스 스타일 스왑 연출 가동
+            // 무기 UI 슬롯 아펠리오스 스타일 스왑 연출 가동
             if (WeaponSlotUI.Instance != null)
             {
                 WeaponSlotUI.Instance.OnAttackModeChanged(attackMode);
@@ -574,12 +591,15 @@ public class CursorController : MonoBehaviour
             // 예: SoundManager.Instance.PlaySFX("ChargeBoom");
         }
 
-        // 2번 모드 차징 공격도 플레이어와 마우스 간 거리에 따라 정화량(피해량) 감소 배율 적용
-        float[] damageMultipliers = { 1.0f, 0.7f, 0.4f };
-        float activeChargeHeal = chargeAttackHealAmount;
-        if (currentCursorIndex >= 0 && currentCursorIndex < damageMultipliers.Length)
+        // 2번 모드 차징 공격도 사거리 3단계(0:근, 1:중, 2:원)에 따라 인스펙터 지정 정화/데미지량 적용
+        float activeChargeHeal = chargeCloseHealAmount;
+        if (currentCursorIndex == 1)
         {
-            activeChargeHeal = chargeAttackHealAmount * damageMultipliers[currentCursorIndex];
+            activeChargeHeal = chargeMediumHealAmount;
+        }
+        else if (currentCursorIndex == 2)
+        {
+            activeChargeHeal = chargeFarHealAmount;
         }
 
         // 3. 범위 정화/힐 일괄 적용
@@ -888,6 +908,38 @@ public class CursorController : MonoBehaviour
     {
         // 씬 전환, 비활성화 시 차징 상태를 강제로 완전히 리셋하여 이펙트 박제 방지
         ResetCharge(true);
+    }
+
+    /// <summary>
+    /// 현재 공격 모드(1번/2번)와 사거리 인덱스(0, 1, 2)에 맞춰 커서 텍스처를 동적으로 즉시 적용합니다.
+    /// </summary>
+    private void UpdateCursorTexture(int index)
+    {
+        List<Texture2D> activeList = null;
+
+        // 2번 모드 (차징 샷) 커서 세트
+        if (attackMode == 2 && mode2CursorTextures != null && mode2CursorTextures.Count > 0)
+        {
+            activeList = mode2CursorTextures;
+        }
+        // 1번 모드 (일반 브러시) 커서 세트
+        else if (mode1CursorTextures != null && mode1CursorTextures.Count > 0)
+        {
+            activeList = mode1CursorTextures;
+        }
+        // 백업 하위 호환 커서 세트
+        else
+        {
+            activeList = cursorTextures;
+        }
+
+        if (activeList != null && index >= 0 && index < activeList.Count)
+        {
+            if (activeList[index] != null)
+            {
+                Cursor.SetCursor(activeList[index], hotSpot, CursorMode.Auto);
+            }
+        }
     }
 
     void UpdateTrailStyle(int index)

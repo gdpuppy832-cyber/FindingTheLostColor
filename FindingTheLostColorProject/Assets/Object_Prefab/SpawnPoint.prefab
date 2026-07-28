@@ -333,7 +333,7 @@ MonoBehaviour:
   uncoloredSprite: {fileID: 0}
   coloredSprite: {fileID: 0}
   spriteRenderer: {fileID: 0}
-  floatingText: {fileID: 0}
+  floatingText: {fileID: 8046789190512335940}
   recontactCooldown: 1
   floatDuration: 1.5
   floatHeight: 1.5

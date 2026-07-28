@@ -48,6 +48,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   trail: {fileID: 4076423752538337938}
+  mode1CursorTextures:
+  - {fileID: 2800000, guid: 3051ebc13365c4944b098ee391d03e5c, type: 3}
+  - {fileID: 2800000, guid: 87916c022afddab4a9a7e7f742e6df01, type: 3}
+  - {fileID: 2800000, guid: b37456a5c058a424a9a2a8bc5474ab1d, type: 3}
+  mode2CursorTextures:
+  - {fileID: 2800000, guid: 00cfdc45d4fd62945aafdaa64c3ef91c, type: 3}
+  - {fileID: 2800000, guid: 3e031c4b2b7b6f144bd8212b23857305, type: 3}
+  - {fileID: 2800000, guid: 019e3619f13a2ae478bd69dfc697058b, type: 3}
   cursorTextures:
   - {fileID: 2800000, guid: 211b25fdfba754241a97426fbb520e07, type: 3}
   - {fileID: 2800000, guid: b0856608de9df1f4cac35395a8e41283, type: 3}
@@ -63,6 +71,9 @@ MonoBehaviour:
   attackMode: 1
   chargeDuration: 1
   chargeAttackRadius: 0.7
+  chargeCloseHealAmount: 3.5
+  chargeMediumHealAmount: 2.5
+  chargeFarHealAmount: 1.5
   chargeAttackHealAmount: 2.5
   chargePaintCost: 0.18
   chargeDepletionMultiplier: 0.25

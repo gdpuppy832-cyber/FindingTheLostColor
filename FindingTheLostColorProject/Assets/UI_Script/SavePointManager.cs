@@ -71,7 +71,7 @@ public class SavePointManager : MonoBehaviour
     /// </summary>
     public void UpdatePurifiedMonstersList()
     {
-        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsSortMode.None);
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         if (monsters == null) return;
 
         foreach (var monster in monsters)
@@ -154,7 +154,7 @@ public class SavePointManager : MonoBehaviour
     /// </summary>
     private void RestorePurifiedMonsters()
     {
-        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsSortMode.None);
+        NormalMonster[] monsters = FindObjectsByType<NormalMonster>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         int restoredCount = 0;
 
         foreach (var monster in monsters)
