@@ -83,9 +83,33 @@ public class TitleUI : MonoBehaviour
     // 2. 옵션 버튼 클릭 시 호출할 함수
     public void OpenOptionPanel()
     {
+        // 1순위: TitleUI 인스펙터에 지정된 옵션 패널 활성화
         if (optionPanel != null)
         {
             optionPanel.SetActive(true);
+            return;
+        }
+
+        // 2순위: PauseManager 컴포넌트가 씬에 존재하는 경우 검색 후 OpenOption 호출
+        PauseManager pauseMgr = FindFirstObjectByType<PauseManager>();
+        if (pauseMgr != null)
+        {
+            pauseMgr.OpenOption();
+            return;
+        }
+
+        // 3순위: 씬 전체에서 OptionPanel / SettingsPanel 패널 자동 검색
+        GameObject foundPanel = GameObject.Find("OptionPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("SettingsPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("OptionCanvas");
+        
+        if (foundPanel != null)
+        {
+            foundPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("[TitleUI] 옵션 패널(optionPanel)을 찾을 수 없습니다. 타이틀 씬 Canvas 하위에 OptionPanel 프리팹을 배치하거나 TitleUI 인스펙터에 연결해 주세요.");
         }
     }
 
@@ -94,6 +118,23 @@ public class TitleUI : MonoBehaviour
         if (optionPanel != null)
         {
             optionPanel.SetActive(false);
+            return;
+        }
+
+        PauseManager pauseMgr = FindFirstObjectByType<PauseManager>();
+        if (pauseMgr != null)
+        {
+            pauseMgr.CloseOption();
+            return;
+        }
+
+        GameObject foundPanel = GameObject.Find("OptionPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("SettingsPanel");
+        if (foundPanel == null) foundPanel = GameObject.Find("OptionCanvas");
+
+        if (foundPanel != null)
+        {
+            foundPanel.SetActive(false);
         }
     }
 
