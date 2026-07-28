@@ -10,7 +10,7 @@ public class MonsterHPBar : MonoBehaviour
     [Tooltip("체력 게이지를 표시할 Image 컴포넌트 (Image Type이 Filled로 설정되어 있어야 함)")]
     public Image hpImage;
 
-    [Header("게이지 연출 설정")]
+
     [Tooltip("게이지가 부드럽게 차오르는 보간 속도 (기본값: 5.0)")]
     public float lerpSpeed = 5f;
 

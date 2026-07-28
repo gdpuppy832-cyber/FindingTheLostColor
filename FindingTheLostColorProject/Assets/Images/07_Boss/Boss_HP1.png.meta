@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 504bb2ad73f0caa428ba8bc571d1fed9
+guid: 50a0361a9484dbb49b7d7b0d812a8c75
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -238276301662938623
-    second: ColorOrb_0
+      213: -6816612108067607844
+    second: Boss_HP1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ColorOrb_0
+      name: Boss_HP1_0
       rect:
         serializedVersion: 2
-        x: 71
-        y: 66
-        width: 106
-        height: 105
+        x: 1
+        y: 16
+        width: 797
+        height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 10a9cf057f871bcf0800000000000000
-      internalID: -238276301662938623
+      spriteID: cdae00757678661a0800000000000000
+      internalID: -6816612108067607844
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e1fdad7027bd56140b7c574f77fce7e7
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ColorOrb_0: -238276301662938623
+      Boss_HP1_0: -6816612108067607844
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

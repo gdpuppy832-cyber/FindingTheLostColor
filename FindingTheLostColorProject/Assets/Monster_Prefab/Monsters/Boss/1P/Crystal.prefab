@@ -233,10 +233,6 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4256118571133681054, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -317,29 +313,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5609594468563374885, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7642267068386756628, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_Name
       value: Monster_HPbar
-      objectReference: {fileID: 0}
-    - target: {fileID: 7642267068386756628, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8442562714766336365, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: monster
-      value: 
-      objectReference: {fileID: 4627690519435609107}
-    - target: {fileID: 8442562714766336365, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
-      propertyPath: healthStepUnit
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

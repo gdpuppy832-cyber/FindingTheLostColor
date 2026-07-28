@@ -43,19 +43,27 @@ public class F_EnemyMove : MonoBehaviour
     public float climbableWallHeight = 1.2f;
     Animator animator;
 
+    [Header("HP Bar (좌우 반전 방지)")]
+    [Tooltip("몬스터의 자식으로 존재하는 World Space Canvas HP바. 부모의 localScale.x 반전과 무관하게 항상 정방향으로 유지됨")]
+    public Transform hpBar;
+
+    Vector3 initialScale;           // 몬스터 자신의 초기 localScale (방향 기준값)
+    Vector3 hpBarInitialLocalScale; // HP바의 초기 localScale (보정 기준값)
+
     void Start()
     {
         prevposition = transform.position;
         rigid = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-
-        animator = GetComponent<Animator>();
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>();
-
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             target = player.transform;
+
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+
+        initialScale = transform.localScale;
+        if (hpBar != null) hpBarInitialLocalScale = hpBar.localScale;
     }
 
     void Update()
@@ -248,19 +256,13 @@ public class F_EnemyMove : MonoBehaviour
 
         if (desiredDir != 0)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(desiredDir);
-            transform.localScale = scale;
+            ApplyFacing(-Mathf.Sign(desiredDir));
         }
 
         prevposition = transform.position;
     }
     private bool CanClimbWall(float dir)
     {
-        // 기존에는 frontPos가 몸통 중앙(transform.position) 높이에서 시작해서,
-        // 몸통 중앙보다 낮은 벽은 lowHit이 아예 아무것도 맞히지 못해 항상 false(오르기 불가)로
-        // 판정되는 문제가 있었음. 감지 기준점을 발밑(콜라이더 하단)으로 낮춰서
-        // 어떤 높이의 벽이든 lowHit이 정상적으로 감지되도록 함
         Vector2 feetPos = new Vector2(transform.position.x, col.bounds.min.y + 0.05f) +
                            Vector2.right * dir *
                            (col.bounds.extents.x + 0.1f);
@@ -336,9 +338,26 @@ public class F_EnemyMove : MonoBehaviour
 
         if (dir != 0)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -dir;
-            transform.localScale = scale;
+            ApplyFacing(-dir);
+        }
+    }
+
+    // 몬스터의 localScale.x를 뒤집는 모든 지점에서 이 함수를 통해서만 처리.
+    // 몬스터가 뒤집히는 그 순간, 자식인 HP바의 localScale.x도 함께 반대로 보정해서
+    // 부모의 반전을 상쇄시킴 (매 프레임 보정이 아니라, 반전이 실제로 발생하는 시점에만 1회 처리)
+    private void ApplyFacing(float sign)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(initialScale.x) * sign;
+        transform.localScale = scale;
+
+        if (hpBar != null)
+        {
+            // 부모(this)의 X축 부호가 초기값 대비 뒤집혔는지에 따라 HP바 로컬 스케일의 부호를 반대로 걸어줌.
+            // 결과적으로 부모(월드) 스케일 * 자식(로컬) 스케일이 항상 초기 부호(정방향)로 유지됨.
+            Vector3 hpScale = hpBarInitialLocalScale;
+            hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
+            hpBar.localScale = hpScale;
         }
     }
     // NormalMonster.Purify()가 이 컴포넌트를 강제로 비활성화시킬 때 Unity가 자동 호출.

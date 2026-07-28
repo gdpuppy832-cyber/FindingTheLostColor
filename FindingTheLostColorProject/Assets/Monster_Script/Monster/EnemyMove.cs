@@ -55,6 +55,13 @@ public class EnemyMove : MonoBehaviour
 
     Animator animator; // 자식 오브젝트에 있는 Animator (스프라이트가 자식으로 분리된 구조 대비 GetComponentInChildren 사용)
 
+    [Header("HP Bar (좌우 반전 방지)")]
+    [Tooltip("몬스터의 자식으로 존재하는 World Space Canvas HP바. 부모의 localScale.x 반전과 무관하게 항상 정방향으로 유지됨")]
+    public Transform hpBar;
+
+    Vector3 initialScale;           // 몬스터 자신의 초기 localScale (방향 기준값)
+    Vector3 hpBarInitialLocalScale; // HP바의 초기 localScale (보정 기준값)
+
     void Start()
     {
         prevposition = transform.position;
@@ -62,6 +69,9 @@ public class EnemyMove : MonoBehaviour
         col = GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
+
+        initialScale = transform.localScale;
+        if (hpBar != null) hpBarInitialLocalScale = hpBar.localScale;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
@@ -119,9 +129,7 @@ public class EnemyMove : MonoBehaviour
 
             if (lookDir != 0)
             {
-                Vector3 scale = transform.localScale;
-                scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(lookDir);
-                transform.localScale = scale;
+                ApplyFacing(-Mathf.Sign(lookDir));
             }
 
 
@@ -306,13 +314,31 @@ public class EnemyMove : MonoBehaviour
 
         if (desiredDir != 0)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * -Mathf.Sign(desiredDir);
-            transform.localScale = scale;
+            ApplyFacing(-Mathf.Sign(desiredDir));
         }
 
         prevposition = transform.position;
     }
+
+    // 몬스터의 localScale.x를 뒤집는 모든 지점에서 이 함수를 통해서만 처리.
+    // 몬스터가 뒤집히는 그 순간, 자식인 HP바의 localScale.x도 함께 반대로 보정해서
+    // 부모의 반전을 상쇄시킴 (매 프레임 보정이 아니라, 반전이 실제로 발생하는 시점에만 1회 처리)
+    private void ApplyFacing(float sign)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(initialScale.x) * sign;
+        transform.localScale = scale;
+
+        if (hpBar != null)
+        {
+            // 부모(this)의 X축 부호가 초기값 대비 뒤집혔는지에 따라 HP바 로컬 스케일의 부호를 반대로 걸어줌.
+            // 결과적으로 부모(월드) 스케일 * 자식(로컬) 스케일이 항상 초기 부호(정방향)로 유지됨.
+            Vector3 hpScale = hpBarInitialLocalScale;
+            hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
+            hpBar.localScale = hpScale;
+        }
+    }
+
     void FixedUpdate()
     {
         //���� ����: ��ȸ ��忡���� ����ó�� ª�� �Ÿ�(2)�� �����ϰ� ����,
