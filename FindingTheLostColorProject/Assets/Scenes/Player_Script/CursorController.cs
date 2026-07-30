@@ -30,6 +30,12 @@ public class CursorController : MonoBehaviour
     [Header("Trail Settings")]
     public float trailWidth = 0.15f; // 트레일 선 굵기
 
+    [Header("Attack Wiggle Effect Settings (Mode 1)")]
+    [Tooltip("1번 모드 좌클릭 공격 중일 때 커서가 좌우로 흔들릴 최대 각도 (기본값: 30도)")]
+    public float cursorWiggleAngle = 30f;
+    [Tooltip("1번 모드 좌클릭 공격 중일 때 커서 흔들림 속도 (기본값: 16.0)")]
+    public float cursorWiggleSpeed = 16f;
+
     [Header("Paint Healing Settings")]
     [Tooltip("붓질(좌클릭)로 몬스터를 정화할 수 있는 반경 (브러시 크기, 기본값: 1.2)")]
     public float paintRadius = 1.2f;
@@ -107,6 +113,9 @@ public class CursorController : MonoBehaviour
 
     private int currentCursorIndex = -1;
     private bool isModeJustSwapped = false;
+    private bool wasDrawingLastFrameForWiggle = false; // [신규] 이전 프레임 흔들림 공격 여부 기억
+    private Texture2D lastAppliedTexture = null;       // [신규] 마지막 적용 커서 텍스처 캐싱 (깜빡임 차단)
+    private float lastAppliedAngle = -999f;            // [신규] 마지막 적용 커서 회전각 캐싱 (깜빡임 차단)
     private GaugeController gaugeController; // 물감 게이지 스크립트 참조
     private PlayerHealth playerHealth; // 플레이어 체력 스크립트 참조
     private GaugeVisualFeedback gaugeFeedback; // [추가] 물감 게이지 비주얼 피드백 참조
@@ -197,7 +206,7 @@ public class CursorController : MonoBehaviour
         // 4. 인덱스 변경 또는 공격 모드 변경 시 커서 아이콘 및 트레일 스타일 즉시 업데이트
         if (nextIndex != currentCursorIndex || isModeJustSwapped)
         {
-            UpdateCursorTexture(nextIndex);
+            UpdateCursorTexture(nextIndex, 0f);
             UpdateTrailStyle(nextIndex);
             currentCursorIndex = nextIndex;
             isModeJustSwapped = false;
@@ -403,8 +412,8 @@ public class CursorController : MonoBehaviour
             ResetCharge();
 
             // 1번 방식일 때만 주변 일반 몬스터 및 물체들 정화/치료 처리
-            // 마우스 움직임 판정(mouseMoveLingerTimer > 0f)이 감지되고 있을 때만 실제 정화 피해량이 가해집니다.
-            if (canDraw && mouseMoveLingerTimer > 0f)
+            // 좌클릭을 꾹 유지하고만 있어도(canDraw) 마우스 아래의 몬스터에게 지속 피해/정화가 가해집니다.
+            if (canDraw)
             {
                 float activeHealRate = closeHealRate;
                 if (currentCursorIndex == 1) activeHealRate = mediumHealRate;
@@ -413,6 +422,19 @@ public class CursorController : MonoBehaviour
                 ApplyNormalHealing(mouseWorldPos, activeHealRate);
             }
         }
+
+        // 1번 모드 좌클릭 공격 중일 때 마우스 커서를 좌우 -30도 ~ +30도 사이로 틱틱 흔들어주는 실시간 픽셀 회전 연출
+        if (canDraw && attackMode == 1)
+        {
+            float zAngle = Mathf.Sin(Time.time * cursorWiggleSpeed) * cursorWiggleAngle;
+            UpdateCursorTexture(currentCursorIndex, zAngle);
+        }
+        else if (wasDrawingLastFrameForWiggle)
+        {
+            // 공격을 멈춘 바로 그 프레임에만 1회 0도 정자세 복원 (매 프레임 난사 방지로 깜빡임 차단!)
+            UpdateCursorTexture(currentCursorIndex, 0f);
+        }
+        wasDrawingLastFrameForWiggle = (canDraw && attackMode == 1);
 
         // 트레일 방출 제어
         if (trail != null)
@@ -913,9 +935,9 @@ public class CursorController : MonoBehaviour
     }
 
     /// <summary>
-    /// 현재 공격 모드(1번/2번)와 사거리 인덱스(0, 1, 2)에 맞춰 커서 텍스처를 동적으로 즉시 적용합니다.
+    /// 현재 공격 모드(1번/2번)와 사거리 인덱스(0, 1, 2), 그리고 회전 각도(zAngle)에 맞춰 커서 텍스처를 즉시 적용합니다.
     /// </summary>
-    private void UpdateCursorTexture(int index)
+    private void UpdateCursorTexture(int index, float zAngle = 0f)
     {
         List<Texture2D> activeList = null;
 
@@ -947,7 +969,13 @@ public class CursorController : MonoBehaviour
                     finalTex = GetResizedCursorTexture(activeList[index], (int)targetCursorSize.x, (int)targetCursorSize.y);
                 }
 
-                // 축소된 크기에 맞춰 핫스팟(중심점) 비율 자동 보정
+                // 회전 각도가 적용되어야 하는 경우 텍스처 픽셀 회전 연산 실행
+                if (Mathf.Abs(zAngle) > 0.5f)
+                {
+                    finalTex = GetRotatedCursorTexture(finalTex, zAngle);
+                }
+
+                // 축소 및 회전된 크기에 맞춰 핫스팟(중심점) 비율 자동 보정
                 Vector2 scaledHotSpot = hotSpot;
                 if (activeList[index].width > 0 && activeList[index].height > 0)
                 {
@@ -957,9 +985,75 @@ public class CursorController : MonoBehaviour
                     );
                 }
 
+                // 이전 프레임과 동일한 텍스처 및 동일한 회전각이면 SetCursor 재호출을 거르고 중복 차단 (깜빡임 0% 원천 차단!)
+                if (lastAppliedTexture == finalTex && Mathf.Abs(lastAppliedAngle - zAngle) < 0.1f)
+                {
+                    return;
+                }
+
+                lastAppliedTexture = finalTex;
+                lastAppliedAngle = zAngle;
+
                 Cursor.SetCursor(finalTex, scaledHotSpot, CursorMode.ForceSoftware);
             }
         }
+    }
+
+    private Dictionary<string, Texture2D> rotatedTextureCache = new Dictionary<string, Texture2D>();
+
+    /// <summary>
+    /// 마우스 커서 텍스처를 지정한 각도만큼 실시간 회전시킨 커서 텍스처를 캐싱 및 반환합니다.
+    /// </summary>
+    private Texture2D GetRotatedCursorTexture(Texture2D source, float angle)
+    {
+        if (source == null) return null;
+        int stepAngle = Mathf.RoundToInt(angle / 5f) * 5; // 5도 단위 이산화로 메타 캐싱 최적화
+        if (stepAngle == 0) return source;
+
+        string key = $"{source.GetInstanceID()}_{stepAngle}";
+        if (rotatedTextureCache.TryGetValue(key, out Texture2D cached) && cached != null)
+        {
+            return cached;
+        }
+
+        int w = source.width;
+        int h = source.height;
+        Texture2D result = new Texture2D(w, h, TextureFormat.RGBA32, false);
+
+        float rad = stepAngle * Mathf.Deg2Rad;
+        float cos = Mathf.Cos(rad);
+        float sin = Mathf.Sin(rad);
+        Vector2 center = new Vector2(w * 0.5f, h * 0.5f);
+
+        Color[] dstPixels = new Color[w * h];
+
+        for (int y = 0; y < h; y++)
+        {
+            for (int x = 0; x < w; x++)
+            {
+                Vector2 pt = new Vector2(x - center.x, y - center.y);
+                float rx = pt.x * cos - pt.y * sin + center.x;
+                float ry = pt.x * sin + pt.y * cos + center.y;
+
+                int ix = Mathf.RoundToInt(rx);
+                int iy = Mathf.RoundToInt(ry);
+
+                if (ix >= 0 && ix < w && iy >= 0 && iy < h)
+                {
+                    dstPixels[y * w + x] = source.GetPixel(ix, iy);
+                }
+                else
+                {
+                    dstPixels[y * w + x] = new Color(0, 0, 0, 0); // 회전 여백 투명 처리
+                }
+            }
+        }
+
+        result.SetPixels(dstPixels);
+        result.Apply();
+
+        rotatedTextureCache[key] = result;
+        return result;
     }
 
     private Dictionary<Texture2D, Texture2D> resizedTextureCache = new Dictionary<Texture2D, Texture2D>();

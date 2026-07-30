@@ -10,7 +10,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject titleConfirmPanel;  // [추가] 정말 타이틀로 가시겠습니까? 팝업 패널 오브젝트
 
     [Header("Scenes to Load")]
-    [SerializeField] private string titleSceneName = "TitleScene"; // 타이틀 씬 이름
+    [SerializeField] private string titleSceneName = "Title"; // 타이틀 씬 이름 (기본값: Title)
 
     private bool isPaused = false;
     public static bool IsPaused => (Time.timeScale == 0f);
@@ -42,6 +42,9 @@ public class PauseManager : MonoBehaviour
 
     private void Start()
     {
+        // UI 버튼 클릭 리스너 및 EventSystem 자동 연결 보장
+        EnsureButtonListeners();
+
         // 시작 시 모든 UI 패널은 닫아둔 상태로 시작합니다.
         if (pausePanel != null) pausePanel.SetActive(false);
         if (optionPanel != null) optionPanel.SetActive(false);
@@ -57,6 +60,43 @@ public class PauseManager : MonoBehaviour
 
         // 씬이 로드될 때 시간 배율을 1로 초기화합니다.
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// EventSystem 부재 및 UI 버튼의 OnClick 리스너 미연결로 인한 버튼 먹통을 코드로 100% 방탄 자동 바인딩합니다.
+    /// </summary>
+    private void EnsureButtonListeners()
+    {
+        if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+        {
+            GameObject esObj = new GameObject("EventSystem");
+            esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            esObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            Debug.Log("[PauseManager] 씬 내 EventSystem 이 없어 런타임에 자동 생성했습니다.");
+        }
+
+        UnityEngine.UI.Button[] allButtons = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var btn in allButtons)
+        {
+            if (btn == null) continue;
+            string btnName = btn.gameObject.name.ToLower();
+
+            // 타이틀 이동 관련 버튼
+            if (btnName.Contains("title") || btnName.Contains("타이틀") || btnName.Contains("gototitle"))
+            {
+                btn.onClick.RemoveListener(GoToTitle);
+                btn.onClick.AddListener(GoToTitle);
+                Debug.Log($"[PauseManager] '{btn.gameObject.name}' 버튼에 GoToTitle() 클릭 이벤트 리스너를 강제 자동 등록했습니다!");
+            }
+
+            // 타이틀 이동 팝업 확인 '네' (Confirm) 버튼
+            if (btnName.Contains("confirmtitle") || (btnName.Contains("yes") && btn.transform.parent != null && btn.transform.parent.name.ToLower().Contains("title")))
+            {
+                btn.onClick.RemoveListener(ConfirmGoToTitle);
+                btn.onClick.AddListener(ConfirmGoToTitle);
+                Debug.Log($"[PauseManager] '{btn.gameObject.name}' 버튼에 ConfirmGoToTitle() 클릭 이벤트 리스너를 강제 자동 등록했습니다!");
+            }
+        }
     }
 
     private void Update()
@@ -222,9 +262,17 @@ public class PauseManager : MonoBehaviour
     // 7. 실제 타이틀 이동 확정 (팝업창의 '네' 버튼)
     public void ConfirmGoToTitle()
     {
-        // [중요] 씬을 이동하기 전에 반드시 시간 배율을 1로 되돌려야 다음 씬이 멈추지 않습니다!
         Time.timeScale = 1f;
-        SceneManager.LoadScene(titleSceneName);
+        string targetScene = (string.IsNullOrEmpty(titleSceneName) || titleSceneName == "TitleScene") ? "Title" : titleSceneName;
+
+        if (ScreenFader.Instance != null)
+        {
+            ScreenFader.Instance.FadeToScene(targetScene, 1.0f);
+        }
+        else
+        {
+            SceneManager.LoadScene(targetScene);
+        }
     }
 
     // 8. 게임 종료하기 버튼 클릭 시 호출 (종료 확인 팝업창을 켬)

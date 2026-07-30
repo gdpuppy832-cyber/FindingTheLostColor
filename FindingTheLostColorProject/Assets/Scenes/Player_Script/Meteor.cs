@@ -51,6 +51,31 @@ public class Meteor : MonoBehaviour
         // 시각적 효과를 위해 자전 연출
         transform.Rotate(0f, 0f, -360f * Time.deltaTime);
 
+        // [핵심] 유니티 2D 물리 충돌 매트릭스(Kinematic vs Trigger) 감지 한계를 완벽히 우회하는 실시간 반경 보스/몬스터 타격 감지
+        Collider2D[] closeColliders = Physics2D.OverlapCircleAll(transform.position, 0.9f);
+        foreach (var col in closeColliders)
+        {
+            if (col == null || col.gameObject == gameObject) continue;
+
+            BossAttack boss = col.GetComponentInParent<BossAttack>();
+            if (boss == null) boss = col.GetComponent<BossAttack>();
+
+            NormalMonster monster = col.GetComponentInParent<NormalMonster>();
+            if (monster == null) monster = col.GetComponent<NormalMonster>();
+
+            if (boss != null || monster != null)
+            {
+                if (monster != null && (!monster.IsPurified || boss != null))
+                {
+                    TryApplyDamage(monster.gameObject, monster);
+                }
+                else if (boss != null)
+                {
+                    TryApplyDamage(boss.gameObject, boss);
+                }
+            }
+        }
+
         // 평생 안 닿는 예외적 상황 방지 (4초 뒤 자동 소멸)
         aliveTime += Time.deltaTime;
         if (aliveTime > 4.0f)
@@ -63,12 +88,20 @@ public class Meteor : MonoBehaviour
     {
         if (isExploded) return;
 
-        // 1. 낙하 중 몬스터/오브젝트 직접 충돌 처리
+        // 1. 낙하 중 몬스터/보스/오브젝트 직접 충돌 처리
         NormalMonster monster = collision.GetComponent<NormalMonster>();
         if (monster == null) monster = collision.GetComponentInParent<NormalMonster>();
         if (monster != null)
         {
             TryApplyDamage(monster.gameObject, monster);
+            return;
+        }
+
+        BossAttack boss = collision.GetComponent<BossAttack>();
+        if (boss == null) boss = collision.GetComponentInParent<BossAttack>();
+        if (boss != null)
+        {
+            TryApplyDamage(boss.gameObject, boss);
             return;
         }
 
@@ -149,6 +182,12 @@ public class Meteor : MonoBehaviour
 
         // 정화 피해 힐 적용
         if (targetComponent is NormalMonster targetMonster) targetMonster.Heal(damage);
+        else if (targetComponent is BossAttack targetBoss)
+        {
+            NormalMonster bHP = targetBoss.GetComponent<NormalMonster>();
+            if (bHP == null) bHP = targetBoss.GetComponentInParent<NormalMonster>();
+            if (bHP != null) bHP.Heal(damage);
+        }
         else if (targetComponent is RoseBush targetRoseBush) targetRoseBush.Heal(damage);
         else if (targetComponent is ColoringBridge targetBridge) targetBridge.Heal(damage);
         else if (targetComponent is Trampoline targetTrampoline) targetTrampoline.Heal(damage);
@@ -176,6 +215,14 @@ public class Meteor : MonoBehaviour
             if (monster != null)
             {
                 TryApplyExplosionDamage(monster.gameObject, monster);
+                continue;
+            }
+
+            BossAttack boss = hitCollider.GetComponent<BossAttack>();
+            if (boss == null) boss = hitCollider.GetComponentInParent<BossAttack>();
+            if (boss != null)
+            {
+                TryApplyExplosionDamage(boss.gameObject, boss);
                 continue;
             }
 
@@ -258,6 +305,12 @@ public class Meteor : MonoBehaviour
         explosionHitObjects.Add(targetObj);
 
         if (targetComponent is NormalMonster finalMonster) finalMonster.Heal(damage);
+        else if (targetComponent is BossAttack finalBoss)
+        {
+            NormalMonster bHP = finalBoss.GetComponent<NormalMonster>();
+            if (bHP == null) bHP = finalBoss.GetComponentInParent<NormalMonster>();
+            if (bHP != null) bHP.Heal(damage);
+        }
         else if (targetComponent is RoseBush finalRoseBush) finalRoseBush.Heal(damage);
         else if (targetComponent is ColoringBridge finalBridge) finalBridge.Heal(damage);
         else if (targetComponent is Trampoline finalTrampoline) finalTrampoline.Heal(damage);

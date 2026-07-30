@@ -50,7 +50,7 @@ public class NormalMonster : MonoBehaviour
     private float lastAttackTime = 0f;
     private Vector3 spawnPosition;
 
-    public bool IsPurified => isPurified;
+    public bool IsPurified { get => isPurified; set => isPurified = value; }
     public Vector3 SpawnPosition => spawnPosition;
 
     void Awake()

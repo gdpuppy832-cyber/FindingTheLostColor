@@ -421,9 +421,10 @@ public class BossAttack : MonoBehaviour
 
             if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
 
-            // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복
+            // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복 및 2페이즈 피격 가드 해제 (IsPurified = false)
             if (bossHealth != null)
             {
+                bossHealth.IsPurified = false; // 2페이즈 대미지/정화 피격 가드 해제!
                 bossHealth.Heal(bossHealth.maxHealth * 0.5f);
             }
 
