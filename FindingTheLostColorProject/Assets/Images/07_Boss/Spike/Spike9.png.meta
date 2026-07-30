@@ -1,10 +1,25 @@
 fileFormatVersion: 2
-guid: 2aeb96a0bb918f54894ab4a5c576c723
+guid: 4e434ecbe8948c641b9e6594946de428
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4821299620984247078
-    second: ShadowBarrier12_0
+      213: 8464974524453466759
+    second: Spike8_0
+  - first:
+      213: 1775880310722369130
+    second: Spike8_1
+  - first:
+      213: 7887105748398914936
+    second: Spike8_2
+  - first:
+      213: 7875063710885268374
+    second: Spike8_3
+  - first:
+      213: 8847807409630605117
+    second: Spike8_4
+  - first:
+      213: 4367741520784585972
+    second: Spike8_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,27 +115,27 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ShadowBarrier12_0
+      name: Spike8_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 884
-        height: 1918
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        width: 324
+        height: 366
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape:
-      - - {x: 159, y: 959}
-        - {x: -157, y: 959}
-        - {x: -152, y: -959}
-        - {x: 153, y: -959}
+      - - {x: 73, y: -182}
+        - {x: -3, y: 150}
+        - {x: -74, y: -183}
+        - {x: 72, y: -183}
       tessellationDetail: 0
       bones: []
-      spriteID: 623dd700672b8e240800000000000000
-      internalID: 4821299620984247078
+      spriteID: 782b7ca0b71a97570800000000000000
+      internalID: 8464974524453466759
       vertices: []
       indices: 
       edges: []
@@ -129,7 +144,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 24ebcf6e2a801b241b1f39aaa66d439f
+    spriteID: 4212a1152fae19d4799ec068abad493b
     internalID: 0
     vertices: []
     indices: 
@@ -139,9 +154,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":884.0,"y":1918.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":324.0,"y":466.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      ShadowBarrier12_0: 4821299620984247078
+      Spike8_0: 8464974524453466759
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

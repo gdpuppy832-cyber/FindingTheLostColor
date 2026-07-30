@@ -27,10 +27,9 @@ public class J_EnemyAttack : MonoBehaviour
     public float landingCheckRetryInterval = 0.15f;
     float nextLandingCheckTime = 0f;
 
-    [Tooltip("추적 시작/종료(isStateDelay)가 끝난 직후, 공격이 실제로 가능해지기까지 추가로 대기하는 시간(초)")]
+    [Tooltip("(더 이상 사용되지 않음: Animator.Play 결정적 전환 도입으로 불필요해짐) 과거 호환용으로만 유지")]
     public float postChaseTransitionAttackDelay = 0.1f;
     bool wasStateDelay = false;      // 직전 프레임의 IsStateDelay 값 (true->false 전환 감지용)
-    float attackAllowedTime = 0f;    // 이 시간이 지나야 공격 시작 가능
 
     J_EnemyMove enemyMove;
     Animator animator;
@@ -124,17 +123,15 @@ public class J_EnemyAttack : MonoBehaviour
         // 추적 시작/종료 시 J_EnemyMove가 잠시 멈춰있는 동안(isStateDelay)에는 공격을 시도하지 않음
         bool currentStateDelay = enemyMove != null && enemyMove.IsStateDelay;
 
-
+        // ★ Play()+Update(0f)로 애니메이터 전환이 이미 결정적으로 확정되므로,
+        //   전환 직후 추가 대기(postChaseTransitionAttackDelay)는 더 이상 필요 없음.
         if (wasStateDelay && !currentStateDelay)
         {
-            attackAllowedTime = Time.time + postChaseTransitionAttackDelay;
+            nextLandingCheckTime = Time.time; // 전환 직후 착지 판정을 즉시 재시도 가능하게 리셋
         }
         wasStateDelay = currentStateDelay;
 
         if (currentStateDelay) return;
-
-        // 전환 직후 추가 대기 시간이 아직 안 지났으면 공격 보류
-        if (Time.time < attackAllowedTime) return;
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
         float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
@@ -172,8 +169,13 @@ public class J_EnemyAttack : MonoBehaviour
         canAttack = false;
         hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
 
+        Debug.Log($"[ATTACK] frame={Time.frameCount} time={Time.time:F3}");
+
         if (animator != null)
+        {
             animator.SetBool("IsAttacking", true);
+            animator.speed = 1f; // 직전 이동/정지 상태에서 남은 speed 값을 정상 속도로 리셋
+        }
 
         if (enemyMove != null)
             enemyMove.enabled = false;

@@ -680,7 +680,7 @@ public class H_MonsterMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 1.25f,
+            transform.position + Vector3.up * 2f,
             Quaternion.identity
         );
 

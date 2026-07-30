@@ -310,7 +310,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 04_FullpupilCat_Attack
-  m_Speed: 0.7
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -809733364036394667}
@@ -342,22 +342,22 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -4842429265242555443}
-    m_Position: {x: 400, y: 110, z: 0}
+    m_Position: {x: 280, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2534606779779810707}
-    m_Position: {x: 540, y: -40, z: 0}
+    m_Position: {x: 580, y: 10, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4314811987274109303}
-    m_Position: {x: 540, y: 250, z: 0}
+    m_Position: {x: 610, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6700117498506722580}
     m_Position: {x: 770, y: -110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6670885937477771193}
-    m_Position: {x: 250, y: 250, z: 0}
+    m_Position: {x: 180, y: 230, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8494626794258927325}
-    m_Position: {x: 250, y: -40, z: 0}
+    m_Position: {x: 180, y: -40, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
