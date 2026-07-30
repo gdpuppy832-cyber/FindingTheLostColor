@@ -91,7 +91,6 @@ public class J_EnemyMove : MonoBehaviour
                     animator.Play(idleStateName, idleAnimatorLayer, 0f);
                     animator.Update(0f);
                     idleForced = true;
-                    Debug.Log($"[IDLE] frame={Time.frameCount} time={Time.time:F3}");
                 }
             }
 
