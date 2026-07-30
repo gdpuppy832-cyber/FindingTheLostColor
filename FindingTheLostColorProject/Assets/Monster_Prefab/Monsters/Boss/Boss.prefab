@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 3942307000133411523}
   - component: {fileID: 2915333899100964050}
   - component: {fileID: -1984632610777454492}
-  - component: {fileID: 2369340244454583480}
   - component: {fileID: 2434699336844069180}
+  - component: {fileID: 2369340244454583480}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Boss
@@ -213,6 +213,30 @@ MonoBehaviour:
   blueArcDuration: 2
   redArcDuration: 2
   tipPauseDuration: 1
+--- !u!114 &2434699336844069180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e529bbe95b944c94fad4c0bd6a760911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossAttack: {fileID: 0}
+  spawnSFX: {fileID: 8300000, guid: dd50bfd7db9908a4d97c6476ddb109ba, type: 3}
+  spawnMonsterPrefabs1:
+  - {fileID: 6765033659729166290, guid: d8a617ec3a4e5134b8b38dc247545788, type: 3}
+  spawnMonsterPrefabs2:
+  - {fileID: 5474003369453071791, guid: 49d471f0b3874174781627d8c756416b, type: 3}
+  leftPortalTransform: {fileID: 0}
+  rightPortalTransform: {fileID: 0}
+  leftPortalObject: {fileID: 0}
+  rightPortalObject: {fileID: 0}
+  spawnInterval: 10
+  isBossBattleStarted: 1
 --- !u!114 &2369340244454583480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,30 +360,6 @@ MonoBehaviour:
   shadowBarrierActiveDuration: 1.17
   shadowBarrierAttackWidth: 34
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
---- !u!114 &2434699336844069180
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 946412894994910540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e529bbe95b944c94fad4c0bd6a760911, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bossAttack: {fileID: 0}
-  spawnSFX: {fileID: 8300000, guid: dd50bfd7db9908a4d97c6476ddb109ba, type: 3}
-  spawnMonsterPrefabs1:
-  - {fileID: 6765033659729166290, guid: d8a617ec3a4e5134b8b38dc247545788, type: 3}
-  spawnMonsterPrefabs2:
-  - {fileID: 5474003369453071791, guid: 49d471f0b3874174781627d8c756416b, type: 3}
-  leftPortalTransform: {fileID: 0}
-  rightPortalTransform: {fileID: 0}
-  leftPortalObject: {fileID: 0}
-  rightPortalObject: {fileID: 0}
-  spawnInterval: 10
-  isBossBattleStarted: 1
 --- !u!1 &1138344273964104933
 GameObject:
   m_ObjectHideFlags: 0
