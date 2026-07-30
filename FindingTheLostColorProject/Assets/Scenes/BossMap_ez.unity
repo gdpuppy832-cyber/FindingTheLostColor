@@ -15466,7 +15466,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2915333899100964050, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
   m_PrefabInstance: {fileID: 8830008015625943918}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8830008015625943924}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68e2fccbcb71d9e43b3ee0684e60978f, type: 3}
@@ -17080,11 +17080,160 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8830008015625943925}
   m_SourcePrefab: {fileID: 100100000, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+--- !u!1 &8830008015625943919 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6236711602578994689, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8830008015625943920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8065591121082918117, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8830008015625943921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2842977707501678497, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8830008015625943922 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 20958626906777141, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8830008015625943923 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4047836205825665637, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8830008015625943924 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8830008015625943925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8830008015625943924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9604731d86571ab49a8f323e213c7122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1918004092}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  attackCooldown: 3
+  bossAttackDamage: 1
+  contactHitbox: {fileID: 8830008015625943923}
+  contactDamage: 1
+  laserSFX: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
+  shadowBarrierSFX: {fileID: 8300000, guid: bb8ad69cc288f9848b4316abe52f5c42, type: 3}
+  thunderSFX: {fileID: 8300000, guid: 3779cb7e038a1f94199a05cab125b676, type: 3}
+  spikeSFX: {fileID: 8300000, guid: 25d1af2aa632a0d43b88de0af1f46830, type: 3}
+  colorWhirlpoolSFX: {fileID: 8300000, guid: 9dd975469202bd44b85e5bb5c90f8eed, type: 3}
+  bossBGM1: {fileID: 8300000, guid: 15abfcf8c8377b645ab8b45cb8e780d9, type: 3}
+  bossBGM2: {fileID: 8300000, guid: adfd5c999dd5d124babcb852ff53f7fc, type: 3}
+  crystals: []
+  colorOrbPrefab: {fileID: 3671281979859366550, guid: 6111f65c5650fd94d8585dbd33fc2ba0, type: 3}
+  colorOrbHealth: 15
+  colorOrbSpawnOffsetY: -4
+  blackFogs: []
+  colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
+  colorWhirlpoolSpawnOffset: {x: 0, y: -7.5}
+  colorWhirlpoolFadeInDuration: 2
+  colorWhirlpoolPullRadius: 20
+  colorWhirlpoolPullForce: 200
+  colorWhirlpoolMinEffectiveDistance: 0
+  colorWhirlpoolMaxPullSpeed: 8
+  colorWhirlpoolDuration: 7.5
+  fallbackColorWhirlpoolSize: 5
+  colorWhirlpoolTriggerCount: 2
+  telegraphMarkerPrefab: {fileID: 5423243490388675897, guid: 7e8369100c326ec4f9f0edfdc14ca3db, type: 3}
+  spikePrefab: {fileID: 2826851748075303553, guid: b60ee5b66146dc442acf78e4044d8b6e, type: 3}
+  spikeTelegraphDuration: 1.5
+  spikeTelegraphBlinkInterval: 0.25
+  spikeLifetime: 2
+  spikeSearchRadius: 15
+  spikeGroundRaycastDistance: 20
+  spikeMaxSearchAttempts: 20
+  spikeMinDistance: 1.7
+  spikeMaxHeightAboveBoss: 10
+  spikeContactSampleCount: 5
+  spikeContactTolerance: 0.05
+  spikeContactSearchStep: 0.5
+  spikeContactSearchMaxDistance: 8
+  fallbackSpikeHalfWidth: 0.3
+  spikeSecondWaveDelay: 0.5
+  frostRainCompanionChance: 1
+  laserTelegraphPrefab: {fileID: 1014840232707358376, guid: 9422e8006b9ae53419523c3ecbf12b24, type: 3}
+  laserPrefab: {fileID: 4371630478863771354, guid: 817fd6c7639bda64fabe240522c3ba53, type: 3}
+  laserTelegraphDuration: 1.5
+  laserTelegraphBlinkInterval: 0.25
+  laserActiveDuration: 1
+  laserFollowSpeed: 1
+  fallbackLaserWidth: 20
+  fallbackLaserThickness: 0.6
+  frostCrystalPrefabs:
+  - {fileID: 2129274666916119979, guid: b4ca3ed960f126e4e9a1eb3c59fc5531, type: 3}
+  frostRangrY: 4.5
+  frostRangeX: 34
+  frostRainDuration: 5
+  frostSpawnInterval: 0.3
+  frostSpawnCountPerTick: 3
+  frostFallInitialSpeed: 0
+  frostFallAcceleration: 15
+  frostMaxLifetime: 6
+  frostTelegraphMarkerPrefab: {fileID: 8830008015625943922}
+  frostTelegraphMarkers:
+  - {fileID: 8830008015625943922}
+  - {fileID: 8830008015625943921}
+  - {fileID: 8830008015625943920}
+  - {fileID: 8830008015625943919}
+  frostTelegraphDuration: 1.5
+  frostTelegraphBlinkInterval: 0.25
+  frostTelegraphColumnCount: 10
+  frostTelegraphCheckDistance: 30
+  frostTelegraphLineLength: 15
+  frostTelegraphLineThickness: 0.3
+  darkOrbPrefab: {fileID: 266052320498548891, guid: a13f7480368e19b428816077405700bc, type: 3}
+  darkOrbCount: 3
+  darkOrbOrbitRadius: 2
+  darkOrbOrbitDuration: 2
+  darkOrbLaunchInterval: 1
+  darkOrbTrackDuration: 2
+  darkOrbSpeedMultiplier: 0.8
+  fallbackDarkOrbSize: 0.6
+  darkCloudPrefab: {fileID: 6254425877237160721, guid: 77d976ba74a1c8149b58eaa5664fcebd, type: 3}
+  lightningPrefab: {fileID: 3224362926502252807, guid: 457e3adcaffe4f3428d3bbb6af82c7eb, type: 3}
+  darkCloudSpawnOffset: {x: 0, y: 5}
+  darkCloudFadeInDuration: 2
+  darkCloudHoldDuration: 6
+  darkCloudPaintEraseDuration: 3
+  lightningLifetime: 1
+  lightningLength: 100
+  fallbackDarkCloudSize: 4
+  fallbackLightningWidth: 0.6
+  fallbackLightningHeight: 6
+  shadowBarrierTelegraphPrefab: {fileID: 4437395552248623217, guid: 654f3ec388745e8439ee27c6b32c3469, type: 3}
+  shadowBarrierHazardPrefab: {fileID: 1923042159831812501, guid: 2b21089851e0e5a4181b6118595a8edf, type: 3}
+  shadowBarrierTelegraphDuration: 1.5
+  shadowBarrierTelegraphBlinkInterval: 0.25
+  shadowBarrierActiveDuration: 1.17
+  shadowBarrierAttackWidth: 34
+  shadowBarrierSpawnOffset: {x: 0, y: -0.7}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
