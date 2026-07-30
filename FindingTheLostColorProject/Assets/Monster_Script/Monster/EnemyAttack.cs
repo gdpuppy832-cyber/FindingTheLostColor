@@ -63,6 +63,9 @@ public class EnemyAttack : MonoBehaviour
         if (enemyMove != null && enemyMove.IsStateDelay)
             return;
 
+        if (enemyMove != null && !enemyMove.IsTrueGrounded)
+            return;
+
         if (isAttacking || !canAttack) return;
 
         float dir = -Mathf.Sign(transform.localScale.x);

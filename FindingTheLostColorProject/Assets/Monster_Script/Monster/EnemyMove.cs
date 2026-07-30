@@ -30,6 +30,7 @@ public class EnemyMove : MonoBehaviour
     bool pendingChaseState = false;
     bool isChasing = false;
     public bool IsStateDelay => isStateDelay;
+    public bool IsGrounded => isGrounded; // 공중에 떠 있는 동안 EnemyAttack이 공격을 트리거하지 못하도록 외부에 공개
     public float attackStopDistance = 1.5f;
 
     [Tooltip("이 거리 안에 낮은 땅이라도 있으면 낭떠러지로 판정하지 않고 이동을 허용함 (계단/턱 내려가기 허용, 추적 모드에서만 적용)")]
@@ -37,6 +38,14 @@ public class EnemyMove : MonoBehaviour
 
     [Tooltip("배회(순찰) 모드일 때 절벽을 감지하는 레이캐스트 거리")]
     public float wanderEdgeCheckDistance = 2f;
+
+    [Tooltip("실제로 발이 바닥에 붙어있는지(진짜 접지) 판정하는 전용 레이캐스트 거리. " +
+             "isGrounded(절벽 감지용)와 달리 값을 아주 짧게 잡아서, 점프로 공중에 떠 있는 동안에는 " +
+             "false가 되도록 함 (예: EnemyAttack이 공중에서 공격을 트리거하지 않게 막는 용도)")]
+    public float trueGroundCheckDistance = 0.12f;
+    bool isTrueGrounded = false;
+    public bool IsTrueGrounded => isTrueGrounded;
+
     [Header("점프 설정")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
@@ -341,8 +350,6 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        //���� ����: ��ȸ ��忡���� ����ó�� ª�� �Ÿ�(2)�� �����ϰ� ����,
-        // ���� ����� ���� safeDropDistance��ŭ �� �ָ� �˻��ؼ� ���� ��/����� ������ �� �ְ� ��
         float halfWidth = col.bounds.extents.x;
         float oneThird = halfWidth * 2f / 3f;
         Vector2 leftPoint = (Vector2)rigid.position + Vector2.left * oneThird;
@@ -361,13 +368,13 @@ public class EnemyMove : MonoBehaviour
 
         if (isGrounded)
             lastGroundedTime = Time.time;
+
+        Vector2 centerPoint = (Vector2)rigid.position;
+        RaycastHit2D trueGroundHit = Physics2D.Raycast(centerPoint, Vector2.down, col.bounds.extents.y + trueGroundCheckDistance, LayerMask.GetMask("Platform"));
+        isTrueGrounded = trueGroundHit.collider != null;
     }
     private bool CanClimbWall(float dir)
     {
-        // 기존에는 frontPos가 몸통 중앙(transform.position) 높이에서 시작해서,
-        // 몸통 중앙보다 낮은 벽은 lowHit이 아예 아무것도 맞히지 못해 항상 false(오르기 불가)로
-        // 판정되는 문제가 있었음. 감지 기준점을 발밑(콜라이더 하단)으로 낮춰서
-        // 어떤 높이의 벽이든 lowHit이 정상적으로 감지되도록 함
         Vector2 feetPos = new Vector2(transform.position.x, col.bounds.min.y + 0.05f) +
                            Vector2.right * dir *
                            (col.bounds.extents.x + 0.1f);
@@ -421,7 +428,7 @@ public class EnemyMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 1.25f,
+            transform.position + Vector3.up * 2f,
             Quaternion.identity
         );
 

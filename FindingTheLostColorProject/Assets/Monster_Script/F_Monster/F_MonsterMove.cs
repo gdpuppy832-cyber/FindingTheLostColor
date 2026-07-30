@@ -38,6 +38,14 @@ public class F_EnemyMove : MonoBehaviour
 
     [Tooltip("배회(순찰) 모드일 때 절벽을 감지하는 레이캐스트 거리")]
     public float wanderEdgeCheckDistance = 2f;
+
+    [Tooltip("실제로 발이 바닥에 붙어있는지(진짜 접지) 판정하는 전용 레이캐스트 거리. " +
+             "isGrounded(절벽 감지용)와 달리 값을 아주 짧게 잡아서, 점프로 공중에 떠 있는 동안에는 " +
+             "false가 되도록 함 (예: B_EnemyAttack이 공중에서 공격을 트리거하지 않게 막는 용도)")]
+    public float trueGroundCheckDistance = 0.12f;
+    bool isTrueGrounded = false;
+    public bool IsTrueGrounded => isTrueGrounded;
+
     [Header("점프 설정")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
@@ -328,6 +336,10 @@ public class F_EnemyMove : MonoBehaviour
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
         isGrounded = groundedLeft || groundedRight;
+
+        Vector2 feetCenter = new Vector2(col.bounds.center.x, col.bounds.min.y + 0.02f);
+        RaycastHit2D trueGroundHit = Physics2D.Raycast(feetCenter, Vector2.down, trueGroundCheckDistance, LayerMask.GetMask("Platform"));
+        isTrueGrounded = trueGroundHit.collider != null;
     }
     private void FaceTarget()
     {
@@ -381,7 +393,7 @@ public class F_EnemyMove : MonoBehaviour
 
         currentAlert = Instantiate(
             prefab,
-            transform.position + Vector3.up * 1.25f,
+            transform.position + Vector3.up * 2f,
             Quaternion.identity
         );
 

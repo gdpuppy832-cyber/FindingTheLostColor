@@ -61,6 +61,9 @@ public class F_EnemyAttack : MonoBehaviour
         if (F_enemyMove != null && F_enemyMove.IsStateDelay)
             return;
 
+        if (F_enemyMove != null && !F_enemyMove.IsTrueGrounded)
+            return;
+
         if (isAttacking || !canAttack) return;
 
         float dir = -Mathf.Sign(transform.localScale.x);
