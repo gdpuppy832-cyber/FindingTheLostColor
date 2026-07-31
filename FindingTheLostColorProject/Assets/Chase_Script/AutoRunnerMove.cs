@@ -27,18 +27,57 @@ public class AutoRunnerMove : MonoBehaviour
     [Tooltip("집중 충전(R키 꾹 누름) 시 이동 속도 비율 (0.2면 80% 감소, 0이면 완전 정지, 기본값: 0.2)")]
     public float focusChargeSpeedMultiplier = 0.2f;
 
+    [Header("피격 넉백 & 복귀 설정")]
+    [Tooltip("피격 시 뒤로 밀려나는 속도")]
+    public float knockbackSpeed = 6f;
+    [Tooltip("밀려난 상태를 유지하는 시간(초)")]
+    public float knockbackDuration = 0.15f;
+    [Tooltip("정상 경로로 복귀하는 데 걸리는 시간(초). 값이 클수록 천천히, 작을수록 빠르게 돌아옴")]
+    public float recoverySmoothTime = 0.6f;
+    [Tooltip("복귀 완료로 판단할 X축 오차 허용치")]
+    public float recoveryCompleteThreshold = 0.05f;
+    [Tooltip("복귀가 이 시간을 넘으면 강제로 종료 (무한 루프 방지 안전장치)")]
+    public float recoveryTimeout = 2f;
+
+    private PlayerHealth playerHealth;
+    private float lastKnownHealth;
+    private bool healthInitialized = false;
+    private bool isKnockedBack = false;
+    private float startPositionX;    // 게임 시작 시 플레이어 위치 (기억용)
+    private float trackedAutoRunX;   // 시작 위치에서 계속 누적 전진한 "정상 경로" X좌표
+    private float recoveryVelocityX; // SmoothDamp 내부 속도 캐시
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         gaugeController = FindFirstObjectByType<GaugeController>();
+        playerHealth = GetComponent<PlayerHealth>();
 
         // 오토러너는 항상 오른쪽을 바라보며 시작
         moveDirection = Vector2.right;
+
+        startPositionX = transform.position.x;
+        trackedAutoRunX = startPositionX;
     }
 
     void Update()
     {
+        // 넉백/복귀 처리는 조작 가능 상태(canControl)일 때만 감지 (사망 등으로 조작 불가면 무시)
+        if (playerHealth != null && canControl)
+        {
+            if (!healthInitialized)
+            {
+                lastKnownHealth = playerHealth.currentHealth;
+                healthInitialized = true;
+            }
+            else if (!isKnockedBack && playerHealth.currentHealth < lastKnownHealth - 0.001f)
+            {
+                StartCoroutine(KnockbackAndRecoverRoutine());
+            }
+            lastKnownHealth = playerHealth.currentHealth;
+        }
+
         // [추가] 일시정지(Pause) 상태일 때는 키 입력을 완전히 차단하고, 잔여 속도를 동결하여 미끄러짐 방지
         if (PauseManager.IsPaused)
         {
@@ -119,18 +158,29 @@ public class AutoRunnerMove : MonoBehaviour
         }
     }
 
+    private float GetActiveAutoSpeed()
+    {
+        return moveSpeed;
+    }
+
     void FixedUpdate()
     {
         // 조작 가능한 상태일 때만 자동 이동 속도 적용 (넉백 등의 물리 외력 보존을 위함)
         if (canControl)
         {
-            float activeSpeed = moveSpeed;
-            // R키 꾹 눌러 집중 충전 중인 경우 이동 속도 감소 비율 적용 (기본 80% 감속)
-            if (gaugeController != null && gaugeController.IsFocusCharging)
+            float activeSpeed = GetActiveAutoSpeed();
+
+            // 넉백/복귀 중이 아닐 때만 X속도를 자동달리기 속도로 강제함
+            if (!isKnockedBack)
             {
-                activeSpeed = moveSpeed * focusChargeSpeedMultiplier;
+                rb.linearVelocity = new Vector2(moveDirection.x * activeSpeed, rb.linearVelocity.y);
             }
-            rb.linearVelocity = new Vector2(moveDirection.x * activeSpeed, rb.linearVelocity.y);
+
+            // 일시정지 중에는 가상 경로가 헛돌지 않도록 정지, 그 외에는 계속 누적 전진
+            if (!PauseManager.IsPaused)
+            {
+                trackedAutoRunX += activeSpeed * Time.fixedDeltaTime;
+            }
         }
 
         // 땅을 벗어난 뒤 0.1초(코요테 타임) 동안은 공중 강제 판정(jumpCount=1)을 유예하여 기본점프를 보장
@@ -164,10 +214,35 @@ public class AutoRunnerMove : MonoBehaviour
         isGrounded = false;
     }
 
-    /// <summary>
-    /// 외부에서 플레이어의 조작(점프) 가능 여부를 제어하는 함수
-    /// </summary>
-    /// <param name="value">true: 조작 가능, false: 조작 불가능</param>
+    private System.Collections.IEnumerator KnockbackAndRecoverRoutine()
+    {
+        isKnockedBack = true;
+
+        float pushDir = -moveDirection.x;
+        rb.linearVelocity = new Vector2(pushDir * knockbackSpeed, rb.linearVelocity.y);
+
+        yield return new WaitForSeconds(knockbackDuration);
+
+        float elapsed = 0f;
+        while (Mathf.Abs(trackedAutoRunX - transform.position.x) > recoveryCompleteThreshold
+               && elapsed < recoveryTimeout)
+        {
+            float distance = trackedAutoRunX - transform.position.x;
+            float catchUpVelocity = distance / recoverySmoothTime;
+            rb.linearVelocity = new Vector2(GetActiveAutoSpeed() + catchUpVelocity, rb.linearVelocity.y);
+
+            elapsed += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        // 정상적으로는 위 루프에서 오차 이내로 수렴해 종료되므로, 이 스냅은 타임아웃 등 예외 상황의 안전장치
+        transform.position = new Vector3(trackedAutoRunX, transform.position.y, transform.position.z);
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+
+        isKnockedBack = false;
+    }
+
+
     public void SetControl(bool value)
     {
         canControl = value;
