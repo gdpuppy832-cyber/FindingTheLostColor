@@ -543,20 +543,18 @@ public class EZ_BossAttack : MonoBehaviour
 
         if (attack.name == "FrostRain")
         {
-            // 프리즘 샤워는 텔레그래프 단계를 먼저 끝낸 뒤에야 동반 패턴을 시작시킴
-            // (동반 패턴의 텔레그래프가 프리즘 샤워 텔레그래프와 겹쳐 보이지 않도록)
-            yield return RunFrostTelegraphPhase();
-
-            AttackEntry companion = PickFrostRainCompanion(previousAttack);
-            if (companion != null)
+            if (activeWhirlpoolCoroutine != null)
             {
-                // 지역 변수 대신 필드에 저장해서, 2페이즈 전환 시 HandleCrystalDestroyed가
-                // 이 독립 코루틴도 함께 강제 종료할 수 있게 함
-                // (기존에는 지역 변수라 currentAttackCoroutine만 멈춰도 이 동반 패턴은
-                //  전혀 영향받지 않고 계속 진행되는 문제가 있었음)
-                activeCompanionCoroutine = StartCoroutine(companion.routine());
+                StopCoroutine(activeWhirlpoolCoroutine);
+                activeWhirlpoolCoroutine = null;
+            }
+            if (activeColorWhirlpool != null)
+            {
+                Destroy(activeColorWhirlpool);
+                activeColorWhirlpool = null;
             }
 
+            yield return RunFrostTelegraphPhase();
             yield return RunFrostRainPhase();
         }
         else

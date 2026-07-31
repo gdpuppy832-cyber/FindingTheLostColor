@@ -17146,11 +17146,17 @@ MonoBehaviour:
   colorWhirlpoolSFX: {fileID: 8300000, guid: 9dd975469202bd44b85e5bb5c90f8eed, type: 3}
   bossBGM1: {fileID: 8300000, guid: 15abfcf8c8377b645ab8b45cb8e780d9, type: 3}
   bossBGM2: {fileID: 8300000, guid: adfd5c999dd5d124babcb852ff53f7fc, type: 3}
-  crystals: []
+  crystals:
+  - {fileID: 169193117}
+  - {fileID: 1891646589}
+  - {fileID: 867256897}
+  - {fileID: 1077446561}
   colorOrbPrefab: {fileID: 3671281979859366550, guid: 6111f65c5650fd94d8585dbd33fc2ba0, type: 3}
   colorOrbHealth: 15
   colorOrbSpawnOffsetY: -4
-  blackFogs: []
+  blackFogs:
+  - {fileID: 1536330476}
+  - {fileID: 867740731}
   colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
   colorWhirlpoolSpawnOffset: {x: 0, y: -7.5}
   colorWhirlpoolFadeInDuration: 2
