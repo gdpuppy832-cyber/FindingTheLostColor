@@ -67,8 +67,13 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("레이저 본체가 유지되는 시간(초)")]
     public float laserDuration = 0.5f;
 
+    [Tooltip("레이저 시작 예정 시각으로부터 몇 초 전에 탄환/먹물 장막 생성을 멈출지")]
+    public float stopAttackBeforeLaser = 1f;
+
     // 레이저 공격 진행 중 여부. true인 동안 FireLoop는 탄환/먹물 장막을 실행하지 않음
     private bool isLaserAttacking = false;
+    // 레이저 텔레그래프 시작 전, 탄환/먹물 장막 생성만 멈추는 사전 대기 상태
+    private bool isPreLaserPause = false;
     private float attackStartTime; // 추격(공격 루프) 시작 시각 - laserUnlockTime 계산 기준
     private Coroutine laserLoopCoroutine;
 
@@ -89,8 +94,8 @@ public class BossChaseAttack : MonoBehaviour
     {
         while (true)
         {
-            // 레이저 공격이 진행 중일 때는 탄환/먹물 장막 패턴을 절대 실행하지 않음
-            if (isLaserAttacking)
+            // 레이저 공격이 진행 중이거나, 시작 직전 대기 중일 때는 탄환/먹물 장막 패턴을 절대 실행하지 않음
+            if (isLaserAttacking || isPreLaserPause)
             {
                 yield return null;
                 continue;
@@ -205,6 +210,11 @@ public class BossChaseAttack : MonoBehaviour
             yield break;
         }
 
+        // 텔레그래프 시작 전, 화면을 비워주는 사전 대기 시간 동안은 새 탄환/먹물 장막 생성만 차단
+        isPreLaserPause = true;
+        yield return new WaitForSeconds(stopAttackBeforeLaser);
+        isPreLaserPause = false;
+
         isLaserAttacking = true;
 
         // ① 텔레그래프 생성 (laserFirePoint 위치 고정)
@@ -220,15 +230,29 @@ public class BossChaseAttack : MonoBehaviour
 
         SpriteRenderer telegraphSr = telegraph != null ? telegraph.GetComponent<SpriteRenderer>() : null;
 
-        // 1.5초(laserTelegraphDuration) 동안 유지하며 0.5초(laserBlinkInterval) 간격으로 깜빡임
+        // 1.5초(laserTelegraphDuration) 동안 유지하며 0.5초(laserBlinkInterval) 간격으로 깜빡임.
+        // WaitForSeconds 대신 매 프레임 대기로 처리해서, 대기하는 동안에도 laserFirePoint 위치를 계속 따라가도록 고정
         float blinkElapsed = 0f;
+        float nextBlinkTime = laserBlinkInterval;
         bool visible = true;
         while (blinkElapsed < laserTelegraphDuration)
         {
-            yield return new WaitForSeconds(laserBlinkInterval);
-            blinkElapsed += laserBlinkInterval;
-            visible = !visible;
-            if (telegraphSr != null) telegraphSr.enabled = visible;
+            if (telegraph != null)
+            {
+                telegraph.transform.position = laserFirePoint.position;
+                telegraph.transform.rotation = laserFirePoint.rotation;
+            }
+
+            blinkElapsed += Time.deltaTime;
+
+            if (blinkElapsed >= nextBlinkTime)
+            {
+                nextBlinkTime += laserBlinkInterval;
+                visible = !visible;
+                if (telegraphSr != null) telegraphSr.enabled = visible;
+            }
+
+            yield return null;
         }
 
         // ② 텔레그래프 제거
@@ -242,6 +266,7 @@ public class BossChaseAttack : MonoBehaviour
             BossChaseLaser hazard = laserObj.GetComponent<BossChaseLaser>();
             if (hazard == null) hazard = laserObj.AddComponent<BossChaseLaser>();
             hazard.Initialize(attackDamage);
+            hazard.SetPinnedPoint(laserFirePoint); // 레이저 피벗을 laserFirePoint 위치에 계속 고정
 
             // laserDuration(0.5초) 동안 유지 후 자동 삭제
             Destroy(laserObj, laserDuration);
@@ -269,5 +294,6 @@ public class BossChaseAttack : MonoBehaviour
             laserLoopCoroutine = null;
         }
         isLaserAttacking = false;
+        isPreLaserPause = false;
     }
 }

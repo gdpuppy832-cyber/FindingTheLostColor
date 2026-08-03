@@ -12,13 +12,26 @@ public class BossChaseLaser : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private PolygonCollider2D polygonCollider;
     private Sprite lastSprite;
-
+    private Transform pinnedPoint; // 레이저 피벗을 계속 고정시킬 기준 Transform (laserFirePoint)
     /// <summary>
     /// BossChaseAttack이 생성 직후 호출해서 레이저의 데미지를 전달합니다.
     /// </summary>
     public void Initialize(int damage)
     {
         attackDamage = damage;
+    }
+
+    /// <summary>
+    /// BossChaseAttack이 생성 직후 호출해서 레이저 피벗을 고정시킬 위치(laserFirePoint)를 전달합니다.
+    /// </summary>
+    public void SetPinnedPoint(Transform point)
+    {
+        pinnedPoint = point;
+        if (pinnedPoint != null)
+        {
+            transform.position = pinnedPoint.position;
+            transform.rotation = pinnedPoint.rotation;
+        }
     }
 
     void Start()
@@ -36,6 +49,13 @@ public class BossChaseLaser : MonoBehaviour
 
     void Update()
     {
+        // 레이저 피벗을 laserFirePoint 위치에 계속 고정 (부모로 붙이지 않고 매 프레임 좌표만 동기화)
+        if (pinnedPoint != null)
+        {
+            transform.position = pinnedPoint.position;
+            transform.rotation = pinnedPoint.rotation;
+        }
+
         // 애니메이션으로 스프라이트가 바뀔 때마다 Physics Shape를 다시 읽어와 콜라이더 모양을 실시간으로 맞춤
         if (spriteRenderer == null || polygonCollider == null)
             return;

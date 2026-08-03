@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2122312772662860871}
   - component: {fileID: 9021043416208486788}
   - component: {fileID: 1697439687702471307}
+  - component: {fileID: 242229606584720678}
   m_Layer: 0
   m_Name: LaserChase
   m_TagString: Untagged
@@ -99,7 +100,7 @@ Animator:
   m_GameObject: {fileID: 1946862533391767322}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 15cc8bc3a6893db4b9c8a1819a89d8b0, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1225377cb817db846846c88bcdb49a45, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -141,7 +142,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -162,3 +163,17 @@ PolygonCollider2D:
       - {x: -9.599999, y: 1.275}
       - {x: -9.599999, y: -1.4449999}
   m_UseDelaunayMesh: 0
+--- !u!114 &242229606584720678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946862533391767322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d647db1d253969b47a6d158054db1e37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 1
+  hitDelay: 0.1
