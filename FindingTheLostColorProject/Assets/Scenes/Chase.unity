@@ -422,11 +422,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.77
+      value: -16.69
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -12.11
+      value: -14.36
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.z
@@ -473,16 +473,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: bulletSpeed
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: fireInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: laserCooldown
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: bulletLifetime
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserFirePoint
       value: 
       objectReference: {fileID: 1244530048}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: laserUnlockTime
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: inkCurtainLifetime
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainSpawnPoint
       value: 
       objectReference: {fileID: 946022903}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: bulletsBeforeInkCurtain
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainRequiredPaintOverlapTime
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_SortingLayer

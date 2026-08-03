@@ -17,6 +17,13 @@ public class BossChaseBullet : MonoBehaviour
     [Tooltip("붓(1번 모드)이 이 탄환과 겹쳐 있어야 하는 누적 시간(초). 이 시간을 채우면 탄환이 파괴됨")]
     public float requiredPaintOverlapTime = 1f;
 
+    [Header("회전 설정")]
+    [Tooltip("초당 회전 속도(도)")]
+    public float rotationSpeed = 180f;
+
+    [Tooltip("회전 축")]
+    public Vector3 rotationAxis = Vector3.forward;
+
     private float currentPaintOverlapTime = 0f;
     private CursorController cursorController;
 
@@ -38,9 +45,10 @@ public class BossChaseBullet : MonoBehaviour
 
     void Update()
     {
+        transform.Rotate(rotationAxis, rotationSpeed * Time.deltaTime);
+
         if (cursorController == null) return;
         if (cursorController.attackMode != 1) return;
-
         if (cursorController.trail == null || !cursorController.trail.emitting) return;
 
         float distance = Vector2.Distance(transform.position, cursorController.transform.position);
