@@ -118,6 +118,17 @@ public class BossPortalSpawner : MonoBehaviour
             return;
         }
 
+        // [신규] 이지 모드일 때 보스가 다른 패턴을 시전 중이면 패턴 겹침 방지를 위해 소환 시도를 보스 패턴 종료까지 일시 미룸
+        BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
+        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
+        bool isBossAttacking = EZ_BossAttack.isPatternActive || BossAttack.isPatternActive;
+
+        if (isEasy && isBossAttacking)
+        {
+            // 보스 패턴이 진행 중이면 이번 프레임의 소환 시도를 다음 프레임으로 지연시킴
+            return;
+        }
+
         // 보스전 시작 후 spawnInterval 주기마다 포탈 소환 시전
         if (Time.time - lastSpawnTime >= spawnInterval)
         {
@@ -126,11 +137,25 @@ public class BossPortalSpawner : MonoBehaviour
         }
     }
 
+    [Header("이지 모드 휴식 딜레이 설정")]
+    [Tooltip("이지 모드에서 소환 완료 및 포탈 닫힌 후 추가 휴식 딜레이 시간 (초, 기본값: 7.0초)")]
+    public float easyModeRestDelay = 7.0f;
+
     /// <summary>
     /// 포탈을 열고 몬스터를 순차 스폰 후 포탈을 닫는 연출 시퀀스
     /// </summary>
     private IEnumerator SpawnSequence()
     {
+        BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
+        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
+
+        // 이지 모드인 경우 소환 연출 동안 보스가 다른 공격을 시작하지 않도록 패턴 락 켜기
+        if (isEasy)
+        {
+            EZ_BossAttack.isPatternActive = true;
+            BossAttack.isPatternActive = true;
+        }
+
         Debug.Log($"[BossPortalSpawner] 포탈 소환 개시! 그룹 인덱스: {spawnGroupIndex + 1}");
 
         // 1. 좌우 포탈 소환기 켜기
@@ -175,6 +200,16 @@ public class BossPortalSpawner : MonoBehaviour
 
         // 4. 다음 소환 인덱스 교체 (1->2->1->2 무한 반복)
         spawnGroupIndex = (spawnGroupIndex + 1) % 2;
+
+        // 5. [신규] 이지 모드인 경우 포탈이 완전히 닫힌 후 4초간 추가 휴식 딜레이 유지!
+        if (isEasy)
+        {
+            Debug.Log($"[BossPortalSpawner] 이지 모드: 소환 완료 후 {easyModeRestDelay}초간 보스 공격 억제 휴식 딜레이 가동!");
+            yield return new WaitForSeconds(easyModeRestDelay);
+
+            EZ_BossAttack.isPatternActive = false;
+            BossAttack.isPatternActive = false;
+        }
     }
 
     /// <summary>

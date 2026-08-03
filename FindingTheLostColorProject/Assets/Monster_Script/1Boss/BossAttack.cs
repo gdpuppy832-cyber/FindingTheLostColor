@@ -71,6 +71,9 @@ public class BossAttack : MonoBehaviour
     [Tooltip("이지 모드(EZ Mode) 여부 (true 체크 시 2페이즈 블랙홀 패턴이 발동하지 않고 난이도가 낮아집니다. false 시 하드 모드로 2페이즈에서도 블랙홀이 발동됩니다)")]
     public bool isEasyMode = false;
 
+    // [신규] 이지 모드 시 스크립트 간 패턴 겹침을 방지하기 위한 공유 신호등 플래그
+    public static bool isPatternActive = false;
+
     // ================= 색채 소용돌이 (1P/2P 공용, 랜덤 풀에는 포함되지 않고 다른 패턴과 동시에 발동) =================
     [Header("Color Whirlpool")]
     public GameObject colorWhirlpoolPrefab;              // 색채 소용돌이 프리팹 (비워두면 임시 생성)
@@ -527,6 +530,7 @@ public class BossAttack : MonoBehaviour
     IEnumerator RunAttack(AttackEntry attack)
     {
         isAttacking = true;
+        if (isEasyMode) isPatternActive = true;
 
         // 프리즘 샤워 직전에 나왔던 패턴을 기억해뒀다가, 동반 패턴 선정 시 제외하기 위해
         // lastUsedAttack을 덮어쓰기 전에 미리 별도 변수로 백업해둠
@@ -590,6 +594,7 @@ public class BossAttack : MonoBehaviour
         }
 
         isAttacking = false;
+        if (isEasyMode) isPatternActive = false;
         nextAttackAllowedTime = Time.time + attackCooldown;
     }
 
@@ -598,6 +603,9 @@ public class BossAttack : MonoBehaviour
     // previousAttack(프리즘 샤워 직전에 나왔던 패턴)은 후보에서 제외됨.
     AttackEntry PickFrostRainCompanion(AttackEntry previousAttack)
     {
+        // 이지 모드(isEasyMode == true)에서는 서리비와 다른 공격 패턴이 겹쳐서 나오지 않음 (1회 1패턴 원칙)
+        if (isEasyMode) return null;
+
         if (Random.value > frostRainCompanionChance) return null;
 
         List<AttackEntry> candidates = new List<AttackEntry>(phase1Attacks);
@@ -1470,22 +1478,26 @@ public class BossAttack : MonoBehaviour
     // ================= 색채 소용돌이 (1P/2P 공용) =================
     IEnumerator ColorWhirlpoolAttackRoutine()
     {
+        if (isEasyMode) isPatternActive = true;
+
         Vector3 spawnPos = initialPosition + (Vector3)colorWhirlpoolSpawnOffset;
         GameObject whirlpool = SpawnColorWhirlpool(spawnPos);
         activeColorWhirlpool = whirlpool;
 
-        // 페이드 인이 먼저 끝날 때까지 대기한 뒤, 그 시점부터 colorWhirlpoolDuration을 셈
-        // (기존에는 스폰과 동시에 지속시간을 셌기 때문에, 페이드 인 시간까지 지속시간에 포함되어
-        //  실제로 온전히 나타나 있는 시간이 의도한 것보다 짧아지는 문제가 있었음)
         yield return new WaitForSeconds(colorWhirlpoolFadeInDuration);
-
-        // 짝지어진 다른 공격이 이보다 먼저 끝나면, RunAttack이 StopCoroutine + Destroy로 더 일찍 정리함
         yield return new WaitForSeconds(colorWhirlpoolDuration);
 
         if (activeColorWhirlpool != null)
         {
             Destroy(activeColorWhirlpool);
             activeColorWhirlpool = null;
+        }
+
+        if (isEasyMode)
+        {
+            Debug.Log("[BossAttack] 이지 모드: 블랙홀 소멸 후 7초간 보스 패턴 억제 휴식 대기 가동!");
+            yield return new WaitForSeconds(7.0f);
+            isPatternActive = false;
         }
     }
 
