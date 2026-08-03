@@ -420,10 +420,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss_Chase
       objectReference: {fileID: 0}
-    - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: transitionDelay
-      value: 90
-      objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.77
@@ -477,23 +473,15 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: laserCooldown
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserFirePoint
       value: 
       objectReference: {fileID: 1244530048}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: laserUnlockTime
-      value: 20
-      objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainSpawnPoint
       value: 
       objectReference: {fileID: 946022903}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: stopAttackBeforeLaser
+      propertyPath: inkCurtainRequiredPaintOverlapTime
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
