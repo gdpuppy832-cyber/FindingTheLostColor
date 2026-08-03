@@ -1218,9 +1218,7 @@ public class EZ_BossAttack : MonoBehaviour
         GameObject lightning = SpawnLightning(cloudPos, groundStrikePos);
         activeLightning = lightning;
 
-        yield return new WaitForSeconds(lightningLifetime);
-
-        if (lightning != null) Destroy(lightning);
+        // lightning은 LightningHazard 스크립트가 스스로 수명을 안전하게 관리합니다.
         activeLightning = null;
     }
 
@@ -1294,8 +1292,7 @@ public class EZ_BossAttack : MonoBehaviour
         LightningHazard hazard = lightning.GetComponent<LightningHazard>();
         if (hazard == null) hazard = lightning.AddComponent<LightningHazard>();
         hazard.damage = bossAttackDamage;
-        hazard.lifetime = lightningLifetime;
-        hazard.Init(fromPos, toPos, lightningLength); // 시작점 고정, 목표 방향으로 lightningLength만큼 즉시 뻗어나감
+        hazard.Init(fromPos, toPos, true);
 
         return lightning;
     }

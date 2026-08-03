@@ -108,6 +108,9 @@ MonoBehaviour:
   maxHealth: 3
   paintDamagePerSecond: 1
   alphaSmoothSpeed: 3
+  isEasyMode: 0
+  screenDarkenFadeInDuration: 1
+  maxScreenDarkAlpha: 0.5
 --- !u!95 &375803216968435787
 Animator:
   serializedVersion: 7

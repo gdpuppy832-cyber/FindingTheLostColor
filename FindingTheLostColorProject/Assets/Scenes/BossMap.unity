@@ -520,6 +520,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8108191516864880753, guid: d32135a49f13e44479a6474ca992b48e, type: 3}
+      propertyPath: travelDuration
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -533,6 +537,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4059382244844945514, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
+      propertyPath: travelDuration
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5878898382132659529, guid: 4e599eb83d3a8ce49b767332776f1db8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 31.93
@@ -16993,8 +17001,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1184861206}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: lightningLifetime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: colorOrbSpawnOffsetY
       value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: darkCloudHoldDuration
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: 'crystals.Array.data[0]'

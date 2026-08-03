@@ -67,6 +67,10 @@ public class BossAttack : MonoBehaviour
     GameObject activeDarkCloud;                                     // 현재 진행 중인 먹구름 (동시에 하나만 존재)
     GameObject activeLightning;                                     // 현재 발동 중인 번개
 
+    [Header("Difficulty Settings")]
+    [Tooltip("이지 모드(EZ Mode) 여부 (true 체크 시 2페이즈 블랙홀 패턴이 발동하지 않고 난이도가 낮아집니다. false 시 하드 모드로 2페이즈에서도 블랙홀이 발동됩니다)")]
+    public bool isEasyMode = false;
+
     // ================= 색채 소용돌이 (1P/2P 공용, 랜덤 풀에는 포함되지 않고 다른 패턴과 동시에 발동) =================
     [Header("Color Whirlpool")]
     public GameObject colorWhirlpoolPrefab;              // 색채 소용돌이 프리팹 (비워두면 임시 생성)
@@ -529,9 +533,10 @@ public class BossAttack : MonoBehaviour
         AttackEntry previousAttack = lastUsedAttack;
         lastUsedAttack = attack;
 
-        // 소용돌이는 1페이즈에서만 나오며, 프리즘 샤워(FrostRain)와도 절대 겹치지 않고,
-        // 소용돌이 제외 다른 패턴이 colorWhirlpoolTriggerCount번 나온 뒤에야 다음 기회에 발동함
-        bool triggerWhirlpool = !phase2Unlocked && attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
+        // 이지 모드(isEasyMode == true)에서는 1페이즈에서만 소용돌이가 나오고,
+        // 하드 모드(isEasyMode == false)에서는 2페이즈에서도 흉악한 블랙홀 소용돌이가 지속 발동함
+        bool canTriggerWhirlpoolInCurrentPhase = !phase2Unlocked || !isEasyMode;
+        bool triggerWhirlpool = canTriggerWhirlpoolInCurrentPhase && attack.name != "FrostRain" && nonWhirlpoolAttackCount >= colorWhirlpoolTriggerCount;
 
         if (triggerWhirlpool)
         {
@@ -1220,9 +1225,7 @@ public class BossAttack : MonoBehaviour
         GameObject lightning = SpawnLightning(cloudPos, groundStrikePos);
         activeLightning = lightning;
 
-        yield return new WaitForSeconds(lightningLifetime);
-
-        if (lightning != null) Destroy(lightning);
+        // lightning은 LightningHazard 스크립트가 난이도(EZ: 0.4s, HARD: 5s 잔류)에 맞게 스스로 수명을 안전하게 관리합니다.
         activeLightning = null;
     }
 
@@ -1296,8 +1299,7 @@ public class BossAttack : MonoBehaviour
         LightningHazard hazard = lightning.GetComponent<LightningHazard>();
         if (hazard == null) hazard = lightning.AddComponent<LightningHazard>();
         hazard.damage = bossAttackDamage;
-        hazard.lifetime = lightningLifetime;
-        hazard.Init(fromPos, toPos, lightningLength); // 시작점 고정, 목표 방향으로 lightningLength만큼 즉시 뻗어나감
+        hazard.Init(fromPos, toPos, isEasyMode);
 
         return lightning;
     }
