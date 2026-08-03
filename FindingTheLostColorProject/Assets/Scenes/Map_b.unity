@@ -23548,7 +23548,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 484192897982048044, guid: 29f35ed79ba70a747859bfea13334e0c, type: 3}
       propertyPath: nextSceneName
-      value: Map_c
+      value: Chase
       objectReference: {fileID: 0}
     - target: {fileID: 2097931735413046690, guid: 29f35ed79ba70a747859bfea13334e0c, type: 3}
       propertyPath: m_Layer

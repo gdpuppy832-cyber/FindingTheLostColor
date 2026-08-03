@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BossPortalSpawner : MonoBehaviour
+public class EZ_BossPortalSpawner : MonoBehaviour
 {
     [Header("보스 페이즈 연동")]
     [Tooltip("2페이즈로 전환되면 이 소환 패턴을 멈추기 위해 참조하는 BossAttack (비워두면 자동으로 같은 오브젝트에서 검색)")]
-    public BossAttack bossAttack;
+    public EZ_BossAttack EZ_BossAttack;
 
     // 지금까지 소환한 몬스터들을 추적 (2페이즈 전환 시 한 번에 정리하기 위함)
     private List<GameObject> activeSpawnedMonsters = new List<GameObject>();
@@ -46,7 +46,7 @@ public class BossPortalSpawner : MonoBehaviour
     void Start()
     {
         // 씬에서 보스 공격 컴포넌트 자동 탐색 및 참조
-        bossAttack = FindFirstObjectByType<BossAttack>();
+        EZ_BossAttack = FindFirstObjectByType<EZ_BossAttack>();
 
         // 보스가 활성화된 시점부터 60초 카운트다운 시작
         lastSpawnTime = Time.time;
@@ -55,12 +55,12 @@ public class BossPortalSpawner : MonoBehaviour
         if (leftPortalObject != null) leftPortalObject.SetActive(false);
         if (rightPortalObject != null) rightPortalObject.SetActive(false);
 
-        if (bossAttack == null) bossAttack = GetComponent<BossAttack>();
-        if (bossAttack == null) bossAttack = GetComponentInParent<BossAttack>();
+        if (EZ_BossAttack == null) EZ_BossAttack = GetComponent<EZ_BossAttack>();
+        if (EZ_BossAttack == null) EZ_BossAttack = GetComponentInParent<EZ_BossAttack>();
 
-        if (bossAttack != null)
+        if (EZ_BossAttack != null)
         {
-            bossAttack.OnPhase2Started += HandlePhase2Started;
+            EZ_BossAttack.OnPhase2Started += HandlePhase2Started;
         }
         else
         {
@@ -70,9 +70,9 @@ public class BossPortalSpawner : MonoBehaviour
 
     void OnDestroy()
     {
-        if (bossAttack != null)
+        if (EZ_BossAttack != null)
         {
-            bossAttack.OnPhase2Started -= HandlePhase2Started;
+            EZ_BossAttack.OnPhase2Started -= HandlePhase2Started;
         }
     }
 
@@ -105,7 +105,7 @@ public class BossPortalSpawner : MonoBehaviour
         if (!isBossBattleStarted) return;
 
         // [신규] 보스가 2페이즈에 진입했는지 실시간 체크 ➔ 진입 시 소환 완전 중단 및 포탈 닫기
-        if (bossAttack != null && bossAttack.IsPhase2)
+        if (EZ_BossAttack != null && EZ_BossAttack.IsPhase2)
         {
             isBossBattleStarted = false; // 소환 스케줄러 자체를 종료
             StopAllCoroutines();         // 이미 진행 중인 소환 시퀀스 코루틴 정지
@@ -118,17 +118,6 @@ public class BossPortalSpawner : MonoBehaviour
             return;
         }
 
-        // [신규] 이지 모드일 때 보스가 다른 패턴을 시전 중이면 패턴 겹침 방지를 위해 소환 시도를 보스 패턴 종료까지 일시 미룸
-        BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
-        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
-        bool isBossAttacking = EZ_BossAttack.isPatternActive || BossAttack.isPatternActive;
-
-        if (isEasy && isBossAttacking)
-        {
-            // 보스 패턴이 진행 중이면 이번 프레임의 소환 시도를 다음 프레임으로 지연시킴
-            return;
-        }
-
         // 보스전 시작 후 spawnInterval 주기마다 포탈 소환 시전
         if (Time.time - lastSpawnTime >= spawnInterval)
         {
@@ -137,25 +126,11 @@ public class BossPortalSpawner : MonoBehaviour
         }
     }
 
-    [Header("이지 모드 휴식 딜레이 설정")]
-    [Tooltip("이지 모드에서 소환 완료 및 포탈 닫힌 후 추가 휴식 딜레이 시간 (초, 기본값: 7.0초)")]
-    public float easyModeRestDelay = 7.0f;
-
     /// <summary>
     /// 포탈을 열고 몬스터를 순차 스폰 후 포탈을 닫는 연출 시퀀스
     /// </summary>
     private IEnumerator SpawnSequence()
     {
-        BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
-        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
-
-        // 이지 모드인 경우 소환 연출 동안 보스가 다른 공격을 시작하지 않도록 패턴 락 켜기
-        if (isEasy)
-        {
-            EZ_BossAttack.isPatternActive = true;
-            BossAttack.isPatternActive = true;
-        }
-
         Debug.Log($"[BossPortalSpawner] 포탈 소환 개시! 그룹 인덱스: {spawnGroupIndex + 1}");
 
         // 1. 좌우 포탈 소환기 켜기
@@ -200,16 +175,6 @@ public class BossPortalSpawner : MonoBehaviour
 
         // 4. 다음 소환 인덱스 교체 (1->2->1->2 무한 반복)
         spawnGroupIndex = (spawnGroupIndex + 1) % 2;
-
-        // 5. [신규] 이지 모드인 경우 포탈이 완전히 닫힌 후 4초간 추가 휴식 딜레이 유지!
-        if (isEasy)
-        {
-            Debug.Log($"[BossPortalSpawner] 이지 모드: 소환 완료 후 {easyModeRestDelay}초간 보스 공격 억제 휴식 딜레이 가동!");
-            yield return new WaitForSeconds(easyModeRestDelay);
-
-            EZ_BossAttack.isPatternActive = false;
-            BossAttack.isPatternActive = false;
-        }
     }
 
     /// <summary>

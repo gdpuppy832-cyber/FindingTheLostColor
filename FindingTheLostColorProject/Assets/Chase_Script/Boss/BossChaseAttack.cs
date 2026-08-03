@@ -49,6 +49,34 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("붓질(1번 모드)이 먹물 장막과 겹쳐 있어야 하는 누적 시간(초). 탄환의 requiredPaintOverlapTime과 별개로 장막 전용 값")]
     public float inkCurtainRequiredPaintOverlapTime = 3f;
 
+    [Header("Laser Settings")]
+    [Tooltip("레이저 텔레그래프 프리팹")]
+    public GameObject laserTelegraphPrefab;
+    [Tooltip("레이저 본체 프리팹 (충돌 판정은 프리팹 자체에 있는 Collider2D를 그대로 사용)")]
+    public GameObject laserPrefab;
+    [Tooltip("레이저가 고정 발사되는 위치 (플레이어를 추적하지 않고 항상 이 위치에서 발사)")]
+    public Transform laserFirePoint;
+    [Tooltip("추격 시작 후 레이저를 처음 사용할 수 있게 되기까지의 시간(초)")]
+    public float laserUnlockTime = 20f;
+    [Tooltip("레이저 종료 후부터 다음 레이저까지의 쿨타임(초)")]
+    public float laserCooldown = 10f;
+    [Tooltip("레이저 텔레그래프 유지 시간(초)")]
+    public float laserTelegraphDuration = 1.5f;
+    [Tooltip("레이저 텔레그래프 깜빡임 간격(초)")]
+    public float laserBlinkInterval = 0.5f;
+    [Tooltip("레이저 본체가 유지되는 시간(초)")]
+    public float laserDuration = 0.5f;
+
+    [Tooltip("레이저 시작 예정 시각으로부터 몇 초 전에 탄환/먹물 장막 생성을 멈출지")]
+    public float stopAttackBeforeLaser = 1f;
+
+    // 레이저 공격 진행 중 여부. true인 동안 FireLoop는 탄환/먹물 장막을 실행하지 않음
+    private bool isLaserAttacking = false;
+    // 레이저 텔레그래프 시작 전, 탄환/먹물 장막 생성만 멈추는 사전 대기 상태
+    private bool isPreLaserPause = false;
+    private float attackStartTime; // 추격(공격 루프) 시작 시각 - laserUnlockTime 계산 기준
+    private Coroutine laserLoopCoroutine;
+
     private int bulletFireCount = 0; // 탄환 발사 카운트 (bulletsBeforeInkCurtain에 도달하면 장막 발동)
 
     private Coroutine fireLoopCoroutine;
@@ -56,12 +84,23 @@ public class BossChaseAttack : MonoBehaviour
     void Start()
     {
         fireLoopCoroutine = StartCoroutine(FireLoop());
+
+        // 레이저 언락/쿨타임 계산 기준 시각 (추격 시작 시점으로 간주)
+        attackStartTime = Time.time;
+        laserLoopCoroutine = StartCoroutine(LaserLoop());
     }
 
     private IEnumerator FireLoop()
     {
         while (true)
         {
+            // 레이저 공격이 진행 중이거나, 시작 직전 대기 중일 때는 탄환/먹물 장막 패턴을 절대 실행하지 않음
+            if (isLaserAttacking || isPreLaserPause)
+            {
+                yield return null;
+                continue;
+            }
+
             if (bulletFireCount >= bulletsBeforeInkCurtain)
             {
                 // 탄환을 bulletsBeforeInkCurtain발 발사했으면 이번 차례는 먹물 장막으로 대체
@@ -143,6 +182,103 @@ public class BossChaseAttack : MonoBehaviour
         return validPoints[Random.Range(0, validPoints.Count)];
     }
 
+    // 레이저 사용 가능 시점(laserUnlockTime)을 기다린 뒤, 레이저 -> 쿨타임을 반복하는 루프
+    private IEnumerator LaserLoop()
+    {
+        float elapsedSinceStart = Time.time - attackStartTime;
+        if (elapsedSinceStart < laserUnlockTime)
+        {
+            yield return new WaitForSeconds(laserUnlockTime - elapsedSinceStart);
+        }
+
+        while (true)
+        {
+            yield return StartCoroutine(FireLaser());
+
+            // 레이저 종료 후부터 쿨타임 계산
+            yield return new WaitForSeconds(laserCooldown);
+        }
+    }
+
+    // 레이저 공격 전용 메서드. laserFirePoint 위치에 고정되어 플레이어를 추적하지 않음.
+    // 텔레그래프 생성 -> 깜빡임 유지 -> 텔레그래프 제거 -> 레이저 생성 -> 유지 -> 자동 삭제 순서로 진행
+    private IEnumerator FireLaser()
+    {
+        if (laserFirePoint == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] laserFirePoint가 비어있어 레이저를 발사할 수 없습니다.");
+            yield break;
+        }
+
+        // 텔레그래프 시작 전, 화면을 비워주는 사전 대기 시간 동안은 새 탄환/먹물 장막 생성만 차단
+        isPreLaserPause = true;
+        yield return new WaitForSeconds(stopAttackBeforeLaser);
+        isPreLaserPause = false;
+
+        isLaserAttacking = true;
+
+        // ① 텔레그래프 생성 (laserFirePoint 위치 고정)
+        GameObject telegraph = null;
+        if (laserTelegraphPrefab != null)
+        {
+            telegraph = Instantiate(laserTelegraphPrefab, laserFirePoint.position, laserFirePoint.rotation);
+        }
+        else
+        {
+            Debug.LogWarning("[BossChaseAttack] laserTelegraphPrefab이 비어있어 텔레그래프 없이 진행합니다.");
+        }
+
+        SpriteRenderer telegraphSr = telegraph != null ? telegraph.GetComponent<SpriteRenderer>() : null;
+
+        // 1.5초(laserTelegraphDuration) 동안 유지하며 0.5초(laserBlinkInterval) 간격으로 깜빡임.
+        // WaitForSeconds 대신 매 프레임 대기로 처리해서, 대기하는 동안에도 laserFirePoint 위치를 계속 따라가도록 고정
+        float blinkElapsed = 0f;
+        float nextBlinkTime = laserBlinkInterval;
+        bool visible = true;
+        while (blinkElapsed < laserTelegraphDuration)
+        {
+            if (telegraph != null)
+            {
+                telegraph.transform.position = laserFirePoint.position;
+                telegraph.transform.rotation = laserFirePoint.rotation;
+            }
+
+            blinkElapsed += Time.deltaTime;
+
+            if (blinkElapsed >= nextBlinkTime)
+            {
+                nextBlinkTime += laserBlinkInterval;
+                visible = !visible;
+                if (telegraphSr != null) telegraphSr.enabled = visible;
+            }
+
+            yield return null;
+        }
+
+        // ② 텔레그래프 제거
+        if (telegraph != null) Destroy(telegraph);
+
+        // ③ 레이저 생성
+        if (laserPrefab != null)
+        {
+            GameObject laserObj = Instantiate(laserPrefab, laserFirePoint.position, laserFirePoint.rotation);
+
+            BossChaseLaser hazard = laserObj.GetComponent<BossChaseLaser>();
+            if (hazard == null) hazard = laserObj.AddComponent<BossChaseLaser>();
+            hazard.Initialize(attackDamage);
+            hazard.SetPinnedPoint(laserFirePoint); // 레이저 피벗을 laserFirePoint 위치에 계속 고정
+
+            // laserDuration(0.5초) 동안 유지 후 자동 삭제
+            Destroy(laserObj, laserDuration);
+            yield return new WaitForSeconds(laserDuration);
+        }
+        else
+        {
+            Debug.LogWarning("[BossChaseAttack] laserPrefab이 비어있어 레이저를 발사할 수 없습니다.");
+        }
+
+        isLaserAttacking = false;
+    }
     void OnDisable()
     {
         if (fireLoopCoroutine != null)
@@ -150,5 +286,14 @@ public class BossChaseAttack : MonoBehaviour
             StopCoroutine(fireLoopCoroutine);
             fireLoopCoroutine = null;
         }
+
+        // 레이저 루프도 함께 정지하고, 진행 중이던 레이저 상태 플래그도 초기화
+        if (laserLoopCoroutine != null)
+        {
+            StopCoroutine(laserLoopCoroutine);
+            laserLoopCoroutine = null;
+        }
+        isLaserAttacking = false;
+        isPreLaserPause = false;
     }
 }
