@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BossPortalSpawner : MonoBehaviour
+public class EZ_BossPortalSpawner : MonoBehaviour
 {
     [Header("보스 페이즈 연동")]
     [Tooltip("2페이즈로 전환되면 이 소환 패턴을 멈추기 위해 참조하는 BossAttack (비워두면 자동으로 같은 오브젝트에서 검색)")]
-    public BossAttack bossAttack;
+    public EZ_BossAttack EZ_BossAttack;
 
     // 지금까지 소환한 몬스터들을 추적 (2페이즈 전환 시 한 번에 정리하기 위함)
     private List<GameObject> activeSpawnedMonsters = new List<GameObject>();
@@ -46,7 +46,7 @@ public class BossPortalSpawner : MonoBehaviour
     void Start()
     {
         // 씬에서 보스 공격 컴포넌트 자동 탐색 및 참조
-        bossAttack = FindFirstObjectByType<BossAttack>();
+        EZ_BossAttack = FindFirstObjectByType<EZ_BossAttack>();
 
         // 보스가 활성화된 시점부터 60초 카운트다운 시작
         lastSpawnTime = Time.time;
@@ -55,12 +55,12 @@ public class BossPortalSpawner : MonoBehaviour
         if (leftPortalObject != null) leftPortalObject.SetActive(false);
         if (rightPortalObject != null) rightPortalObject.SetActive(false);
 
-        if (bossAttack == null) bossAttack = GetComponent<BossAttack>();
-        if (bossAttack == null) bossAttack = GetComponentInParent<BossAttack>();
+        if (EZ_BossAttack == null) EZ_BossAttack = GetComponent<EZ_BossAttack>();
+        if (EZ_BossAttack == null) EZ_BossAttack = GetComponentInParent<EZ_BossAttack>();
 
-        if (bossAttack != null)
+        if (EZ_BossAttack != null)
         {
-            bossAttack.OnPhase2Started += HandlePhase2Started;
+            EZ_BossAttack.OnPhase2Started += HandlePhase2Started;
         }
         else
         {
@@ -70,9 +70,9 @@ public class BossPortalSpawner : MonoBehaviour
 
     void OnDestroy()
     {
-        if (bossAttack != null)
+        if (EZ_BossAttack != null)
         {
-            bossAttack.OnPhase2Started -= HandlePhase2Started;
+            EZ_BossAttack.OnPhase2Started -= HandlePhase2Started;
         }
     }
 
@@ -105,7 +105,7 @@ public class BossPortalSpawner : MonoBehaviour
         if (!isBossBattleStarted) return;
 
         // [신규] 보스가 2페이즈에 진입했는지 실시간 체크 ➔ 진입 시 소환 완전 중단 및 포탈 닫기
-        if (bossAttack != null && bossAttack.IsPhase2)
+        if (EZ_BossAttack != null && EZ_BossAttack.IsPhase2)
         {
             isBossBattleStarted = false; // 소환 스케줄러 자체를 종료
             StopAllCoroutines();         // 이미 진행 중인 소환 시퀀스 코루틴 정지
