@@ -1,52 +1,146 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-// ¹ø°³: fromPos(¸Ô±¸¸§ À§Ä¡)¿¡¼­ ½ÃÀÛÇØ¼­, toPos(ÇÃ·¹ÀÌ¾î) ¹æÇâÀ¸·Î ¾ÆÁÖ ±æ°Ô(È­¸é ³¡±îÁö) »¸¾î³ª°¡´Â ÇüÅÂ.
-// Áï½Ã ¿Ï¼ºµÈ »óÅÂ·Î ³ªÅ¸³ª°í, lifetime¸¸Å­ À¯ÁöµÇ´Ù »ç¶óÁü.
+// ë²ˆê°œ: ë¨¹êµ¬ë¦„ ìœ„ì¹˜ì—ì„œ ì§€ë©´ìœ¼ë¡œ ë»—ì–´ë‚˜ê°€ëŠ” ë²ˆê°œ ìŠ¤í¬ë¦½íŠ¸.
+// ì´ì§€ ëª¨ë“œ: 0.4ì´ˆ ì†Œë©¸ / í•˜ë“œ ëª¨ë“œ: 5.0ì´ˆ ë™ì•ˆ í•„ë“œ ì”ë¥˜ ë° 0.5ì´ˆ í‹± ê°ì „ í”¼í•´ ì§€ì† ì ìš©.
 public class LightningHazard : MonoBehaviour
 {
     public float damage = 1f;
-    public float lifetime = 0.4f;
+    public float lifetime = 0.4f;           // ìµœì´ˆ ë‚´ë¦¬ì¹¨ ëŒ€ê¸°ì‹œê°„ (0.4ì´ˆ)
+    public float easyModeDuration = 0.4f;   // ì´ì§€ ëª¨ë“œ ìœ ì§€ì‹œê°„ (0.4ì´ˆ)
+    public float hardModeDuration = 5.0f;   // í•˜ë“œ ëª¨ë“œ ì”ë¥˜ ìœ ì§€ì‹œê°„ (5.0ì´ˆ)
+    public float residualDuration = 5.0f;   // í•˜ë“œ ëª¨ë“œ ì”ë¥˜ ìœ ì§€ì‹œê°„ (5.0ì´ˆ)
+    public float damageTickInterval = 0.5f; // ì§€ì† ê°ì „ í”¼ê²© ì¿¨íƒ€ì„ (0.5ì´ˆ)
 
-    bool hasHit = false; // ÇÑ ¹ø¸¸ ÇÇÇØ¸¦ ÁÖµµ·Ï (ÂªÀº Áö¼Ó½Ã°£ µ¿¾È ¿©·¯ ¹ø Æ½ ¹æÁö)
+    public bool isEasyMode = false;
 
-    /// <summary>
-    /// fromPos¿¡ ½ÃÀÛÁ¡À» °íÁ¤ÇÏ°í, toPos ¹æÇâÀ¸·Î length¸¸Å­ »¸¾î³ª°¡´Â ÇüÅÂ·Î ¹èÄ¡.
-    /// </summary>
+    private SpriteRenderer sr;
+    private Animator anim;
+    private Collider2D col;
+    private Dictionary<PlayerHealth, float> lastHitTimes = new Dictionary<PlayerHealth, float>();
+
     public void Init(Vector3 fromPos, Vector3 toPos, float length)
     {
-        // ¡Ú Å©±â´Â ´õ ÀÌ»ó °è»êÇÏÁö ¾ÊÀ½ - ÇÁ¸®ÆÕ¿¡ ¼³Á¤µÈ localScaleÀ» ±×´ë·Î »ç¿ëÇÔ
-        // È¸ÀüÀº Ç×»ó ¼öÁ÷(À§¡æ¾Æ·¡)À¸·Î °íÁ¤
-        // toPos: ÇÃ·¹ÀÌ¾î xÁÂÇ¥ ±âÁØÀ¸·Î ¶¥¿¡ ´ê´Â ÁöÁ¡ (BossAttack¿¡¼­ ¹Ì¸® °è»êÇØ¼­ ³Ñ°ÜÁÜ)
         transform.rotation = Quaternion.identity;
         transform.position = toPos;
     }
 
+    public void Init(Vector3 fromPos, Vector3 toPos, bool isEasy)
+    {
+        transform.rotation = Quaternion.identity;
+        transform.position = toPos;
+        this.isEasyMode = isEasy;
+    }
+
     void Start()
     {
-        Destroy(gameObject, lifetime);
+        sr = GetComponent<SpriteRenderer>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
+
+        anim = GetComponent<Animator>();
+        if (anim == null) anim = GetComponentInChildren<Animator>();
+
+        col = GetComponent<Collider2D>();
+        if (col == null) col = GetComponentInChildren<Collider2D>();
+
+        BossAttack boss = FindFirstObjectByType<BossAttack>();
+        if (boss != null)
+        {
+            isEasyMode = boss.isEasyMode;
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(LightningLifecycleRoutine());
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    private IEnumerator LightningLifecycleRoutine()
     {
-        TryDamage(other.gameObject);
+        if (isEasyMode)
+        {
+            yield return new WaitForSeconds(easyModeDuration);
+            Destroy(gameObject);
+        }
+        else
+        {
+            StartCoroutine(ResidualLightningRoutine());
+        }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private IEnumerator ResidualLightningRoutine()
     {
-        TryDamage(collision.gameObject);
+        // 1. ë²ˆê°œ ìµœì´ˆ íƒ€ê²© ë°œë™ (0.4ì´ˆ)
+        yield return new WaitForSeconds(lifetime);
+
+        Debug.Log($"<color=cyan>[LightningHazard]</color> í•˜ë“œëª¨ë“œ 5ì´ˆê°„ ì”ë¥˜ ë²ˆê°œ ê°€ë™!");
+
+        // 2. í•˜ë“œ ëª¨ë“œ ì”ë¥˜ ë²ˆê°œ: ì´ 5ì´ˆ ì¤‘ ì²« 4ì´ˆëŠ” 100% ì§„í•œ ì„ ëª…ë„(Alpha 1.0f) ì§±ì§±í•¨ ìœ ì§€, ë§ˆì§€ë§‰ 1ì´ˆ ë™ì•ˆ í˜ì´ë“œì•„ì›ƒ
+        float elapsed = 0f;
+        float holdFullDuration = Mathf.Max(0f, residualDuration - 1.0f); // 4ì´ˆê°„ 100% ìœ ì§€
+        float fadeOutDuration = 1.0f; // ë§ˆì§€ë§‰ 1ì´ˆê°„ í˜ì´ë“œì•„ì›ƒ
+
+        Color startColor = sr != null ? sr.color : Color.white;
+        startColor.a = 1f;
+
+        while (elapsed < residualDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            // [í•µì‹¬] 5ì´ˆ ì”ë¥˜í•˜ëŠ” ë™ì•ˆ LIGHTNING ì• ë‹ˆë©”ì´ì…˜ì´ 1íšŒ ëë‚˜ë©´ 0ì´ˆ ì‹œì ìœ¼ë¡œ ëŒë ¤ ëŠê¹€ ì—†ì´ ë¬´í•œ ë°˜ë³µ ì¬ìƒ!
+            if (anim != null)
+            {
+                anim.enabled = true;
+                AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+                if (stateInfo.normalizedTime >= 0.95f)
+                {
+                    anim.Play("LIGHTNING", 0, 0f);
+                }
+            }
+
+            if (sr != null)
+            {
+                if (elapsed <= holdFullDuration)
+                {
+                    // ì²« 4ì´ˆ ë™ì•ˆì€ ì„ ëª…ë„ 100% ì§±ì§±í•˜ê²Œ ì„ ëª…í•¨ ìœ ì§€
+                    Color c = startColor;
+                    c.a = 1f;
+                    sr.color = c;
+                }
+                else
+                {
+                    // ë§ˆì§€ë§‰ 1ì´ˆ ë™ì•ˆ ìŠ¤ë¥´ë¥µ íˆ¬ëª…í•´ì§ (1.0 -> 0.0)
+                    float fadeRatio = (elapsed - holdFullDuration) / fadeOutDuration;
+                    Color c = startColor;
+                    c.a = Mathf.Lerp(1f, 0f, fadeRatio);
+                    sr.color = c;
+                }
+            }
+
+            yield return null;
+        }
+
+        Debug.Log($"<color=orange>[LightningHazard]</color> ì”ë¥˜ ë²ˆê°œ 5ì´ˆ ì™„ì „íˆ ì™„ë£Œ í›„ ì†Œë©¸!");
+        Destroy(gameObject);
     }
+
+    void OnTriggerStay2D(Collider2D other) { TryDamage(other.gameObject); }
+    void OnTriggerEnter2D(Collider2D other) { TryDamage(other.gameObject); }
+    void OnCollisionStay2D(Collision2D collision) { TryDamage(collision.gameObject); }
+    void OnCollisionEnter2D(Collision2D collision) { TryDamage(collision.gameObject); }
 
     void TryDamage(GameObject obj)
     {
-        if (hasHit) return;
-
         PlayerHealth player = obj.GetComponent<PlayerHealth>();
         if (player == null) player = obj.GetComponentInParent<PlayerHealth>();
 
         if (player != null)
         {
-            player.TakeDamage(damage);
-            hasHit = true;
+            if (!lastHitTimes.ContainsKey(player) || Time.time >= lastHitTimes[player] + damageTickInterval)
+            {
+                player.TakeDamage(damage);
+                lastHitTimes[player] = Time.time;
+                Debug.Log($"<color=red>[LightningHazard]</color> ë²ˆê°œ ê°ì „ í”¼ê²©! í”¼í•´ëŸ‰: {damage}");
+            }
         }
     }
 }
