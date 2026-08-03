@@ -39,6 +39,18 @@ public class R_EnemyMove : MonoBehaviour
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
 
+    [Header("벽 점프 안정성 설정")]
+    [Tooltip("isGrounded는 FixedUpdate에서만 갱신되기 때문에, Update() 타이밍과 어긋나 실제로는 접지 중인데도 " +
+             "한 프레임 동안 false로 읽혀 Jump()가 무시되는 경우가 있음. 마지막으로 접지했던 시점부터 " +
+             "이 시간(초) 안이면 여전히 접지 상태로 간주해서 점프가 씹히지 않도록 함 (코요테 타임)")]
+    public float groundedBufferDuration = 0.15f;
+    float lastGroundedTime = -999f;
+
+    [Tooltip("추적 중 벽(1칸 벽 등)에 막혔을 때, 점프 조건(isGrounded/CanClimbWall)이 한 프레임 실패하더라도 " +
+             "즉시 포기하지 않고 이 시간(초) 동안은 매 프레임 계속 점프를 재시도함")]
+    public float wallJumpRetryDuration = 0.3f;
+    float wallBlockStartTime = -1f;
+
     Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
 
     [Header("HP Bar (좌우 반전 방지)")]
@@ -224,13 +236,26 @@ public class R_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isChasing &&
-                isGrounded &&
-                CanClimbWall(desiredDir))
+            if (isChasing)
             {
-                Jump();
-                return;
+                if (wallBlockStartTime < 0f)
+                    wallBlockStartTime = Time.time;
+
+                if (CanClimbWall(desiredDir))
+                {
+                    Jump();
+                    wallBlockStartTime = -1f;
+                    return;
+                }
+
+                if (Time.time - wallBlockStartTime < wallJumpRetryDuration)
+                {
+                    if (animator != null) animator.SetBool("IsWalking", false);
+                    prevposition = transform.position;
+                    return;
+                }
             }
+
             if (animator != null) animator.SetBool("IsWalking", false);
 
             // 배회 모드에서만 벽 충돌 시 0.5초 멈췄다가 반대 방향으로 전환
@@ -242,6 +267,10 @@ public class R_EnemyMove : MonoBehaviour
 
             prevposition = transform.position;
             return;
+        }
+        else
+        {
+            wallBlockStartTime = -1f;
         }
 
         if (animator != null) animator.SetBool("IsWalking", true);
@@ -289,7 +318,8 @@ public class R_EnemyMove : MonoBehaviour
     }
     private void Jump()
     {
-        if (!isGrounded)
+        bool groundedRecently = isGrounded || (Time.time - lastGroundedTime <= groundedBufferDuration);
+        if (!groundedRecently)
             return;
 
         rigid.linearVelocity =
@@ -312,6 +342,9 @@ public class R_EnemyMove : MonoBehaviour
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
         isGrounded = groundedLeft || groundedRight;
+
+        if (isGrounded)
+            lastGroundedTime = Time.time;
     }
     private void FaceTarget()
     {

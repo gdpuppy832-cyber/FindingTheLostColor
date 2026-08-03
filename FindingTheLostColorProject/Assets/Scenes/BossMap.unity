@@ -16993,6 +16993,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1184861206}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: frostRainDuration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: frostSpawnInterval
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: colorOrbSpawnOffsetY
       value: -4
       objectReference: {fileID: 0}
@@ -17013,6 +17021,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1077446561}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: frostSpawnCountPerTick
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: 'blackFogs.Array.data[0]'
       value: 
       objectReference: {fileID: 1536330476}
@@ -17020,6 +17032,10 @@ PrefabInstance:
       propertyPath: 'blackFogs.Array.data[1]'
       value: 
       objectReference: {fileID: 867740731}
+    - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: colorWhirlpoolTriggerCount
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2434699336844069180, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: spawnInterval
       value: 30
