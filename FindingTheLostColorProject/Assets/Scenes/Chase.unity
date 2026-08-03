@@ -484,6 +484,14 @@ PrefabInstance:
       propertyPath: inkCurtainRequiredPaintOverlapTime
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -485289909
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -885,8 +893,8 @@ MonoBehaviour:
   - {fileID: 8074891915994420155, guid: 00a1b64584448244392d5bd47a9c01a4, type: 3}
   chunkLength: 20
   player: {fileID: 1225379488}
-  chunksAheadCount: 3
-  despawnDelay: 3
+  chunksAheadCount: 4
+  despawnDelay: 1
 --- !u!4 &1635130481
 Transform:
   m_ObjectHideFlags: 0
