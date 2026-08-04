@@ -380,7 +380,10 @@ public class H_MonsterAttack : MonoBehaviour
         float activeJumpHeight = isInitialPounce ? initialJumpHeight : jumpHeight;
         float activeJumpDuration = isInitialPounce ? initialJumpDuration : jumpDuration;
 
-
+        if (landPos.x != startPos.x && enemyMove != null)
+        {
+            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
+        }
 
         // 포물선 점프 시작
         float elapsed = 0f;
