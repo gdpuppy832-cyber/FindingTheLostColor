@@ -20,7 +20,7 @@ public class BossChaseSceneTransition : MonoBehaviour
     private IEnumerator TransitionRoutine()
     {
         // Time.timeScale 영향 없이 정확히 90초(기본값) 대기
-        yield return new WaitForSecondsRealtime(transitionDelay);
+        yield return new WaitForSeconds(transitionDelay);
 
         if (ScreenFader.Instance != null)
         {
