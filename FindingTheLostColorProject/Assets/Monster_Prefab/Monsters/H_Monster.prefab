@@ -158,8 +158,8 @@ MonoBehaviour:
   postDelay: 0.5
   attackCooldown: 2
   initialTelegraphTime: 1
-  initialJumpHeight: 2.8
-  initialJumpDuration: 0.6
+  initialJumpHeight: 1.5
+  initialJumpDuration: 0.75
   stunDuration: 3
   wakeUpDelay: 0
   contactHitbox: {fileID: 0}
@@ -186,6 +186,7 @@ MonoBehaviour:
   fallAcceleration: 20
   maxFallTime: 3
   groundCheckRadius: 0.3
+  safeDropDistance: 3
 --- !u!114 &6751853423434323122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,8 +254,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.756, y: 0.52}
-  m_SizeDelta: {x: 100.337776, y: 40.7029}
+  m_AnchoredPosition: {x: 0.61, y: 0.385}
+  m_SizeDelta: {x: 1.6966, y: 0.5162}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8909110265294197332
 CanvasRenderer:
@@ -349,7 +350,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 49.168148, y: 20.46486, z: 50.099377, w: 19.838392}
+  m_margin: {x: -0.029397132, y: 0.24471483, z: 0.009925484, w: 0.74620664}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

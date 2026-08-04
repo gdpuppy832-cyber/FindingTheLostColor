@@ -109,28 +109,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 04_FullpupilCat_Attack_6_0
-      rect:
-        serializedVersion: 2
-        x: 144
-        y: 132
-        width: 17
-        height: 22
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 35fbf388084401350800000000000000
-      internalID: 5985359223607770963
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: 04_FullpupilCat_Attack_6_1
       rect:
         serializedVersion: 2
@@ -148,50 +126,6 @@ TextureImporter:
       bones: []
       spriteID: 5ac28c96938184c80800000000000000
       internalID: -8338388075209544539
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 04_FullpupilCat_Attack_6_2
-      rect:
-        serializedVersion: 2
-        x: 392
-        y: 113
-        width: 19
-        height: 12
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c433538684d08c8d0800000000000000
-      internalID: -2825994161537862836
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 04_FullpupilCat_Attack_6_3
-      rect:
-        serializedVersion: 2
-        x: 127
-        y: 84
-        width: 27
-        height: 24
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c7c40155da21738b0800000000000000
-      internalID: -5172645111345951620
       vertices: []
       indices: 
       edges: []

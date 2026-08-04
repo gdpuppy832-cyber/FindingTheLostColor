@@ -380,7 +380,10 @@ public class H_MonsterAttack : MonoBehaviour
         float activeJumpHeight = isInitialPounce ? initialJumpHeight : jumpHeight;
         float activeJumpDuration = isInitialPounce ? initialJumpDuration : jumpDuration;
 
-
+        if (landPos.x != startPos.x && enemyMove != null)
+        {
+            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
+        }
 
         // 포물선 점프 시작
         float elapsed = 0f;
@@ -553,7 +556,11 @@ public class H_MonsterAttack : MonoBehaviour
 
     public float groundCheckRadius = 0.3f;  // 바닥 감지 반경
 
-    // isCliff: 경로 중간에 바닥이 끊겨서 착지 지점이 원래 목표(desired)보다 앞에서 잘렸는지 여부
+    [Tooltip("경로 중간 지점 아래로 이 거리 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함 (계단/턱 아래로 착지 허용)")]
+    public float safeDropDistance = 3f;
+
+    const float ceilingExclusionEpsilon = 0.01f;
+
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
@@ -561,32 +568,36 @@ public class H_MonsterAttack : MonoBehaviour
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
-        float rayStartY = desired.y + 1f;
+        float rayStartY = desired.y - 0.1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
-        RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
-        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
-        int steps = 10;
-        Vector2 lastGroundPos = start;
-        for (int i = 0; i <= steps; i++)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, Vector2.down, 50f, groundLayer);
+
+        RaycastHit2D? bestHit = null;
+        foreach (var h in hits)
         {
-            float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-            Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
+            if (h.point.y > desired.y + ceilingExclusionEpsilon) continue;
 
-            bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
-
-            if (foundGround)
-            {
-                lastGroundPos = checkPos;
-            }
-            else
-            {
-                isCliff = true;
-                return lastGroundPos;
-            }
+            if (bestHit == null || h.point.y > bestHit.Value.point.y)
+                bestHit = h;
         }
-        return targetLandPos;
+
+        if (bestHit == null)
+        {
+            isCliff = true;
+            return desired;
+        }
+
+        float currentGroundY = start.y - footOffset;
+        float landingGroundY = bestHit.Value.point.y;
+
+        if (currentGroundY - landingGroundY > safeDropDistance)
+        {
+            isCliff = true;
+            return desired;
+        }
+
+        return bestHit.Value.point + Vector2.up * footOffset;
     }
 
     void OnDrawGizmosSelected()
