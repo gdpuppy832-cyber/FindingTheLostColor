@@ -120,7 +120,7 @@ public class BossPortalSpawner : MonoBehaviour
 
         // [신규] 이지 모드일 때 보스가 다른 패턴을 시전 중이면 패턴 겹침 방지를 위해 소환 시도를 보스 패턴 종료까지 일시 미룸
         BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
-        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
+        bool isEasy = (bossAttack != null && bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
         bool isBossAttacking = EZ_BossAttack.isPatternActive || BossAttack.isPatternActive;
 
         if (isEasy && isBossAttacking)
@@ -147,7 +147,7 @@ public class BossPortalSpawner : MonoBehaviour
     private IEnumerator SpawnSequence()
     {
         BossAttack mainBoss = FindFirstObjectByType<BossAttack>();
-        bool isEasy = (EZ_bossAttack != null && EZ_bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
+        bool isEasy = (bossAttack != null && bossAttack.isEasyMode) || (mainBoss != null && mainBoss.isEasyMode);
 
         // 이지 모드인 경우 소환 연출 동안 보스가 다른 공격을 시작하지 않도록 패턴 락 켜기
         if (isEasy)
