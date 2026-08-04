@@ -98,10 +98,7 @@ public class AutoRunnerMove : MonoBehaviour
         moveDirection = Vector2.right;
 
         // 항상 걷는 애니메이션이 나오도록 유지
-        if (animator != null)
-        {
-            animator.SetBool("IsWalking", true);
-        }
+    
 
         // 조작 가능한 상태일 때만 점프 입력 허용 (좌우 입력은 사용하지 않음)
         if (canControl)

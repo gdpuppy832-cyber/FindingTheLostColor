@@ -67,13 +67,6 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("레이저 본체가 유지되는 시간(초)")]
     public float laserDuration = 0.5f;
 
-    [Tooltip("레이저 시작 예정 시각으로부터 몇 초 전에 탄환/먹물 장막 생성을 멈출지")]
-    public float stopAttackBeforeLaser = 1f;
-
-    // 레이저 공격 진행 중 여부. true인 동안 FireLoop는 탄환/먹물 장막을 실행하지 않음
-    private bool isLaserAttacking = false;
-    // 레이저 텔레그래프 시작 전, 탄환/먹물 장막 생성만 멈추는 사전 대기 상태
-    private bool isPreLaserPause = false;
     private float attackStartTime; // 추격(공격 루프) 시작 시각 - laserUnlockTime 계산 기준
     private Coroutine laserLoopCoroutine;
 
@@ -94,13 +87,6 @@ public class BossChaseAttack : MonoBehaviour
     {
         while (true)
         {
-            // 레이저 공격이 진행 중이거나, 시작 직전 대기 중일 때는 탄환/먹물 장막 패턴을 절대 실행하지 않음
-            if (isLaserAttacking || isPreLaserPause)
-            {
-                yield return null;
-                continue;
-            }
-
             if (bulletFireCount >= bulletsBeforeInkCurtain)
             {
                 // 탄환을 bulletsBeforeInkCurtain발 발사했으면 이번 차례는 먹물 장막으로 대체
@@ -210,13 +196,6 @@ public class BossChaseAttack : MonoBehaviour
             yield break;
         }
 
-        // 텔레그래프 시작 전, 화면을 비워주는 사전 대기 시간 동안은 새 탄환/먹물 장막 생성만 차단
-        isPreLaserPause = true;
-        yield return new WaitForSeconds(stopAttackBeforeLaser);
-        isPreLaserPause = false;
-
-        isLaserAttacking = true;
-
         // ① 텔레그래프 생성 (laserFirePoint 위치 고정)
         GameObject telegraph = null;
         if (laserTelegraphPrefab != null)
@@ -276,8 +255,6 @@ public class BossChaseAttack : MonoBehaviour
         {
             Debug.LogWarning("[BossChaseAttack] laserPrefab이 비어있어 레이저를 발사할 수 없습니다.");
         }
-
-        isLaserAttacking = false;
     }
     void OnDisable()
     {
@@ -287,13 +264,11 @@ public class BossChaseAttack : MonoBehaviour
             fireLoopCoroutine = null;
         }
 
-        // 레이저 루프도 함께 정지하고, 진행 중이던 레이저 상태 플래그도 초기화
+        // 레이저 루프도 함께 정지
         if (laserLoopCoroutine != null)
         {
             StopCoroutine(laserLoopCoroutine);
             laserLoopCoroutine = null;
         }
-        isLaserAttacking = false;
-        isPreLaserPause = false;
     }
 }
