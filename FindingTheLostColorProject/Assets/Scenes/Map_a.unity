@@ -171,6 +171,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PauseManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5788282712644293211, guid: bb9d5cee0becdc44a9c29931c9a8d38d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -13.533325
+      objectReference: {fileID: 0}
+    - target: {fileID: 6841567340925199102, guid: bb9d5cee0becdc44a9c29931c9a8d38d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -26534,6 +26542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1520221423}
   - component: {fileID: 1520221422}
+  - component: {fileID: 1520221424}
   m_Layer: 0
   m_Name: Hole_event
   m_TagString: Untagged
@@ -26554,9 +26563,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 6665902968580602944, guid: fdb9eb15a1b4035418e7599edefd1dee, type: 3}
-  rangeX: 6
+  rangeX: 6.4
   spawnOffsetY: 0
-  spawnInterval: 0.6
+  spawnInterval: 2
   initialDelay: 0.5
   isSpawning: 1
 --- !u!4 &1520221423
@@ -26574,6 +26583,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1520221424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520221421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 016ff43dd5c4ea44aa55d11a96413ea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speechBubbleAnimator: {fileID: 0}
+  speechBubbleTriggerName: 19_nero_SpeechBubbleTriger
+  speechBubbleDuration: 2
+  warningIndicatorPrefab: {fileID: 8403602281671783000, guid: 86121e43083e49f4ab1fd322d4f93f7a, type: 3}
+  warningIndicatorInstance: {fileID: 0}
+  warningDuration: 2
+  darkOrbPrefab: {fileID: 8042931255661769342, guid: 33b8bc8766a4a334b8fbf70ba4c83ece, type: 3}
+  spawnTopOffsetY: 8
+  attackInterval: 5
+  isAttacking: 1
+  useMinXThreshold: 1
+  startAttackMinX: 266
+  playerTransform: {fileID: 0}
 --- !u!1001 &1546050837
 PrefabInstance:
   m_ObjectHideFlags: 0
