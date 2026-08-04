@@ -474,7 +474,7 @@ PrefabInstance:
       objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletSpeed
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: fireInterval
@@ -493,6 +493,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1244530048}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: inkCurtainSpeed
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserUnlockTime
       value: 20
       objectReference: {fileID: 0}
@@ -510,7 +514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainRequiredPaintOverlapTime
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_SortingLayer
