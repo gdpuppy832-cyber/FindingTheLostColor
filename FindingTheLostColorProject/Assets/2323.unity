@@ -2792,6 +2792,8 @@ MonoBehaviour:
   maxDistance: 15
   minCameraPos: {x: -100, y: -3}
   maxCameraPos: {x: 100, y: 100}
+  useDisableYLimitXThreshold: 0
+  disableYLimitXThreshold: 266
   isBossStageCamera: 0
   bossIntroDelay: 3
   zoomDuration: 1

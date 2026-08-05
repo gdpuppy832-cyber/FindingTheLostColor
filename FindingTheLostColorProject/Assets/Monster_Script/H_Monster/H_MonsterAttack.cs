@@ -50,6 +50,7 @@ public class H_MonsterAttack : MonoBehaviour
     H_MonsterMove enemyMove;
     private Rigidbody2D rigid;
     private Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+    NormalMonster nm;
 
     // 최초 덮치기 도중 플레이어 타격 성공 여부 플래그
     private bool initialPounceHitPlayer = false;
@@ -77,6 +78,9 @@ public class H_MonsterAttack : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
+
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
 
         // 게임 시작 시 텔레그래프가 그대로 보이는 문제 방지 (일반 몬스터 EnemyAttack.cs와 동일하게 처음부터 꺼둠)
         if (meleeTelegraphSprite != null)
@@ -380,53 +384,15 @@ public class H_MonsterAttack : MonoBehaviour
         float activeJumpHeight = isInitialPounce ? initialJumpHeight : jumpHeight;
         float activeJumpDuration = isInitialPounce ? initialJumpDuration : jumpDuration;
 
-        if (landPos.x != startPos.x && enemyMove != null)
+        Coroutine movementRoutine = (nm != null)
+             ? nm.StartCoroutine(JumpMovementRoutine(landPos, activeJumpHeight, activeJumpDuration, jumpColliderSize))
+             : StartCoroutine(JumpMovementRoutine(landPos, activeJumpHeight, activeJumpDuration, jumpColliderSize));
+
+        yield return movementRoutine;
+
+        if (nm != null && nm.IsPurified)
         {
-            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
-        }
-
-        // 포물선 점프 시작
-        float elapsed = 0f;
-        Vector2 lastValidPos = startPos;
-        bool hitCeiling = false;
-
-        while (elapsed < activeJumpDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / activeJumpDuration);
-            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
-            float heightOffset = 4f * activeJumpHeight * t * (1f - t);
-
-            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
-
-            // 천장(장애물) 충돌 체크
-            Vector2 moveDir = desiredPos - lastValidPos;
-            float moveDist = moveDir.magnitude;
-            if (moveDist > 0.0001f)
-            {
-                RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
-                if (hit.collider != null)
-                {
-                    desiredPos = hit.point - moveDir.normalized * 0.05f;
-                    hitCeiling = true;
-                }
-            }
-
-            lastValidPos = desiredPos;
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            yield return null;
-
-            if (hitCeiling)
-                break;
-        }
-
-        if (hitCeiling)
-        {
-            yield return StartCoroutine(FallToGround());
-        }
-        else
-        {
-            transform.position = landPos; // 정확히 착지 지점에 정렬 (J_EnemyAttack과 동일)
+            yield break;
         }
 
         // 착지했으므로 사냥(점프) 애니메이션 종료
@@ -503,6 +469,63 @@ public class H_MonsterAttack : MonoBehaviour
 
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
+    }
+
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 landPos, float activeJumpHeight, float activeJumpDuration, Vector2 jumpColliderSize)
+    {
+        if (nm != null && nm.IsPurified)
+        {
+            yield break;
+        }
+
+        Vector2 startPos = transform.position;
+
+        if (landPos.x != startPos.x && enemyMove != null)
+        {
+            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
+        }
+
+        float elapsed = 0f;
+        Vector2 lastValidPos = startPos;
+        bool hitCeiling = false;
+
+        while (elapsed < activeJumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / activeJumpDuration);
+            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
+            float heightOffset = 4f * activeJumpHeight * t * (1f - t);
+
+            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
+
+            Vector2 moveDir = desiredPos - lastValidPos;
+            float moveDist = moveDir.magnitude;
+            if (moveDist > 0.0001f)
+            {
+                RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
+                if (hit.collider != null)
+                {
+                    desiredPos = hit.point - moveDir.normalized * 0.05f;
+                    hitCeiling = true;
+                }
+            }
+
+            lastValidPos = desiredPos;
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            yield return null;
+
+            if (hitCeiling)
+                break;
+        }
+
+        if (hitCeiling)
+        {
+            yield return StartCoroutine(FallToGround());
+        }
+        else
+        {
+            transform.position = landPos;
+        }
     }
 
     public float fallAcceleration = 20f;   // 낙하 가속도
