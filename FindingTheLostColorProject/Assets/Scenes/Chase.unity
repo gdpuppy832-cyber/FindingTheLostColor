@@ -426,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: transitionDelay
-      value: 600
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.x
@@ -519,6 +519,10 @@ PrefabInstance:
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletsBeforeInkCurtain
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: requiredPaintOverlapTime
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainRequiredPaintOverlapTime
@@ -636,6 +640,14 @@ PrefabInstance:
     - target: {fileID: 2485025523567754234, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2727329631353126922, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -18
+      objectReference: {fileID: 0}
+    - target: {fileID: 2727329631353126922, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 2747423992399475623, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_LocalPosition.x
@@ -760,6 +772,14 @@ PrefabInstance:
     - target: {fileID: 4883735426482037287, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: orthographic size
       value: 5.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4967722058908863658, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4967722058908863658, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 15.1
       objectReference: {fileID: 0}
     - target: {fileID: 5540492297323759555, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchorMax.y
