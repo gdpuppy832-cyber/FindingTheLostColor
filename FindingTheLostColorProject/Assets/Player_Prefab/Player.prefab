@@ -358,6 +358,8 @@ MonoBehaviour:
   deathTriggerName: Die
   hurtTriggerName: Hurt
   deathYThreshold: -7
+  useDisableDeathXThreshold: 0
+  disableDeathXThreshold: 266
   deathSprite: {fileID: 0}
   deathSFX: {fileID: 0}
   fallSFX: {fileID: 0}
@@ -381,8 +383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
-  jumpForce: 10.2
-  jumpDelay: 0.1
+  jumpForce: 10.4
+  jumpDelay: 0.12
   dashSpeed: 17
   dashDuration: 0.2
   dashCooldown: 3
@@ -501,7 +503,7 @@ Transform:
   m_GameObject: {fileID: 7858486052886892305}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.21, y: -0.56, z: 0}
+  m_LocalPosition: {x: -0.14, y: -0.56, z: 0}
   m_LocalScale: {x: 1.4285715, y: 1.4925373, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
