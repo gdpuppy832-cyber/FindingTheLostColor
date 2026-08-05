@@ -469,8 +469,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.75, y: 0.53}
-  m_SizeDelta: {x: 100.337776, y: 40.7029}
+  m_AnchoredPosition: {x: 0.111, y: 0.244}
+  m_SizeDelta: {x: 1.0213, y: 0.4042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6844123284146265641
 CanvasRenderer:
@@ -565,7 +565,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 49.168148, y: 20.46486, z: 50.584446, w: 19.901495}
+  m_margin: {x: 0.01597312, y: 0.04381585, z: 0.011060797, w: 0.14514649}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -668,6 +668,8 @@ MonoBehaviour:
   wanderEdgeCheckDistance: 2
   jumpForce: 5
   climbableWallHeight: 1.2
+  groundedBufferDuration: 0.15
+  wallJumpRetryDuration: 0.3
   hpBar: {fileID: 6301831316783023479}
   chaseAnimSpeedMultiplier: 1.5
 --- !u!50 &5328816977903137336
