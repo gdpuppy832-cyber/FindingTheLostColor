@@ -530,6 +530,9 @@ public class CursorController : MonoBehaviour
                     ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
                     if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
 
+                    ColoringFallingBlock fallingBlock = hitCollider.GetComponent<ColoringFallingBlock>();
+                    if (fallingBlock == null) fallingBlock = hitCollider.GetComponentInParent<ColoringFallingBlock>();
+
                     if (bridge != null)
                     {
                         if (healedObjects.Contains(bridge.gameObject)) continue;
@@ -540,6 +543,23 @@ public class CursorController : MonoBehaviour
                         {
                             float healAmount = activeHealRate * Time.deltaTime;
                             bridge.Heal(healAmount);
+
+                            if (SuperGaugeController.Instance != null)
+                            {
+                                SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                            }
+                        }
+                    }
+                    else if (fallingBlock != null)
+                    {
+                        if (healedObjects.Contains(fallingBlock.gameObject)) continue;
+                        healedObjects.Add(fallingBlock.gameObject);
+
+                        // 정화 완료된 채색 블록 배제
+                        if (!fallingBlock.IsPurified)
+                        {
+                            float healAmount = activeHealRate * Time.deltaTime;
+                            fallingBlock.Heal(healAmount);
 
                             if (SuperGaugeController.Instance != null)
                             {
@@ -684,6 +704,10 @@ public class CursorController : MonoBehaviour
 
                 ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
                 if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
+
+                ColoringFallingBlock fallingBlock = hitCollider.GetComponent<ColoringFallingBlock>();
+                if (fallingBlock == null) fallingBlock = hitCollider.GetComponentInParent<ColoringFallingBlock>();
+
                 if (bridge != null)
                 {
                     if (healedObjects.Contains(bridge.gameObject)) continue;
@@ -693,6 +717,24 @@ public class CursorController : MonoBehaviour
                     if (!bridge.IsPurified)
                     {
                         bridge.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
+                    hitCount++;
+                    continue;
+                }
+                else if (fallingBlock != null)
+                {
+                    if (healedObjects.Contains(fallingBlock.gameObject)) continue;
+                    healedObjects.Add(fallingBlock.gameObject);
+
+                    // 정화 완료된 채색 블록 배제
+                    if (!fallingBlock.IsPurified)
+                    {
+                        fallingBlock.Heal(activeChargeHeal);
 
                         if (SuperGaugeController.Instance != null)
                         {

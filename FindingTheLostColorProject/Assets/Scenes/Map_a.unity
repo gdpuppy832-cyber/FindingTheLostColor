@@ -26563,11 +26563,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 6665902968580602944, guid: fdb9eb15a1b4035418e7599edefd1dee, type: 3}
+  secondaryPrefabToSpawn: {fileID: 463744175093243742, guid: 8efd900365ed38343a19b50ab06d600c, type: 3}
+  secondarySpawnChance: 0.15
   rangeX: 6.5
   spawnOffsetY: 0
   spawnInterval: 2
   initialDelay: 0.5
   isSpawning: 1
+  useObjectPooling: 1
+  initialPoolSize: 10
 --- !u!4 &1520221423
 Transform:
   m_ObjectHideFlags: 0
