@@ -120,39 +120,10 @@ public class ColoringFallingBlock : MonoBehaviour
 
     void Update()
     {
-        // 1. 아래 방향으로 일정한 속도로 하강 이동
+        // 아래 방향으로 일정한 속도로 하강 이동
         if (enableFall)
         {
             transform.Translate(Vector3.down * fallSpeed * Time.deltaTime, Space.World);
-        }
-
-        // 2. 마우스 붓질 감지 (마우스 왼쪽 버튼 누른 채 커서를 블록 위에 가져다 대면 채색 진행)
-        CheckMouseBrushPainting();
-    }
-
-    /// <summary>
-    /// 마우스 커서가 블록 위에 있고 왼쪽 버튼(붓질)을 누르고 있을 때 실시간으로 채색(Heal) 적용
-    /// </summary>
-    private void CheckMouseBrushPainting()
-    {
-        if (isPurified) return;
-
-        // 마우스 왼쪽 버튼을 누르고 있는 동안
-        if (Input.GetMouseButton(0))
-        {
-            Camera mainCam = Camera.main;
-            if (mainCam != null)
-            {
-                Vector3 mouseWorldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-
-                if (blockCollider != null && blockCollider.OverlapPoint(mousePos2D))
-                {
-                    // 초당 10의 속도로 붓질 정화 진행 (0.5초 만에 5 완충)
-                    float healAmount = 10.0f * Time.deltaTime;
-                    Heal(healAmount);
-                }
-            }
         }
     }
 
