@@ -604,7 +604,6 @@ public class EZ_BossAttack : MonoBehaviour
     GameObject telegraphMarkerTemplate;           // telegraphMarkerPrefab의 런타임 복제 템플릿 (원본 보호용)
     GameObject spikeTemplate;                     // spikePrefab의 런타임 복제 템플릿 (원본 보호용)
     public float spikeTelegraphDuration = 1.5f;      // 텔레그래프 지속 시간
-    public float spikeTelegraphDuration = 1.5f;      // 텔레그래프 지속 시간
     public float spikeTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     [Tooltip("가시 유지 시간")]
     public float spikeLifetime = 3f;               // 가시가 유지되는 시간
