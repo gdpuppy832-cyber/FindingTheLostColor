@@ -31,6 +31,22 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("붓질(1번 모드)이 탄환과 겹쳐 있어야 하는 누적 시간(초). 이 시간을 채우면 탄환이 파괴됨")]
     public float requiredPaintOverlapTime = 1f;
 
+    [Header("Curve Bullet Settings")]
+    [Tooltip("변화구 탄환 프리팹 (일반 탄환과 별개)")]
+    public GameObject curveBulletPrefab;
+    [Tooltip("변화구 탄환이 항상 생성되는 위치 (일반 탄환의 3개 발사 위치와 별개)")]
+    public Transform curveFirePoint;
+    [Tooltip("변화구 탄환이 방향을 틀어 향할 목표 위치")]
+    public Transform curveTargetPoint;
+    [Tooltip("생성 후 몇 초가 지나야 curveTargetPoint 방향으로 꺾이기 시작할지")]
+    public float curveStartTime = 0.8f;
+    [Tooltip("방향을 튼 이후 curveTargetPoint를 향해 이동하는 속도")]
+    public float curveMoveSpeed = 6f;
+    [Tooltip("일반 탄환을 몇 발 발사할 때마다 그 자리를 변화구 탄환으로 대체할지 (먹물 장막 카운트와 독립적으로 관리됨)")]
+    public int bulletsBeforeCurveBullet = 15;
+
+    private int curveBulletFireCount = 0; // 변화구 전환 카운트 (bulletFireCount와 완전히 독립적으로 관리)
+
     [Header("Boss Damage")]
     [Tooltip("모든 보스 공격이 공통으로 사용하는 공격력. 앞으로 추가될 공격도 이 값을 사용함")]
     public int attackDamage = 1;
@@ -95,7 +111,19 @@ public class BossChaseAttack : MonoBehaviour
             }
             else
             {
-                FireBullet();
+                // ★ 먹물 장막 카운트(bulletFireCount)와 완전히 독립적인 변화구 카운트.
+                //   일반 탄환이 나가야 할 차례 중, 15번째마다 변화구로 대체됨.
+                curveBulletFireCount++;
+                if (curveBulletFireCount >= bulletsBeforeCurveBullet)
+                {
+                    FireCurveBullet();
+                    curveBulletFireCount = 0;
+                }
+                else
+                {
+                    FireBullet();
+                }
+
                 bulletFireCount++;
             }
 
@@ -129,6 +157,43 @@ public class BossChaseAttack : MonoBehaviour
         if (bullet == null) bullet = bulletObj.AddComponent<BossChaseBullet>();
         bullet.Initialize(attackDamage, bulletLifetime, requiredPaintOverlapTime);
     }
+
+    private void FireCurveBullet()
+    {
+        if (curveBulletPrefab == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] curveBulletPrefab이 비어있어 변화구를 발사할 수 없습니다.");
+            return;
+        }
+        if (curveFirePoint == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] curveFirePoint가 비어있어 변화구를 발사할 수 없습니다.");
+            return;
+        }
+        if (curveTargetPoint == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] curveTargetPoint가 비어있어 변화구를 발사할 수 없습니다.");
+            return;
+        }
+
+        GameObject bulletObj = Instantiate(curveBulletPrefab, curveFirePoint.position, Quaternion.identity);
+
+        Rigidbody2D rb = bulletObj.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = bulletObj.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.left * bulletSpeed; // 생성 직후엔 일반 탄환과 동일하게 왼쪽으로 직진
+
+        // 기존 BossChaseBullet을 그대로 재사용 -> 정화(붓질)/수명/데미지 시스템이 일반 탄환과 완전히 동일
+        BossChaseBullet bullet = bulletObj.GetComponent<BossChaseBullet>();
+        if (bullet == null) bullet = bulletObj.AddComponent<BossChaseBullet>();
+        bullet.Initialize(attackDamage, bulletLifetime, requiredPaintOverlapTime);
+
+        // 곡선 이동만 별도 컴포넌트로 추가 (BossChaseBullet 로직에는 전혀 관여하지 않음)
+        BossChaseCurveBullet curveMotion = bulletObj.GetComponent<BossChaseCurveBullet>();
+        if (curveMotion == null) curveMotion = bulletObj.AddComponent<BossChaseCurveBullet>();
+        curveMotion.SetCurveParams(curveTargetPoint.position, curveStartTime, curveMoveSpeed);
+    }
+
     // 먹물 장막(Ink Curtain) 공격 전용 메서드. 탄환과 동일하게 오른쪽 -> 왼쪽으로 이동하며,
     // attackDamage/requiredPaintOverlapTime을 새로 만들지 않고 그대로 재사용함
     private void FireInkCurtain()
