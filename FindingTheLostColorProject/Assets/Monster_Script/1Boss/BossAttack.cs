@@ -432,7 +432,7 @@ public class BossAttack : MonoBehaviour
             if (bossHealth != null)
             {
                 bossHealth.IsPurified = false; // 2페이즈 대미지/정화 피격 가드 해제!
-                bossHealth.Heal(bossHealth.maxHealth * 0.5f);
+    
             }
 
             // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
