@@ -666,7 +666,7 @@ MonoBehaviour:
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
   jumpForce: 4.75
-  climbableWallHeight: 1
+  climbableWallHeight: 1.1
   groundedBufferDuration: 0.15
   hpBar: {fileID: 6301831316783023479}
   chaseAnimSpeedMultiplier: 1.5

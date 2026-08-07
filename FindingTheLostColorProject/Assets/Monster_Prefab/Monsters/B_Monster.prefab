@@ -153,7 +153,7 @@ MonoBehaviour:
   wanderEdgeCheckDistance: 1
   trueGroundCheckDistance: 0.12
   jumpForce: 3.15
-  climbableWallHeight: 1
+  climbableWallHeight: 1.1
   hpBar: {fileID: 6485753932739016795}
 --- !u!114 &-1757121507883713966
 MonoBehaviour:

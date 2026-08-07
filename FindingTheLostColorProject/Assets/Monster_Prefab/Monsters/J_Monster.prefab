@@ -403,7 +403,7 @@ MonoBehaviour:
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
   jumpForce: 3.15
-  climbableWallHeight: 1
+  climbableWallHeight: 1.1
   idleStateName: 04_FullpupilCat_IDLE
   idleAnimatorLayer: 0
   hpBar: {fileID: 7729095219242970518}
