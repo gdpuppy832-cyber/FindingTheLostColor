@@ -1,19 +1,19 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossChaseCurveBullet : MonoBehaviour
 {
-    private Vector3 targetPos;
+    private float targetY;
     private float curveStartTime;
     private float curveMoveSpeed;
 
     private float elapsed = 0f;
+    private bool reachedTargetY = false;
     private Rigidbody2D rb;
 
     public void SetCurveParams(Vector3 targetPosition, float startTime, float moveSpeed)
     {
-        targetPos = targetPosition;
+        targetY = targetPosition.y;
         curveStartTime = startTime;
         curveMoveSpeed = moveSpeed;
         rb = GetComponent<Rigidbody2D>();
@@ -21,20 +21,28 @@ public class BossChaseCurveBullet : MonoBehaviour
 
     void Update()
     {
-        if (rb == null) return;
+        if (rb == null || reachedTargetY) return;
 
         elapsed += Time.deltaTime;
 
-        // curveStartTime ÀÌÀü¿¡´Â ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½ -> ±âÁ¸¿¡ ¼³Á¤µÈ ¿ŞÂÊ Á÷Áø velocity ±×´ë·Î À¯Áö
+        // curveStartTime ì´ì „ì—ëŠ” ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ -> ê¸°ì¡´ì— ì„¤ì •ëœ ì™¼ìª½ ì§ì§„ velocity ê·¸ëŒ€ë¡œ ìœ ì§€
         if (elapsed < curveStartTime) return;
 
-        // curveStartTime ÀÌÈÄ: ¸ñÇ¥ ÁöÁ¡ ¹æÇâÀ¸·Î velocity¸¦ ¸Å ÇÁ·¹ÀÓ Á¶±İ¾¿ È¸Àü½ÃÄÑ
-        // ÀÚ¿¬½º·´°Ô ¹æÇâÀ» Æ®´Â È¿°ú¸¦ ¸¸µê (À§Ä¡¸¦ Á÷Á¢ ¿Å±âÁö ¾ÊÀ¸¹Ç·Î ¼ø°£ÀÌµ¿ÀÌ ¹ß»ıÇÏÁö ¾ÊÀ½)
-        Vector2 directionToTarget = ((Vector2)targetPos - rb.position).normalized;
-        Vector2 desiredVelocity = directionToTarget * curveMoveSpeed;
+        // curveStartTime ì´í›„: Xì¶• ì†ë„(ì™¼ìª½ ì§ì§„)ëŠ” ê·¸ëŒ€ë¡œ ë‘ê³ , Yì¶• ì†ë„ë§Œ ëª©í‘œ Yë¥¼ í–¥í•´ ë¶€ì—¬
+        float currentY = rb.position.y;
+        float direction = Mathf.Sign(targetY - currentY);
+        float velocityY = direction * curveMoveSpeed;
 
-        // MoveTowards·Î ÇöÀç velocity¸¦ desiredVelocity ÂÊÀ¸·Î ºÎµå·´°Ô º¸°£
-        // (Lerp/SmoothDamp ´ë½Å MoveTowards¸¦ »ç¿ëÇØ È¸Àü ¼Óµµ¸¦ curveMoveSpeed¿¡ ºñ·ÊÇÏ°Ô Á¦¾î)
-        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, desiredVelocity, curveMoveSpeed * Time.deltaTime * 2f);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, velocityY);
+
+        // ëª©í‘œ Yì— ì‹¤ì œë¡œ ë„ë‹¬í–ˆëŠ”ì§€ ë§¤ í”„ë ˆì„ í™•ì¸ (í•œ í”„ë ˆì„ì— ì§€ë‚˜ì¹˜ëŠ” ê²ƒì„ ë°©ì§€í•˜ê¸° ìœ„í•´ MoveTowardsë¡œ ìœ„ì¹˜ ë³´ì •)
+        float newY = Mathf.MoveTowards(currentY, targetY, curveMoveSpeed * Time.deltaTime);
+        rb.position = new Vector2(rb.position.x, newY);
+
+        if (Mathf.Approximately(newY, targetY))
+        {
+            reachedTargetY = true;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // Yì¶• ì´ë™ë§Œ ì •ì§€, Xì¶•ì€ ê³„ì† ìœ ì§€
+        }
     }
 }

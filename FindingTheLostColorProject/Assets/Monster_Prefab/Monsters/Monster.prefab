@@ -156,8 +156,8 @@ MonoBehaviour:
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
   trueGroundCheckDistance: 0.12
-  jumpForce: 3.15
-  climbableWallHeight: 1.1
+  jumpForce: 4.75
+  climbableWallHeight: 1
   groundedBufferDuration: 0.15
   wallJumpRetryDuration: 0.3
   hpBar: {fileID: 1931599742186503558}
