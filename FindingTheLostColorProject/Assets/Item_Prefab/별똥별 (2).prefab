@@ -170,4 +170,5 @@ MonoBehaviour:
   explosionScaleMultiplier: 2
   explosionFadeDuration: 0.25
   terrainIgnoreDuration: 0.2
-  damage: 2
+  damage: 5
+  clusterShardPrefab: {fileID: 7780929785348327095, guid: 1694fe196747c7b4eb751c0721fb6920, type: 3}

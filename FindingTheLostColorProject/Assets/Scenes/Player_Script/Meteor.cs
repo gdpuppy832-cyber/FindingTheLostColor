@@ -21,8 +21,12 @@ public class Meteor : MonoBehaviour
     [SerializeField] private float terrainIgnoreDuration = 0.7f;
 
     [Header("Ultimate Damage Settings")]
-    [Tooltip("별똥별의 정화 피해량 (기본값: 2.0)")]
-    [SerializeField] private float damage = 2.0f;
+    [Tooltip("별똥별의 정화 피해량 (기본값: 5.0)")]
+    [SerializeField] private float damage = 5.0f;
+
+    [Header("Cluster Shard Settings")]
+    [Tooltip("폭발 시 생성될 파편 프리팹 (유니티 에디터 인스펙터에서 연결)")]
+    [SerializeField] private GameObject clusterShardPrefab;
 
     // [수정] 별똥별마다 독립적인 중복피격판정을 위해 개별 해시셋 관리
     // 한 별똥별당 직접 충돌 대미지 1회 + 폭발 범위 대미지 1회, 총 2회 피격 허용
@@ -243,8 +247,52 @@ public class Meteor : MonoBehaviour
             if (lamp != null) { TryApplyExplosionDamage(lamp.gameObject, lamp); continue; }
         }
 
+        // 폭발 시 -45도, 0도, 45도 방향으로 튀어오르는 지형 관통 클러스터 파편 3개 소환
+        SpawnClusterShards();
+
         // 2번 모드 이펙트처럼 이미지 팽창 및 페이드아웃 연출 코루틴 실행
         StartCoroutine(ExplodeVisualEffectRoutine());
+    }
+
+    /// <summary>
+    /// 폭발 지점에서 -45도, 0도, 45도 방향으로 포물선을 그리며 튀어오르는 클러스터 파편 3개 생성
+    /// </summary>
+    private void SpawnClusterShards()
+    {
+        float[] angles = new float[] { -45f, 0f, 45f };
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
+        Sprite meteorSprite = sr != null ? sr.sprite : null;
+
+        foreach (float angle in angles)
+        {
+            GameObject shardObj = null;
+
+            // 사용자가 인스펙터에 연결한 파편 프리팹이 있으면 그것을 생성!
+            if (clusterShardPrefab != null)
+            {
+                shardObj = Instantiate(clusterShardPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                // 없으면 동적 붉은/주황빛 예비 파편 생성
+                shardObj = new GameObject($"MeteorClusterShard_{angle:F0}");
+                shardObj.transform.position = transform.position;
+            }
+
+            // 회전 각도에 따른 상향 방출 방향 벡터 계산 (-45도: 좌상단, 0도: 직상단, 45도: 우상단)
+            Quaternion rot = Quaternion.Euler(0f, 0f, angle);
+            Vector2 launchDir = rot * Vector2.up;
+
+            MeteorClusterShard shardComponent = shardObj.GetComponent<MeteorClusterShard>();
+            if (shardComponent == null)
+            {
+                shardComponent = shardObj.AddComponent<MeteorClusterShard>();
+            }
+
+            shardComponent.Initialize(launchDir, damage, meteorSprite, transform.localScale);
+        }
     }
 
     // 팽창 및 페이드아웃 코루틴 구현

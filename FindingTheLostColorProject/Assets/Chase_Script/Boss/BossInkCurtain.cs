@@ -19,6 +19,7 @@ public class BossInkCurtain : MonoBehaviour
     public float requiredPaintOverlapTime = 1f;
     private float currentPaintOverlapTime = 0f;
     private CursorController cursorController;
+    private Collider2D myCollider;
 
     [Header("붓질 이탈 유예 설정")]
     [Tooltip("붓질 겹침 조건이 깨졌을 때, 이 시간(초) 안에 다시 겹치면 누적 시간을 리셋하지 않고 이어감. " +
@@ -36,18 +37,30 @@ public class BossInkCurtain : MonoBehaviour
     void Start()
     {
         cursorController = FindFirstObjectByType<CursorController>();
+        myCollider = GetComponent<Collider2D>();
+        if (myCollider == null) myCollider = GetComponentInChildren<Collider2D>();
         Destroy(gameObject, lifetime);
     }
 
     void Update()
     {
         bool isOverlapping = false;
-
         if (cursorController != null && cursorController.attackMode == 1
             && cursorController.trail != null && cursorController.trail.emitting)
         {
-            float distance = Vector2.Distance(transform.position, cursorController.transform.position);
-            isOverlapping = distance <= cursorController.paintRadius;
+            Vector2 mousePos = cursorController.transform.position;
+
+            if (myCollider != null)
+            {
+                Vector2 closestPoint = myCollider.ClosestPoint(mousePos);
+                float distanceToSurface = Vector2.Distance(closestPoint, mousePos);
+                isOverlapping = distanceToSurface <= cursorController.paintRadius;
+            }
+            else
+            {
+                float distance = Vector2.Distance(transform.position, mousePos);
+                isOverlapping = distance <= cursorController.paintRadius;
+            }
         }
 
         if (isOverlapping)

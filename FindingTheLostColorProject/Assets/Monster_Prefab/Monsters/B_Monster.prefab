@@ -151,6 +151,7 @@ MonoBehaviour:
   attackStopDistance: 0.1
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
+  trueGroundCheckDistance: 0.12
   jumpForce: 3.15
   climbableWallHeight: 1.1
   hpBar: {fileID: 6485753932739016795}
@@ -211,8 +212,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.755, y: 0.531}
-  m_SizeDelta: {x: 100.337776, y: 40.7029}
+  m_AnchoredPosition: {x: -0.149, y: 0.292}
+  m_SizeDelta: {x: 0.6306, y: 0.484}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5017623105259221939
 CanvasRenderer:
@@ -307,7 +308,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 49.168148, y: 20.46486, z: 50.099377, w: 19.838392}
+  m_margin: {x: 0.033763707, y: 0.14180446, z: 0.09301704, w: 0.07951075}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

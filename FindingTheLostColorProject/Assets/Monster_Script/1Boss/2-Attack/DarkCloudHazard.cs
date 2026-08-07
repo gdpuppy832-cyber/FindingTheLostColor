@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -30,6 +30,18 @@ public class DarkCloudHazard : MonoBehaviour
     [Tooltip("체력이 깎였을 때, 실제 알파값이 목표 알파값을 따라가는 속도 (초당 변화율). 클수록 빠르게 투명해짐")]
     public float alphaSmoothSpeed = 3f;
 
+    [Header("화면 암전 설정 (Screen Overlay)")]
+    [Tooltip("이지 모드(EZ Mode) 여부 (true 체크 시 화면 어두워짐 50% 암전 연출이 발동하지 않고 투명하게 유지됩니다)")]
+    public bool isEasyMode = false;
+    [Tooltip("먹구름 스폰 시 화면 암전 페이드인 시간 (초, 기본값 1초)")]
+    public float screenDarkenFadeInDuration = 1.0f;
+    [Tooltip("하드 모드 먹구름에 의한 최대 화면 암전 투명도 (0.5 = 50% 암전)")]
+    public float maxScreenDarkAlpha = 0.5f;
+
+    private static UnityEngine.UI.Image screenDarkOverlayImage = null;
+    private static GameObject screenDarkOverlayObj = null;
+    private float currentScreenDarkAlpha = 0f;
+
     float elapsed = 0f;
     bool erased = false;
     bool finished = false;
@@ -53,6 +65,13 @@ public class DarkCloudHazard : MonoBehaviour
         }
         gaugeController = FindFirstObjectByType<GaugeController>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
+
+        // [신규] 보스 스크립트(BossAttack)의 난이도 세팅(isEasyMode) 자동 연동
+        BossAttack boss = FindFirstObjectByType<BossAttack>();
+        if (boss != null)
+        {
+            isEasyMode = boss.isEasyMode;
+        }
 
         currentHealth = maxHealth;
 
@@ -117,14 +136,21 @@ public class DarkCloudHazard : MonoBehaviour
         currentDisplayAlpha = Mathf.MoveTowards(currentDisplayAlpha, targetAlpha, alphaSmoothSpeed * Time.deltaTime);
         SetAlpha(currentDisplayAlpha);
 
-        // ���̵����� �Ϸ�Ǿ� ������ ��Ÿ�� ������ �� ���� �α׷� ǥ��
+        // [신규] 이지 모드(isEasyMode == true)에서는 화면 암전 미적용(0%), 하드 모드에서는 50%(maxScreenDarkAlpha) 적용
+        float effectiveMaxDarkAlpha = isEasyMode ? 0f : maxScreenDarkAlpha;
+        float screenFadeInRatio = Mathf.Clamp01(elapsed / screenDarkenFadeInDuration);
+        float targetScreenAlpha = screenFadeInRatio * healthProgress * effectiveMaxDarkAlpha;
+        currentScreenDarkAlpha = Mathf.MoveTowards(currentScreenDarkAlpha, targetScreenAlpha, alphaSmoothSpeed * Time.deltaTime);
+        UpdateScreenOverlayAlpha(currentScreenDarkAlpha);
+
+        // 페이드인이 완료되었을 때 한번만 로그 표시
         if (!fadeInLogged && elapsed >= fadeInDuration)
         {
             fadeInLogged = true;
         }
 
-        // fadeInDuration + holdDuration�� ������ ���� �ߵ� ��ȣ
-        if (elapsed >= fadeInDuration + holdDuration)
+        // 먹구름 생성 후 holdDuration (인스펙터 4초) 시간에 도달하면 칼같이 번개 내리침!
+        if (elapsed >= holdDuration)
         {
             finished = true;
             IsReadyToStrike = true;
@@ -177,6 +203,7 @@ public class DarkCloudHazard : MonoBehaviour
     IEnumerator FadeOutAndDestroyOnErase()
     {
         float startAlpha = currentDisplayAlpha;
+        float startScreenAlpha = currentScreenDarkAlpha;
         float t = 0f;
 
         while (t < fadeOutDuration)
@@ -185,10 +212,47 @@ public class DarkCloudHazard : MonoBehaviour
             float ratio = fadeOutDuration > 0f ? Mathf.Clamp01(t / fadeOutDuration) : 1f;
             currentDisplayAlpha = Mathf.Lerp(startAlpha, 0f, ratio);
             SetAlpha(currentDisplayAlpha);
+
+            currentScreenDarkAlpha = Mathf.Lerp(startScreenAlpha, 0f, ratio);
+            UpdateScreenOverlayAlpha(currentScreenDarkAlpha);
             yield return null;
         }
 
         SetAlpha(0f);
+        UpdateScreenOverlayAlpha(0f);
         Destroy(gameObject);
+    }
+
+    private void EnsureScreenOverlayCreated()
+    {
+        if (screenDarkOverlayObj == null)
+        {
+            screenDarkOverlayObj = new GameObject("DarkCloudScreenOverlay");
+            Canvas canvas = screenDarkOverlayObj.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 998;
+
+            screenDarkOverlayObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+
+            screenDarkOverlayImage = screenDarkOverlayObj.AddComponent<UnityEngine.UI.Image>();
+            screenDarkOverlayImage.color = new Color(0f, 0f, 0f, 0f);
+            screenDarkOverlayImage.raycastTarget = false;
+        }
+    }
+
+    private void UpdateScreenOverlayAlpha(float targetAlpha)
+    {
+        EnsureScreenOverlayCreated();
+        if (screenDarkOverlayImage != null)
+        {
+            Color c = screenDarkOverlayImage.color;
+            c.a = targetAlpha;
+            screenDarkOverlayImage.color = c;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UpdateScreenOverlayAlpha(0f);
     }
 }

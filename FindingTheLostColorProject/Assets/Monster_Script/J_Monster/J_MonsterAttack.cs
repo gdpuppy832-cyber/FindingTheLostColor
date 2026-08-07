@@ -169,7 +169,6 @@ public class J_EnemyAttack : MonoBehaviour
         canAttack = false;
         hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
 
-        Debug.Log($"[ATTACK] frame={Time.frameCount} time={Time.time:F3}");
 
         if (animator != null)
         {

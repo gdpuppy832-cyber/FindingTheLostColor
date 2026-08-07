@@ -50,6 +50,7 @@ public class H_MonsterAttack : MonoBehaviour
     H_MonsterMove enemyMove;
     private Rigidbody2D rigid;
     private Animator animator; // 자식 오브젝트에 있는 경우도 대비해서 GetComponentInChildren 사용
+    NormalMonster nm;
 
     // 최초 덮치기 도중 플레이어 타격 성공 여부 플래그
     private bool initialPounceHitPlayer = false;
@@ -77,6 +78,9 @@ public class H_MonsterAttack : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         if (animator == null) animator = GetComponentInChildren<Animator>();
+
+        nm = GetComponent<NormalMonster>();
+        if (nm == null) nm = GetComponentInParent<NormalMonster>();
 
         // 게임 시작 시 텔레그래프가 그대로 보이는 문제 방지 (일반 몬스터 EnemyAttack.cs와 동일하게 처음부터 꺼둠)
         if (meleeTelegraphSprite != null)
@@ -380,50 +384,15 @@ public class H_MonsterAttack : MonoBehaviour
         float activeJumpHeight = isInitialPounce ? initialJumpHeight : jumpHeight;
         float activeJumpDuration = isInitialPounce ? initialJumpDuration : jumpDuration;
 
+        Coroutine movementRoutine = (nm != null)
+             ? nm.StartCoroutine(JumpMovementRoutine(landPos, activeJumpHeight, activeJumpDuration, jumpColliderSize))
+             : StartCoroutine(JumpMovementRoutine(landPos, activeJumpHeight, activeJumpDuration, jumpColliderSize));
 
+        yield return movementRoutine;
 
-        // 포물선 점프 시작
-        float elapsed = 0f;
-        Vector2 lastValidPos = startPos;
-        bool hitCeiling = false;
-
-        while (elapsed < activeJumpDuration)
+        if (nm != null && nm.IsPurified)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / activeJumpDuration);
-            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
-            float heightOffset = 4f * activeJumpHeight * t * (1f - t);
-
-            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
-
-            // 천장(장애물) 충돌 체크
-            Vector2 moveDir = desiredPos - lastValidPos;
-            float moveDist = moveDir.magnitude;
-            if (moveDist > 0.0001f)
-            {
-                RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
-                if (hit.collider != null)
-                {
-                    desiredPos = hit.point - moveDir.normalized * 0.05f;
-                    hitCeiling = true;
-                }
-            }
-
-            lastValidPos = desiredPos;
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
-            yield return null;
-
-            if (hitCeiling)
-                break;
-        }
-
-        if (hitCeiling)
-        {
-            yield return StartCoroutine(FallToGround());
-        }
-        else
-        {
-            transform.position = landPos; // 정확히 착지 지점에 정렬 (J_EnemyAttack과 동일)
+            yield break;
         }
 
         // 착지했으므로 사냥(점프) 애니메이션 종료
@@ -502,6 +471,63 @@ public class H_MonsterAttack : MonoBehaviour
         canAttack = true;
     }
 
+    System.Collections.IEnumerator JumpMovementRoutine(Vector2 landPos, float activeJumpHeight, float activeJumpDuration, Vector2 jumpColliderSize)
+    {
+        if (nm != null && nm.IsPurified)
+        {
+            yield break;
+        }
+
+        Vector2 startPos = transform.position;
+
+        if (landPos.x != startPos.x && enemyMove != null)
+        {
+            enemyMove.ApplyFacing(landPos.x < startPos.x ? 1f : -1f);
+        }
+
+        float elapsed = 0f;
+        Vector2 lastValidPos = startPos;
+        bool hitCeiling = false;
+
+        while (elapsed < activeJumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / activeJumpDuration);
+            Vector2 flatPos = Vector2.Lerp(startPos, landPos, t);
+            float heightOffset = 4f * activeJumpHeight * t * (1f - t);
+
+            Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
+
+            Vector2 moveDir = desiredPos - lastValidPos;
+            float moveDist = moveDir.magnitude;
+            if (moveDist > 0.0001f)
+            {
+                RaycastHit2D hit = Physics2D.BoxCast(lastValidPos, jumpColliderSize, 0f, moveDir.normalized, moveDist, obstacleLayer);
+                if (hit.collider != null)
+                {
+                    desiredPos = hit.point - moveDir.normalized * 0.05f;
+                    hitCeiling = true;
+                }
+            }
+
+            lastValidPos = desiredPos;
+            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            yield return null;
+
+            if (hitCeiling)
+                break;
+        }
+
+        if (hitCeiling)
+        {
+            yield return StartCoroutine(FallToGround());
+        }
+        else
+        {
+            transform.position = landPos;
+        }
+    }
+
     public float fallAcceleration = 20f;   // 낙하 가속도
     public float maxFallTime = 3f;         // 안전장치
 
@@ -553,7 +579,11 @@ public class H_MonsterAttack : MonoBehaviour
 
     public float groundCheckRadius = 0.3f;  // 바닥 감지 반경
 
-    // isCliff: 경로 중간에 바닥이 끊겨서 착지 지점이 원래 목표(desired)보다 앞에서 잘렸는지 여부
+    [Tooltip("경로 중간 지점 아래로 이 거리 안에 땅이 있으면 낭떠러지로 취급하지 않고 점프를 계속 진행함 (계단/턱 아래로 착지 허용)")]
+    public float safeDropDistance = 3f;
+
+    const float ceilingExclusionEpsilon = 0.01f;
+
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {
         isCliff = false;
@@ -561,32 +591,36 @@ public class H_MonsterAttack : MonoBehaviour
         Collider2D selfCol = GetComponent<Collider2D>();
         float footOffset = selfCol != null ? selfCol.bounds.extents.y : 0.5f;
 
-        float rayStartY = desired.y + 1f;
+        float rayStartY = desired.y - 0.1f;
         Vector2 rayStart = new Vector2(desired.x, rayStartY);
-        RaycastHit2D hit = Physics2D.Raycast(rayStart, Vector2.down, 50f, groundLayer);
-        Vector2 targetLandPos = hit.collider != null ? hit.point + Vector2.up * footOffset : desired;
 
-        int steps = 10;
-        Vector2 lastGroundPos = start;
-        for (int i = 0; i <= steps; i++)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(rayStart, Vector2.down, 50f, groundLayer);
+
+        RaycastHit2D? bestHit = null;
+        foreach (var h in hits)
         {
-            float t = (float)i / steps;
-            Vector2 checkPos = Vector2.Lerp(start, targetLandPos, t);
-            Vector2 groundCheckPos = checkPos + Vector2.down * footOffset;
+            if (h.point.y > desired.y + ceilingExclusionEpsilon) continue;
 
-            bool foundGround = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer) != null;
-
-            if (foundGround)
-            {
-                lastGroundPos = checkPos;
-            }
-            else
-            {
-                isCliff = true;
-                return lastGroundPos;
-            }
+            if (bestHit == null || h.point.y > bestHit.Value.point.y)
+                bestHit = h;
         }
-        return targetLandPos;
+
+        if (bestHit == null)
+        {
+            isCliff = true;
+            return desired;
+        }
+
+        float currentGroundY = start.y - footOffset;
+        float landingGroundY = bestHit.Value.point.y;
+
+        if (currentGroundY - landingGroundY > safeDropDistance)
+        {
+            isCliff = true;
+            return desired;
+        }
+
+        return bestHit.Value.point + Vector2.up * footOffset;
     }
 
     void OnDrawGizmosSelected()

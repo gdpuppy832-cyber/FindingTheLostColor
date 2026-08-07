@@ -62,6 +62,12 @@ public class PlayerHealth : MonoBehaviour
     [Tooltip("사망 감지 Y축 좌표 (이 값보다 밑으로 내려가면 추락사)")]
     public float deathYThreshold = -10f;
 
+    [Tooltip("일정 X좌표 이상에서 낙사를 비활성화할지 여부")]
+    public bool useDisableDeathXThreshold = false;
+
+    [Tooltip("낙사 감지가 비활성화되는 기준 X좌표 (플레이어 X좌표가 이 값 이상이면 낙사 안 함)")]
+    public float disableDeathXThreshold = 266.0f;
+
     [Tooltip("추락 사망 시 교체할 플레이어 이미지")]
     public Sprite deathSprite;
 
@@ -154,8 +160,9 @@ public class PlayerHealth : MonoBehaviour
             currentHealth = maxHealth;
         }
 
-        // 낭떠러지 추락 감지 (사망하지 않았고 Y축 좌표가 기준치 이하일 때)
-        if (!isDead && transform.position.y < deathYThreshold)
+        // 낭떠러지 추락 감지 (사망하지 않았고 Y축 좌표가 기준치 이하일 때, X좌표 조건 체크)
+        bool isFallDeathDisabled = useDisableDeathXThreshold && transform.position.x >= disableDeathXThreshold;
+        if (!isDead && !isFallDeathDisabled && transform.position.y < deathYThreshold)
         {
             isInvincible = false; // 무적 강제 해제
             currentHealth = 0f;

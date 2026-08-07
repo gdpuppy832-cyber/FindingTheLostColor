@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3942307000133411523}
   - component: {fileID: -5889155966984538356}
   - component: {fileID: 6814805997823367217}
+  - component: {fileID: 2205639967118484951}
   m_Layer: 8
   m_Name: Boss_Chase
   m_TagString: Boss
@@ -78,8 +79,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -485289909
-  m_SortingLayer: 4
+  m_SortingLayerID: 354283401
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -197,15 +198,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8264b986247992743b49d4e456e545a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 5909081372243577439, guid: 10a062f32a3270a4e95145cd4716dc08, type: 3}
   firePoint1: {fileID: 0}
   firePoint2: {fileID: 0}
   firePoint3: {fileID: 0}
-  bulletSpeed: 5
-  fireInterval: 1.5
+  bulletSpeed: 1
+  fireInterval: 0.5
   bulletLifetime: 5
-  requiredPaintOverlapTime: 1
+  requiredPaintOverlapTime: 0.5
   attackDamage: 1
+  inkCurtainPrefab: {fileID: 7828294059909771260, guid: 9a2be343e7d23804894043b90f522605, type: 3}
+  inkCurtainSpawnPoint: {fileID: 0}
+  inkCurtainSpeed: 0.25
+  inkCurtainLifetime: 13
+  bulletsBeforeInkCurtain: 10
+  inkCurtainRequiredPaintOverlapTime: 2
+  laserTelegraphPrefab: {fileID: 1014840232707358376, guid: d42dfd4c3fda2da4d845f5427524483e, type: 3}
+  laserPrefab: {fileID: 1946862533391767322, guid: 17a8817652c68bb42a408daee43fe676, type: 3}
+  laserFirePoint: {fileID: 0}
+  laserUnlockTime: 20
+  laserCooldown: 10
+  laserTelegraphDuration: 1.5
+  laserBlinkInterval: 0.5
+  laserDuration: 0.5
+  stopAttackBeforeLaser: 1
+--- !u!114 &2205639967118484951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0a1cc6950179ca4a93bfcd5fbdeaf16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitionDelay: 90
+  nextSceneName: Map_c
+  fadeDuration: 1
 --- !u!1001 &3848036189668441168
 PrefabInstance:
   m_ObjectHideFlags: 0

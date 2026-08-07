@@ -22,6 +22,13 @@ public class CameraFollow : MonoBehaviour
     public Vector2 minCameraPos;
     public Vector2 maxCameraPos;
 
+    [Header("카메라 Y축 한계선 비활성화 설정")]
+    [Tooltip("일정 X좌표 이상에서 Y축 카메라 한계선을 비활성화할지 여부")]
+    public bool useDisableYLimitXThreshold = false;
+
+    [Tooltip("Y축 카메라 한계선이 비활성화되는 기준 X좌표 (이 값 이상이면 Y축 한계선 적용 안함)")]
+    public float disableYLimitXThreshold = 266.0f;
+
     [Header("보스방 진입 연출 설정 (신규)")]
     [Tooltip("이 카메라가 보스방 전용 카메라인지 여부")]
     public bool isBossStageCamera = false;
@@ -82,7 +89,9 @@ public class CameraFollow : MonoBehaviour
 
         // 4. 카메라 한계선 Clamping (한계선 위치 역시 NaN 예방)
         float clampedX = Mathf.Clamp(nextPos.x, minCameraPos.x, maxCameraPos.x);
-        float clampedY = Mathf.Clamp(nextPos.y, minCameraPos.y, maxCameraPos.y);
+
+        bool isYLimitDisabled = useDisableYLimitXThreshold && (target != null ? target.position.x : nextPos.x) >= disableYLimitXThreshold;
+        float clampedY = isYLimitDisabled ? nextPos.y : Mathf.Clamp(nextPos.y, minCameraPos.y, maxCameraPos.y);
 
         if (float.IsNaN(clampedX)) clampedX = transform.position.x;
         if (float.IsNaN(clampedY)) clampedY = transform.position.y;

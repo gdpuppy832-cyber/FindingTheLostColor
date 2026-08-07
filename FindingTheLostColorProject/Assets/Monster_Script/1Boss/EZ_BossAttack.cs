@@ -67,8 +67,11 @@ public class EZ_BossAttack : MonoBehaviour
     GameObject activeDarkCloud;                                     // 현재 진행 중인 먹구름 (동시에 하나만 존재)
     GameObject activeLightning;                                     // 현재 발동 중인 번개
 
-    // ================= 색채 소용돌이 (1P/2P 공용, 랜덤 풀에는 포함되지 않고 다른 패턴과 동시에 발동) =================
-    [Header("Color Whirlpool")]
+    [Header("Difficulty Settings")]
+    public bool isEasyMode = true; // EZ_BossAttack은 기본적으로 이지 모드
+
+    // [신규] 스크립트 간 패턴 겹침 방지용 신호등 플래그
+    public static bool isPatternActive = false;
     public GameObject colorWhirlpoolPrefab;              // 색채 소용돌이 프리팹 (비워두면 임시 생성)
     GameObject colorWhirlpoolTemplate;                    // colorWhirlpoolPrefab의 런타임 복제 템플릿 (원본 보호용)
     [Tooltip("보스의 처음 배치 위치(initialPosition) 기준 오프셋 (Y를 음수로 하면 아래쪽에 소환됨)")]
@@ -425,7 +428,6 @@ public class EZ_BossAttack : MonoBehaviour
             if (bossHealth != null)
             {
                 bossHealth.IsPurified = false; // 2페이즈 대미지/정화 피격 가드 해제!
-                bossHealth.Heal(bossHealth.maxHealth * 0.5f);
             }
 
             // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
@@ -523,6 +525,7 @@ public class EZ_BossAttack : MonoBehaviour
     IEnumerator RunAttack(AttackEntry attack)
     {
         isAttacking = true;
+        isPatternActive = true;
 
         // 프리즘 샤워 직전에 나왔던 패턴을 기억해뒀다가, 동반 패턴 선정 시 제외하기 위해
         // lastUsedAttack을 덮어쓰기 전에 미리 별도 변수로 백업해둠
@@ -583,23 +586,14 @@ public class EZ_BossAttack : MonoBehaviour
         }
 
         isAttacking = false;
+        isPatternActive = false;
         nextAttackAllowedTime = Time.time + attackCooldown;
     }
 
-    // 프리즘 샤워와 함께 나올 동반 패턴을 고름.
-    // frostRainCompanionChance 확률로 아예 동반 패턴 없이 진행될 수도 있음.
-    // previousAttack(프리즘 샤워 직전에 나왔던 패턴)은 후보에서 제외됨.
+    // 이지 모드에서는 서리비와 다른 공격 패턴이 겹쳐서 나오지 않도록 동반 패턴을 절대 생성하지 않음 (1회 1패턴 원칙)
     AttackEntry PickFrostRainCompanion(AttackEntry previousAttack)
     {
-        if (Random.value > frostRainCompanionChance) return null;
-
-        List<AttackEntry> candidates = new List<AttackEntry>(phase1Attacks);
-        candidates.RemoveAll(a => a.name == "FrostRain");
-        if (previousAttack != null) candidates.Remove(previousAttack);
-
-        if (candidates.Count == 0) return null;
-
-        return candidates[Random.Range(0, candidates.Count)];
+        return null; // 이지 모드: 동반 패턴 겹침 100% 차단
     }
 
     // ================= 가시 함정 공격 (1페이즈) =================
@@ -612,26 +606,29 @@ public class EZ_BossAttack : MonoBehaviour
     public float spikeTelegraphBlinkInterval = 0.5f; // 깜빡임 간격
     [Tooltip("가시 유지 시간")]
     public float spikeLifetime = 3f;               // 가시가 유지되는 시간
-    [Tooltip("가시 생성 반경")]
-    public float spikeSearchRadius = 8f;           // 보스 주변 랜덤 위치 탐색 반경
     public float spikeGroundRaycastDistance = 20f; // 바닥 탐색용 레이캐스트 최대 거리
-    public int spikeMaxSearchAttempts = 20;        // 유효 바닥 못 찾을 때 재시도 최대 횟수
-    public float spikeMinDistance = 1.5f;           // 가시끼리 최소 간격 (겹침 방지)
-    public float spikeMaxHeightAboveBoss = 3f;      // 보스 기준 이 값보다 높은 땅에는 가시 생성 안 함 (여유 허용치)
-
-    [Header("Player Spike Full-Contact Search")]
-    [Tooltip("가시 아래쪽 면이 바닥에 닿는지 검사할 때 폭 방향으로 몇 개 지점을 샘플링할지")]
-    public int spikeContactSampleCount = 5;
-    [Tooltip("샘플 지점의 바닥 높이가 기준 Y와 이 값 이내로 차이나면 '닿아 있다'고 판정")]
-    public float spikeContactTolerance = 0.05f;
-    [Tooltip("X축 탐색 시 한 번에 이동할 간격")]
-    public float spikeContactSearchStep = 0.5f;
-    [Tooltip("X축 탐색 최대 거리 (이 거리 안에서 못 찾으면 원래 위치 그대로 사용)")]
-    public float spikeContactSearchMaxDistance = 8f;
-    public float fallbackSpikeHalfWidth = 0.3f; // spikeTemplate에서 폭을 못 구했을 때 사용할 기본 반폭
+    public int spikeMaxSearchAttempts = 20;        // 유효 위치 못 찾을 때 재시도 최대 횟수
+    public float spikeMinDistance = 1.5f;           // 가시끼리(플레이어 발밑 가시 포함) 최소 간격
 
     [Tooltip("두 번째 공격 시작 전 대기 시간 (첫 번째 가시가 사라진 뒤)")]
     public float spikeSecondWaveDelay = 0.5f;
+
+    [Header("New Spike Spawn System")]
+    [Tooltip("가시 생성 범위의 중심 (보스 초기 위치 기준 오프셋)")]
+    public Vector2 spikeSpawnAreaOffset = Vector2.zero;
+    [Tooltip("가시 생성 범위의 가로 폭")]
+    public float spikeSpawnAreaWidth = 16f;
+    [Tooltip("가시 생성 범위의 세로 높이 (무작위 위치 탐색 시 상단에서 아래로 바닥을 탐색하는 기준)")]
+    public float spikeSpawnAreaHeight = 6f;
+    [Tooltip("바닥 판정 지점에서 왼쪽으로 이 길이만큼 Raycast를 쏘아 Ground가 감지되어야 함")]
+    public float spikeGroundLeftCheckDistance = 1f;
+    [Tooltip("바닥 판정 지점에서 오른쪽으로 이 길이만큼 Raycast를 쏘아 Ground가 감지되어야 함")]
+    public float spikeGroundRightCheckDistance = 1f;
+
+    [Tooltip("플레이어 발밑 위치에서 바닥을 못 찾았을 때, 좌우로 이동하며 재탐색할 최대 횟수(한쪽 방향 기준)")]
+    public int playerSpikeSearchMaxSteps = 5;
+    [Tooltip("플레이어 발밑 위치 재탐색 시, 한 번에 좌우로 이동할 거리")]
+    public float playerSpikeSearchStep = 1f;
 
     [Header("Prism Shower Combo")]
     [Range(0f, 1f)]
@@ -675,42 +672,8 @@ public class EZ_BossAttack : MonoBehaviour
     // avoidPositions: 이 위치들과는 겹치지 않게 새 위치를 뽑음 (null이면 회피 없음)
     IEnumerator RunSpikeTelegraphPhase(List<Vector2> resultPositions, List<Vector2> avoidPositions)
     {
-        // 1. 위치 4곳 결정: 플레이어 위치 1곳 + 랜덤 바닥 위치 3곳
-        resultPositions.Add(FindPlayerSpikePosition(target.position));
-
-        int found = 0;
-        int attempts = 0;
-
-        // 1단계 (엄격): 가시 폭 전체가 바닥에 닿는 위치를 우선적으로 탐색
-        while (found < 3 && attempts < spikeMaxSearchAttempts)
-        {
-            attempts++;
-            Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
-            Vector2? groundPos = TryFindGroundPosition(randomPoint);
-            if (groundPos.HasValue
-                && IsFarEnough(groundPos.Value, resultPositions)
-                && (avoidPositions == null || IsFarEnough(groundPos.Value, avoidPositions)))
-            {
-                resultPositions.Add(groundPos.Value);
-                found++;
-            }
-        }
-
-        int relaxedAttempts = 0;
-        int relaxedMaxAttempts = spikeMaxSearchAttempts * 4; // 완화 탐색은 조건이 널널한 만큼 더 여유 있게 시도
-        while (found < 3 && relaxedAttempts < relaxedMaxAttempts)
-        {
-            relaxedAttempts++;
-            Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * spikeSearchRadius;
-            Vector2? groundPos = TryFindGroundPositionBasic(randomPoint);
-            if (groundPos.HasValue
-                && IsFarEnough(groundPos.Value, resultPositions)
-                && (avoidPositions == null || IsFarEnough(groundPos.Value, avoidPositions)))
-            {
-                resultPositions.Add(groundPos.Value);
-                found++;
-            }
-        }
+        // 1. 위치 4곳 결정: 플레이어 발밑 1곳(필수) + 겹치지 않는 무작위 위치 3곳
+        FindSpikeSpawnPositions(target.position, avoidPositions, resultPositions);
 
         // 2. 각 위치에 텔레그래프 마커 생성
         List<GameObject> markers = new List<GameObject>();
@@ -1218,9 +1181,7 @@ public class EZ_BossAttack : MonoBehaviour
         GameObject lightning = SpawnLightning(cloudPos, groundStrikePos);
         activeLightning = lightning;
 
-        yield return new WaitForSeconds(lightningLifetime);
-
-        if (lightning != null) Destroy(lightning);
+        // lightning은 LightningHazard 스크립트가 스스로 수명을 안전하게 관리합니다.
         activeLightning = null;
     }
 
@@ -1294,8 +1255,7 @@ public class EZ_BossAttack : MonoBehaviour
         LightningHazard hazard = lightning.GetComponent<LightningHazard>();
         if (hazard == null) hazard = lightning.AddComponent<LightningHazard>();
         hazard.damage = bossAttackDamage;
-        hazard.lifetime = lightningLifetime;
-        hazard.Init(fromPos, toPos, lightningLength); // 시작점 고정, 목표 방향으로 lightningLength만큼 즉시 뻗어나감
+        hazard.Init(fromPos, toPos, true);
 
         return lightning;
     }
@@ -1466,16 +1426,13 @@ public class EZ_BossAttack : MonoBehaviour
     // ================= 색채 소용돌이 (1P/2P 공용) =================
     IEnumerator ColorWhirlpoolAttackRoutine()
     {
+        isPatternActive = true; // 이지 모드 블랙홀 패턴 시작 시 락 켜기
+
         Vector3 spawnPos = initialPosition + (Vector3)colorWhirlpoolSpawnOffset;
         GameObject whirlpool = SpawnColorWhirlpool(spawnPos);
         activeColorWhirlpool = whirlpool;
 
-        // 페이드 인이 먼저 끝날 때까지 대기한 뒤, 그 시점부터 colorWhirlpoolDuration을 셈
-        // (기존에는 스폰과 동시에 지속시간을 셌기 때문에, 페이드 인 시간까지 지속시간에 포함되어
-        //  실제로 온전히 나타나 있는 시간이 의도한 것보다 짧아지는 문제가 있었음)
         yield return new WaitForSeconds(colorWhirlpoolFadeInDuration);
-
-        // 짝지어진 다른 공격이 이보다 먼저 끝나면, RunAttack이 StopCoroutine + Destroy로 더 일찍 정리함
         yield return new WaitForSeconds(colorWhirlpoolDuration);
 
         if (activeColorWhirlpool != null)
@@ -1483,6 +1440,12 @@ public class EZ_BossAttack : MonoBehaviour
             Destroy(activeColorWhirlpool);
             activeColorWhirlpool = null;
         }
+
+        // 이지 모드: 블랙홀 소멸 후 7초간 보스가 다른 공격을 시작하지 못하도록 휴식 딜레이
+        Debug.Log("[EZ_BossAttack] 이지 모드: 블랙홀 소멸 후 7초간 보스 패턴 억제 휴식 대기 가동!");
+        yield return new WaitForSeconds(7.0f);
+
+        isPatternActive = false;
     }
 
     GameObject SpawnColorWhirlpool(Vector3 pos)
@@ -1623,144 +1586,113 @@ public class EZ_BossAttack : MonoBehaviour
         return hit.collider != null ? hit.point : fromPos;
     }
 
-    // 플레이어 위치 기준 가시 스폰 위치를 결정.
-    // 1) 우선 플레이어 X에서 바로 아래 바닥의 Y를 구해 "고정 Y"로 삼는다.
-    // 2) 그 Y에서 가시 폭 전체가 바닥에 닿는지 검사한다.
-    // 3) 안 닿으면 Y는 절대 바꾸지 않고 X만 좌우로 넓혀가며 재검사한다.
-    // 4) 플레이어와 가장 가까운 유효 X를 찾으면 그 지점을, 못 찾으면 기존 위치를 그대로 반환한다.
-    Vector2 FindPlayerSpikePosition(Vector2 playerPos)
+    void FindSpikeSpawnPositions(Vector2 playerPos, List<Vector2> avoidPositions, List<Vector2> output)
     {
-        Vector2 basePos = GetGroundPositionBelow(playerPos); // X = 플레이어 X, Y = 그 지점의 바닥 높이 (이후 절대 변경 안 함)
-        float halfWidth = GetSpikeHalfWidth();
-        float fixedY = basePos.y;
-
-        // 3-1. 플레이어 위치에서 바로 검사
-        if (HasFullGroundContact(basePos.x, fixedY, halfWidth))
-            return basePos;
-
-        // 3-2. X축으로만 좌우 탐색 (Y는 fixedY로 고정)
-        for (float offset = spikeContactSearchStep; offset <= spikeContactSearchMaxDistance; offset += spikeContactSearchStep)
+        // 1) 플레이어 발밑 위치 시도. 실패하면 좌우로 조금씩 벌려가며 재탐색
+        if (TryFindPlayerSpikePosition(playerPos, out Vector2 playerSpikePos))
         {
-            float xRight = basePos.x + offset;
-            if (HasFullGroundContact(xRight, fixedY, halfWidth))
-                return new Vector2(xRight, fixedY);
-
-            float xLeft = basePos.x - offset;
-            if (HasFullGroundContact(xLeft, fixedY, halfWidth))
-                return new Vector2(xLeft, fixedY);
+            output.Add(playerSpikePos);
         }
 
-        // 유효한 위치를 못 찾은 경우, 안전하게 기존 위치 그대로 사용
-        return basePos;
+        // 2) 무작위 3개 위치 탐색 (겹침 없음, 최소 거리 유지, 최대 시도 횟수 제한으로 무한루프 방지)
+        Vector2 areaCenter = GetSpikeSpawnAreaCenter();
+        float halfWidth = spikeSpawnAreaWidth * 0.5f;
+        float rayStartY = areaCenter.y + spikeSpawnAreaHeight * 0.5f;
+
+        int found = 0;
+        int attempts = 0;
+
+        while (found < 3 && attempts < spikeMaxSearchAttempts)
+        {
+            attempts++;
+
+            float randomX = areaCenter.x + Random.Range(-halfWidth, halfWidth);
+
+            if (!TryValidateSpikeGroundPosition(randomX, rayStartY, out Vector2 candidate))
+                continue;
+
+            if (!IsFarEnoughFromAll(candidate, output, spikeMinDistance))
+                continue;
+
+            if (avoidPositions != null && !IsFarEnoughFromAll(candidate, avoidPositions, spikeMinDistance))
+                continue;
+
+            output.Add(candidate);
+            found++;
+        }
     }
 
-    // centerX를 중심으로 halfWidth만큼의 가시 아래쪽 면 전체가 targetY 높이에서
-    // 빈틈 없이 바닥에 닿아 있는지 검사 (샘플 지점 여러 개를 아래로 레이캐스트)
-    bool HasFullGroundContact(float centerX, float targetY, float halfWidth)
+    bool TryFindPlayerSpikePosition(Vector2 playerPos, out Vector2 result)
     {
-        int sampleCount = Mathf.Max(2, spikeContactSampleCount);
-
-        for (int i = 0; i < sampleCount; i++)
+        // 0단계: 플레이어 정중앙 시도
+        if (TryValidateSpikeGroundPosition(playerPos.x, playerPos.y + 1f, out result))
         {
-            float t = (float)i / (sampleCount - 1); // 0 ~ 1
-            float sampleX = centerX - halfWidth + halfWidth * 2f * t;
-
-            RaycastHit2D hit = Physics2D.Raycast(
-                new Vector2(sampleX, targetY + 0.5f),
-                Vector2.down,
-                spikeGroundRaycastDistance,
-                groundLayer
-            );
-
-            // 바닥이 아예 없음 (구멍/낭떠러지)
-            if (hit.collider == null) return false;
-
-            // 바닥이 있어도 기준 Y와 높이가 다르면 (턱, 경사, 다른 층 등)
-            // 전체 면이 같은 평면에 닿는다고 볼 수 없으므로 실패 처리
-            if (Mathf.Abs(hit.point.y - targetY) > spikeContactTolerance) return false;
+            return true;
         }
 
+        // 1단계부터: 좌우로 playerSpikeSearchStep씩 벌려가며 번갈아 시도
+        for (int step = 1; step <= playerSpikeSearchMaxSteps; step++)
+        {
+            float offset = step * playerSpikeSearchStep;
+
+            if (TryValidateSpikeGroundPosition(playerPos.x - offset, playerPos.y + 1f, out result))
+            {
+                return true;
+            }
+
+            if (TryValidateSpikeGroundPosition(playerPos.x + offset, playerPos.y + 1f, out result))
+            {
+                return true;
+            }
+        }
+
+        result = Vector2.zero;
+        return false;
+    }
+    bool TryValidateSpikeGroundPosition(float x, float startY, out Vector2 groundPos)
+    {
+        groundPos = Vector2.zero;
+
+        RaycastHit2D downHit = Physics2D.Raycast(new Vector2(x, startY), Vector2.down, spikeGroundRaycastDistance, groundLayer);
+        if (downHit.collider == null) return false;
+
+        Vector2 hitPoint = downHit.point;
+
+        float sideCheckDepth = 0.5f;
+
+        Vector2 leftCheckOrigin = new Vector2(x - spikeGroundLeftCheckDistance, hitPoint.y + 0.3f);
+        RaycastHit2D leftHit = Physics2D.Raycast(leftCheckOrigin, Vector2.down, sideCheckDepth, groundLayer);
+        if (leftHit.collider == null) return false;
+
+        Vector2 rightCheckOrigin = new Vector2(x + spikeGroundRightCheckDistance, hitPoint.y + 0.3f);
+        RaycastHit2D rightHit = Physics2D.Raycast(rightCheckOrigin, Vector2.down, sideCheckDepth, groundLayer);
+        if (rightHit.collider == null) return false;
+
+        groundPos = hitPoint;
         return true;
     }
 
-    float GetSpikeHalfWidth()
-    {
-        if (spikeTemplate != null)
-        {
-            BoxCollider2D box = spikeTemplate.GetComponentInChildren<BoxCollider2D>(true);
-            if (box != null && box.size.x > 0.001f)
-                return (box.size.x * box.transform.lossyScale.x) * 0.5f;
-
-            // 삼각형 등 뾰족한 형태의 가시는 보통 PolygonCollider2D를 사용함.
-            // points는 로컬 좌표로 직렬화되어 있어 비활성 상태에서도 항상 정확함.
-            PolygonCollider2D poly = spikeTemplate.GetComponentInChildren<PolygonCollider2D>(true);
-            if (poly != null && poly.points != null && poly.points.Length > 0)
-            {
-                float minX = float.MaxValue;
-                float maxX = float.MinValue;
-                foreach (var p in poly.points)
-                {
-                    if (p.x < minX) minX = p.x;
-                    if (p.x > maxX) maxX = p.x;
-                }
-                float localWidth = maxX - minX;
-                if (localWidth > 0.001f)
-                    return (localWidth * poly.transform.lossyScale.x) * 0.5f;
-            }
-
-            // 콜라이더에서 폭을 못 구했다면 스프라이트 자체의 폭을 사용 (에셋 데이터라 항상 정확)
-            SpriteRenderer sr = spikeTemplate.GetComponentInChildren<SpriteRenderer>(true);
-            if (sr != null && sr.sprite != null)
-                return (sr.sprite.bounds.size.x * sr.transform.lossyScale.x) * 0.5f;
-        }
-
-        return fallbackSpikeHalfWidth;
-    }
-
-    // 가시 폭 전체가 바닥에 닿는지까지 검사하는 엄격 버전.
-    // 개수를 반드시 채워야 하므로, 이 버전이 실패해도 즉시 개수를 포기하지 않고
-    // RunSpikeTelegraphPhase의 2단계(완화 탐색)에서 보완함.
-    Vector2? TryFindGroundPosition(Vector2 randomPoint)
-    {
-        Vector2? basic = TryFindGroundPositionBasic(randomPoint);
-        if (!basic.HasValue) return null;
-
-        float halfWidth = GetSpikeHalfWidth();
-        if (!HasFullGroundContact(basic.Value.x, basic.Value.y, halfWidth)) return null;
-
-        return basic;
-    }
-
-
-    Vector2? TryFindGroundPositionBasic(Vector2 randomPoint)
-    {
-        // 보스는 항상 바닥과 천장 사이(빈 공간)에 떠 있다고 가정하고,
-        // 보스 자신의 y좌표에서 바로 아래로 쏨 (천장을 뚫고 지나갈 일이 없음)
-        Vector2 origin = new Vector2(randomPoint.x, transform.position.y);
-        RaycastHit2D hit = Physics2D.Raycast(
-            origin,
-            Vector2.down,
-            spikeGroundRaycastDistance,
-            groundLayer
-        );
-
-        if (hit.collider == null) return null;
-
-        // 보스보다 spikeMaxHeightAboveBoss 이상 높은 위치의 땅(발판)에는 가시를 생성하지 않음
-        if (hit.point.y > transform.position.y + spikeMaxHeightAboveBoss) return null;
-
-        return hit.point;
-    }
-
-    // spawnPositions에 이미 있는 위치들과 최소 간격 이상 떨어져 있는지 확인
-    bool IsFarEnough(Vector2 pos, List<Vector2> existing)
+    bool IsFarEnoughFromAll(Vector2 pos, List<Vector2> existing, float minDistance)
     {
         foreach (var p in existing)
         {
-            if (Vector2.Distance(pos, p) < spikeMinDistance)
+            if (Vector2.Distance(pos, p) < minDistance)
                 return false;
         }
         return true;
+    }
+
+    Vector2 GetSpikeSpawnAreaCenter()
+    {
+        Vector3 basePos = Application.isPlaying ? initialPosition : transform.position;
+        return (Vector2)basePos + spikeSpawnAreaOffset;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Vector2 center = GetSpikeSpawnAreaCenter();
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(center, new Vector3(spikeSpawnAreaWidth, spikeSpawnAreaHeight, 0.1f));
     }
 
     GameObject SpawnTelegraphMarker(Vector2 pos)
