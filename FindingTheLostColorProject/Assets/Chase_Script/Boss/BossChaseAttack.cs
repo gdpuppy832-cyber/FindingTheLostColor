@@ -4,73 +4,89 @@ using System.Collections;
 public class BossChaseAttack : MonoBehaviour
 {
     [Header("Bullet Prefab")]
-    [Tooltip("¹ß»çÇÒ ÅºÈ¯ ÇÁ¸®ÆÕ")]
+    [Tooltip("ï¿½ß»ï¿½ï¿½ï¿½ ÅºÈ¯ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject bulletPrefab;
 
-    [Header("Fire Points (3°³ Áß ¹«ÀÛÀ§ ¹ß»ç)")]
-    [Tooltip("¹ß»ç À§Ä¡ 1")]
+    [Header("Fire Points (3ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½)")]
+    [Tooltip("ï¿½ß»ï¿½ ï¿½ï¿½Ä¡ 1")]
     public Transform firePoint1;
-    [Tooltip("¹ß»ç À§Ä¡ 2")]
+    [Tooltip("ï¿½ß»ï¿½ ï¿½ï¿½Ä¡ 2")]
     public Transform firePoint2;
-    [Tooltip("¹ß»ç À§Ä¡ 3")]
+    [Tooltip("ï¿½ß»ï¿½ ï¿½ï¿½Ä¡ 3")]
     public Transform firePoint3;
 
     [Header("Bullet Movement")]
-    [Tooltip("ÅºÈ¯ ÀÌµ¿ ¼Óµµ")]
+    [Tooltip("ÅºÈ¯ ï¿½Ìµï¿½ ï¿½Óµï¿½")]
     public float bulletSpeed = 5f;
 
     [Header("Fire Timing")]
-    [Tooltip("ÅºÈ¯À» ¹ß»çÇÏ´Â °£°İ(ÃÊ)")]
+    [Tooltip("ÅºÈ¯ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)")]
     public float fireInterval = 1.5f;
 
     [Header("Bullet Lifetime")]
-    [Tooltip("ÅºÈ¯ÀÌ »ı¼ºµÈ ÈÄ ÀÚµ¿À¸·Î »ç¶óÁö´Â ½Ã°£(ÃÊ)")]
+    [Tooltip("ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float bulletLifetime = 5f;
 
     [Header("Paint Destroy Settings")]
-    [Tooltip("º×Áú(1¹ø ¸ğµå)ÀÌ ÅºÈ¯°ú °ãÃÄ ÀÖ¾î¾ß ÇÏ´Â ´©Àû ½Ã°£(ÃÊ). ÀÌ ½Ã°£À» Ã¤¿ì¸é ÅºÈ¯ÀÌ ÆÄ±«µÊ")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½ ï¿½ï¿½ï¿½)ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½). ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½")]
     public float requiredPaintOverlapTime = 1f;
 
+    [Header("Curve Bullet Settings")]
+    [Tooltip("ë³€í™”êµ¬ íƒ„í™˜ í”„ë¦¬íŒ¹ (ì¼ë°˜ íƒ„í™˜ê³¼ ë³„ê°œ)")]
+    public GameObject curveBulletPrefab;
+    [Tooltip("ë³€í™”êµ¬ íƒ„í™˜ ìƒì„± ìœ„ì¹˜ 1ë²ˆ. ì—¬ê¸°ì„œ ìƒì„±ë˜ë©´ 2ë²ˆ ìœ„ì¹˜ì˜ Yì¢Œí‘œë¡œ ì´ë™í•¨")]
+    public Transform curveFirePoint1;
+    [Tooltip("ë³€í™”êµ¬ íƒ„í™˜ ìƒì„± ìœ„ì¹˜ 2ë²ˆ. ì—¬ê¸°ì„œ ìƒì„±ë˜ë©´ 1ë²ˆ ìœ„ì¹˜ì˜ Yì¢Œí‘œë¡œ ì´ë™í•¨")]
+    public Transform curveFirePoint2;
+    [Tooltip("ìƒì„± í›„ ëª‡ ì´ˆê°€ ì§€ë‚˜ì•¼ ë°˜ëŒ€ìª½ ìœ„ì¹˜ì˜ Yì¢Œí‘œë¡œ êº¾ì´ê¸° ì‹œì‘í• ì§€")]
+    public float curveStartTime = 0.8f;
+    [Tooltip("ë°©í–¥ì„ íŠ¼ ì´í›„ ëª©í‘œ Yì¢Œí‘œë¥¼ í–¥í•´ ì´ë™í•˜ëŠ” ì†ë„")]
+    public float curveMoveSpeed = 6f;
+    [Tooltip("ì¼ë°˜ íƒ„í™˜ì„ ëª‡ ë°œ ë°œì‚¬í•  ë•Œë§ˆë‹¤ ê·¸ ìë¦¬ë¥¼ ë³€í™”êµ¬ íƒ„í™˜ìœ¼ë¡œ ëŒ€ì²´í• ì§€ (ë¨¹ë¬¼ ì¥ë§‰ ì¹´ìš´íŠ¸ì™€ ë…ë¦½ì ìœ¼ë¡œ ê´€ë¦¬ë¨)")]
+    public int bulletsBeforeCurveBullet = 15;
+
+    private int curveBulletFireCount = 0; // ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½È¯ Ä«ï¿½ï¿½Æ® (bulletFireCountï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+
     [Header("Boss Damage")]
-    [Tooltip("¸ğµç º¸½º °ø°İÀÌ °øÅëÀ¸·Î »ç¿ëÇÏ´Â °ø°İ·Â. ¾ÕÀ¸·Î Ãß°¡µÉ °ø°İµµ ÀÌ °ªÀ» »ç¿ëÇÔ")]
+    [Tooltip("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½İ·ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½İµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public int attackDamage = 1;
 
     [Header("Ink Curtain Settings")]
-    [Tooltip("¸Ô¹° Àå¸· ÇÁ¸®ÆÕ")]
+    [Tooltip("ï¿½Ô¹ï¿½ ï¿½å¸· ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject inkCurtainPrefab;
-    [Tooltip("¸Ô¹° Àå¸·ÀÌ »ı¼ºµÉ À§Ä¡")]
+    [Tooltip("ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
     public Transform inkCurtainSpawnPoint;
-    [Tooltip("¸Ô¹° Àå¸· ÀÌµ¿ ¼Óµµ (ÅºÈ¯Ã³·³ ¿À¸¥ÂÊ -> ¿ŞÂÊÀ¸·Î ÀÌµ¿)")]
+    [Tooltip("ï¿½Ô¹ï¿½ ï¿½å¸· ï¿½Ìµï¿½ ï¿½Óµï¿½ (ÅºÈ¯Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½)")]
     public float inkCurtainSpeed = 4f;
-    [Tooltip("¸Ô¹° Àå¸·ÀÌ ÀÚµ¿À¸·Î »ç¶óÁö±â±îÁöÀÇ ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float inkCurtainLifetime = 8f;
-    [Tooltip("ÅºÈ¯À» ¸î ¹ß ¹ß»çÇÒ ¶§¸¶´Ù ¸Ô¹° Àå¸·À¸·Î ÀüÈ¯ÇÒÁö")]
+    [Tooltip("ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½")]
     public int bulletsBeforeInkCurtain = 10;
-    [Tooltip("º×Áú(1¹ø ¸ğµå)ÀÌ ¸Ô¹° Àå¸·°ú °ãÃÄ ÀÖ¾î¾ß ÇÏ´Â ´©Àû ½Ã°£(ÃÊ). ÅºÈ¯ÀÇ requiredPaintOverlapTime°ú º°°³·Î Àå¸· Àü¿ë °ª")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½(1ï¿½ï¿½ ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½). ÅºÈ¯ï¿½ï¿½ requiredPaintOverlapTimeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½å¸· ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½")]
     public float inkCurtainRequiredPaintOverlapTime = 3f;
 
     [Header("Laser Settings")]
-    [Tooltip("·¹ÀÌÀú ÅÚ·¹±×·¡ÇÁ ÇÁ¸®ÆÕ")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject laserTelegraphPrefab;
-    [Tooltip("·¹ÀÌÀú º»Ã¼ ÇÁ¸®ÆÕ (Ãæµ¹ ÆÇÁ¤Àº ÇÁ¸®ÆÕ ÀÚÃ¼¿¡ ÀÖ´Â Collider2D¸¦ ±×´ë·Î »ç¿ë)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ö´ï¿½ Collider2Dï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½)")]
     public GameObject laserPrefab;
-    [Tooltip("·¹ÀÌÀú°¡ °íÁ¤ ¹ß»çµÇ´Â À§Ä¡ (ÇÃ·¹ÀÌ¾î¸¦ ÃßÀûÇÏÁö ¾Ê°í Ç×»ó ÀÌ À§Ä¡¿¡¼­ ¹ß»ç)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½Ç´ï¿½ ï¿½ï¿½Ä¡ (ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½)")]
     public Transform laserFirePoint;
-    [Tooltip("Ãß°İ ½ÃÀÛ ÈÄ ·¹ÀÌÀú¸¦ Ã³À½ »ç¿ëÇÒ ¼ö ÀÖ°Ô µÇ±â±îÁöÀÇ ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float laserUnlockTime = 20f;
-    [Tooltip("·¹ÀÌÀú Á¾·á ÈÄºÎÅÍ ´ÙÀ½ ·¹ÀÌÀú±îÁöÀÇ ÄğÅ¸ÀÓ(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½(ï¿½ï¿½)")]
     public float laserCooldown = 10f;
-    [Tooltip("·¹ÀÌÀú ÅÚ·¹±×·¡ÇÁ À¯Áö ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float laserTelegraphDuration = 1.5f;
-    [Tooltip("·¹ÀÌÀú ÅÚ·¹±×·¡ÇÁ ±ôºıÀÓ °£°İ(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½)")]
     public float laserBlinkInterval = 0.5f;
-    [Tooltip("·¹ÀÌÀú º»Ã¼°¡ À¯ÁöµÇ´Â ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float laserDuration = 0.5f;
 
-    private float attackStartTime; // Ãß°İ(°ø°İ ·çÇÁ) ½ÃÀÛ ½Ã°¢ - laserUnlockTime °è»ê ±âÁØ
+    private float attackStartTime; // ï¿½ß°ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ - laserUnlockTime ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Coroutine laserLoopCoroutine;
 
-    private int bulletFireCount = 0; // ÅºÈ¯ ¹ß»ç Ä«¿îÆ® (bulletsBeforeInkCurtain¿¡ µµ´ŞÇÏ¸é Àå¸· ¹ßµ¿)
+    private int bulletFireCount = 0; // ÅºÈ¯ ï¿½ß»ï¿½ Ä«ï¿½ï¿½Æ® (bulletsBeforeInkCurtainï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½å¸· ï¿½ßµï¿½)
 
     private Coroutine fireLoopCoroutine;
 
@@ -78,7 +94,7 @@ public class BossChaseAttack : MonoBehaviour
     {
         fireLoopCoroutine = StartCoroutine(FireLoop());
 
-        // ·¹ÀÌÀú ¾ğ¶ô/ÄğÅ¸ÀÓ °è»ê ±âÁØ ½Ã°¢ (Ãß°İ ½ÃÀÛ ½ÃÁ¡À¸·Î °£ÁÖ)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½/ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ (ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         attackStartTime = Time.time;
         laserLoopCoroutine = StartCoroutine(LaserLoop());
     }
@@ -89,13 +105,25 @@ public class BossChaseAttack : MonoBehaviour
         {
             if (bulletFireCount >= bulletsBeforeInkCurtain)
             {
-                // ÅºÈ¯À» bulletsBeforeInkCurtain¹ß ¹ß»çÇßÀ¸¸é ÀÌ¹ø Â÷·Ê´Â ¸Ô¹° Àå¸·À¸·Î ´ëÃ¼
+                // ÅºÈ¯ï¿½ï¿½ bulletsBeforeInkCurtainï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½Ê´ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
                 FireInkCurtain();
                 bulletFireCount = 0;
             }
             else
             {
-                FireBullet();
+                // ï¿½ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸· Ä«ï¿½ï¿½Æ®(bulletFireCount)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ Ä«ï¿½ï¿½Æ®.
+                //   ï¿½Ï¹ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, 15ï¿½ï¿½Â°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½.
+                curveBulletFireCount++;
+                if (curveBulletFireCount >= bulletsBeforeCurveBullet)
+                {
+                    FireCurveBullet();
+                    curveBulletFireCount = 0;
+                }
+                else
+                {
+                    FireBullet();
+                }
+
                 bulletFireCount++;
             }
 
@@ -107,14 +135,14 @@ public class BossChaseAttack : MonoBehaviour
     {
         if (bulletPrefab == null)
         {
-            Debug.LogWarning("[BossChaseAttack] bulletPrefabÀÌ ºñ¾îÀÖ¾î ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] bulletPrefabï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
         Transform chosenPoint = GetRandomFirePoint();
         if (chosenPoint == null)
         {
-            Debug.LogWarning("[BossChaseAttack] À¯È¿ÇÑ ¹ß»ç À§Ä¡°¡ ¾ø¾î ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] ï¿½ï¿½È¿ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
@@ -129,18 +157,55 @@ public class BossChaseAttack : MonoBehaviour
         if (bullet == null) bullet = bulletObj.AddComponent<BossChaseBullet>();
         bullet.Initialize(attackDamage, bulletLifetime, requiredPaintOverlapTime);
     }
-    // ¸Ô¹° Àå¸·(Ink Curtain) °ø°İ Àü¿ë ¸Ş¼­µå. ÅºÈ¯°ú µ¿ÀÏÇÏ°Ô ¿À¸¥ÂÊ -> ¿ŞÂÊÀ¸·Î ÀÌµ¿ÇÏ¸ç,
-    // attackDamage/requiredPaintOverlapTimeÀ» »õ·Î ¸¸µéÁö ¾Ê°í ±×´ë·Î Àç»ç¿ëÇÔ
+
+    private void FireCurveBullet()
+    {
+        if (curveBulletPrefab == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] curveBulletPrefabì´ ë¹„ì–´ìˆì–´ ë³€í™”êµ¬ë¥¼ ë°œì‚¬í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+        if (curveFirePoint1 == null || curveFirePoint2 == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] curveFirePoint1/2ê°€ ë¹„ì–´ìˆì–´ ë³€í™”êµ¬ë¥¼ ë°œì‚¬í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        // â˜… 1ë²ˆ/2ë²ˆ ìœ„ì¹˜ ì¤‘ ë¬´ì‘ìœ„ë¡œ ìƒì„± ì§€ì ì„ ê³ ë¥´ê³ , ëª©í‘œëŠ” í•­ìƒ ë°˜ëŒ€ìª½ ìœ„ì¹˜ì˜ Yì¢Œí‘œë¡œ ì„¤ì •
+        bool spawnAtPoint1 = Random.value < 0.5f;
+        Transform spawnPoint = spawnAtPoint1 ? curveFirePoint1 : curveFirePoint2;
+        Transform targetPoint = spawnAtPoint1 ? curveFirePoint2 : curveFirePoint1;
+
+        GameObject bulletObj = Instantiate(curveBulletPrefab, spawnPoint.position, Quaternion.identity);
+
+        Rigidbody2D rb = bulletObj.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = bulletObj.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.left * bulletSpeed; // ìƒì„± ì§í›„ì—” ì¼ë°˜ íƒ„í™˜ê³¼ ë™ì¼í•˜ê²Œ ì™¼ìª½ìœ¼ë¡œ ì§ì§„
+
+        // ê¸°ì¡´ BossChaseBulletì„ ê·¸ëŒ€ë¡œ ì¬ì‚¬ìš© -> ì •í™”(ë¶“ì§ˆ)/ìˆ˜ëª…/ë°ë¯¸ì§€ ì‹œìŠ¤í…œì´ ì¼ë°˜ íƒ„í™˜ê³¼ ì™„ì „íˆ ë™ì¼
+        BossChaseBullet bullet = bulletObj.GetComponent<BossChaseBullet>();
+        if (bullet == null) bullet = bulletObj.AddComponent<BossChaseBullet>();
+        bullet.Initialize(attackDamage, bulletLifetime, requiredPaintOverlapTime);
+
+        // ê³¡ì„  ì´ë™ë§Œ ë³„ë„ ì»´í¬ë„ŒíŠ¸ë¡œ ì¶”ê°€ (BossChaseBullet ë¡œì§ì—ëŠ” ì „í˜€ ê´€ì—¬í•˜ì§€ ì•ŠìŒ)
+        BossChaseCurveBullet curveMotion = bulletObj.GetComponent<BossChaseCurveBullet>();
+        if (curveMotion == null) curveMotion = bulletObj.AddComponent<BossChaseCurveBullet>();
+        curveMotion.SetCurveParams(targetPoint.position, curveStartTime, curveMoveSpeed);
+    }
+
+    // ï¿½Ô¹ï¿½ ï¿½å¸·(Ink Curtain) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ş¼ï¿½ï¿½ï¿½. ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï¸ï¿½,
+    // attackDamage/requiredPaintOverlapTimeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void FireInkCurtain()
     {
         if (inkCurtainPrefab == null)
         {
-            Debug.LogWarning("[BossChaseAttack] inkCurtainPrefabÀÌ ºñ¾îÀÖ¾î ¸Ô¹° Àå¸·À» ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] inkCurtainPrefabï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
         if (inkCurtainSpawnPoint == null)
         {
-            Debug.LogWarning("[BossChaseAttack] inkCurtainSpawnPoint°¡ ºñ¾îÀÖ¾î ¸Ô¹° Àå¸·À» ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] inkCurtainSpawnPointï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
@@ -168,7 +233,7 @@ public class BossChaseAttack : MonoBehaviour
         return validPoints[Random.Range(0, validPoints.Count)];
     }
 
-    // ·¹ÀÌÀú »ç¿ë °¡´É ½ÃÁ¡(laserUnlockTime)À» ±â´Ù¸° µÚ, ·¹ÀÌÀú -> ÄğÅ¸ÀÓÀ» ¹İº¹ÇÏ´Â ·çÇÁ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(laserUnlockTime)ï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½İºï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
     private IEnumerator LaserLoop()
     {
         float elapsedSinceStart = Time.time - attackStartTime;
@@ -181,22 +246,22 @@ public class BossChaseAttack : MonoBehaviour
         {
             yield return StartCoroutine(FireLaser());
 
-            // ·¹ÀÌÀú Á¾·á ÈÄºÎÅÍ ÄğÅ¸ÀÓ °è»ê
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½
             yield return new WaitForSeconds(laserCooldown);
         }
     }
 
-    // ·¹ÀÌÀú °ø°İ Àü¿ë ¸Ş¼­µå. laserFirePoint À§Ä¡¿¡ °íÁ¤µÇ¾î ÇÃ·¹ÀÌ¾î¸¦ ÃßÀûÇÏÁö ¾ÊÀ½.
-    // ÅÚ·¹±×·¡ÇÁ »ı¼º -> ±ôºıÀÓ À¯Áö -> ÅÚ·¹±×·¡ÇÁ Á¦°Å -> ·¹ÀÌÀú »ı¼º -> À¯Áö -> ÀÚµ¿ »èÁ¦ ¼ø¼­·Î ÁøÇà
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ş¼ï¿½ï¿½ï¿½. laserFirePoint ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+    // ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ -> ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private IEnumerator FireLaser()
     {
         if (laserFirePoint == null)
         {
-            Debug.LogWarning("[BossChaseAttack] laserFirePoint°¡ ºñ¾îÀÖ¾î ·¹ÀÌÀú¸¦ ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] laserFirePointï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             yield break;
         }
 
-        // ¨ç ÅÚ·¹±×·¡ÇÁ »ı¼º (laserFirePoint À§Ä¡ °íÁ¤)
+        // ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (laserFirePoint ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½)
         GameObject telegraph = null;
         if (laserTelegraphPrefab != null)
         {
@@ -204,13 +269,13 @@ public class BossChaseAttack : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[BossChaseAttack] laserTelegraphPrefabÀÌ ºñ¾îÀÖ¾î ÅÚ·¹±×·¡ÇÁ ¾øÀÌ ÁøÇàÇÕ´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] laserTelegraphPrefabï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
         }
 
         SpriteRenderer telegraphSr = telegraph != null ? telegraph.GetComponent<SpriteRenderer>() : null;
 
-        // 1.5ÃÊ(laserTelegraphDuration) µ¿¾È À¯ÁöÇÏ¸ç 0.5ÃÊ(laserBlinkInterval) °£°İÀ¸·Î ±ôºıÀÓ.
-        // WaitForSeconds ´ë½Å ¸Å ÇÁ·¹ÀÓ ´ë±â·Î Ã³¸®ÇØ¼­, ´ë±âÇÏ´Â µ¿¾È¿¡µµ laserFirePoint À§Ä¡¸¦ °è¼Ó µû¶ó°¡µµ·Ï °íÁ¤
+        // 1.5ï¿½ï¿½(laserTelegraphDuration) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ 0.5ï¿½ï¿½(laserBlinkInterval) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+        // WaitForSeconds ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Ø¼ï¿½, ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ laserFirePoint ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ó°¡µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         float blinkElapsed = 0f;
         float nextBlinkTime = laserBlinkInterval;
         bool visible = true;
@@ -234,10 +299,10 @@ public class BossChaseAttack : MonoBehaviour
             yield return null;
         }
 
-        // ¨è ÅÚ·¹±×·¡ÇÁ Á¦°Å
+        // ï¿½ï¿½ ï¿½Ú·ï¿½ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (telegraph != null) Destroy(telegraph);
 
-        // ¨é ·¹ÀÌÀú »ı¼º
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (laserPrefab != null)
         {
             GameObject laserObj = Instantiate(laserPrefab, laserFirePoint.position, laserFirePoint.rotation);
@@ -245,15 +310,15 @@ public class BossChaseAttack : MonoBehaviour
             BossChaseLaser hazard = laserObj.GetComponent<BossChaseLaser>();
             if (hazard == null) hazard = laserObj.AddComponent<BossChaseLaser>();
             hazard.Initialize(attackDamage);
-            hazard.SetPinnedPoint(laserFirePoint); // ·¹ÀÌÀú ÇÇ¹şÀ» laserFirePoint À§Ä¡¿¡ °è¼Ó °íÁ¤
+            hazard.SetPinnedPoint(laserFirePoint); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¹ï¿½ï¿½ï¿½ laserFirePoint ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-            // laserDuration(0.5ÃÊ) µ¿¾È À¯Áö ÈÄ ÀÚµ¿ »èÁ¦
+            // laserDuration(0.5ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
             Destroy(laserObj, laserDuration);
             yield return new WaitForSeconds(laserDuration);
         }
         else
         {
-            Debug.LogWarning("[BossChaseAttack] laserPrefabÀÌ ºñ¾îÀÖ¾î ·¹ÀÌÀú¸¦ ¹ß»çÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossChaseAttack] laserPrefabï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
         }
     }
     void OnDisable()
@@ -264,7 +329,7 @@ public class BossChaseAttack : MonoBehaviour
             fireLoopCoroutine = null;
         }
 
-        // ·¹ÀÌÀú ·çÇÁµµ ÇÔ²² Á¤Áö
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (laserLoopCoroutine != null)
         {
             StopCoroutine(laserLoopCoroutine);

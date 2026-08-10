@@ -30,35 +30,31 @@ public class R_EnemyMove : MonoBehaviour
     public bool IsStateDelay => isStateDelay;
     public float attackStopDistance = 1.5f;
 
-    [Tooltip("ÀÌ °Å¸® ¾È¿¡ ³·Àº ¶¥ÀÌ¶óµµ ÀÖÀ¸¸é ³¶¶°·¯Áö·Î ÆÇÁ¤ÇÏÁö ¾Ê°í ÀÌµ¿À» Çã¿ëÇÔ (°è´Ü/ÅÎ ³»·Á°¡±â Çã¿ë, ÃßÀû ¸ðµå¿¡¼­¸¸ Àû¿ë)")]
+    [Tooltip("ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½/ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
     public float safeDropDistance = 3f;
 
-    [Tooltip("¹èÈ¸(¼øÂû) ¸ðµåÀÏ ¶§ Àýº®À» °¨ÁöÇÏ´Â ·¹ÀÌÄ³½ºÆ® °Å¸®")]
+    [Tooltip("ï¿½ï¿½È¸(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½Å¸ï¿½")]
     public float wanderEdgeCheckDistance = 2f;
-    [Header("Á¡ÇÁ ¼³Á¤")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
 
-    [Header("º® Á¡ÇÁ ¾ÈÁ¤¼º ¼³Á¤")]
-    [Tooltip("isGrounded´Â FixedUpdate¿¡¼­¸¸ °»½ÅµÇ±â ¶§¹®¿¡, Update() Å¸ÀÌ¹Ö°ú ¾î±ß³ª ½ÇÁ¦·Î´Â Á¢Áö ÁßÀÎµ¥µµ " +
-             "ÇÑ ÇÁ·¹ÀÓ µ¿¾È false·Î ÀÐÇô Jump()°¡ ¹«½ÃµÇ´Â °æ¿ì°¡ ÀÖÀ½. ¸¶Áö¸·À¸·Î Á¢ÁöÇß´ø ½ÃÁ¡ºÎÅÍ " +
-             "ÀÌ ½Ã°£(ÃÊ) ¾ÈÀÌ¸é ¿©ÀüÈ÷ Á¢Áö »óÅÂ·Î °£ÁÖÇØ¼­ Á¡ÇÁ°¡ ¾ÃÈ÷Áö ¾Êµµ·Ï ÇÔ (ÄÚ¿äÅ× Å¸ÀÓ)")]
+    [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("isGroundedï¿½ï¿½ FixedUpdateï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÅµÇ±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Update() Å¸ï¿½Ì¹Ö°ï¿½ ï¿½ï¿½ß³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ " +
+             "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ falseï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Jump()ï¿½ï¿½ ï¿½ï¿½ï¿½ÃµÇ´ï¿½ ï¿½ï¿½ì°¡ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " +
+             "ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½Ú¿ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½)")]
     public float groundedBufferDuration = 0.15f;
     float lastGroundedTime = -999f;
 
-    [Tooltip("ÃßÀû Áß º®(1Ä­ º® µî)¿¡ ¸·ÇûÀ» ¶§, Á¡ÇÁ Á¶°Ç(isGrounded/CanClimbWall)ÀÌ ÇÑ ÇÁ·¹ÀÓ ½ÇÆÐÇÏ´õ¶óµµ " +
-             "Áï½Ã Æ÷±âÇÏÁö ¾Ê°í ÀÌ ½Ã°£(ÃÊ) µ¿¾ÈÀº ¸Å ÇÁ·¹ÀÓ °è¼Ó Á¡ÇÁ¸¦ Àç½ÃµµÇÔ")]
-    public float wallJumpRetryDuration = 0.3f;
-    float wallBlockStartTime = -1f;
 
-    Animator animator; // ÀÚ½Ä ¿ÀºêÁ§Æ®¿¡ ÀÖ´Â °æ¿ìµµ ´ëºñÇØ¼­ GetComponentInChildren »ç¿ë
+    Animator animator; // ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ìµµ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ GetComponentInChildren ï¿½ï¿½ï¿½
 
-    [Header("HP Bar (ÁÂ¿ì ¹ÝÀü ¹æÁö)")]
-    [Tooltip("¸ó½ºÅÍÀÇ ÀÚ½ÄÀ¸·Î Á¸ÀçÇÏ´Â World Space Canvas HP¹Ù. ºÎ¸ðÀÇ localScale.x ¹ÝÀü°ú ¹«°üÇÏ°Ô Ç×»ó Á¤¹æÇâÀ¸·Î À¯ÁöµÊ")]
+    [Header("HP Bar (ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ World Space Canvas HPï¿½ï¿½. ï¿½Î¸ï¿½ï¿½ï¿½ localScale.x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Transform hpBar;
 
-    Vector3 initialScale;           // ¸ó½ºÅÍ ÀÚ½ÅÀÇ ÃÊ±â localScale (¹æÇâ ±âÁØ°ª)
-    Vector3 hpBarInitialLocalScale; // HP¹ÙÀÇ ÃÊ±â localScale (º¸Á¤ ±âÁØ°ª)
+    Vector3 initialScale;           // ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ localScale (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½)
+    Vector3 hpBarInitialLocalScale; // HPï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ localScale (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½)
 
     void Start()
     {
@@ -75,7 +71,7 @@ public class R_EnemyMove : MonoBehaviour
         initialScale = transform.localScale;
         if (hpBar != null) hpBarInitialLocalScale = hpBar.localScale;
     }
-    [Tooltip("ÃßÀû ¸ðµåÀÏ ¶§ ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý ¼Óµµ ¹èÀ² (ÀÌµ¿ ¼Óµµ ¹èÀ²°ú ¸ÂÃç¼­ 1.5 ±ÇÀå)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ìµï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ 1.5 ï¿½ï¿½ï¿½ï¿½)")]
     public float chaseAnimSpeedMultiplier = 1.5f;
 
     void Update()
@@ -108,13 +104,13 @@ public class R_EnemyMove : MonoBehaviour
             return;
         }
 
-        // ÃßÀû »óÅÂ ¿©ºÎ¿¡ µû¶ó ¾Ö´Ï¸ÞÀÌÅÍ Àç»ý ¼Óµµ¸¦ ½Ç½Ã°£À¸·Î °»½Å
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½Ç½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (animator != null)
         {
             animator.speed = isChasing ? chaseAnimSpeedMultiplier : 1f;
         }
 
-        if (ignoreEdgeTimer > 0f)//¹æÇâ ÀüÈ¯ Á÷ÈÄ º¸È£ ½Ã°£
+        if (ignoreEdgeTimer > 0f)//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½Ã°ï¿½
             ignoreEdgeTimer -= Time.deltaTime;
 
         if (!isChasing && distance <= range)
@@ -149,7 +145,7 @@ public class R_EnemyMove : MonoBehaviour
             return;
         }
 
-        if (isStopped)//Àýº® ³¡¿¡¼­ ¸ØÃá »óÅÂ
+        if (isStopped)//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         {
             if (animator != null) animator.SetBool("IsWalking", false);
 
@@ -184,13 +180,13 @@ public class R_EnemyMove : MonoBehaviour
         timer += Time.deltaTime;
 
         float desiredDir = 0f;
-        if (isChasing)//ÃßÀû ¸ðµå
+        if (isChasing)//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         {
             float xDiff = target.position.x - transform.position.x;
             if (Mathf.Abs(xDiff) > attackStopDistance)
                 desiredDir = Mathf.Sign(xDiff);
         }
-        else if (timer < 3f)//¹èÈ¸»óÅÂ
+        else if (timer < 3f)//ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½
         {
             desiredDir = -1f;
         }
@@ -236,29 +232,17 @@ public class R_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isChasing)
+            bool isSettledOnGround = isGrounded && Mathf.Abs(rigid.linearVelocity.y) < 0.05f;
+
+            if (isChasing && isSettledOnGround && CanClimbWall(desiredDir))
             {
-                if (wallBlockStartTime < 0f)
-                    wallBlockStartTime = Time.time;
-
-                if (CanClimbWall(desiredDir))
-                {
-                    Jump();
-                    wallBlockStartTime = -1f;
-                    return;
-                }
-
-                if (Time.time - wallBlockStartTime < wallJumpRetryDuration)
-                {
-                    if (animator != null) animator.SetBool("IsWalking", false);
-                    prevposition = transform.position;
-                    return;
-                }
+                Jump();
+                return;
             }
 
             if (animator != null) animator.SetBool("IsWalking", false);
 
-            // ¹èÈ¸ ¸ðµå¿¡¼­¸¸ º® Ãæµ¹ ½Ã 0.5ÃÊ ¸ØÃè´Ù°¡ ¹Ý´ë ¹æÇâÀ¸·Î ÀüÈ¯
+            // ë°°íšŒ ëª¨ë“œì—ì„œë§Œ ë²½ ì¶©ëŒ ì‹œ 0.5ì´ˆ ë©ˆì·„ë‹¤ê°€ ë°˜ëŒ€ ë°©í–¥ìœ¼ë¡œ ì „í™˜
             if (!isChasing)
             {
                 isStopped = true;
@@ -267,10 +251,6 @@ public class R_EnemyMove : MonoBehaviour
 
             prevposition = transform.position;
             return;
-        }
-        else
-        {
-            wallBlockStartTime = -1f;
         }
 
         if (animator != null) animator.SetBool("IsWalking", true);
@@ -287,10 +267,6 @@ public class R_EnemyMove : MonoBehaviour
     }
     private bool CanClimbWall(float dir)
     {
-        // ±âÁ¸¿¡´Â frontPos°¡ ¸öÅë Áß¾Ó(transform.position) ³ôÀÌ¿¡¼­ ½ÃÀÛÇØ¼­,
-        // ¸öÅë Áß¾Óº¸´Ù ³·Àº º®Àº lowHitÀÌ ¾Æ¿¹ ¾Æ¹«°Íµµ ¸ÂÈ÷Áö ¸øÇØ Ç×»ó false(¿À¸£±â ºÒ°¡)·Î
-        // ÆÇÁ¤µÇ´Â ¹®Á¦°¡ ÀÖ¾úÀ½. °¨Áö ±âÁØÁ¡À» ¹ß¹Ø(ÄÝ¶óÀÌ´õ ÇÏ´Ü)À¸·Î ³·Ãç¼­
-        // ¾î¶² ³ôÀÌÀÇ º®ÀÌµç lowHitÀÌ Á¤»óÀûÀ¸·Î °¨ÁöµÇµµ·Ï ÇÔ
         Vector2 feetPos = new Vector2(transform.position.x, col.bounds.min.y + 0.05f) +
                            Vector2.right * dir *
                            (col.bounds.extents.x + 0.1f);
@@ -304,8 +280,8 @@ public class R_EnemyMove : MonoBehaviour
         if (lowHit.collider == null)
             return false;
 
-        // ¹ß¹Ø ±âÁØÀ¸·Î climbableWallHeight¸¸Å­ À§¿¡¼­µµ º®ÀÌ °è¼Ó ÀÌ¾îÁö´ÂÁö °Ë»ç.
-        // ±× ³ôÀÌ¿¡¼­ º®ÀÌ ¾ø´Ù¸é(=³·Àº º®ÀÌ¶ó¸é) ¿À¸¦ ¼ö ÀÖ´Ù°í ÆÇÁ¤
+        // ë°œë°‘ ê¸°ì¤€ìœ¼ë¡œ climbableWallHeightë§Œí¼ ìœ„ì—ì„œë„ ë²½ì´ ê³„ì† ì´ì–´ì§€ëŠ”ì§€ ê²€ì‚¬.
+        // ê·¸ ë†’ì´ì—ì„œ ë²½ì´ ì—†ë‹¤ë©´(=ë‚®ì€ ë²½ì´ë¼ë©´) ì˜¤ë¥¼ ìˆ˜ ìžˆë‹¤ê³  íŒì •
         Vector2 upperPos = feetPos + Vector2.up * climbableWallHeight;
 
         RaycastHit2D upperHit = Physics2D.Raycast(
@@ -316,11 +292,14 @@ public class R_EnemyMove : MonoBehaviour
 
         return upperHit.collider == null;
     }
+
     private void Jump()
     {
         bool groundedRecently = isGrounded || (Time.time - lastGroundedTime <= groundedBufferDuration);
         if (!groundedRecently)
             return;
+
+        Debug.Log($"[R_JUMP] frame={Time.frameCount} pos={transform.position} isChasing={isChasing} velY_before={rigid.linearVelocity.y}");
 
         rigid.linearVelocity =
             new Vector2(rigid.linearVelocity.x, jumpForce);
@@ -367,16 +346,16 @@ public class R_EnemyMove : MonoBehaviour
 
         if (hpBar != null)
         {
-            // ºÎ¸ð(this)ÀÇ XÃà ºÎÈ£°¡ ÃÊ±â°ª ´ëºñ µÚÁýÇû´ÂÁö¿¡ µû¶ó HP¹Ù ·ÎÄÃ ½ºÄÉÀÏÀÇ ºÎÈ£¸¦ ¹Ý´ë·Î °É¾îÁÜ.
-            // °á°úÀûÀ¸·Î ºÎ¸ð(¿ùµå) ½ºÄÉÀÏ * ÀÚ½Ä(·ÎÄÃ) ½ºÄÉÀÏÀÌ Ç×»ó ÃÊ±â ºÎÈ£(Á¤¹æÇâ)·Î À¯ÁöµÊ.
+            // ï¿½Î¸ï¿½(this)ï¿½ï¿½ Xï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ê±â°ª ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ HPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ý´ï¿½ï¿½ ï¿½É¾ï¿½ï¿½ï¿½.
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ * ï¿½Ú½ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×»ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½È£(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
             Vector3 hpScale = hpBarInitialLocalScale;
             hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
             hpBar.localScale = hpScale;
         }
     }
-    // NormalMonster.Purify()°¡ ÀÌ ÄÄÆ÷³ÍÆ®¸¦ °­Á¦·Î ºñÈ°¼ºÈ­½ÃÅ³ ¶§ Unity°¡ ÀÚµ¿ È£Ãâ.
-    // ±× ½ÃÁ¡¿¡ Update() ·çÇÁ(isStateDelay Ã³¸®)°¡ ¸ØÃç¼­ currentAlert°¡ Á¤¸®µÇÁö ¸øÇÏ¹Ç·Î,
-    // ¿©±â¼­ È®½ÇÇÏ°Ô ÆÄ±«ÇÔ
+    // NormalMonster.Purify()ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½ï¿½Å³ ï¿½ï¿½ Unityï¿½ï¿½ ï¿½Úµï¿½ È£ï¿½ï¿½.
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Update() ï¿½ï¿½ï¿½ï¿½(isStateDelay Ã³ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ currentAlertï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¹Ç·ï¿½,
+    // ï¿½ï¿½ï¿½â¼­ È®ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½
     void OnDisable()
     {
         if (currentAlert != null)

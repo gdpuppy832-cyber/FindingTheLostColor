@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -1984632610777454492}
   - component: {fileID: 2434699336844069180}
   - component: {fileID: 2369340244454583480}
+  - component: {fileID: 3967793477410676102}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Boss
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_SortingLayerID: -485289909
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
+  m_Sprite: {fileID: 3789445723894214045, guid: b831829ccab2101438689eeaf9a7ab52, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -130,17 +131,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.043038845, y: -0.0649668}
+  m_Offset: {x: -0.111600995, y: -0.5707058}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.33, y: 2.83}
+    oldSize: {x: 4.57, y: 4.3}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.1406279, y: 2.7000663}
+  m_Size: {x: 1.5921273, y: 2.2665753}
   m_EdgeRadius: 0
 --- !u!50 &3942307000133411523
 Rigidbody2D:
@@ -237,6 +238,7 @@ MonoBehaviour:
   rightPortalObject: {fileID: 0}
   spawnInterval: 10
   isBossBattleStarted: 1
+  easyModeRestDelay: 7
 --- !u!114 &2369340244454583480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,6 +277,7 @@ MonoBehaviour:
   blackFogs:
   - {fileID: 0}
   - {fileID: 0}
+  isEasyMode: 0
   colorWhirlpoolPrefab: {fileID: 3122498533466164753, guid: 2a78f54f1bc20e74d9ecf6b52e935560, type: 3}
   colorWhirlpoolSpawnOffset: {x: 0, y: -7.5}
   colorWhirlpoolFadeInDuration: 2
@@ -290,17 +293,17 @@ MonoBehaviour:
   spikeTelegraphDuration: 1.5
   spikeTelegraphBlinkInterval: 0.25
   spikeLifetime: 2
-  spikeSearchRadius: 15
   spikeGroundRaycastDistance: 20
   spikeMaxSearchAttempts: 20
   spikeMinDistance: 1.7
-  spikeMaxHeightAboveBoss: 10
-  spikeContactSampleCount: 5
-  spikeContactTolerance: 0.05
-  spikeContactSearchStep: 0.5
-  spikeContactSearchMaxDistance: 8
-  fallbackSpikeHalfWidth: 0.3
   spikeSecondWaveDelay: 0.5
+  spikeSpawnAreaOffset: {x: 0, y: 0}
+  spikeSpawnAreaWidth: 16
+  spikeSpawnAreaHeight: 6
+  spikeGroundLeftCheckDistance: 1
+  spikeGroundRightCheckDistance: 1
+  playerSpikeSearchMaxSteps: 5
+  playerSpikeSearchStep: 1
   frostRainCompanionChance: 1
   laserTelegraphPrefab: {fileID: 1014840232707358376, guid: 9422e8006b9ae53419523c3ecbf12b24, type: 3}
   laserPrefab: {fileID: 4371630478863771354, guid: 817fd6c7639bda64fabe240522c3ba53, type: 3}
@@ -360,6 +363,28 @@ MonoBehaviour:
   shadowBarrierActiveDuration: 1.17
   shadowBarrierAttackWidth: 34
   shadowBarrierSpawnOffset: {x: 0, y: -0.75}
+--- !u!95 &3967793477410676102
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 17b6f75cba36e004ebf46180d58994cc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1138344273964104933
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,7 +539,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0028717518, y: -0.1080997}
+  m_Offset: {x: -0.025695637, y: -0.5193597}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -524,7 +549,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.9839664, y: 2.3204079}
+  m_Size: {x: 0.9898075, y: 1.7646513}
   m_EdgeRadius: 0
 --- !u!114 &331626701248160981
 MonoBehaviour:

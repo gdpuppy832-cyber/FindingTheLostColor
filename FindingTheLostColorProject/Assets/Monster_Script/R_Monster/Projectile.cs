@@ -17,6 +17,12 @@ public class Projectile : MonoBehaviour
     [Tooltip("날아가는 동안 초당 회전하는 각도 (양수면 반시계, 음수면 시계 방향)")]
     public float rotationSpeed = 720f;
 
+    [Header("발사 몬스터 정화 연동")]
+    [Tooltip("체크하면, 이 투사체를 쏜 몬스터가 정화(Purify)되는 순간 투사체도 함께 사라짐")]
+    public bool despawnOnShooterPurified = true;
+
+    NormalMonster shooterMonster; // 이 투사체를 발사한 몬스터 (정화 여부 감시용)
+
     SpriteRenderer sr;
     Camera mainCam;
     Rigidbody2D rb;
@@ -60,7 +66,11 @@ public class Projectile : MonoBehaviour
         transform.rotation = Quaternion.identity; // 회전 각도 초기화 (이전 발사 때 회전한 상태가 남지 않도록)
         BeginDelayedLaunch();
     }
-
+    // 이 투사체를 발사한 몬스터를 등록 (R_EnemyAttack 등이 발사 직후 호출)
+    public void SetShooter(NormalMonster shooter)
+    {
+        shooterMonster = shooter;
+    }
     // 이동(속도)은 생성 즉시 그대로 유지하고, 회전만 preFlightDelay 뒤에 시작되게 함
     void BeginDelayedLaunch()
     {
@@ -76,6 +86,13 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
+        // 발사 몬스터가 정화되었다면 투사체도 즉시 소멸
+        if (despawnOnShooterPurified && shooterMonster != null && shooterMonster.IsPurified)
+        {
+            Despawn();
+            return;
+        }
+
         // preFlightDelay가 끝나 실제로 날아가는 동안에는 계속 회전시킴
         if (isFlying)
             transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
