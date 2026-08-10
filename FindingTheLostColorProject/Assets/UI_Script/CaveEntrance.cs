@@ -228,23 +228,46 @@ public class CaveEntrance : InteractableObject
     }
 
     /// <summary>
-    /// 화면을 페이드 아웃시킨 뒤 보스 씬으로 이동합니다.
+    /// 화면을 페이드 아웃시킨 뒤 선택된 난이도(Easy/Hard)에 맞추어 보스 씬으로 이동합니다.
     /// </summary>
     private IEnumerator TransitionToBossStage()
     {
         isTransitioning = true;
 
+        string finalSceneName = GetTargetSceneWithDifficulty(targetSceneName);
+
         if (ScreenFader.Instance != null)
         {
-            ScreenFader.Instance.FadeToScene(targetSceneName, fadeDuration);
+            ScreenFader.Instance.FadeToScene(finalSceneName, fadeDuration);
         }
         else
         {
             // ScreenFader가 없는 경우 기존 즉시 로드 처리
-            SceneManager.LoadScene(targetSceneName);
+            SceneManager.LoadScene(finalSceneName);
         }
 
         yield return null;
+    }
+
+    private string GetTargetSceneWithDifficulty(string targetScene)
+    {
+        if (string.IsNullOrEmpty(targetScene)) return targetScene;
+
+        string lower = targetScene.ToLower();
+        if (lower.Contains("boss") || lower.Contains("stage2"))
+        {
+            string diff = PlayerPrefs.GetString("SelectedDifficulty", "Easy");
+            if (diff == "Easy")
+            {
+                return "BossMap_ez";
+            }
+            else
+            {
+                return "BossMap";
+            }
+        }
+
+        return targetScene;
     }
 
     /// <summary>
