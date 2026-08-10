@@ -19,7 +19,8 @@ public class LightningHazard : MonoBehaviour
     private Animator anim;
     private Collider2D col;
     private Dictionary<PlayerHealth, float> lastHitTimes = new Dictionary<PlayerHealth, float>();
-
+    private PolygonCollider2D polyCol;
+    private Sprite lastSprite;
     public void Init(Vector3 fromPos, Vector3 toPos, float length)
     {
         transform.rotation = Quaternion.identity;
@@ -52,6 +53,24 @@ public class LightningHazard : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(LightningLifecycleRoutine());
+
+        polyCol = col as PolygonCollider2D;
+    }
+    void Update()
+    {
+        if (sr != null && polyCol != null && sr.sprite != null && sr.sprite != lastSprite)
+        {
+            lastSprite = sr.sprite;
+            polyCol.pathCount = sr.sprite.GetPhysicsShapeCount();
+
+            List<Vector2> path = new List<Vector2>();
+            for (int i = 0; i < polyCol.pathCount; i++)
+            {
+                path.Clear();
+                sr.sprite.GetPhysicsShape(i, path);
+                polyCol.SetPath(i, path.ToArray());
+            }
+        }
     }
 
     private IEnumerator LightningLifecycleRoutine()
@@ -72,7 +91,6 @@ public class LightningHazard : MonoBehaviour
         // 1. 번개 최초 타격 발동 (0.4초)
         yield return new WaitForSeconds(lifetime);
 
-        Debug.Log($"<color=cyan>[LightningHazard]</color> 하드모드 5초간 잔류 번개 가동!");
 
         // 2. 하드 모드 잔류 번개: 총 5초 중 첫 4초는 100% 진한 선명도(Alpha 1.0f) 짱짱함 유지, 마지막 1초 동안 페이드아웃
         float elapsed = 0f;
@@ -119,7 +137,6 @@ public class LightningHazard : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log($"<color=orange>[LightningHazard]</color> 잔류 번개 5초 완전히 완료 후 소멸!");
         Destroy(gameObject);
     }
 
@@ -139,7 +156,6 @@ public class LightningHazard : MonoBehaviour
             {
                 player.TakeDamage(damage);
                 lastHitTimes[player] = Time.time;
-                Debug.Log($"<color=red>[LightningHazard]</color> 번개 감전 피격! 피해량: {damage}");
             }
         }
     }
