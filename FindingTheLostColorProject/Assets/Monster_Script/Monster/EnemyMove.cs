@@ -261,13 +261,11 @@ public class EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            if (isChasing)
+            if (isChasing && IsSettledOnGround())
             {
                 if (wallBlockStartTime < 0f)
                     wallBlockStartTime = Time.time;
 
-                // isGrounded 자체가 아니라 Jump() 내부에서 버퍼(코요테 타임)까지 감안해서
-                // 판정하므로, 여기서는 그냥 시도만 하면 됨.
                 if (CanClimbWall(desiredDir))
                 {
                     Jump();
@@ -372,6 +370,11 @@ public class EnemyMove : MonoBehaviour
         Vector2 centerPoint = (Vector2)rigid.position;
         RaycastHit2D trueGroundHit = Physics2D.Raycast(centerPoint, Vector2.down, col.bounds.extents.y + trueGroundCheckDistance, LayerMask.GetMask("Platform"));
         isTrueGrounded = trueGroundHit.collider != null;
+    }
+
+    private bool IsSettledOnGround()
+    {
+        return isTrueGrounded && Mathf.Abs(rigid.linearVelocity.y) < 0.05f;
     }
     private bool CanClimbWall(float dir)
     {

@@ -497,9 +497,25 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveFirePoint
+      value: 
+      objectReference: {fileID: 411191068}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveStartTime
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserFirePoint
       value: 
       objectReference: {fileID: 1244530048}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveFirePoint1
+      value: 
+      objectReference: {fileID: 411191068}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveFirePoint2
+      value: 
+      objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainSpeed
       value: 1
@@ -508,6 +524,14 @@ PrefabInstance:
       propertyPath: laserUnlockTime
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveTargetPoint
+      value: 
+      objectReference: {fileID: 583435371}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: curveBulletPrefab
+      value: 
+      objectReference: {fileID: 5909081372243577439, guid: a62916e4cfa0ac9479c95ff7a0d81103, type: 3}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainLifetime
       value: 8
@@ -585,6 +609,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 136949802834516866, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.7461548
+      objectReference: {fileID: 0}
     - target: {fileID: 969019871352650803, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

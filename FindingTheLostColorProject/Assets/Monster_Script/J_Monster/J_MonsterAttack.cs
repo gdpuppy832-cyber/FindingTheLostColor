@@ -169,6 +169,7 @@ public class J_EnemyAttack : MonoBehaviour
         canAttack = false;
         hitPlayerThisJump = false; // 새 점프 시작 시 충돌 기록 초기화
 
+        Debug.Log($"[ATTACK] frame={Time.frameCount} time={Time.time:F3}");
 
         if (animator != null)
         {
@@ -179,7 +180,11 @@ public class J_EnemyAttack : MonoBehaviour
         if (enemyMove != null)
             enemyMove.enabled = false;
 
-
+        Vector2 currentPos = transform.position;
+        if (landPos.x != currentPos.x && enemyMove != null)
+        {
+            enemyMove.ApplyFacing(landPos.x < currentPos.x ? 1f : -1f);
+        }
 
         StartCoroutine(JumpAttackRoutine(landPos));
     }
@@ -291,14 +296,6 @@ public class J_EnemyAttack : MonoBehaviour
         }
 
         Vector2 startPos = transform.position;
-
-        // 점프 시작 직전, 날아가는 방향(착지 지점 쪽)을 바라보도록 스프라이트 반전
-        if (landPos.x != startPos.x)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * (landPos.x < startPos.x ? 1f : -1f);
-            transform.localScale = scale;
-        }
 
         // 포물선 점프 (장애물/천장 감지 없이 계획된 착지 지점까지 그대로 진행)
         float elapsed = 0f;
