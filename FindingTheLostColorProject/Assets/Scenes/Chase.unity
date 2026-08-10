@@ -453,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: transitionDelay
-      value: 600
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3110220901936660074, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_Color.a
