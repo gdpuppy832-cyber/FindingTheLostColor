@@ -822,6 +822,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7520781782448258880, guid: 23317ca43e4c13e418116cd5d1546e64, type: 3}
+      propertyPath: despawnOnShooterPurified
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
