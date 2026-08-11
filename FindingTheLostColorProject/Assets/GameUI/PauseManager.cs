@@ -341,10 +341,89 @@ public class PauseManager : MonoBehaviour
 
     public void ToggleInfinitePaint()
     {
-        isInfinitePaint = !isInfinitePaint;
+        TeleportToPortal();
+    }
+
+    /// <summary>
+    /// [치트/개발자 기능] 씬 내의 맵 포탈(MapPortal, PuzzleDoor, CaveEntrance 등)의 위치로 플레이어를 즉시 순간이동 시킵니다.
+    /// </summary>
+    public void TeleportToPortal()
+    {
         if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.SFXType.ButtonClick, 0.8f);
-        UpdateCheatTexts(); // 실시간 텍스트 및 칼라 피드백 스왑
-        Debug.Log("[DevMode] 무한 물감 상태: " + isInfinitePaint);
+
+        // 1. 플레이어 오브젝트 탐색
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj == null)
+        {
+            PlayerHealth pHealth = FindFirstObjectByType<PlayerHealth>();
+            if (pHealth != null) playerObj = pHealth.gameObject;
+        }
+
+        if (playerObj == null)
+        {
+            Debug.LogWarning("[PauseManager] 텔레포트할 플레이어를 찾을 수 없습니다.");
+            return;
+        }
+
+        // 2. 포탈 오브젝트 탐색 (MapPortal, PuzzleDoor, CaveEntrance 또는 "Portal" 태그/이름 탐색)
+        Vector3 targetPortalPos = Vector3.zero;
+        bool foundPortal = false;
+
+        MapPortal mapPortal = FindFirstObjectByType<MapPortal>();
+        if (mapPortal != null)
+        {
+            targetPortalPos = mapPortal.transform.position;
+            foundPortal = true;
+        }
+        else
+        {
+            PuzzleDoor door = FindFirstObjectByType<PuzzleDoor>();
+            if (door != null)
+            {
+                targetPortalPos = door.transform.position;
+                foundPortal = true;
+            }
+            else
+            {
+                CaveEntrance cave = FindFirstObjectByType<CaveEntrance>();
+                if (cave != null)
+                {
+                    targetPortalPos = cave.transform.position;
+                    foundPortal = true;
+                }
+                else
+                {
+                    GameObject portalObj = GameObject.FindWithTag("Portal");
+                    if (portalObj != null)
+                    {
+                        targetPortalPos = portalObj.transform.position;
+                        foundPortal = true;
+                    }
+                }
+            }
+        }
+
+        if (foundPortal)
+        {
+            // 플레이어를 포탈 위치로 순간이동 (Z축 보존)
+            targetPortalPos.z = playerObj.transform.position.z;
+            playerObj.transform.position = targetPortalPos;
+
+            // 리지드바디 속도 초기화 (추락 중 순간이동 대응)
+            Rigidbody2D rb = playerObj.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+
+            Debug.Log($"[PauseManager] 포탈 위치({targetPortalPos})로 플레이어 순간이동 완료!");
+        }
+        else
+        {
+            Debug.LogWarning("[PauseManager] 씬 내에 텔레포트할 포탈 오브젝트(MapPortal/PuzzleDoor/CaveEntrance 등)를 찾을 수 없습니다.");
+        }
+
+        UpdateCheatTexts();
     }
 
     public void ToggleInfiniteSuper()
@@ -366,7 +445,7 @@ public class PauseManager : MonoBehaviour
         }
         if (infinitePaintText != null)
         {
-            infinitePaintText.text = "물감 무한: " + (isInfinitePaint ? "<color=#00FF00>ON</color>" : "<color=#FF0000>OFF</color>");
+            infinitePaintText.text = "포탈 텔레포트";
         }
         if (infiniteSuperText != null)
         {

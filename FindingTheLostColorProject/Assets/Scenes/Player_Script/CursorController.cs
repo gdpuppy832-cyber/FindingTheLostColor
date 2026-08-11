@@ -59,17 +59,17 @@ public class CursorController : MonoBehaviour
     [Tooltip("차징 샷 폭발 반경 (범위, 기본값: 2.5)")]
     public float chargeAttackRadius = 2.5f;
 
-    [Tooltip("2번 차징 샷 근거리(0단계) 정화/힐량 (기본값: 3.0)")]
-    public float chargeCloseHealAmount = 3.0f;
+    [Tooltip("2번 차징 샷 근거리(0단계) 정화/힐량 (기본값: 4.0)")]
+    public float chargeCloseHealAmount = 4.0f;
 
-    [Tooltip("2번 차징 샷 중거리(1단계) 정화/힐량 (기본값: 2.0)")]
-    public float chargeMediumHealAmount = 2.0f;
+    [Tooltip("2번 차징 샷 중거리(1단계) 정화/힐량 (기본값: 2.5)")]
+    public float chargeMediumHealAmount = 2.5f;
 
-    [Tooltip("2번 차징 샷 원거리(2단계) 정화/힐량 (기본값: 1.0)")]
-    public float chargeFarHealAmount = 1.0f;
+    [Tooltip("2번 차징 샷 원거리(2단계) 정화/힐량 (기본값: 1.5)")]
+    public float chargeFarHealAmount = 1.5f;
 
     [Tooltip("하위 호환용 기존 단일 정화량 변수")]
-    public float chargeAttackHealAmount = 3.0f;
+    public float chargeAttackHealAmount = 4.0f;
     [Tooltip("차징 샷 발사 시 소모될 물감량 (기본값: 0.2, maxPaint는 1f)")]
     public float chargePaintCost = 0.2f;
     [Tooltip("차징 중 물감 소모 비율 (기존 소모량 대비 배율, 0.3 = 30% 소모)")]
@@ -530,6 +530,9 @@ public class CursorController : MonoBehaviour
                     ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
                     if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
 
+                    ColoringFallingBlock fallingBlock = hitCollider.GetComponent<ColoringFallingBlock>();
+                    if (fallingBlock == null) fallingBlock = hitCollider.GetComponentInParent<ColoringFallingBlock>();
+
                     if (bridge != null)
                     {
                         if (healedObjects.Contains(bridge.gameObject)) continue;
@@ -540,6 +543,23 @@ public class CursorController : MonoBehaviour
                         {
                             float healAmount = activeHealRate * Time.deltaTime;
                             bridge.Heal(healAmount);
+
+                            if (SuperGaugeController.Instance != null)
+                            {
+                                SuperGaugeController.Instance.AddSuperGauge(healAmount);
+                            }
+                        }
+                    }
+                    else if (fallingBlock != null)
+                    {
+                        if (healedObjects.Contains(fallingBlock.gameObject)) continue;
+                        healedObjects.Add(fallingBlock.gameObject);
+
+                        // 정화 완료된 채색 블록 배제
+                        if (!fallingBlock.IsPurified)
+                        {
+                            float healAmount = activeHealRate * Time.deltaTime;
+                            fallingBlock.Heal(healAmount);
 
                             if (SuperGaugeController.Instance != null)
                             {
@@ -684,6 +704,10 @@ public class CursorController : MonoBehaviour
 
                 ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
                 if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
+
+                ColoringFallingBlock fallingBlock = hitCollider.GetComponent<ColoringFallingBlock>();
+                if (fallingBlock == null) fallingBlock = hitCollider.GetComponentInParent<ColoringFallingBlock>();
+
                 if (bridge != null)
                 {
                     if (healedObjects.Contains(bridge.gameObject)) continue;
@@ -693,6 +717,24 @@ public class CursorController : MonoBehaviour
                     if (!bridge.IsPurified)
                     {
                         bridge.Heal(activeChargeHeal);
+
+                        if (SuperGaugeController.Instance != null)
+                        {
+                            SuperGaugeController.Instance.AddSuperGauge(activeChargeHeal);
+                        }
+                    }
+                    hitCount++;
+                    continue;
+                }
+                else if (fallingBlock != null)
+                {
+                    if (healedObjects.Contains(fallingBlock.gameObject)) continue;
+                    healedObjects.Add(fallingBlock.gameObject);
+
+                    // 정화 완료된 채색 블록 배제
+                    if (!fallingBlock.IsPurified)
+                    {
+                        fallingBlock.Heal(activeChargeHeal);
 
                         if (SuperGaugeController.Instance != null)
                         {
