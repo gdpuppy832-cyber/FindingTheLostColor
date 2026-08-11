@@ -26563,11 +26563,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabToSpawn: {fileID: 6665902968580602944, guid: fdb9eb15a1b4035418e7599edefd1dee, type: 3}
+  secondaryPrefabToSpawn: {fileID: 0}
+  secondarySpawnChance: 0.15
   rangeX: 6.4
   spawnOffsetY: 0
   spawnInterval: 2
   initialDelay: 0.5
   isSpawning: 1
+  useObjectPooling: 1
+  initialPoolSize: 10
 --- !u!4 &1520221423
 Transform:
   m_ObjectHideFlags: 0
@@ -27832,6 +27836,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 269325346}
+    - target: {fileID: 3867903220537394188, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: yOffset
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3867903220537394188, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: maxCameraPos.x
       value: 400
