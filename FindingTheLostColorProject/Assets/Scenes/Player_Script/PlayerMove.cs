@@ -220,14 +220,17 @@ public class PlayerMove : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        foreach (ContactPoint2D contact in collision.contacts)
+        if (IsGroundOrPlatform(collision.gameObject))
         {
-            if (contact.normal.y > 0.5f)
+            foreach (ContactPoint2D contact in collision.contacts)
             {
-                isGrounded = true;
-                lastGroundedTime = Time.time; // 땅을 딛고 있는 동안 실시간 시간 갱신
-                jumpCount = 0;
-                return;
+                if (contact.normal.y > 0.5f)
+                {
+                    isGrounded = true;
+                    lastGroundedTime = Time.time; // 땅을 딛고 있는 동안 실시간 시간 갱신
+                    jumpCount = 0;
+                    return;
+                }
             }
         }
     }
@@ -387,12 +390,66 @@ public class PlayerMove : MonoBehaviour
         // 감지된 지형 콜라이더가 있고, 트리거 성격의 감지 영역이 아닐 경우
         if (hit.collider != null && !hit.collider.isTrigger)
         {
-            // 접촉한 바닥면의 각도가 평평하거나 완만한 서 있을 수 있는 경사인지 확인
-            if (hit.normal.y > 0.5f)
+            // 접촉한 바닥면의 각도가 평평하고 진짜 지형/플랫폼일 때만 착지 인정
+            if (hit.normal.y > 0.5f && IsGroundOrPlatform(hit.collider.gameObject))
             {
                 return true;
             }
         }
+        return false;
+    }
+
+    /// <summary>
+    /// 닿은 오브젝트가 진짜 지형/플랫폼(Ground/Platform)인지 검사하여 점프 리셋 대상인지 판별합니다.
+    /// 크리스탈, 몬스터 등은 점프 횟수 리셋 대상에서 제외됩니다.
+    /// (미정의 태그 호출 예외 에러 방지 안전 처리 포함)
+    /// </summary>
+    private bool IsGroundOrPlatform(GameObject obj)
+    {
+        if (obj == null) return false;
+
+        // 1. 크리스탈이나 몬스터 등은 지형이 아님
+        if (obj.GetComponent<BossCrystal>() != null || obj.GetComponentInParent<BossCrystal>() != null) return false;
+        if (obj.GetComponent<NormalMonster>() != null || obj.GetComponentInParent<NormalMonster>() != null) return false;
+
+        // 2. LayerMask 안전 검사 (Ground / Platform 레이어)
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        int platformLayer = LayerMask.NameToLayer("Platform");
+
+        if ((groundLayer != -1 && obj.layer == groundLayer) ||
+            (platformLayer != -1 && obj.layer == platformLayer))
+        {
+            return true;
+        }
+
+        // 3. 태그 미정의 예외 방지 안전 검사
+        try
+        {
+            if (obj.tag == "Ground" || obj.tag == "Platform")
+            {
+                return true;
+            }
+        }
+        catch
+        {
+            // 프로젝트에 해당 태그가 정의되어 있지 않은 경우 예외 무시
+        }
+
+        // 4. 오브젝트 이름 기반 지형/타일맵 판별 (ground, platform, tilemap, floor)
+        string objName = obj.name.ToLower();
+        string parentName = obj.transform.parent != null ? obj.transform.parent.name.ToLower() : "";
+
+        if (objName.Contains("ground") ||
+            objName.Contains("platform") ||
+            objName.Contains("tilemap") ||
+            objName.Contains("floor") ||
+            parentName.Contains("platform") ||
+            parentName.Contains("ground") ||
+            parentName.Contains("tilemap"))
+        {
+            return true;
+        }
+
         return false;
     }
 }
