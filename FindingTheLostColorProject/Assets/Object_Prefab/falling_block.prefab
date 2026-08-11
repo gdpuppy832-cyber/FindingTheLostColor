@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5505720930942686820}
   - component: {fileID: 3249766198904043212}
   - component: {fileID: 6798505516652982182}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: falling_block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,6 +177,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableFall: 1
   fallSpeed: 2
-  lifeTime: 20
+  lifeTime: 19
   enableFadeOut: 1
   fadeOutDuration: 1

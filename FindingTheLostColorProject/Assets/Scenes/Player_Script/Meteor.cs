@@ -125,6 +125,14 @@ public class Meteor : MonoBehaviour
             return;
         }
 
+        ColoringFallingBlock fallingBlock = collision.GetComponent<ColoringFallingBlock>();
+        if (fallingBlock == null) fallingBlock = collision.GetComponentInParent<ColoringFallingBlock>();
+        if (fallingBlock != null)
+        {
+            TryApplyDamage(fallingBlock.gameObject, fallingBlock);
+            return;
+        }
+
         Trampoline trampoline = collision.GetComponent<Trampoline>();
         if (trampoline == null) trampoline = collision.GetComponentInParent<Trampoline>();
         if (trampoline != null)
@@ -170,6 +178,7 @@ public class Meteor : MonoBehaviour
         if (targetComponent is NormalMonster monster && monster.IsPurified) return;
         if (targetComponent is RoseBush roseBush && roseBush.IsPurified) return;
         if (targetComponent is ColoringBridge bridge && bridge.IsPurified) return;
+        if (targetComponent is ColoringFallingBlock fBlock && fBlock.IsPurified) return;
         if (targetComponent is Trampoline trampoline && trampoline.IsPurified) return;
         if (targetComponent is PuzzleLamp lamp && lamp.IsPurified) return;
 
@@ -194,6 +203,7 @@ public class Meteor : MonoBehaviour
         }
         else if (targetComponent is RoseBush targetRoseBush) targetRoseBush.Heal(damage);
         else if (targetComponent is ColoringBridge targetBridge) targetBridge.Heal(damage);
+        else if (targetComponent is ColoringFallingBlock targetFBlock) targetFBlock.Heal(damage);
         else if (targetComponent is Trampoline targetTrampoline) targetTrampoline.Heal(damage);
         else if (targetComponent is PuzzleLamp targetLamp) targetLamp.Heal(damage);
 
@@ -237,6 +247,10 @@ public class Meteor : MonoBehaviour
             ColoringBridge bridge = hitCollider.GetComponent<ColoringBridge>();
             if (bridge == null) bridge = hitCollider.GetComponentInParent<ColoringBridge>();
             if (bridge != null) { TryApplyExplosionDamage(bridge.gameObject, bridge); continue; }
+
+            ColoringFallingBlock fallingBlock = hitCollider.GetComponent<ColoringFallingBlock>();
+            if (fallingBlock == null) fallingBlock = hitCollider.GetComponentInParent<ColoringFallingBlock>();
+            if (fallingBlock != null) { TryApplyExplosionDamage(fallingBlock.gameObject, fallingBlock); continue; }
 
             Trampoline trampoline = hitCollider.GetComponent<Trampoline>();
             if (trampoline == null) trampoline = hitCollider.GetComponentInParent<Trampoline>();
@@ -338,6 +352,7 @@ public class Meteor : MonoBehaviour
         if (targetComponent is NormalMonster monster && monster.IsPurified) return;
         if (targetComponent is RoseBush roseBush && roseBush.IsPurified) return;
         if (targetComponent is ColoringBridge bridge && bridge.IsPurified) return;
+        if (targetComponent is ColoringFallingBlock fBlock && fBlock.IsPurified) return;
         if (targetComponent is Trampoline trampoline && trampoline.IsPurified) return;
         if (targetComponent is PuzzleLamp lamp && lamp.IsPurified) return;
 
@@ -361,6 +376,7 @@ public class Meteor : MonoBehaviour
         }
         else if (targetComponent is RoseBush finalRoseBush) finalRoseBush.Heal(damage);
         else if (targetComponent is ColoringBridge finalBridge) finalBridge.Heal(damage);
+        else if (targetComponent is ColoringFallingBlock finalFB) finalFB.Heal(damage);
         else if (targetComponent is Trampoline finalTrampoline) finalTrampoline.Heal(damage);
         else if (targetComponent is PuzzleLamp finalLamp) finalLamp.Heal(damage);
 
