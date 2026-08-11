@@ -197,14 +197,14 @@ public class B_EnemyMove : MonoBehaviour
 
         float rayDistance = 0.2f;
 
-        RaycastHit2D wallHit = Physics2D.BoxCast(
-            col.bounds.center,
-            col.bounds.size * 0.9f,
-            0f,
-            Vector2.right * desiredDir,
-            rayDistance,
-            LayerMask.GetMask("Platform")
-        );
+        RaycastHit2D wallHit = BoxCastIgnoreTrampoline(
+    col.bounds.center,
+    col.bounds.size * 0.9f,
+    0f,
+    Vector2.right * desiredDir,
+    rayDistance,
+    LayerMask.GetMask("Platform")
+);
 
         if (wallHit.collider != null)
         {
@@ -273,6 +273,30 @@ public class B_EnemyMove : MonoBehaviour
         rigid.linearVelocity =
             new Vector2(rigid.linearVelocity.x, jumpForce);
     }
+    RaycastHit2D RaycastIgnoreTrampoline(Vector2 origin, Vector2 direction, float distance, int layerMask)
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, distance, layerMask);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var h in hits)
+        {
+            if (h.collider != null && h.collider.GetComponent<Trampoline>() == null)
+                return h;
+        }
+        return new RaycastHit2D();
+    }
+
+    RaycastHit2D BoxCastIgnoreTrampoline(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+    {
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, size, angle, direction, distance, layerMask);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var h in hits)
+        {
+            if (h.collider != null && h.collider.GetComponent<Trampoline>() == null)
+                return h;
+        }
+        return new RaycastHit2D();
+    }
+
     void FixedUpdate()
     {
         float halfWidth = col.bounds.extents.x;
@@ -284,15 +308,15 @@ public class B_EnemyMove : MonoBehaviour
 
         Debug.DrawRay(leftPoint, Vector2.down * checkDistance, Color.red);
         Debug.DrawRay(rightPoint, Vector2.down * checkDistance, Color.blue);
-        RaycastHit2D leftHit = Physics2D.Raycast(leftPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
-        RaycastHit2D rightHit = Physics2D.Raycast(rightPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
+        RaycastHit2D leftHit = RaycastIgnoreTrampoline(leftPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
+        RaycastHit2D rightHit = RaycastIgnoreTrampoline(rightPoint, Vector2.down, checkDistance, LayerMask.GetMask("Platform"));
 
         groundedLeft = leftHit.collider != null;
         groundedRight = rightHit.collider != null;
         isGrounded = groundedLeft || groundedRight;
 
         Vector2 centerPoint = (Vector2)rigid.position;
-        RaycastHit2D trueGroundHit = Physics2D.Raycast(centerPoint, Vector2.down, col.bounds.extents.y + trueGroundCheckDistance, LayerMask.GetMask("Platform"));
+        RaycastHit2D trueGroundHit = RaycastIgnoreTrampoline(centerPoint, Vector2.down, col.bounds.extents.y + trueGroundCheckDistance, LayerMask.GetMask("Platform"));
         isTrueGrounded = trueGroundHit.collider != null;
     }
     private void FaceTarget()

@@ -23,5 +23,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BossMap.unity
     guid: 4cd758b99f867f74d95010a2b48eaf22
+  - enabled: 1
+    path: Assets/Scenes/BossMap_ez.unity
+    guid: 6519c2b7cf1e60d449acded2c3b9ec0e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
