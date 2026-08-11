@@ -387,7 +387,7 @@ MonoBehaviour:
   jumpDelay: 0.12
   dashSpeed: 17
   dashDuration: 0.2
-  dashCooldown: 3
+  dashCooldown: 2
   focusChargeSpeedMultiplier: 0.2
   dashSFX: {fileID: 8300000, guid: 3048bea47b6604d45a7a4d3da6d2bf2a, type: 3}
   dashSFXStartOffset: 0.1
