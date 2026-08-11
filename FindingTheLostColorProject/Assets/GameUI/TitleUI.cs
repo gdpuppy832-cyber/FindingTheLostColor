@@ -5,11 +5,8 @@ using UnityEngine.UI;
 
 public class TitleUI : MonoBehaviour
 {
-    [Header("Difficulty Select Panel & First Game Scene")]
-    [Tooltip("게임 시작 클릭 시 열릴 난이도 선택 패널 UI 오브젝트")]
-    [SerializeField] private GameObject difficultySelectPanel;
-    [Tooltip("이지/하드 난이도 선택 후 첫 게임 진행을 개시할 메인 맵 씬 이름")]
-    [SerializeField] private string startGameSceneName = "Map_a";
+    [Header("Scenes to Load")]
+    [SerializeField] private string nextSceneName = "GameScene"; // 전환할 씬 이름
 
     [Header("Panels")]
     [SerializeField] private GameObject optionPanel; // 옵션 패널 UI
@@ -17,6 +14,7 @@ public class TitleUI : MonoBehaviour
     [Header("Fade Settings")]
     [SerializeField] private Image fadeImage; // 페이드 효과용 검은색 Image 컴포넌트
     [SerializeField] private float fadeDuration = 1.0f; // 페이드 시간
+    [SerializeField] private bool useFadeInOnStart = false; // [추가] 씬이 처음 켜질 때 페이드인(검은화면->밝아짐)을 사용할지 여부
 
     [Header("Full Screen Background Settings (신규)")]
     [Tooltip("모든 해상도에서 화면을 꽉 채울 타이틀 배경 Image (비워 둘 시 런타임 자동 검색)")]
@@ -29,37 +27,30 @@ public class TitleUI : MonoBehaviour
         // 모든 해상도(16:9, 16:10, 21:9 등)에서 화면을 꽉 채우도록 레이아웃 및 캔버스 자동 세팅
         SetupFullScreenLayout();
 
-        // 시작할 때 옵션 패널 및 난이도 선택 패널은 닫아둡니다.
+        // 시작할 때 옵션 패널은 닫아둡니다.
         if (optionPanel != null)
         {
             optionPanel.SetActive(false);
         }
 
-        if (difficultySelectPanel != null)
-        {
-            difficultySelectPanel.SetActive(false);
-        }
-
-        // 시작 시 자체 페이드 이미지는 비활성화하여 전역 ScreenFader만 깔끔하게 단일 페이드를 처리하도록 합니다.
         if (fadeImage != null)
         {
-            fadeImage.raycastTarget = false;
-            fadeImage.gameObject.SetActive(false);
-        }
-    }
-
-    private void Update()
-    {
-        // ESC 키로 난이도 패널 또는 옵션 패널 닫기 지원
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (difficultySelectPanel != null && difficultySelectPanel.activeSelf)
+            if (useFadeInOnStart)
             {
-                CloseDifficultySelectPanel();
+                // 씬 시작 시 화면을 밝히는 페이드인 효과 (알파값 1 -> 0으로 투명하게)
+                Color tempColor = fadeImage.color;
+                tempColor.a = 1f;
+                fadeImage.color = tempColor;
+                
+                StartCoroutine(FadeRoutine(0f)); 
             }
-            else if (optionPanel != null && optionPanel.activeSelf)
+            else
             {
-                CloseOptionPanel();
+                // 페이드인을 안 쓰면 이미지를 바로 투명하게(알파 0) 만들어 화면을 가리지 않게 합니다.
+                Color tempColor = fadeImage.color;
+                tempColor.a = 0f;
+                fadeImage.color = tempColor;
+                fadeImage.raycastTarget = false;
             }
         }
     }
@@ -96,25 +87,10 @@ public class TitleUI : MonoBehaviour
         foreach (var img in allImages)
         {
             if (img == null) continue;
-
-            // 난이도 선택 패널, 옵션 패널 등의 팝업 윈도우 패널은 크기를 강제로 확장하지 않도록 예외 처리
-            if (difficultySelectPanel != null && (img.gameObject == difficultySelectPanel || img.transform.IsChildOf(difficultySelectPanel.transform)))
-            {
-                continue;
-            }
-            if (optionPanel != null && (img.gameObject == optionPanel || img.transform.IsChildOf(optionPanel.transform)))
-            {
-                continue;
-            }
-
             string objName = img.gameObject.name.ToLower();
-            if (objName.Contains("difficulty") || objName.Contains("popup") || objName.Contains("dialog") || objName.Contains("select"))
-            {
-                continue;
-            }
 
-            // 배경, 메인 캔버스 이미지의 경우 비율 유지 옵션을 꺼서 화면 전체에 쫙 늘려줌
-            if (objName.Contains("bg") || objName.Contains("background") || objName.Contains("title") || img == backgroundImage)
+            // 배경, 패널, 캔버스 관련 이미지의 경우 비율 유지 옵션을 꺼서 16:10 모니터 전체에 쫙 늘려줌
+            if (objName.Contains("bg") || objName.Contains("background") || objName.Contains("title") || objName.Contains("panel") || img == backgroundImage)
             {
                 img.preserveAspect = false; // 비율 유지 강제 해제 (여백 방지!)
                 RectTransform rect = img.rectTransform;
@@ -137,75 +113,33 @@ public class TitleUI : MonoBehaviour
         }
     }
 
-    // 1. 게임 시작 버튼 클릭 시 호출할 함수 (난이도 선택 패널 열기)
+    // 1. 게임 시작 버튼 클릭 시 호출할 함수
     public void OnStartButtonClick()
     {
         if (isTransitioning) return;
-
-        if (difficultySelectPanel != null)
-        {
-            difficultySelectPanel.SetActive(true);
-        }
-        else
-        {
-            // 난이도 패널이 비어있으면 기본 지정된 첫 게임 맵(Map_a)으로 이동
-            PlayerPrefs.SetString("SelectedDifficulty", "Easy");
-            PlayerPrefs.Save();
-            StartCoroutine(StartGameRoutine(startGameSceneName));
-        }
+        
+        StartCoroutine(StartGameRoutine());
     }
 
-    // 난이도 선택 패널 닫기 버튼용
-    public void CloseDifficultySelectPanel()
+    private IEnumerator StartGameRoutine()
     {
-        if (difficultySelectPanel != null)
-        {
-            difficultySelectPanel.SetActive(false);
-        }
-    }
-
-    // 2. 이지 모드 선택 버튼 클릭 시 호출할 함수 (난이도: Easy 저장 후 Map_a 씬으로 로드)
-    public void OnEasyModeButtonClick()
-    {
-        if (isTransitioning) return;
-        PlayerPrefs.SetString("SelectedDifficulty", "Easy");
-        PlayerPrefs.Save();
-        Debug.Log("[TitleUI] 선택된 난이도: Easy ➔ 첫 번째 게임 맵('Map_a')으로 진입합니다.");
-
-        StartCoroutine(StartGameRoutine(startGameSceneName));
-    }
-
-    // 3. 하드 모드 선택 버튼 클릭 시 호출할 함수 (난이도: Hard 저장 후 Map_a 씬으로 로드)
-    public void OnHardModeButtonClick()
-    {
-        if (isTransitioning) return;
-        PlayerPrefs.SetString("SelectedDifficulty", "Hard");
-        PlayerPrefs.Save();
-        Debug.Log("[TitleUI] 선택된 난이도: Hard ➔ 첫 번째 게임 맵('Map_a')으로 진입합니다.");
-
-        StartCoroutine(StartGameRoutine(startGameSceneName));
-    }
-
-    private IEnumerator StartGameRoutine(string targetSceneName)
-    {
-        if (string.IsNullOrEmpty(targetSceneName))
-        {
-            Debug.LogError("[TitleUI] 이동할 targetSceneName이 비어 있습니다!");
-            isTransitioning = false;
-            yield break;
-        }
-
         isTransitioning = true;
 
-        // 씬 전환 및 페이드 아웃/인 처리를 전역 ScreenFader 단일 시스템으로 위임
-        Debug.Log($"[TitleUI] '{targetSceneName}' 씬으로 전역 ScreenFader 페이드 전환을 개시합니다.");
+        // 1. 자체 페이드아웃 효과가 존재하면 먼저 적용
+        if (fadeImage != null)
+        {
+            yield return StartCoroutine(FadeRoutine(1f));
+        }
+
+        // 2. 씬을 넘어갈 때 ScreenFader에 씬 전환을 위임하여 다음 씬 페이드인까지 자연스럽게 연동!
         if (ScreenFader.Instance != null)
         {
-            ScreenFader.Instance.FadeToScene(targetSceneName, fadeDuration);
+            // 이미 타이틀에서 페이드 아웃을 마친 상태이므로, 0초 딜레이로 즉시 어두운 상태에서 로드 후 페이드인하도록 전달합니다.
+            ScreenFader.Instance.FadeToScene(nextSceneName, 0f);
         }
         else
         {
-            SceneManager.LoadScene(targetSceneName);
+            SceneManager.LoadScene(nextSceneName);
         }
 
         yield return null;

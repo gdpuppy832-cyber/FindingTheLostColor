@@ -208,12 +208,10 @@ public class MapPortal : InteractableObject
             SoundManager.Instance.PlaySFX(nextSceneSFX);
         }
 
-        string finalSceneName = GetTargetSceneWithDifficulty(nextSceneName);
-
         // ScreenFader 싱글톤이 활성화되어 있다면 통합 페이드아웃/인 시스템에 위임
         if (ScreenFader.Instance != null)
         {
-            ScreenFader.Instance.FadeToScene(finalSceneName, fadeDuration);
+            ScreenFader.Instance.FadeToScene(nextSceneName, fadeDuration);
             yield break;
         }
 
@@ -237,28 +235,7 @@ public class MapPortal : InteractableObject
         }
 
         // 다음 씬 전환 실행
-        SceneManager.LoadScene(finalSceneName);
-    }
-
-    private string GetTargetSceneWithDifficulty(string targetScene)
-    {
-        if (string.IsNullOrEmpty(targetScene)) return targetScene;
-
-        string lower = targetScene.ToLower();
-        if (lower.Contains("boss"))
-        {
-            string diff = PlayerPrefs.GetString("SelectedDifficulty", "Easy");
-            if (diff == "Easy")
-            {
-                return "BossMap_ez";
-            }
-            else
-            {
-                return "BossMap";
-            }
-        }
-
-        return targetScene;
+        SceneManager.LoadScene(nextSceneName);
     }
 
     /// <summary>
