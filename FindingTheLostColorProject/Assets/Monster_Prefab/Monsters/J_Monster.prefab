@@ -381,7 +381,7 @@ MonoBehaviour:
   missIndicatorDelay: 0.375
   groundCheckRadius: 0.3
   safeDropDistance: 3
-  maxAllowedDropHeight: 5
+  maxAllowedDropHeight: 2.5
 --- !u!114 &-5272792582670928354
 MonoBehaviour:
   m_ObjectHideFlags: 0
