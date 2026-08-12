@@ -34,6 +34,8 @@ public class J_EnemyAttack : MonoBehaviour
     J_EnemyMove enemyMove;
     Animator animator;
     NormalMonster nm;
+    Rigidbody2D rb;
+    Collider2D selfCollider;
 
     [Header("Attack Animation (Deterministic Transition)")]
     [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
@@ -61,6 +63,8 @@ public class J_EnemyAttack : MonoBehaviour
     void Start()
     {
         enemyMove = GetComponent<J_EnemyMove>();
+        rb = GetComponent<Rigidbody2D>();
+        selfCollider = GetComponent<Collider2D>();
 
         animator = GetComponent<Animator>();
         if (animator == null)
@@ -132,6 +136,13 @@ public class J_EnemyAttack : MonoBehaviour
         wasStateDelay = currentStateDelay;
 
         if (currentStateDelay) return;
+
+        // 발이 바닥에 닿아있지 않으면(공중에 떠있으면) 공격을 시도하지 않음
+        if (!IsGrounded(out bool debugTouchingGround, out bool debugNotFalling))
+        {
+            Debug.Log($"[GROUND CHECK 실패] touchingGround={debugTouchingGround}, notFalling={debugNotFalling}, rb={(rb != null ? rb.linearVelocity.y.ToString("F3") : "null")}, groundLayer={groundLayer.value}");
+            return;
+        }
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
         float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
@@ -210,11 +221,37 @@ public class J_EnemyAttack : MonoBehaviour
             yield break;
         }
 
+        float originalGravityScale = 0f;
+        if (rb != null)
+        {
+            originalGravityScale = rb.gravityScale;
+            rb.gravityScale = 0f;      // 점프 이동 도중엔 물리 중력이 위치를 방해하지 않도록 끔
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        bool originalIsTrigger = false;
+        if (selfCollider != null)
+        {
+            originalIsTrigger = selfCollider.isTrigger;
+            selfCollider.isTrigger = true; // 점프 도중엔 천장/벽 등 모든 지형과 물리적으로 부딪히지 않도록 함
+        }
+
         Coroutine movementRoutine = (nm != null)
             ? nm.StartCoroutine(JumpMovementRoutine(landPos))
             : StartCoroutine(JumpMovementRoutine(landPos));
 
         yield return movementRoutine;
+
+        // 착지 완료 → 중력/속도/콜라이더를 원래대로 복구 (정화 도중 중단된 경우에도 반드시 복구)
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = originalGravityScale;
+        }
+        if (selfCollider != null)
+        {
+            selfCollider.isTrigger = originalIsTrigger;
+        }
 
         if (nm != null && nm.IsPurified)
         {
@@ -309,11 +346,13 @@ public class J_EnemyAttack : MonoBehaviour
 
             Vector2 desiredPos = new Vector2(flatPos.x, flatPos.y + heightOffset);
 
-            transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
+            if (rb != null) rb.position = desiredPos;
+            else transform.position = new Vector3(desiredPos.x, desiredPos.y, transform.position.z);
             yield return null;
         }
 
-        transform.position = landPos;
+        if (rb != null) rb.position = landPos;
+        else transform.position = landPos;
     }
 
     void OnDisable()
@@ -347,6 +386,29 @@ public class J_EnemyAttack : MonoBehaviour
     public float maxAllowedDropHeight = 5f;
 
     const float ceilingExclusionEpsilon = 0.01f;
+
+    [Tooltip("발밑에서 이 거리 이내에 바닥이 있어야 '접지'로 인정함 (타일맵 위 물리 특성상 살짝 여유를 둬야 함)")]
+    public float strictGroundCheckDistance = 0.15f;
+
+    [Tooltip("이 값보다 수직 속도가 작아야 '낙하 중이 아님'으로 인정함 (너무 작으면 정지 상태의 미세한 물리 진동에도 걸림)")]
+    public float groundedVelocityThreshold = 0.3f;
+
+    bool IsGrounded(out bool touchingGround, out bool notFalling)
+    {
+        Collider2D selfCol = GetComponent<Collider2D>();
+
+        // 피벗 위치에 의존하는 계산 대신, 콜라이더의 실제 바닥 좌표(bounds.min.y)를 직접 사용
+        Vector2 feetPos = selfCol != null
+            ? new Vector2(selfCol.bounds.center.x, selfCol.bounds.min.y)
+            : (Vector2)transform.position;
+
+        touchingGround = Physics2D.Raycast(feetPos, Vector2.down, strictGroundCheckDistance, groundLayer);
+        notFalling = rb == null || rb.linearVelocity.y > -groundedVelocityThreshold;
+
+        Debug.DrawRay(feetPos, Vector2.down * strictGroundCheckDistance, touchingGround ? Color.green : Color.red, 0.1f);
+
+        return touchingGround && notFalling;
+    }
 
     Vector2 FindValidLandingSpot(Vector2 start, Vector2 desired, out bool isCliff)
     {

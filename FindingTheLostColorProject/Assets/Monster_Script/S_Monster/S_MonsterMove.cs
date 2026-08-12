@@ -256,12 +256,6 @@ public class S_MonsterMove : MonoBehaviour
         isPausedForTurn = false;
     }
 
-    [Header("자국 소멸 설정")]
-    [Tooltip("자국이 옅어지기 시작하는 시점 (생성 후 경과 시간, 초)")]
-    public float trailFadeStartTime = 3f;
-
-    [Tooltip("자국이 완전히 사라지는 시점 (생성 후 경과 시간, 초 - trailFadeStartTime보다 커야 함)")]
-    public float trailFullyGoneTime = 4f;
 
     /// <summary>
     /// 몬스터가 기어가는 길바닥에 자국을 생성합니다.
@@ -299,47 +293,9 @@ public class S_MonsterMove : MonoBehaviour
             boxCol.isTrigger = true;
             boxCol.size = new Vector2(0.8f, 0.3f);
         }
-
-        // 생성된 자국(프리팹이든 디버그용이든)을 3초부터 서서히 옅어지다가 4초에 완전히 사라지게 함
-        StartCoroutine(FadeAndDestroyTrail(trailObj));
     }
 
-    private System.Collections.IEnumerator FadeAndDestroyTrail(GameObject trailObj)
-    {
-        if (trailObj == null) yield break;
-
-        SpriteRenderer sr = trailObj.GetComponent<SpriteRenderer>();
-        if (sr == null) sr = trailObj.GetComponentInChildren<SpriteRenderer>();
-
-        // 페이드 시작 전까지 대기
-        yield return new WaitForSeconds(trailFadeStartTime);
-
-        if (sr == null)
-        {
-            // 페이드시킬 스프라이트가 없으면 그냥 종료 시점에 파괴
-            yield return new WaitForSeconds(Mathf.Max(0f, trailFullyGoneTime - trailFadeStartTime));
-            if (trailObj != null) Destroy(trailObj);
-            yield break;
-        }
-
-        Color startColor = sr.color;
-        float fadeDuration = Mathf.Max(0.01f, trailFullyGoneTime - trailFadeStartTime);
-        float elapsed = 0f;
-
-        while (elapsed < fadeDuration)
-        {
-            if (trailObj == null) yield break; // 페이드 도중 다른 이유로 먼저 파괴된 경우 안전 종료
-
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / fadeDuration);
-            Color c = startColor;
-            c.a = Mathf.Lerp(startColor.a, 0f, t);
-            sr.color = c;
-            yield return null;
-        }
-
-        if (trailObj != null) Destroy(trailObj);
-    }
+    
 
     /// <summary>
     /// 이동 방향에 맞춰 스프라이트 좌우 방향을 갱신합니다.
