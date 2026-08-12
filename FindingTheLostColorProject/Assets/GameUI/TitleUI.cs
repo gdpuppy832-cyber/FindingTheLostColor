@@ -88,7 +88,8 @@ public class TitleUI : MonoBehaviour
 
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand; // Expand 모드는 16:10 해상도의 여백을 가득 덮어버림
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f; // 가로/세로 모든 해상도 비율 변경 시 패널 및 자식 버튼 크기가 반응형으로 확대/축소됨!
         }
 
         // 3. 씬 내 모든 배경/패널 Image 검색하여 Preserve Aspect(비율 유지) 강제 해제 후 Full Stretch 적용
