@@ -1156,7 +1156,7 @@ PrefabInstance:
       objectReference: {fileID: 1368834621}
     - target: {fileID: 1569838638359305151, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: farHealRate
-      value: 1.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1569838638359305151, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: closeHealRate
@@ -1168,7 +1168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1569838638359305151, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: chargeAttackHealAmount
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4127650697164539468, guid: 96b38c8a4c72de740b88331995829a8b, type: 3}
       propertyPath: m_Name

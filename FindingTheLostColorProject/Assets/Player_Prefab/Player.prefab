@@ -318,7 +318,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 2.6
+  m_GravityScale: 2.7
   m_Material: {fileID: 6200000, guid: cbef0de1c9826c24390e08ecd5775866, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -383,11 +383,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
-  jumpForce: 10.4
+  jumpForce: 11.6
   jumpDelay: 0.12
   dashSpeed: 17
   dashDuration: 0.2
-  dashCooldown: 2
+  dashCooldown: 1.5
   focusChargeSpeedMultiplier: 0.2
   dashSFX: {fileID: 8300000, guid: 3048bea47b6604d45a7a4d3da6d2bf2a, type: 3}
   dashSFXStartOffset: 0.1
