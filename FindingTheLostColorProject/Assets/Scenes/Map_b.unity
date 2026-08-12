@@ -22703,6 +22703,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\uB2E4\uB9AC1_0 (3)"
       objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Size.x
+      value: 0.9919046
+      objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.0068514943
+      objectReference: {fileID: 0}
     - target: {fileID: 991467388068880551, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.97
@@ -23244,6 +23252,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\uB2E4\uB9AC1_0"
       objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Size.x
+      value: 0.9707357
+      objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.0037329495
+      objectReference: {fileID: 0}
     - target: {fileID: 1337015630736443857, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.88
@@ -23778,6 +23794,14 @@ PrefabInstance:
     - target: {fileID: 463744175093243742, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
       propertyPath: m_Name
       value: "\uB2E4\uB9AC1_0 (1)"
+      objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Size.x
+      value: 0.97835004
+      objectReference: {fileID: 0}
+    - target: {fileID: 610139579163248680, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.000074222684
       objectReference: {fileID: 0}
     - target: {fileID: 1337015630736443857, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
       propertyPath: m_LocalScale.x
