@@ -572,6 +572,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 946022903}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: potionProjectilePrefab
+      value: 
+      objectReference: {fileID: 8911848656146449713, guid: 13f9e8cb577006c4080fef5e4ecf512e, type: 3}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletsBeforeInkCurtain
       value: 10
       objectReference: {fileID: 0}

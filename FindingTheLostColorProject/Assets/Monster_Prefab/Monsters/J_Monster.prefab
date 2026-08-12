@@ -352,7 +352,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160378922ffe1084494e97a3c09de863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
+  attackRange: 2
+  attackRangeYOffset: -0.5
   lineWidth: 4
   telegraphTime: 1
   jumpDuration: 0.75
@@ -382,6 +383,8 @@ MonoBehaviour:
   groundCheckRadius: 0.3
   safeDropDistance: 3
   maxAllowedDropHeight: 2.5
+  strictGroundCheckDistance: 0.15
+  groundedVelocityThreshold: 0.3
 --- !u!114 &-5272792582670928354
 MonoBehaviour:
   m_ObjectHideFlags: 0

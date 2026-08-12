@@ -4,6 +4,8 @@ using UnityEngine;
 public class J_EnemyAttack : MonoBehaviour
 {
     public float attackRange = 4f;        // y축 범위
+    [Tooltip("공격 판정의 y축 범위 중심을 몬스터 위치 기준으로 위/아래로 옮기는 오프셋 (양수면 위로, 음수면 아래로 이동)")]
+    public float attackRangeYOffset = 0f;
     public float lineWidth = 0.3f;        // x축 범위
     public float telegraphTime = 0.7f;    // 점프 전 경고 시간
     public float jumpDuration = 0.6f;     // 점프(공중에 떠있는) 시간
@@ -36,6 +38,12 @@ public class J_EnemyAttack : MonoBehaviour
     NormalMonster nm;
     Rigidbody2D rb;
     Collider2D selfCollider;
+
+    // 점프 도중 컴포넌트가 강제로 비활성화(정화 등)되어 코루틴이 중간에 끊기더라도
+    // OnDisable에서 안전하게 복구할 수 있도록, 현재 점프 중인지와 원래 값을 기억해둠
+    bool isJumpPhysicsModified = false;
+    float cachedOriginalGravityScale = 0f;
+    bool cachedOriginalIsTrigger = false;
 
     [Header("Attack Animation (Deterministic Transition)")]
     [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
@@ -145,7 +153,7 @@ public class J_EnemyAttack : MonoBehaviour
         }
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
-        float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
+        float verticalDist = Mathf.Abs(target.position.y - (transform.position.y + attackRangeYOffset));
 
         if (horizontalDist <= lineWidth && verticalDist <= attackRange)
         {
@@ -236,6 +244,11 @@ public class J_EnemyAttack : MonoBehaviour
             selfCollider.isTrigger = true; // 점프 도중엔 천장/벽 등 모든 지형과 물리적으로 부딪히지 않도록 함
         }
 
+        // OnDisable에서 복구할 수 있도록 원본 값을 클래스 필드에도 기록
+        cachedOriginalGravityScale = originalGravityScale;
+        cachedOriginalIsTrigger = originalIsTrigger;
+        isJumpPhysicsModified = true;
+
         Coroutine movementRoutine = (nm != null)
             ? nm.StartCoroutine(JumpMovementRoutine(landPos))
             : StartCoroutine(JumpMovementRoutine(landPos));
@@ -252,6 +265,7 @@ public class J_EnemyAttack : MonoBehaviour
         {
             selfCollider.isTrigger = originalIsTrigger;
         }
+        isJumpPhysicsModified = false; // 정상적으로 복구되었으므로 OnDisable에서 다시 복구할 필요 없음
 
         if (nm != null && nm.IsPurified)
         {
@@ -362,6 +376,21 @@ public class J_EnemyAttack : MonoBehaviour
             Destroy(activeMissIndicator);
             activeMissIndicator = null;
         }
+
+        // 점프 도중 코루틴이 정상 종료되지 못하고 컴포넌트가 강제로 꺼진 경우(정화 등),
+        // gravityScale=0 / isTrigger=true 상태로 영구히 남아 바닥을 뚫고 떨어지는 것을 방지
+        if (isJumpPhysicsModified)
+        {
+            if (rb != null)
+            {
+                rb.gravityScale = cachedOriginalGravityScale;
+            }
+            if (selfCollider != null)
+            {
+                selfCollider.isTrigger = cachedOriginalIsTrigger;
+            }
+            isJumpPhysicsModified = false;
+        }
     }
 
     // 공격 실패 시 몬스터 머리 위에 띄울 표시 오브젝트 생성 (자체 애니메이션은 프리팹의 Animator가 알아서 재생)
@@ -460,7 +489,7 @@ public class J_EnemyAttack : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Vector3 center = transform.position;
+        Vector3 center = transform.position + new Vector3(0f, attackRangeYOffset, 0f);
         Vector3 size = new Vector3(lineWidth * 2f, attackRange * 2f, 0.1f);
         Gizmos.DrawWireCube(center, size);
     }
