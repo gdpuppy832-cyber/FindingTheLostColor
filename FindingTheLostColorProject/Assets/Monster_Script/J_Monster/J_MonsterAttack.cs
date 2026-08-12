@@ -4,6 +4,8 @@ using UnityEngine;
 public class J_EnemyAttack : MonoBehaviour
 {
     public float attackRange = 4f;        // y축 범위
+    [Tooltip("공격 판정의 y축 범위 중심을 몬스터 위치 기준으로 위/아래로 옮기는 오프셋 (양수면 위로, 음수면 아래로 이동)")]
+    public float attackRangeYOffset = 0f;
     public float lineWidth = 0.3f;        // x축 범위
     public float telegraphTime = 0.7f;    // 점프 전 경고 시간
     public float jumpDuration = 0.6f;     // 점프(공중에 떠있는) 시간
@@ -151,7 +153,7 @@ public class J_EnemyAttack : MonoBehaviour
         }
 
         float horizontalDist = Mathf.Abs(target.position.x - transform.position.x);
-        float verticalDist = Mathf.Abs(target.position.y - transform.position.y);
+        float verticalDist = Mathf.Abs(target.position.y - (transform.position.y + attackRangeYOffset));
 
         if (horizontalDist <= lineWidth && verticalDist <= attackRange)
         {
@@ -487,7 +489,7 @@ public class J_EnemyAttack : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Vector3 center = transform.position;
+        Vector3 center = transform.position + new Vector3(0f, attackRangeYOffset, 0f);
         Vector3 size = new Vector3(lineWidth * 2f, attackRange * 2f, 0.1f);
         Gizmos.DrawWireCube(center, size);
     }
