@@ -37,6 +37,12 @@ public class J_EnemyAttack : MonoBehaviour
     Rigidbody2D rb;
     Collider2D selfCollider;
 
+    // 점프 도중 컴포넌트가 강제로 비활성화(정화 등)되어 코루틴이 중간에 끊기더라도
+    // OnDisable에서 안전하게 복구할 수 있도록, 현재 점프 중인지와 원래 값을 기억해둠
+    bool isJumpPhysicsModified = false;
+    float cachedOriginalGravityScale = 0f;
+    bool cachedOriginalIsTrigger = false;
+
     [Header("Attack Animation (Deterministic Transition)")]
     [Tooltip("Animator Controller 안의 공격 상태(State) 이름. Base Layer 바로 아래에 있다면 상태 이름만 입력하고, " +
              "서브 스테이트 머신 안에 있다면 \"SubStateMachineName.StateName\" 형식으로 입력해야 함. " +
@@ -236,6 +242,11 @@ public class J_EnemyAttack : MonoBehaviour
             selfCollider.isTrigger = true; // 점프 도중엔 천장/벽 등 모든 지형과 물리적으로 부딪히지 않도록 함
         }
 
+        // OnDisable에서 복구할 수 있도록 원본 값을 클래스 필드에도 기록
+        cachedOriginalGravityScale = originalGravityScale;
+        cachedOriginalIsTrigger = originalIsTrigger;
+        isJumpPhysicsModified = true;
+
         Coroutine movementRoutine = (nm != null)
             ? nm.StartCoroutine(JumpMovementRoutine(landPos))
             : StartCoroutine(JumpMovementRoutine(landPos));
@@ -252,6 +263,7 @@ public class J_EnemyAttack : MonoBehaviour
         {
             selfCollider.isTrigger = originalIsTrigger;
         }
+        isJumpPhysicsModified = false; // 정상적으로 복구되었으므로 OnDisable에서 다시 복구할 필요 없음
 
         if (nm != null && nm.IsPurified)
         {
@@ -361,6 +373,21 @@ public class J_EnemyAttack : MonoBehaviour
         {
             Destroy(activeMissIndicator);
             activeMissIndicator = null;
+        }
+
+        // 점프 도중 코루틴이 정상 종료되지 못하고 컴포넌트가 강제로 꺼진 경우(정화 등),
+        // gravityScale=0 / isTrigger=true 상태로 영구히 남아 바닥을 뚫고 떨어지는 것을 방지
+        if (isJumpPhysicsModified)
+        {
+            if (rb != null)
+            {
+                rb.gravityScale = cachedOriginalGravityScale;
+            }
+            if (selfCollider != null)
+            {
+                selfCollider.isTrigger = cachedOriginalIsTrigger;
+            }
+            isJumpPhysicsModified = false;
         }
     }
 
