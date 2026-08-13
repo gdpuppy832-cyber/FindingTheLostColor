@@ -453,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: transitionDelay
-      value: 60
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 3110220901936660074, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_Color.a
@@ -517,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: fireInterval
-      value: 0.5
+      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserCooldown
@@ -553,7 +553,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserUnlockTime
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: curveTargetPoint
