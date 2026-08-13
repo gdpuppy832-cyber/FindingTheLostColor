@@ -27876,6 +27876,10 @@ PrefabInstance:
       propertyPath: playerHealth
       value: 
       objectReference: {fileID: 849073173780774392}
+    - target: {fileID: 4763204117961488267, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -15
+      objectReference: {fileID: 0}
     - target: {fileID: 5390616892844084202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_IsActive
       value: 1
