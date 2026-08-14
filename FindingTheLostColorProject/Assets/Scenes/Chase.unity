@@ -520,6 +520,10 @@ PrefabInstance:
       value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
+      propertyPath: laserFireSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
+    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserCooldown
       value: 10
       objectReference: {fileID: 0}

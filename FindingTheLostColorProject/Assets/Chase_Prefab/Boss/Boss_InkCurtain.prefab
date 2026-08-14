@@ -105,6 +105,7 @@ MonoBehaviour:
   lifetime: 8
   requiredPaintOverlapTime: 2
   overlapBreakGraceTime: 0.15
+  hitSFX: {fileID: 8300000, guid: ae15cb813b9dcc747a8d4822e6184844, type: 3}
 --- !u!61 &5057754860543535214
 BoxCollider2D:
   m_ObjectHideFlags: 0
