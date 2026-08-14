@@ -248,6 +248,10 @@ public class R_EnemyAttack : MonoBehaviour
         if (pb == null) pb = proj.AddComponent<Projectile>();
         pb.targetLayer = targetLayer;
         pb.lifetime = projectileLifetime;
+
+        NormalMonster shooterMonster = GetComponent<NormalMonster>();
+        if (shooterMonster == null) shooterMonster = GetComponentInParent<NormalMonster>();
+        pb.SetShooter(shooterMonster);
     }
 
     // 임시 원형 스프라이트 생성 (테스트용)

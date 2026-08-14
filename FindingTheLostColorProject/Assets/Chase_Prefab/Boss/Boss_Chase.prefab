@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 946412894994910540}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.93, y: 4.61, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.9727, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6133269192264771671, guid: 9ef1ab1e774a3294d9bae6512df85a24, type: 3}
+  m_Sprite: {fileID: 3789445723894214045, guid: b831829ccab2101438689eeaf9a7ab52, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -131,7 +131,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.33, y: 2.83}
+    oldSize: {x: 4.57, y: 4.3}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -206,6 +206,12 @@ MonoBehaviour:
   fireInterval: 0.5
   bulletLifetime: 5
   requiredPaintOverlapTime: 0.5
+  curveBulletPrefab: {fileID: 0}
+  curveFirePoint1: {fileID: 0}
+  curveFirePoint2: {fileID: 0}
+  curveStartTime: 0.8
+  curveMoveSpeed: 6
+  bulletsBeforeCurveBullet: 15
   attackDamage: 1
   inkCurtainPrefab: {fileID: 7828294059909771260, guid: 9a2be343e7d23804894043b90f522605, type: 3}
   inkCurtainSpawnPoint: {fileID: 0}
@@ -221,7 +227,6 @@ MonoBehaviour:
   laserTelegraphDuration: 1.5
   laserBlinkInterval: 0.5
   laserDuration: 0.5
-  stopAttackBeforeLaser: 1
 --- !u!114 &2205639967118484951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4349567811573008747, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4349567811573008747, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_LocalPosition.z
@@ -290,12 +295,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6008297436639347283, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
+      propertyPath: m_Color.a
+      value: 0.36862746
+      objectReference: {fileID: 0}
+    - target: {fileID: 6008297436639347283, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6008297436639347283, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_SortingLayerID
-      value: -1462922495
+      value: -485289909
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

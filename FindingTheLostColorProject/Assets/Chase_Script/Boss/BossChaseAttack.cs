@@ -45,7 +45,15 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("일반 탄환을 몇 발 발사할 때마다 그 자리를 변화구 탄환으로 대체할지 (먹물 장막 카운트와 독립적으로 관리됨)")]
     public int bulletsBeforeCurveBullet = 15;
 
-    private int curveBulletFireCount = 0; // ��ȭ�� ��ȯ ī��Ʈ (bulletFireCount�� ������ ���������� ����)
+    private int curveBulletFireCount = 0; // 변화구 전환 카운트 (bulletFireCount와 완전히 독립적으로 관리)
+
+    [Header("Potion Bullet Settings")]
+    [Tooltip("탄환 대신 발사할 포션 프리팹 (PotionProjectile 컴포넌트 자동 부착됨)")]
+    public GameObject potionProjectilePrefab;
+    [Tooltip("일반 탄환을 몇 발 발사할 때마다 그 자리를 포션으로 대체할지 (먹물 장막 차례에는 절대 끼어들지 않음)")]
+    public int bulletsBeforePotion = 10;
+
+    private int potionFireCount = 0; // 포션 전환 카운트 (먹물 장막/변화구 카운트와 완전히 독립적으로 관리)
 
     [Header("Boss Damage")]
     [Tooltip("��� ���� ������ �������� ����ϴ� ���ݷ�. ������ �߰��� ���ݵ� �� ���� �����")]
@@ -111,13 +119,23 @@ public class BossChaseAttack : MonoBehaviour
             }
             else
             {
-                // �� �Թ� �帷 ī��Ʈ(bulletFireCount)�� ������ �������� ��ȭ�� ī��Ʈ.
-                //   �Ϲ� źȯ�� ������ �� ���� ��, 15��°���� ��ȭ���� ��ü��.
+                // ★ 먹물 장막 카운트(bulletFireCount)와 완전히 독립적인 변화구 카운트.
+                //   일반 탄환이 나가야 할 차례 중, 15번째마다 변화구로 대체됨.
                 curveBulletFireCount++;
+
+                // ★ 포션 카운트도 마찬가지로 독립적으로 관리. 이 블록 자체가 이미
+                //   "먹물 장막 차례가 아닐 때"만 실행되므로, 포션은 장막과 절대 겹치지 않음.
+                potionFireCount++;
+
                 if (curveBulletFireCount >= bulletsBeforeCurveBullet)
                 {
                     FireCurveBullet();
                     curveBulletFireCount = 0;
+                }
+                else if (potionFireCount >= bulletsBeforePotion)
+                {
+                    FirePotionBullet();
+                    potionFireCount = 0;
                 }
                 else
                 {
@@ -194,8 +212,35 @@ public class BossChaseAttack : MonoBehaviour
         curveMotion.SetCurveParams(targetPoint.position, curveStartTime, curveMoveSpeed);
     }
 
-    // �Թ� �帷(Ink Curtain) ���� ���� �޼���. źȯ�� �����ϰ� ������ -> �������� �̵��ϸ�,
-    // attackDamage/requiredPaintOverlapTime�� ���� ������ �ʰ� �״�� ������
+    // 탄환 대신 포션을 발사하는 전용 메서드. 발사 위치/속도/방향은 일반 탄환과 동일하게
+    // 왼쪽으로 직진하며, PotionProjectile이 회복/수명/소멸을 자체적으로 관리함.
+    private void FirePotionBullet()
+    {
+        if (potionProjectilePrefab == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] potionProjectilePrefab이 비어있어 포션을 발사할 수 없습니다.");
+            return;
+        }
+
+        Transform chosenPoint = GetRandomFirePoint();
+        if (chosenPoint == null)
+        {
+            Debug.LogWarning("[BossChaseAttack] 유효한 발사 위치가 없어 포션을 발사할 수 없습니다.");
+            return;
+        }
+
+        GameObject potionObj = Instantiate(potionProjectilePrefab, chosenPoint.position, Quaternion.identity);
+
+        Rigidbody2D rb = potionObj.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = potionObj.AddComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.left * bulletSpeed;
+
+        ChasePotion potion = potionObj.GetComponent<ChasePotion>();
+        if (potion == null) potion = potionObj.AddComponent<ChasePotion>();
+    }
+
+    // 먹물 장막(Ink Curtain) 공격 전용 메서드. 탄환과 동일하게 오른쪽 -> 왼쪽으로 이동하며,
     private void FireInkCurtain()
     {
         if (inkCurtainPrefab == null)

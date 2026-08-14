@@ -893,12 +893,24 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 2039
       objectReference: {fileID: 0}
+    - target: {fileID: 4664412667489271536, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4891520712772447840, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5750622499374078052, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: maxCameraPos.x
       value: 266.5
       objectReference: {fileID: 0}
     - target: {fileID: 5750622499374078052, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
       propertyPath: minCameraPos.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774838274462556674, guid: 49c3fe3795e2a2949a24aacca1cc4666, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

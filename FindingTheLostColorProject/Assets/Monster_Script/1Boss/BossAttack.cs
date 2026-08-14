@@ -52,6 +52,8 @@ public class BossAttack : MonoBehaviour
     int destroyedCrystalCount = 0;
     Collider2D[] bossOwnColliders; // 크리스탈 페이즈 동안 붓질(OverlapCircleAll) 감지를 막기 위해 비활성화할 보스 콜라이더
 
+    Animator animator; // 보스 애니메이터 (2페이즈 진입 시 "2P" bool 파라미터 발동용)
+
     bool isAttacking = false;
     float nextAttackAllowedTime = 0f;
     Coroutine currentAttackCoroutine; // 2페이즈 전환 시 진행 중인 공격을 정확히 멈추기 위한 참조
@@ -137,6 +139,9 @@ public class BossAttack : MonoBehaviour
     void Start()
     {
         initialPosition = transform.position; // 보스가 처음 배치된 위치를 기록 (구역 공격 기준점)
+
+        animator = GetComponent<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
 
         if (target == null)
         {
@@ -354,6 +359,10 @@ public class BossAttack : MonoBehaviour
             phase2Unlocked = true;
             OnPhase2Started?.Invoke(); // [신규] 2페이즈 진입 이벤트 발송!
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
+
+            // ★ 2페이즈 진입 확정 시 애니메이터의 "2P" bool 파라미터를 켬
+            if (animator != null)
+                animator.SetBool("2P", true);
 
             // 2페이즈 BGM으로 전환
             if (SoundManager.Instance != null && bossBGM2 != null)

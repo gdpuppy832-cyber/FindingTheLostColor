@@ -352,7 +352,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 160378922ffe1084494e97a3c09de863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
+  attackRange: 2
+  attackRangeYOffset: -0.5
   lineWidth: 4
   telegraphTime: 1
   jumpDuration: 0.75
@@ -381,7 +382,9 @@ MonoBehaviour:
   missIndicatorDelay: 0.375
   groundCheckRadius: 0.3
   safeDropDistance: 3
-  maxAllowedDropHeight: 5
+  maxAllowedDropHeight: 2.5
+  strictGroundCheckDistance: 0.15
+  groundedVelocityThreshold: 0.3
 --- !u!114 &-5272792582670928354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +460,7 @@ Transform:
   m_GameObject: {fileID: 7682335048796014484}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.78, z: 0}
+  m_LocalPosition: {x: 0, y: -0.78, z: -4}
   m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -698,7 +701,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalRotation.w

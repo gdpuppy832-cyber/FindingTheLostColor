@@ -7,6 +7,11 @@ public class S_MonsterTrail : MonoBehaviour
     [Tooltip("자국이 유지되는 시간 (초, 기본값: 4.0초)")]
     public float lifetime = 4f;
 
+    [Tooltip("자국이 옅어지기 시작하는 시점 (생성 후 경과 시간, 초. lifetime보다 작아야 함)")]
+    public float fadeStartTime = 3f;
+
+    private SpriteRenderer sr;
+
     [Header("개별 디버프 감쇄 수치 설정 (0.0 ~ 1.0)")]
     [Tooltip("이동 속도 배율 (예: 0.5면 속도가 50% 수준으로 감소)")]
     [Range(0f, 1f)]
@@ -27,8 +32,40 @@ public class S_MonsterTrail : MonoBehaviour
 
     void Start()
     {
-        // 4초 뒤 자동으로 오브젝트 파괴 (자국이 사라짐)
-        Destroy(gameObject, lifetime);
+        sr = GetComponent<SpriteRenderer>();
+        if (sr == null) sr = GetComponentInChildren<SpriteRenderer>();
+
+        StartCoroutine(FadeAndDestroy());
+    }
+
+    private System.Collections.IEnumerator FadeAndDestroy()
+    {
+        // 페이드 시작 전까지 대기
+        yield return new WaitForSeconds(fadeStartTime);
+
+        if (sr == null)
+        {
+            // 페이드시킬 스프라이트가 없으면 그냥 남은 시간만큼 대기 후 파괴
+            yield return new WaitForSeconds(Mathf.Max(0f, lifetime - fadeStartTime));
+            Destroy(gameObject);
+            yield break;
+        }
+
+        Color startColor = sr.color;
+        float fadeDuration = Mathf.Max(0.01f, lifetime - fadeStartTime);
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+            Color c = startColor;
+            c.a = Mathf.Lerp(startColor.a, 0f, t);
+            sr.color = c;
+            yield return null;
+        }
+
+        Destroy(gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D other)
