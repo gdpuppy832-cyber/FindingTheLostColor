@@ -224,7 +224,7 @@ Transform:
   m_GameObject: {fileID: 411191066}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.079616, y: -0.5, z: 8.333332}
+  m_LocalPosition: {x: 9.16, y: -0.5, z: 8.333332}
   m_LocalScale: {x: 0.83333325, y: 0.83333325, z: 0.83333325}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -311,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 583435369}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.079616, y: -3.5, z: 8.333332}
+  m_LocalPosition: {x: 9.16, y: -3.5, z: 8.333332}
   m_LocalScale: {x: 0.83333325, y: 0.83333325, z: 0.83333325}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -425,7 +425,7 @@ Transform:
   m_GameObject: {fileID: 946022901}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.079615, y: -2, z: 8.333332}
+  m_LocalPosition: {x: 9.159999, y: -2, z: 8.333332}
   m_LocalScale: {x: 0.83333325, y: 0.83333325, z: 0.83333325}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -517,7 +517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: fireInterval
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserFireSFX
@@ -525,7 +525,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserCooldown
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletLifetime
@@ -557,7 +557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserUnlockTime
-      value: 20
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: curveTargetPoint
@@ -569,7 +569,7 @@ PrefabInstance:
       objectReference: {fileID: 5909081372243577439, guid: a62916e4cfa0ac9479c95ff7a0d81103, type: 3}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainLifetime
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainSpawnPoint
@@ -616,6 +616,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6350377537342072783, guid: d49ca4a12c449e24ab4c698c29ecb470, type: 3}
   m_PrefabInstance: {fileID: 6551705739215880776}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1225379489 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5626675105805483269, guid: d49ca4a12c449e24ab4c698c29ecb470, type: 3}
+  m_PrefabInstance: {fileID: 6551705739215880776}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e9e32e5e8b0180419acc198903a1600, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1244530047
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,7 +652,7 @@ Transform:
   m_GameObject: {fileID: 1244530047}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.5, z: 8.333332}
+  m_LocalPosition: {x: 0, y: -3.45, z: 8.333332}
   m_LocalScale: {x: 0.83333325, y: 0.83333325, z: 0.83333325}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -830,7 +841,7 @@ PrefabInstance:
     - target: {fileID: 4541909796981899640, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: playerHealth
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1225379489}
     - target: {fileID: 4763204117961488267, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.2
