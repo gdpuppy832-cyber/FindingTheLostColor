@@ -525,7 +525,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserCooldown
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletLifetime
@@ -557,7 +557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserUnlockTime
-      value: 1
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: curveTargetPoint
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkPrefabs:
-  - {fileID: 8074891915994420155, guid: 00a1b64584448244392d5bd47a9c01a4, type: 3}
+  - {fileID: 8074891915994420155, guid: d7a7e69c5e2485948b9c93e0df5b47bc, type: 3}
   chunkLength: 20
   player: {fileID: 1225379488}
   chunksAheadCount: 4
