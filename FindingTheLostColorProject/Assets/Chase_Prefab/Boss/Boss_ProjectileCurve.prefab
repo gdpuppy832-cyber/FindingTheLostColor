@@ -106,6 +106,7 @@ MonoBehaviour:
   requiredPaintOverlapTime: 0.5
   rotationSpeed: 90
   rotationAxis: {x: 0, y: 0, z: 1}
+  hitSFX: {fileID: 8300000, guid: ae15cb813b9dcc747a8d4822e6184844, type: 3}
 --- !u!58 &4962581228406010627
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -54,9 +54,22 @@ public class BossChaseAttack : MonoBehaviour
     public int bulletsBeforePotion = 10;
 
     private int potionFireCount = 0; // 포션 전환 카운트 (먹물 장막/변화구 카운트와 완전히 독립적으로 관리)
+    [Header("Chase Attack SFX")]
+    [Tooltip("일반 탄환 발사 순간 재생할 효과음")]
+    public AudioClip bulletSFX;
+    [Tooltip("변화구 탄환 발사 순간 재생할 효과음")]
+    public AudioClip curveBulletSFX;
+    [Tooltip("포션 발사 순간 재생할 효과음")]
+    public AudioClip potionSFX;
+    [Tooltip("먹물 장막 발사 순간 재생할 효과음")]
+    public AudioClip inkCurtainSFX;
+    [Tooltip("레이저 텔레그래프 시작 순간 재생할 효과음")]
+    public AudioClip laserTelegraphSFX;
+    [Tooltip("레이저 실제 발사 순간 재생할 효과음")]
+    public AudioClip laserFireSFX;
 
     [Header("Boss Damage")]
-    [Tooltip("��� ���� ������ �������� ����ϴ� ���ݷ�. ������ �߰��� ���ݵ� �� ���� �����")]
+    [Tooltip("모든 보스 공격이 공통으로 사용하는 공격력. 앞으로 추가될 공격도 이 값을 사용함")]
     public int attackDamage = 1;
 
     [Header("Ink Curtain Settings")]
@@ -174,6 +187,8 @@ public class BossChaseAttack : MonoBehaviour
         BossChaseBullet bullet = bulletObj.GetComponent<BossChaseBullet>();
         if (bullet == null) bullet = bulletObj.AddComponent<BossChaseBullet>();
         bullet.Initialize(attackDamage, bulletLifetime, requiredPaintOverlapTime);
+
+        PlaySFX(bulletSFX);
     }
 
     private void FireCurveBullet()
@@ -210,6 +225,8 @@ public class BossChaseAttack : MonoBehaviour
         BossChaseCurveBullet curveMotion = bulletObj.GetComponent<BossChaseCurveBullet>();
         if (curveMotion == null) curveMotion = bulletObj.AddComponent<BossChaseCurveBullet>();
         curveMotion.SetCurveParams(targetPoint.position, curveStartTime, curveMoveSpeed);
+
+        PlaySFX(curveBulletSFX);
     }
 
     // 탄환 대신 포션을 발사하는 전용 메서드. 발사 위치/속도/방향은 일반 탄환과 동일하게
@@ -238,6 +255,8 @@ public class BossChaseAttack : MonoBehaviour
 
         ChasePotion potion = potionObj.GetComponent<ChasePotion>();
         if (potion == null) potion = potionObj.AddComponent<ChasePotion>();
+
+        PlaySFX(potionSFX);
     }
 
     // 먹물 장막(Ink Curtain) 공격 전용 메서드. 탄환과 동일하게 오른쪽 -> 왼쪽으로 이동하며,
@@ -264,6 +283,8 @@ public class BossChaseAttack : MonoBehaviour
         BossInkCurtain curtain = curtainObj.GetComponent<BossInkCurtain>();
         if (curtain == null) curtain = curtainObj.AddComponent<BossInkCurtain>();
         curtain.Initialize(attackDamage, inkCurtainLifetime, inkCurtainRequiredPaintOverlapTime);
+
+        PlaySFX(inkCurtainSFX);
     }
 
     private Transform GetRandomFirePoint()
@@ -278,6 +299,11 @@ public class BossChaseAttack : MonoBehaviour
         return validPoints[Random.Range(0, validPoints.Count)];
     }
 
+    void PlaySFX(AudioClip clip)
+    {
+        if (clip == null || SoundManager.Instance == null) return;
+        SoundManager.Instance.PlaySFX(clip);
+    }
     // ������ ��� ���� ����(laserUnlockTime)�� ��ٸ� ��, ������ -> ��Ÿ���� �ݺ��ϴ� ����
     private IEnumerator LaserLoop()
     {
@@ -317,6 +343,8 @@ public class BossChaseAttack : MonoBehaviour
             Debug.LogWarning("[BossChaseAttack] laserTelegraphPrefab�� ����־� �ڷ��׷��� ���� �����մϴ�.");
         }
 
+        PlaySFX(laserTelegraphSFX);
+
         SpriteRenderer telegraphSr = telegraph != null ? telegraph.GetComponent<SpriteRenderer>() : null;
 
         // 1.5��(laserTelegraphDuration) ���� �����ϸ� 0.5��(laserBlinkInterval) �������� �����.
@@ -347,9 +375,11 @@ public class BossChaseAttack : MonoBehaviour
         // �� �ڷ��׷��� ����
         if (telegraph != null) Destroy(telegraph);
 
-        // �� ������ ����
+        // ③ 레이저 생성
         if (laserPrefab != null)
         {
+            PlaySFX(laserFireSFX);
+
             GameObject laserObj = Instantiate(laserPrefab, laserFirePoint.position, laserFirePoint.rotation);
 
             BossChaseLaser hazard = laserObj.GetComponent<BossChaseLaser>();

@@ -54,6 +54,17 @@ public class ColoringBridge : MonoBehaviour
 
     void Start()
     {
+        // [프리팹 자식계층 동적 분리] 부모 다리를 밟았을 때 자식 다리들이 같이 끌려 내려가는 현상을 방지하기 위해
+        // 자식으로 포함된 다른 ColoringBridge 오브젝트들의 부모 계층을 런타임에 독립적으로 분리합니다.
+        ColoringBridge[] childBridges = GetComponentsInChildren<ColoringBridge>(true);
+        foreach (var child in childBridges)
+        {
+            if (child != null && child != this)
+            {
+                child.transform.SetParent(transform.parent);
+            }
+        }
+
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
         bridgeCollider = GetComponent<Collider2D>();
         originalPosition = transform.position; // 최초 고정 원점 위치 백업

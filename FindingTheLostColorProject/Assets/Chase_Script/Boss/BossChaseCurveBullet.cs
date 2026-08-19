@@ -3,6 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossChaseCurveBullet : MonoBehaviour
 {
+    [Header("Hit Sound")]
+    [Tooltip("이 변화구가 플레이어에게 닿았을 때 재생할 효과음")]
+    public AudioClip hitSFX;
+
     private float targetY;
     private float curveStartTime;
     private float curveMoveSpeed;
@@ -43,6 +47,21 @@ public class BossChaseCurveBullet : MonoBehaviour
         {
             reachedTargetY = true;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // Y축 이동만 정지, X축은 계속 유지
+        }
+    }
+
+    // ★ 데미지/Destroy는 같은 오브젝트의 BossChaseBullet.OnTriggerEnter2D가 이미 처리하므로,
+    //   여기서는 소리만 재생함 (데미지를 또 넣으면 중복 적용됨)
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other == null) return;
+
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        if (player == null) player = other.GetComponentInParent<PlayerHealth>();
+
+        if (player != null && hitSFX != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFXWithOffset(hitSFX, 0f);
         }
     }
 }

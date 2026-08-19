@@ -5,30 +5,34 @@ using UnityEngine.InputSystem;
 
 public class BossChaseBullet : MonoBehaviour
 {
-    [Header("ÀüÅõ ¼³Á¤")]
-    [Tooltip("ÀÌ ÅºÈ¯ÀÌ ÇÃ·¹ÀÌ¾î¿¡°Ô ÁÖ´Â ÇÇÇØ·® (BossChaseAttack¿¡¼­ Àü´Ş¹ŞÀ½)")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ø·ï¿½ (BossChaseAttackï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ş¹ï¿½ï¿½ï¿½)")]
     public int attackDamage = 1;
 
-    [Header("¼ö¸í ¼³Á¤")]
-    [Tooltip("»ı¼º ÈÄ ÀÚµ¿À¸·Î »ç¶óÁö±â±îÁöÀÇ ½Ã°£(ÃÊ)")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float lifetime = 5f;
 
-    [Header("º×Áú ÆÄ±« ¼³Á¤")]
-    [Tooltip("º×(1¹ø ¸ğµå)ÀÌ ÀÌ ÅºÈ¯°ú °ãÃÄ ÀÖ¾î¾ß ÇÏ´Â ´©Àû ½Ã°£(ÃÊ). ÀÌ ½Ã°£À» Ã¤¿ì¸é ÅºÈ¯ÀÌ ÆÄ±«µÊ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½Ä±ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½(1ï¿½ï¿½ ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½). ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½")]
     public float requiredPaintOverlapTime = 1f;
 
-    [Header("È¸Àü ¼³Á¤")]
-    [Tooltip("ÃÊ´ç È¸Àü ¼Óµµ(µµ)")]
+    [Header("È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½Ê´ï¿½ È¸ï¿½ï¿½ ï¿½Óµï¿½(ï¿½ï¿½)")]
     public float rotationSpeed = 180f;
 
-    [Tooltip("È¸Àü Ãà")]
+    [Tooltip("È¸ï¿½ï¿½ ï¿½ï¿½")]
     public Vector3 rotationAxis = Vector3.forward;
+
+    [Header("Hit Sound")]
+    [Tooltip("ì´ íƒ„í™˜(ë³€í™”êµ¬ í¬í•¨)ì´ í”Œë ˆì´ì–´ì—ê²Œ ë‹¿ì•˜ì„ ë•Œ ì¬ìƒí•  íš¨ê³¼ìŒ")]
+    public AudioClip hitSFX;
 
     private float currentPaintOverlapTime = 0f;
     private CursorController cursorController;
 
     /// <summary>
-    /// BossChaseAttackÀÌ »ı¼º Á÷ÈÄ È£ÃâÇØ¼­ ÅºÈ¯ÀÇ ¼¼ºÎ ¼³Á¤À» Àü´ŞÇÕ´Ï´Ù.
+    /// BossChaseAttackï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ø¼ï¿½ ÅºÈ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     /// </summary>
     public void Initialize(int damage, float life, float requiredOverlap)
     {
@@ -83,6 +87,10 @@ public class BossChaseBullet : MonoBehaviour
         if (player != null)
         {
             player.TakeDamage(attackDamage);
+
+            if (hitSFX != null && SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFXWithOffset(hitSFX, 0f);
+
             Destroy(gameObject);
         }
     }
