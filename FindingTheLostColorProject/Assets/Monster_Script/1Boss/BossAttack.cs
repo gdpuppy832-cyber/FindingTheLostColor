@@ -919,15 +919,18 @@ public class BossAttack : MonoBehaviour
             elapsed += Time.deltaTime;
 
             if (Mathf.FloorToInt(elapsed / laserTelegraphBlinkInterval) !=
-                Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
+     Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
             {
                 visible = !visible;
 
                 if (marker != null)
                 {
-                    SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                        sr.enabled = visible;
+                    // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                    SpriteRenderer[] srs = marker.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach (var sr in srs)
+                    {
+                        if (sr != null) sr.enabled = visible;
+                    }
                 }
             }
 
@@ -1056,18 +1059,22 @@ public class BossAttack : MonoBehaviour
         }
 
         // 2. 2초 동안 0.5초 간격으로 깜빡임
-        float telegraphElapsed = 0f;
+        float elapsed = 0f;
         bool visible = true;
-        while (telegraphElapsed < frostTelegraphDuration)
+        while (elapsed < frostTelegraphDuration)
         {
             yield return new WaitForSeconds(frostTelegraphBlinkInterval);
-            telegraphElapsed += frostTelegraphBlinkInterval;
+            elapsed += frostTelegraphBlinkInterval;
             visible = !visible;
             foreach (var marker in frostTelegraphMarkers)
             {
                 if (marker == null) continue;
-                SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                SpriteRenderer[] srs = marker.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var sr in srs)
+                {
+                    if (sr != null) sr.enabled = visible;
+                }
             }
         }
 
@@ -1477,8 +1484,12 @@ public class BossAttack : MonoBehaviour
             foreach (var m in markers)
             {
                 if (m == null) continue;
-                SpriteRenderer sr = m.GetComponent<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                SpriteRenderer[] srs = m.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var sr in srs)
+                {
+                    if (sr != null) sr.enabled = visible;
+                }
             }
         }
 
