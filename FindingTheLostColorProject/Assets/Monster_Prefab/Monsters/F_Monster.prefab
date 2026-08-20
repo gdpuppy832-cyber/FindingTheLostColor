@@ -152,8 +152,11 @@ MonoBehaviour:
   attackStopDistance: 0.1
   safeDropDistance: 7
   wanderEdgeCheckDistance: 1
+  edgeLookAheadDistance: 0.2
+  edgeGroundCheckDistance: 3
+  edgeCheckPointCount: 3
   trueGroundCheckDistance: 0.12
-  jumpForce: 3.15
+  jumpForce: 4
   climbableWallHeight: 1.1
   hpBar: {fileID: 5984589783402368840}
 --- !u!114 &3477999997369932034
