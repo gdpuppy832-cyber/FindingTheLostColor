@@ -104,12 +104,28 @@ public class BossChaseAttack : MonoBehaviour
     [Tooltip("������ ��ü�� �����Ǵ� �ð�(��)")]
     public float laserDuration = 0.5f;
 
-    private float attackStartTime; // �߰�(���� ����) ���� �ð� - laserUnlockTime ��� ����
+    private float attackStartTime; // 추격(공격 루프) 시작 시각 - laserUnlockTime 계산 기준
     private Coroutine laserLoopCoroutine;
 
-    private int bulletFireCount = 0; // źȯ �߻� ī��Ʈ (bulletsBeforeInkCurtain�� �����ϸ� �帷 �ߵ�)
+    private int bulletFireCount = 0; // 탄환 발사 카운트 (bulletsBeforeInkCurtain에 도달하면 장막 차례가 됨)
 
     private Coroutine fireLoopCoroutine;
+
+    // ===== 레이저 / 먹물 장막 상호 배제 상태 관리 =====
+    // 레이저가 "텔레그래프 시작"부터 "레이저 본체 종료"까지 진행 중임을 나타냄.
+    // FireLoop가 이 값을 보고 장막 발동을 보류하는 데 사용됨.
+    private bool isLaserActive = false;
+
+    // 탄환 10발(bulletsBeforeInkCurtain)을 채워서 "이번 차례는 장막"이 확정됐지만,
+    // 레이저가 진행 중이라 아직 실제로 쏘지 못하고 대기 중인 상태.
+    // 이 플래그가 true인 동안은 bulletFireCount를 절대 리셋하지 않고,
+    // 일반 탄환/변화구/포션 루프도 함께 대기시켜 카운트가 계속 쌓이는 것을 막음.
+    private bool curtainPending = false;
+
+    // 현재 씬에 살아있는(파괴되지 않은) 먹물 장막의 개수.
+    // 0보다 크면 "장막이 게임 안에 존재하는 상태" -> LaserLoop가 레이저 발동을 보류함.
+    // 장막 생성 시 증가, 장막이 Destroy되면(TrackCurtainLifetime 코루틴이 감지) 감소.
+    private int activeCurtainCount = 0;
 
     void Start()
     {
@@ -124,11 +140,24 @@ public class BossChaseAttack : MonoBehaviour
     {
         while (true)
         {
-            if (bulletFireCount >= bulletsBeforeInkCurtain)
+            // 1. 탄환 카운트가 이미 차서 "장막 차례"로 확정된 경우 (이번 프레임에 새로 확정되든,
+            //    이전 사이클부터 대기 중이었든 상관없이 동일하게 처리)
+            if (bulletFireCount >= bulletsBeforeInkCurtain || curtainPending)
             {
-                // źȯ�� bulletsBeforeInkCurtain�� �߻������� �̹� ���ʴ� �Թ� �帷���� ��ü
+                // 장막 차례는 확정됐지만, 아직 발사 시도를 한 적이 없다면 대기 상태로 진입
+                curtainPending = true;
+
+                if (isLaserActive)
+                {
+                    FireBullet();
+                    yield return new WaitForSeconds(fireInterval);
+                    continue;
+                }
+
+                // 레이저가 진행 중이 아니므로 지금 즉시 장막을 발사
                 FireInkCurtain();
                 bulletFireCount = 0;
+                curtainPending = false;
             }
             else
             {
@@ -285,6 +314,22 @@ public class BossChaseAttack : MonoBehaviour
         curtain.Initialize(attackDamage, inkCurtainLifetime, inkCurtainRequiredPaintOverlapTime);
 
         PlaySFX(inkCurtainSFX);
+
+        // 이 장막이 파괴될 때까지(자동 수명, 붓질 파괴, 플레이어 접촉 파괴 등 어떤 경로로 사라지든)
+        // activeCurtainCount에 존재 상태를 반영함. 여러 장막이 동시에 존재해도 각자 독립적으로 카운트됨.
+        activeCurtainCount++;
+        StartCoroutine(TrackCurtainLifetime(curtainObj));
+    }
+
+    // 장막 GameObject가 씬에서 파괴될 때까지 대기한 뒤 activeCurtainCount를 감소시키는 감시용 코루틴.
+    // "게임 내 먹물 장막 존재 상태"를 정확히 판단하기 위한 유일한 진실 공급원(source of truth)임.
+    private IEnumerator TrackCurtainLifetime(GameObject curtainObj)
+    {
+        while (curtainObj != null)
+        {
+            yield return null;
+        }
+        activeCurtainCount--;
     }
 
     private Transform GetRandomFirePoint()
@@ -315,9 +360,16 @@ public class BossChaseAttack : MonoBehaviour
 
         while (true)
         {
+            // ★ 레이저 발동 조건(언락/쿨타임)은 이미 충족된 상태. 이 상태를 그대로 유지한 채
+            //   장막이 사라질 때까지만 대기함 (요구사항 4, 9: 대기 시간을 처음부터 다시 계산하지 않음).
+            while (activeCurtainCount > 0)
+            {
+                yield return null;
+            }
+
             yield return StartCoroutine(FireLaser());
 
-            // ������ ���� �ĺ��� ��Ÿ�� ���
+            // 레이저 종료 후부터 쿨타임 계산
             yield return new WaitForSeconds(laserCooldown);
         }
     }
@@ -328,11 +380,15 @@ public class BossChaseAttack : MonoBehaviour
     {
         if (laserFirePoint == null)
         {
-            Debug.LogWarning("[BossChaseAttack] laserFirePoint�� ����־� �������� �߻��� �� �����ϴ�.");
+            Debug.LogWarning("[BossChaseAttack] laserFirePoint가 비어있어 레이저를 발사할 수 없습니다.");
             yield break;
         }
 
-        // �� �ڷ��׷��� ���� (laserFirePoint ��ġ ����)
+        // ★ "레이저 텔레그래프가 생성된 순간"부터 이 상태를 켬 (요구사항 1).
+        //   FireLoop는 이 값을 보고 장막 발동을 보류함.
+        isLaserActive = true;
+
+        // ① 텔레그래프 생성 (laserFirePoint 위치 고정)
         GameObject telegraph = null;
         if (laserTelegraphPrefab != null)
         {
@@ -393,8 +449,10 @@ public class BossChaseAttack : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[BossChaseAttack] laserPrefab�� ����־� �������� �߻��� �� �����ϴ�.");
+            Debug.LogWarning("[BossChaseAttack] laserPrefab이 비어있어 레이저를 발사할 수 없습니다.");
         }
+
+        isLaserActive = false;
     }
     void OnDisable()
     {
