@@ -153,11 +153,11 @@ MonoBehaviour:
   enableFadeOut: 1
   fadeOutDuration: 1
   useObjectPooling: 1
-  maxHealth: 5
+  maxHealth: 1.5
   currentHealth: 0
   startColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0.2509804}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
-  defaultSprite: {fileID: 0}
-  purifiedSprite: {fileID: 0}
+  defaultSprite: {fileID: -3677240329375128076, guid: cf372f45ccbe5294b9225a517c6185ee, type: 3}
+  purifiedSprite: {fileID: 1703783245333700708, guid: 5983d2a313d6b4f4286cb2ed61d4ebc4, type: 3}
   targetSpriteRenderer: {fileID: 0}
   hitTextFont: {fileID: 0}

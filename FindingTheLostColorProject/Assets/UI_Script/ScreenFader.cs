@@ -196,4 +196,64 @@ public class ScreenFader : MonoBehaviour
 
         isFading = false;
     }
+
+    /// <summary>
+    /// 외부 전용 API: 씬 이동 없이 순수 화면 페이드아웃 코루틴
+    /// </summary>
+    public IEnumerator FadeOutOnly(float duration = 1.0f)
+    {
+        InitializeUI();
+        if (fadeImage != null)
+        {
+            fadeImage.gameObject.SetActive(true);
+            fadeImage.raycastTarget = true;
+
+            float elapsed = 0f;
+            Color baseColor = fadeImage.color;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float alpha = Mathf.Clamp01(elapsed / duration);
+                fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
+                yield return null;
+            }
+            fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
+        }
+        else
+        {
+            yield return new WaitForSecondsRealtime(duration);
+        }
+    }
+
+    /// <summary>
+    /// 외부 전용 API: 씬 이동 없이 순수 화면 페이드인 코루틴
+    /// </summary>
+    public IEnumerator FadeInOnly(float duration = 1.0f)
+    {
+        InitializeUI();
+        if (fadeImage != null)
+        {
+            fadeImage.gameObject.SetActive(true);
+            fadeImage.raycastTarget = true;
+
+            float elapsed = 0f;
+            Color baseColor = fadeImage.color;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float alpha = Mathf.Clamp01(1f - (elapsed / duration));
+                fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
+                yield return null;
+            }
+            fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, 0f);
+            fadeImage.raycastTarget = false;
+            fadeImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            yield return new WaitForSecondsRealtime(duration);
+        }
+    }
 }
