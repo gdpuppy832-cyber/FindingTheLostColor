@@ -65,6 +65,20 @@ public class DashGaugeController : MonoBehaviour
     public void StartDashGauge(float cooldown)
     {
         Debug.Log($"[DashGauge] PlayerMove 로부터 대쉬 신호 수신! 연출 준비중 (쿨타임: {cooldown}초)");
+
+        // 씬 내 캔버스나 오브젝트가 꺼져 있는 경우 켜기 시도
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+        }
+
+        // 오브젝트나 부모 캔버스가 여전히 꺼져 있으면 코루틴 에러 차단을 위해 안전하게 리턴
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning("[DashGauge] 대쉬 게이지 UI(또는 부모 Canvas)가 비활성화 상태여서 연출 출력을 안전하게 스킵합니다.");
+            return;
+        }
+
         if (activeRoutine != null)
         {
             StopCoroutine(activeRoutine);

@@ -177,6 +177,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableFall: 1
   fallSpeed: 2
-  lifeTime: 19
+  lifeTime: 19.2
   enableFadeOut: 1
   fadeOutDuration: 1

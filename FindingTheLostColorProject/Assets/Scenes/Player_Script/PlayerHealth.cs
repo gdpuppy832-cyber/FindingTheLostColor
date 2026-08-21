@@ -335,15 +335,14 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log($"[PlayerHealth] 데미지 {amount} 수신. 현재 체력: {currentHealth}/{maxHealth}");
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0f)
         {
-            // [즉시 차단] 0.35초 대기 도중 추가 피격이 중복 발생하는 것을 완벽 차단하기 위해
-            // 체력이 0이 되는 즉시 사망(isDead) 및 무적(isInvincible) 상태를 켭니다.
+            currentHealth = 0f;
             isDead = true;
             isInvincible = true;
 
-            // [수정] 피격 직후 사망 연출을 위해 코루틴 실행 (피격모션 -> 대기 -> 사망모션)
-            StartCoroutine(HurtThenDieRoutine());
+            // [다치는 모션 -> 사망 모션 연계] 피격(Hurt) 모션을 살짝 보여준 후 사망(Die) 모션으로 자연스럽게 전환합니다.
+            StartCoroutine(HurtThenDieSequenceRoutine());
         }
         else
         {
@@ -360,21 +359,32 @@ public class PlayerHealth : MonoBehaviour
     }
 
     /// <summary>
-    /// [수정] 피격당해 아파하며 넉백되는 모션(Hurt)을 살짝 보여준 뒤 사망 처리(Die)로 연계하는 코루틴
+    /// 피격당해 아파하며 넉백되는 모션(Hurt)을 살짝 보여준 뒤 사망 처리(Die)로 연계하는 순차 코루틴
     /// </summary>
-    private System.Collections.IEnumerator HurtThenDieRoutine()
+    private System.Collections.IEnumerator HurtThenDieSequenceRoutine()
     {
-        // 1. 먼저 피격 애니메이션 트리거 재생
-        if (animator != null && !string.IsNullOrEmpty(hurtTriggerName))
+        // 1. 조작 먼저 차단 및 이동 파라미터 리셋
+        PlayerMove playerMove = GetComponent<PlayerMove>();
+        if (playerMove != null) playerMove.SetControl(false);
+
+        if (animator != null)
         {
-            Debug.Log($"[PlayerHealth] 피격 후 사망 연출 시작! 피격 트리거 '{hurtTriggerName}' 호출.");
-            animator.SetTrigger(hurtTriggerName);
+            animator.SetBool("IsWalking", false);
+            animator.SetFloat("VelocityX", 0f);
+
+            // 2. 먼저 다치는(Hurt) 애니메이션 트리거 발동
+            if (!string.IsNullOrEmpty(hurtTriggerName))
+            {
+                Debug.Log($"[PlayerHealth] 사망 전 다치는 모션 트리거 '{hurtTriggerName}' 연계 호출.");
+                animator.ResetTrigger(hurtTriggerName);
+                animator.SetTrigger(hurtTriggerName);
+            }
         }
 
-        // 2. 피격 넉백 포즈 연출 시간만큼 대기 (기본값: 0.35초)
+        // 3. 다쳐서 아파하는 모션이 선명히 보일 때까지 대기
         yield return new WaitForSeconds(deathDelayAfterHurt);
 
-        // 3. 대기 후 최종 사망 처리 실행 (Die 트리거 발동)
+        // 4. 이어서 최종 사망(Die) 모션 및 로직 실행!
         Die(isFalling: false);
     }
 
@@ -460,10 +470,20 @@ public class PlayerHealth : MonoBehaviour
         else
         {
             // [피해사 모션] - 지정된 애니메이션 재생
-            if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
+            if (animator != null)
             {
-                Debug.Log($"[PlayerHealth] '{deathTriggerName}' 애니메이션 트리거를 호출했습니다.");
-                animator.SetTrigger(deathTriggerName);
+                // 충돌/이동 관련 애니메이터 잔여 트리거 및 이동 파라미터 강제 리셋
+                if (!string.IsNullOrEmpty(hurtTriggerName)) animator.ResetTrigger(hurtTriggerName);
+                animator.ResetTrigger("OnJump");
+                animator.ResetTrigger("DoubleJump");
+                animator.SetBool("IsWalking", false);
+                animator.SetFloat("VelocityX", 0f);
+
+                if (!string.IsNullOrEmpty(deathTriggerName))
+                {
+                    Debug.Log($"[PlayerHealth] '{deathTriggerName}' 사망 애니메이션 트리거를 최우선 호출했습니다.");
+                    animator.SetTrigger(deathTriggerName);
+                }
                 
                 // 애니메이터 가로채기 방지를 위해 IsDead Bool 변수도 true로 켜줍니다.
                 animator.SetBool("IsDead", true);
