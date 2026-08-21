@@ -33,8 +33,8 @@ public class RandomRangeSpawner : MonoBehaviour
     [Tooltip("게임 시작 시 첫 소환까지의 대기 시간")]
     public float initialDelay = 0.5f;
 
-    [Tooltip("자동 스폰 가동 여부")]
-    public bool isSpawning = true;
+    [Tooltip("자동 스폰 가동 여부 (기본값: false - 컷씬 이후 등의 이벤트로 가동)")]
+    public bool isSpawning = false;
 
     [Header("오브젝트 풀링 설정 (Object Pooling Settings)")]
     [Tooltip("오브젝트 풀링 사용 여부 (체크 시 Instantiate/Destroy 대신 재사용하여 렉 방지)")]
@@ -46,6 +46,12 @@ public class RandomRangeSpawner : MonoBehaviour
     private float timer = 0.0f;
     private Queue<GameObject> primaryPoolQueue = new Queue<GameObject>();
     private Queue<GameObject> secondaryPoolQueue = new Queue<GameObject>();
+
+    void Awake()
+    {
+        // 씬 시작 시 무조건 스폰 꺼진 상태로 시작 (컷씬 완료 후 활성화)
+        isSpawning = false;
+    }
 
     void Start()
     {
@@ -147,6 +153,30 @@ public class RandomRangeSpawner : MonoBehaviour
         GameObject newObj = Instantiate(prefab, transform);
         newObj.SetActive(false);
         return newObj;
+    }
+
+    /// <summary>
+    /// 외부 스크립트(컷씬 종료 등)에서 스포너 작동을 시작시킵니다.
+    /// </summary>
+    public void StartSpawning()
+    {
+        isSpawning = true;
+        enabled = true;
+
+        // 네로 방해 공격 매니저도 함께 가동
+        NeroInterferenceAttackManager neroAttack = FindFirstObjectByType<NeroInterferenceAttackManager>();
+        if (neroAttack != null)
+        {
+            neroAttack.StartAttackLoop();
+        }
+    }
+
+    /// <summary>
+    /// 스포너 작동을 정지시킵니다.
+    /// </summary>
+    public void StopSpawning()
+    {
+        isSpawning = false;
     }
 
     // 에디터 씬 뷰에서 스폰 범위를 초록색 선으로 보여줌

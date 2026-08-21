@@ -240,6 +240,9 @@ public class PlayerHealth : MonoBehaviour
         // [치트] 개발자 모드 무한 체력(갓모드) 활성화 시 피격 데미지 무시
         if (PauseManager.IsGodMode) return;
 
+        // 대화/컷씬 진행 중에는 데미지 무시 (스토리 진행 중 피격 방지)
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive) return;
+
         // 이미 사망한 상태면 처리 중단
         if (isDead) return;
 
@@ -662,10 +665,13 @@ public class PlayerHealth : MonoBehaviour
 
         yield return new WaitForSeconds(duration);
 
-        // 플레이어가 살아있는 경우에만 조작권 복구
+        // 플레이어가 살아있고, 대화/컷씬 진행 중이 아닐 때만 조작권 복구
         if (!isDead && playerMove != null)
         {
-            playerMove.SetControl(true);
+            if (DialogueManager.Instance == null || !DialogueManager.Instance.IsDialogueActive)
+            {
+                playerMove.SetControl(true);
+            }
         }
     }
 }

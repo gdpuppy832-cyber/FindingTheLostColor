@@ -439,8 +439,219 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabfb88ed58bb7f44b89e334f902ee57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triggerOnce: 1
+  dialogues:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    text: "\uC5B4? \uC0C9\uCC44 \uAD6C\uC2AC\uC774\uB2E4!"
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    text: "\uADF8\uB807\uB2E4\uB294 \uAC74\u2026 \uB124\uAC00 \uB124\uB85C\uAD6C\uB098."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    text: "\uB2F9\uC7A5 \uB3CC\uB824\uC918!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 6728608051442990292, guid: 93a02c32b52817f47a7296a9a722f913, type: 3}
+    - {fileID: -1473792860349258381, guid: e796cf4e974f9b94d92f4c7ee80b7e03, type: 3}
+    - {fileID: 465689876785166616, guid: 0b0985283fdcfe745bed67ae673a013a, type: 3}
+    - {fileID: 6831873775216009993, guid: a6d8eebf643ab3b4bbe90846568b3104, type: 3}
+    - {fileID: -6244158674266640043, guid: b4ce148864507d44784c61341602cc88, type: 3}
+    - {fileID: 5101929957156484894, guid: 03b62f04bc7a84849aebdd864f0af863, type: 3}
+    - {fileID: -4017422075554577276, guid: 1769d1822eae64544956f88065229447, type: 3}
+    - {fileID: 7190372861478922836, guid: 5a7d907e42bef4045a023980b79a716d, type: 3}
+    - {fileID: 6889248940486376637, guid: c75cbb16ebccf154393232fc9ba818bd, type: 3}
+    - {fileID: 4498515023224636211, guid: 8655c40d59be73d4894f44b6761ae0b4, type: 3}
+    - {fileID: -5031428073276139755, guid: 520ab456610c42f4a9e786d2cb3eedee, type: 3}
+    - {fileID: -565477609394802846, guid: 3165592cb7d1bcc4a88a220fadd1da23, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    text: "\uB3CC\uB824\uB2EC\uB77C\uACE0?"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    text: "\uC774\uAC74 \uC774\uC81C \uB0B4\uAEBC\uC57C."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    text: "\uB204\uAD6C\uC5D0\uAC8C\uB3C4 \uB118\uAE38 \uC0DD\uAC01\uC740 \uC5C6\uC5B4."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    text: "\uBB50\uD558\uB294.."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -3765476732512089264, guid: 3c1747952fabfd44c88ed3dd335a7b8d, type: 3}
+    - {fileID: -7806596502893373407, guid: c6bb47dae336ee749acef5abf66e8a5a, type: 3}
+    - {fileID: 2187262625507223224, guid: 7ec73f8e017bef94397a07378c7f163c, type: 3}
+    - {fileID: -7193410094067273655, guid: 48d171e30440fc544a5c6307b5b2b993, type: 3}
+    - {fileID: 6976558518904614444, guid: 3ea64351612d2914d98cba41f1ae593c, type: 3}
+    - {fileID: -1621861650249559287, guid: 89d3d0fb1f90af4489c08ac1c0eff096, type: 3}
+    - {fileID: -5844276369593300606, guid: ac5be6cca017f484db3bc49f05007ed4, type: 3}
+    - {fileID: 4861266106521999131, guid: f482442a6354efe43b7892d4cc84cedf, type: 3}
+    - {fileID: -6839713009835716172, guid: bc3f8ecc9eee36d4b896d2b09c632db8, type: 3}
+    - {fileID: 5285373758891540214, guid: 6650c7402bc8eb04abf36ee7c99f746e, type: 3}
+    - {fileID: -1081180699556938933, guid: a0fa7314bcd26a8468336a51d442cb89, type: 3}
+    - {fileID: -2961546575942682820, guid: 70f3adec2d743dc4ab1eeb2417f1abed, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 2168919108311830837, guid: 23c618355b9ef314a9c046ac19f23dc0, type: 3}
+    text: "\uC544"
   playerTag: Player
+  triggerOnlyOnce: 1
+  freezePlayerDuringCutscene: 1
+  fadeDurationOnEnd: 1.5
+  onDialogueEnded:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &49702738
 Transform:
   m_ObjectHideFlags: 0
@@ -27124,14 +27335,15 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1584226411}
   - {fileID: 2093903462}
   - {fileID: 942817880}
   m_Father: {fileID: 1335865312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 22.71289, y: -190.031}
-  m_SizeDelta: {x: -301.845, y: -380.063}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &999561125
 Animator:
@@ -27168,14 +27380,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28111,7 +28323,7 @@ MonoBehaviour:
   spawnOffsetY: 0
   spawnInterval: 2
   initialDelay: 0.5
-  isSpawning: 1
+  isSpawning: 0
   useObjectPooling: 1
   initialPoolSize: 10
 --- !u!4 &1520221423
@@ -28150,7 +28362,7 @@ MonoBehaviour:
   darkOrbPrefab: {fileID: 8042931255661769342, guid: 33b8bc8766a4a334b8fbf70ba4c83ece, type: 3}
   spawnTopOffsetY: 8
   attackInterval: 5
-  isAttacking: 1
+  isAttacking: 0
   useMinXThreshold: 1
   startAttackMinX: 266
   playerTransform: {fileID: 0}
@@ -28272,6 +28484,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3128425829009819886, guid: e5394386546571e4a8d2fdabebb7c196, type: 3}
   m_PrefabInstance: {fileID: 87716842}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1584226410
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1584226411}
+  - component: {fileID: 1584226413}
+  - component: {fileID: 1584226412}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1584226411
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584226410}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 7, y: 2.4, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 999561124}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -190.5}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1584226412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584226410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1584226413
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584226410}
+  m_CullTransparentMesh: 1
 --- !u!1001 &1587797165
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29726,13 +30013,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5390616892844084202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2282264305597275985}
-    - targetCorrespondingSourceObject: {fileID: 5390616892844084202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2282264305597275984}
     - targetCorrespondingSourceObject: {fileID: 5390616892844084202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2282264305597275983}
+    - targetCorrespondingSourceObject: {fileID: 5390616892844084202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2282264305597275989}
   m_SourcePrefab: {fileID: 100100000, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
 --- !u!1 &2282264305597275981 stripped
 GameObject:
@@ -29821,7 +30108,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2282264305597275985
+--- !u!114 &2282264305597275989
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29830,75 +30117,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2282264305597275982}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54985cc34cf8a4d428ba34c2674ea073, type: 3}
+  m_Script: {fileID: 11500000, guid: f0ef27ac8de07b34c9255484bce20a58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialoguePanelObj: {fileID: 999561123}
-  dialogueAnimator: {fileID: 999561125}
-  dialogueFrameImage: {fileID: 0}
-  portraitImage: {fileID: 0}
-  portraitAnimator: {fileID: 0}
-  speakerTmpText: {fileID: 2093903463}
-  speakerLegacyText: {fileID: 0}
-  sentenceTmpText: {fileID: 942817881}
-  sentenceLegacyText: {fileID: 0}
-  spacePromptObj: {fileID: 0}
-  autoAdvanceDelay: 2
-  targetTilemapCollider: {fileID: 0}
-  targetFloorObj: {fileID: 0}
-  fadeOutDurationOnEnd: 2
-  inspectorDialogues:
-  - speakerName: "\uCE58\uC988"
-    sentence: "\uC5B4? \uC0C9\uCC44 \uAD6C\uC2AC\uC774\uB2E4!"
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uCE58\uC988"
-    sentence: "\uADF8\uB807\uB2E4\uB294 \uAC74\u2026 \uB124\uAC00 \uB124\uB85C\uAD6C\uB098."
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uCE58\uC988"
-    sentence: "\uB2F9\uC7A5 \uB3CC\uB824\uC918!"
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uB124\uB85C"
-    sentence: "\uB3CC\uB824\uB2EC\uB77C\uACE0?"
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uB124\uB85C"
-    sentence: "\uC774\uAC74 \uC774\uC81C \uB0B4 \uAEBC\uC57C."
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uB124\uB85C"
-    sentence: "\uB204\uAD6C\uC5D0\uAC8C\uB3C4 \uB118\uAE38 \uC0DD\uAC01\uC740 \uC5C6\uC5B4."
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uCE58\uC988"
-    sentence: "\uBB50\uD558\uB294\u2026"
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  - speakerName: "\uB124\uB85C"
-    sentence: "\uC544."
-    speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 
-    idleAnimState: 
-    dialogueSprite: {fileID: 0}
-  typingSpeed: 0.03
-  openTriggerName: Open
-  closeTriggerName: Close
+  dialogueBox: {fileID: 999561123}
+  characterImage: {fileID: 1584226412}
+  nameText: {fileID: 2093903463}
+  dialogueText: {fileID: 942817881}
+  typeSpeed: 0.1
+  mouthChangeInterval: 0.05
 --- !u!1001 &3057142150872114516
 PrefabInstance:
   m_ObjectHideFlags: 0
