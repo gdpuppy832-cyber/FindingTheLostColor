@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -6,54 +6,57 @@ using System.Collections;
 [System.Serializable]
 public class DialogueLine
 {
-    [Header("Ä³¸¯ÅÍ")]
-    [Tooltip("´ëÈ­Ã¢ »ó´Ü¿¡ Ç¥½ÃµÉ Ä³¸¯ÅÍ ÀÌ¸§")]
+    [Header("ìºë¦­í„°")]
+    [Tooltip("ëŒ€í™”ì°½ ìƒë‹¨ì— í‘œì‹œë  ìºë¦­í„° ì´ë¦„")]
     public string speakerName;
 
-    [Tooltip("ÇöÀç ´ëÈ­¿¡¼­ Ç¥½ÃÇÒ ±âº» Ä³¸¯ÅÍ ÀÌ¹ÌÁö")]
+    [Tooltip("í˜„ì¬ ëŒ€í™”ì—ì„œ í‘œì‹œí•  ê¸°ë³¸ ìºë¦­í„° ì´ë¯¸ì§€")]
     public Sprite characterImage;
 
-    [Tooltip("¸»ÇÏÁö ¾ÊÀ» ¶§ »ç¿ëÇÒ ÀÔ ´İÈû(±âº») ÀÌ¹ÌÁö")]
+    [Tooltip("ë§í•˜ì§€ ì•Šì„ ë•Œ ì‚¬ìš©í•  ì… ë‹«í˜(ê¸°ë³¸) ì´ë¯¸ì§€")]
     public Sprite characterMouthClosedImage;
 
-    [Tooltip("¸»ÇÏ´Â µ¿¾È ¼ø¼­´ë·Î ¹İº¹ Àç»ıÇÒ ÀÔ ¸ğ¾ç ÇÁ·¹ÀÓµé. ¹è¿­ Å©±â·Î ÇÁ·¹ÀÓ °³¼ö¸¦ ÀÚÀ¯·Ó°Ô Á¶ÀıÇÒ ¼ö ÀÖÀ½ (¿¹: ÀÔ »ìÂ¦ ¹ú¸² -> Å©°Ô ¹ú¸² -> »ìÂ¦ ¹ú¸² ¼ø¼­·Î 3Àå ÀÌ»óµµ °¡´É)")]
+    [Tooltip("ë§í•˜ëŠ” ë™ì•ˆ ìˆœì„œëŒ€ë¡œ ë°˜ë³µ ì¬ìƒí•  ì… ëª¨ì–‘ í”„ë ˆì„ë“¤. ë°°ì—´ í¬ê¸°ë¡œ í”„ë ˆì„ ê°œìˆ˜ë¥¼ ììœ ë¡­ê²Œ ì¡°ì ˆí•  ìˆ˜ ìˆìŒ (ì˜ˆ: ì… ì‚´ì§ ë²Œë¦¼ -> í¬ê²Œ ë²Œë¦¼ -> ì‚´ì§ ë²Œë¦¼ ìˆœì„œë¡œ 3ì¥ ì´ìƒë„ ê°€ëŠ¥)")]
     public Sprite[] characterMouthFrames;
 
-    [Tooltip("ÄÑµÎ¸é, ÀÌ ´ë»çÀÇ Å¸ÀÌÇÎÀÌ ³¡³­ µÚ¿¡µµ ÀÔ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ¸ØÃßÁö ¾Ê°í °è¼Ó ¹İº¹ Àç»ıµÊ. ´ÙÀ½ ´ë»ç·Î ³Ñ¾î°¡°Å³ª ´ëÈ­°¡ Á¾·áµÉ ¶§ ºñ·Î¼Ò ¸ØÃã")]
+    [Tooltip("ì¼œë‘ë©´, ì´ ëŒ€ì‚¬ì˜ íƒ€ì´í•‘ì´ ëë‚œ ë’¤ì—ë„ ì… ì• ë‹ˆë©”ì´ì…˜ì´ ë©ˆì¶”ì§€ ì•Šê³  ê³„ì† ë°˜ë³µ ì¬ìƒë¨. ë‹¤ìŒ ëŒ€ì‚¬ë¡œ ë„˜ì–´ê°€ê±°ë‚˜ ëŒ€í™”ê°€ ì¢…ë£Œë  ë•Œ ë¹„ë¡œì†Œ ë©ˆì¶¤")]
     public bool keepMouthAnimatingAfterTyping = false;
 
-    [Header("´ë»ç")]
+    [Tooltip("keepMouthAnimatingAfterTypingì´ ì¼œì ¸ ìˆì„ ë•Œ, íƒ€ì´í•‘ ì™„ë£Œ í›„~ë‹¤ìŒ ëŒ€ì‚¬ ì „ê¹Œì§€ ë°˜ë³µ ì¬ìƒí•  ì „ìš© í”„ë ˆì„ë“¤. ë¹„ì›Œë‘ë©´ characterMouthFramesë¥¼ ê·¸ëŒ€ë¡œ ì¬ì‚¬ìš©í•¨")]
+    public Sprite[] afterTypingMouthFrames;
+
+    [Header("ëŒ€ì‚¬")]
     [TextArea(2, 4)]
     public string text;
 }
 
 /// <summary>
-/// ¸ŞÀÌÇÃ½ºÅä¸® ½ºÅ¸ÀÏ ´ëÈ­ ½Ã½ºÅÛ.
-/// ´ëÈ­Ã¢ UI´Â ÇÏ³ª¸¸ Á¸ÀçÇÏ¸ç, ´ë»ç°¡ ¹Ù²ğ ¶§¸¶´Ù ±× ¾ÈÀÇ Sprite/ÅØ½ºÆ®¸¸ ±³Ã¼ÇÑ´Ù.
+/// ë©”ì´í”ŒìŠ¤í† ë¦¬ ìŠ¤íƒ€ì¼ ëŒ€í™” ì‹œìŠ¤í…œ.
+/// ëŒ€í™”ì°½ UIëŠ” í•˜ë‚˜ë§Œ ì¡´ì¬í•˜ë©°, ëŒ€ì‚¬ê°€ ë°”ë€” ë•Œë§ˆë‹¤ ê·¸ ì•ˆì˜ Sprite/í…ìŠ¤íŠ¸ë§Œ êµì²´í•œë‹¤.
 /// </summary>
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
-    [Header("´ëÈ­ UI")]
-    [Tooltip("´ëÈ­Ã¢ ÀüÃ¼ ¿ÀºêÁ§Æ® (´ëÈ­ ½ÃÀÛ ½Ã È°¼ºÈ­, Á¾·á ½Ã ºñÈ°¼ºÈ­)")]
+    [Header("ëŒ€í™” UI")]
+    [Tooltip("ëŒ€í™”ì°½ ì „ì²´ ì˜¤ë¸Œì íŠ¸ (ëŒ€í™” ì‹œì‘ ì‹œ í™œì„±í™”, ì¢…ë£Œ ì‹œ ë¹„í™œì„±í™”)")]
     public GameObject dialogueBox;
 
-    [Tooltip("´ëÈ­Ã¢ ¾ÈÀÇ Ä³¸¯ÅÍ ÀÌ¹ÌÁö (ÇÏ³ª¸¸ Á¸ÀçÇÏ¸ç Sprite¸¸ °è¼Ó ±³Ã¼µÊ)")]
+    [Tooltip("ëŒ€í™”ì°½ ì•ˆì˜ ìºë¦­í„° ì´ë¯¸ì§€ (í•˜ë‚˜ë§Œ ì¡´ì¬í•˜ë©° Spriteë§Œ ê³„ì† êµì²´ë¨)")]
     public Image characterImage;
 
-    [Tooltip("´ëÈ­Ã¢ ¾ÈÀÇ Ä³¸¯ÅÍ ÀÌ¸§ ÅØ½ºÆ®")]
+    [Tooltip("ëŒ€í™”ì°½ ì•ˆì˜ ìºë¦­í„° ì´ë¦„ í…ìŠ¤íŠ¸")]
     public TextMeshProUGUI nameText;
 
-    [Tooltip("´ëÈ­Ã¢ ¾ÈÀÇ ´ë»ç ³»¿ë ÅØ½ºÆ®")]
+    [Tooltip("ëŒ€í™”ì°½ ì•ˆì˜ ëŒ€ì‚¬ ë‚´ìš© í…ìŠ¤íŠ¸")]
     public TextMeshProUGUI dialogueText;
 
-    [Header("Å¸ÀÚ±â ¼³Á¤")]
-    [Tooltip("´ë»ç°¡ ÇÑ ±ÛÀÚ¾¿ Ãâ·ÂµÇ´Â °£°İ (ÃÊ)")]
+    [Header("íƒ€ìê¸° ì„¤ì •")]
+    [Tooltip("ëŒ€ì‚¬ê°€ í•œ ê¸€ìì”© ì¶œë ¥ë˜ëŠ” ê°„ê²© (ì´ˆ)")]
     public float typeSpeed = 0.1f;
 
-    [Header("ÀÔ ¸ğ¾ç ¼³Á¤")]
-    [Tooltip("Å¸ÀÌÇÎ Áß ÀÔ ¸ğ¾çÀÌ ¿­¸²/´İÈûÀ¸·Î ÀüÈ¯µÇ´Â °£°İ (ÃÊ)")]
+    [Header("ì… ëª¨ì–‘ ì„¤ì •")]
+    [Tooltip("íƒ€ì´í•‘ ì¤‘ ì… ëª¨ì–‘ì´ ì—´ë¦¼/ë‹«í˜ìœ¼ë¡œ ì „í™˜ë˜ëŠ” ê°„ê²© (ì´ˆ)")]
     public float mouthChangeInterval = 0.05f;
 
     private DialogueLine[] currentLines;
@@ -65,11 +68,11 @@ public class DialogueManager : MonoBehaviour
     private bool isTyping = false;
     private bool isDialogueActive = false;
     private bool keepMouthAnimating = false;
-    private System.Action onDialogueEndedCallback; // ÀÌ ´ëÈ­°¡ ³¡³µÀ» ¶§ È£ÃâÇÒ Äİ¹é (¿¹: º¸½º 2ÆäÀÌÁî ½ÃÀÛ)
+    private System.Action onDialogueEndedCallback; // ì´ ëŒ€í™”ê°€ ëë‚¬ì„ ë•Œ í˜¸ì¶œí•  ì½œë°± (ì˜ˆ: ë³´ìŠ¤ 2í˜ì´ì¦ˆ ì‹œì‘)
 
     void Awake()
     {
-        // °£´ÜÇÑ ½Ì±ÛÅæ. ÀÌ¹Ì ÀÎ½ºÅÏ½º°¡ ÀÖÀ¸¸é »õ·Î »ı±ä ÂÊÀ» Á¤¸®ÇÑ´Ù.
+        // ê°„ë‹¨í•œ ì‹±ê¸€í†¤. ì´ë¯¸ ì¸ìŠ¤í„´ìŠ¤ê°€ ìˆìœ¼ë©´ ìƒˆë¡œ ìƒê¸´ ìª½ì„ ì •ë¦¬í•œë‹¤.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -88,38 +91,38 @@ public class DialogueManager : MonoBehaviour
     {
         if (!isDialogueActive) return;
 
-        // ¿ä±¸»çÇ×: ENTER¸¦ Ç×»ó ¸ÕÀú °Ë»çÇÑ´Ù. ENTER´Â "ÇöÀç ´ë»ç ½ºÅµ"ÀÌ ¾Æ´Ï¶ó "ÀüÃ¼ ´ëÈ­ Á¾·á".
+        // ìš”êµ¬ì‚¬í•­: ENTERë¥¼ í•­ìƒ ë¨¼ì € ê²€ì‚¬í•œë‹¤. ENTERëŠ” "í˜„ì¬ ëŒ€ì‚¬ ìŠ¤í‚µ"ì´ ì•„ë‹ˆë¼ "ì „ì²´ ëŒ€í™” ì¢…ë£Œ".
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             EndDialogue();
             return;
         }
 
-        // ENTER°¡ ´­¸®Áö ¾Ê¾ÒÀ» ¶§¸¸ SPACE¸¦ °Ë»çÇÑ´Ù.
+        // ENTERê°€ ëˆŒë¦¬ì§€ ì•Šì•˜ì„ ë•Œë§Œ SPACEë¥¼ ê²€ì‚¬í•œë‹¤.
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isTyping)
             {
-                // Å¸ÀÌÇÎ Áß SPACE -> ÇöÀç ´ë»ç¸¦ Áï½Ã ¿Ï¼º
+                // íƒ€ì´í•‘ ì¤‘ SPACE -> í˜„ì¬ ëŒ€ì‚¬ë¥¼ ì¦‰ì‹œ ì™„ì„±
                 CompleteCurrentLineInstantly();
             }
             else
             {
-                // Å¸ÀÌÇÎÀÌ ÀÌ¹Ì ³¡³­ »óÅÂ¿¡¼­ SPACE -> ´ÙÀ½ ´ë»ç·Î ÁøÇà
+                // íƒ€ì´í•‘ì´ ì´ë¯¸ ëë‚œ ìƒíƒœì—ì„œ SPACE -> ë‹¤ìŒ ëŒ€ì‚¬ë¡œ ì§„í–‰
                 AdvanceToNextLine();
             }
         }
     }
 
     /// <summary>
-    /// ¿ÜºÎ ½ºÅ©¸³Æ®¿¡¼­ ´ëÈ­¸¦ ½ÃÀÛÇÒ ¶§ È£ÃâÇÏ´Â ÇÔ¼ö.
-    /// ¿¹: DialogueManager.Instance.StartDialogue(dialogues);
+    /// ì™¸ë¶€ ìŠ¤í¬ë¦½íŠ¸ì—ì„œ ëŒ€í™”ë¥¼ ì‹œì‘í•  ë•Œ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜.
+    /// ì˜ˆ: DialogueManager.Instance.StartDialogue(dialogues);
     /// </summary>
     public void StartDialogue(DialogueLine[] lines, System.Action onComplete = null)
     {
         if (lines == null || lines.Length == 0) return;
 
-        // È¤½Ã ÀÌÀü ´ëÈ­°¡ ³²¾ÆÀÖ´Ù¸é ¿ÏÀüÈ÷ Á¤¸®ÇÏ°í »õ·Î ½ÃÀÛ
+        // í˜¹ì‹œ ì´ì „ ëŒ€í™”ê°€ ë‚¨ì•„ìˆë‹¤ë©´ ì™„ì „íˆ ì •ë¦¬í•˜ê³  ìƒˆë¡œ ì‹œì‘
         StopAllDialogueCoroutines();
 
         currentLines = lines;
@@ -134,7 +137,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ´ÙÀ½ DialogueLineÀ¸·Î ³Ñ¾î°£´Ù. ´õ ÀÌ»ó ´ë»ç°¡ ¾øÀ¸¸é ´ëÈ­¸¦ Á¾·áÇÑ´Ù.
+    /// ë‹¤ìŒ DialogueLineìœ¼ë¡œ ë„˜ì–´ê°„ë‹¤. ë” ì´ìƒ ëŒ€ì‚¬ê°€ ì—†ìœ¼ë©´ ëŒ€í™”ë¥¼ ì¢…ë£Œí•œë‹¤.
     /// </summary>
     private void AdvanceToNextLine()
     {
@@ -148,23 +151,23 @@ public class DialogueManager : MonoBehaviour
 
         DialogueLine line = currentLines[currentLineIndex];
 
-        // ÀÌ¸§/Ä³¸¯ÅÍ ÀÌ¹ÌÁö ±³Ã¼ (´ëÈ­Ã¢ UI ÀÚÃ¼´Â ±×´ë·Î, ³»ºÎ ³»¿ë¸¸ °»½Å)
+        // ì´ë¦„/ìºë¦­í„° ì´ë¯¸ì§€ êµì²´ (ëŒ€í™”ì°½ UI ìì²´ëŠ” ê·¸ëŒ€ë¡œ, ë‚´ë¶€ ë‚´ìš©ë§Œ ê°±ì‹ )
         if (nameText != null)
             nameText.text = line.speakerName;
 
-        // ´ë»ç ½ÃÀÛ ½Ã ±âº»Àº ÀÔ ´İÈû ÀÌ¹ÌÁö
+        // ëŒ€ì‚¬ ì‹œì‘ ì‹œ ê¸°ë³¸ì€ ì… ë‹«í˜ ì´ë¯¸ì§€
         if (characterImage != null)
         {
             characterImage.sprite = line.characterMouthClosedImage != null
                 ? line.characterMouthClosedImage
                 : line.characterImage;
         }
-        // (characterMouthOpenImage ÂüÁ¶´Â ´õ ÀÌ»ó ¾øÀ½ - characterMouthFrames ¹è¿­ »ç¿ë)
+        // (characterMouthOpenImage ì°¸ì¡°ëŠ” ë” ì´ìƒ ì—†ìŒ - characterMouthFrames ë°°ì—´ ì‚¬ìš©)
 
         if (dialogueText != null)
             dialogueText.text = "";
 
-        // ÀÌÀü ´ë»ç¿¡¼­ µ¹´ø ÄÚ·çÆ¾µéÀ» È®½ÇÈ÷ ²÷°í »õ·Î ½ÃÀÛ
+        // ì´ì „ ëŒ€ì‚¬ì—ì„œ ëŒë˜ ì½”ë£¨í‹´ë“¤ì„ í™•ì‹¤íˆ ëŠê³  ìƒˆë¡œ ì‹œì‘
         StopAllDialogueCoroutines();
 
         typingCoroutine = StartCoroutine(TypeLineRoutine(line));
@@ -172,7 +175,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÑ ±ÛÀÚ¾¿ ´ë»ç¸¦ Ãâ·ÂÇÏ´Â Å¸ÀÚ±â È¿°ú ÄÚ·çÆ¾.
+    /// í•œ ê¸€ìì”© ëŒ€ì‚¬ë¥¼ ì¶œë ¥í•˜ëŠ” íƒ€ìê¸° íš¨ê³¼ ì½”ë£¨í‹´.
     /// </summary>
     private IEnumerator TypeLineRoutine(DialogueLine line)
     {
@@ -193,27 +196,57 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Å¸ÀÌÇÎ Áß ÀÔ ¸ğ¾çÀ» ´İÈû/¿­¸²À¸·Î ¹İº¹ ÀüÈ¯ÇÏ´Â ÄÚ·çÆ¾.
-    /// Å¸ÀÌÇÎÀÌ ³¡³ª¸é(¶Ç´Â ½ºÅµµÇ¸é) ¹İµå½Ã ÇÔ²² ¸ØÃç¾ß ÇÑ´Ù.
+    /// íƒ€ì´í•‘ ì¤‘ ì… ëª¨ì–‘ì„ ë‹«í˜/ì—´ë¦¼ìœ¼ë¡œ ë°˜ë³µ ì „í™˜í•˜ëŠ” ì½”ë£¨í‹´.
+    /// íƒ€ì´í•‘ì´ ëë‚˜ë©´(ë˜ëŠ” ìŠ¤í‚µë˜ë©´) ë°˜ë“œì‹œ í•¨ê»˜ ë©ˆì¶°ì•¼ í•œë‹¤.
     /// </summary>
     private IEnumerator MouthAnimationRoutine(DialogueLine line)
     {
-        // ¼øÈ¯ÇÒ ÇÁ·¹ÀÓÀÌ ¾øÀ¸¸é(ºó ¹è¿­) ¾Ö´Ï¸ŞÀÌ¼Ç ¾øÀÌ ±×³Â ´ë±â
-        if (line.characterMouthFrames == null || line.characterMouthFrames.Length == 0)
+        // 1ë‹¨ê³„: íƒ€ì´í•‘ ì¤‘ â€” characterMouthFramesë¥¼ ìˆœí™˜
+        if (line.characterMouthFrames != null && line.characterMouthFrames.Length > 0)
+        {
+            int frameIndex = 0;
+            while (isTyping)
+            {
+                if (characterImage != null)
+                {
+                    Sprite target = line.characterMouthFrames[frameIndex];
+                    if (target != null)
+                        characterImage.sprite = target;
+
+                    frameIndex = (frameIndex + 1) % line.characterMouthFrames.Length;
+                }
+
+                yield return new WaitForSeconds(mouthChangeInterval);
+            }
+        }
+        else
+        {
+            // íƒ€ì´í•‘ìš© í”„ë ˆì„ì´ ì—†ì–´ë„, íƒ€ì´í•‘ì´ ëë‚  ë•Œê¹Œì§€ëŠ” ëŒ€ê¸°í•´ì•¼ 2ë‹¨ê³„ë¡œ ë„˜ì–´ê°ˆ ìˆ˜ ìˆìŒ
+            while (isTyping)
+            {
+                yield return null;
+            }
+        }
+
+        // 2ë‹¨ê³„: íƒ€ì´í•‘ ì™„ë£Œ í›„ ~ ë‹¤ìŒ ëŒ€ì‚¬ ì „ê¹Œì§€ â€” afterTypingMouthFramesë¥¼ ìˆœí™˜
+        // (ë¹„ì›Œë’€ìœ¼ë©´ characterMouthFramesë¥¼ ê·¸ëŒ€ë¡œ ì¬ì‚¬ìš©)
+        Sprite[] idleFrames = (line.afterTypingMouthFrames != null && line.afterTypingMouthFrames.Length > 0)
+            ? line.afterTypingMouthFrames
+            : line.characterMouthFrames;
+
+        if (idleFrames == null || idleFrames.Length == 0)
             yield break;
 
-        int frameIndex = 0;
-
-        // Å¸ÀÌÇÎ ÁßÀÌ°Å³ª, "Å¸ÀÌÇÎ ³¡³ªµµ °è¼Ó" ¿É¼ÇÀÌ ÄÑÁ®¼­ keepMouthAnimatingÀÌ trueÀÎ µ¿¾È °è¼Ó ¹İº¹
-        while (isTyping || keepMouthAnimating)
+        int idleIndex = 0;
+        while (keepMouthAnimating)
         {
             if (characterImage != null)
             {
-                Sprite target = line.characterMouthFrames[frameIndex];
+                Sprite target = idleFrames[idleIndex];
                 if (target != null)
                     characterImage.sprite = target;
 
-                frameIndex = (frameIndex + 1) % line.characterMouthFrames.Length;
+                idleIndex = (idleIndex + 1) % idleFrames.Length;
             }
 
             yield return new WaitForSeconds(mouthChangeInterval);
@@ -221,7 +254,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// SPACE·Î Å¸ÀÌÇÎÀ» ½ºÅµÇßÀ» ¶§: ´ë»ç ÀüÃ¼¸¦ Áï½Ã Ç¥½ÃÇÏ°í, °ü·Ã ÄÚ·çÆ¾À» Á¤È®È÷ Á¤¸®ÇÑ´Ù.
+    /// SPACEë¡œ íƒ€ì´í•‘ì„ ìŠ¤í‚µí–ˆì„ ë•Œ: ëŒ€ì‚¬ ì „ì²´ë¥¼ ì¦‰ì‹œ í‘œì‹œí•˜ê³ , ê´€ë ¨ ì½”ë£¨í‹´ì„ ì •í™•íˆ ì •ë¦¬í•œë‹¤.
     /// </summary>
     private void CompleteCurrentLineInstantly()
     {
@@ -242,8 +275,8 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Å¸ÀÌÇÎÀÌ ³¡³µÀ» ¶§(ÀÚ¿¬ Á¾·áµç ½ºÅµÀÌµç) °øÅëÀ¸·Î Ã³¸®ÇÏ´Â ¸¶¹«¸® ·ÎÁ÷.
-    /// ÀÔ ¸ğ¾ç ÄÚ·çÆ¾À» ¸ØÃß°í ÀÔ ´İÈû ÀÌ¹ÌÁö·Î µÇµ¹¸°´Ù.
+    /// íƒ€ì´í•‘ì´ ëë‚¬ì„ ë•Œ(ìì—° ì¢…ë£Œë“  ìŠ¤í‚µì´ë“ ) ê³µí†µìœ¼ë¡œ ì²˜ë¦¬í•˜ëŠ” ë§ˆë¬´ë¦¬ ë¡œì§.
+    /// ì… ëª¨ì–‘ ì½”ë£¨í‹´ì„ ë©ˆì¶”ê³  ì… ë‹«í˜ ì´ë¯¸ì§€ë¡œ ë˜ëŒë¦°ë‹¤.
     /// </summary>
     private void FinishTyping()
     {
@@ -255,8 +288,8 @@ public class DialogueManager : MonoBehaviour
 
         if (line != null && line.keepMouthAnimatingAfterTyping)
         {
-            // ÀÌ ´ë»ç´Â Å¸ÀÌÇÎÀÌ ³¡³ªµµ ÀÔ ¾Ö´Ï¸ŞÀÌ¼ÇÀ» °è¼Ó µ¹¸² (mouthCoroutineÀ» ¸ØÃßÁö ¾Ê°í,
-            // ÀÔ ´İÈû ÀÌ¹ÌÁö·Îµµ µÇµ¹¸®Áö ¾ÊÀ½ - ´ÙÀ½ ´ë»ç·Î ³Ñ¾î°¥ ¶§ StopAllDialogueCoroutines¿¡¼­ Á¤¸®µÊ)
+            // ì´ ëŒ€ì‚¬ëŠ” íƒ€ì´í•‘ì´ ëë‚˜ë„ ì… ì• ë‹ˆë©”ì´ì…˜ì„ ê³„ì† ëŒë¦¼ (mouthCoroutineì„ ë©ˆì¶”ì§€ ì•Šê³ ,
+            // ì… ë‹«í˜ ì´ë¯¸ì§€ë¡œë„ ë˜ëŒë¦¬ì§€ ì•ŠìŒ - ë‹¤ìŒ ëŒ€ì‚¬ë¡œ ë„˜ì–´ê°ˆ ë•Œ StopAllDialogueCoroutinesì—ì„œ ì •ë¦¬ë¨)
             keepMouthAnimating = true;
         }
         else
@@ -294,11 +327,11 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
-        keepMouthAnimating = false; // "Å¸ÀÌÇÎ ³¡³ªµµ °è¼Ó" ¿É¼ÇÀ¸·Î ³²¾ÆÀÖ´ø ¾Ö´Ï¸ŞÀÌ¼Çµµ ¿©±â¼­ È®½ÇÈ÷ Á¾·á
+        keepMouthAnimating = false; // "íƒ€ì´í•‘ ëë‚˜ë„ ê³„ì†" ì˜µì…˜ìœ¼ë¡œ ë‚¨ì•„ìˆë˜ ì• ë‹ˆë©”ì´ì…˜ë„ ì—¬ê¸°ì„œ í™•ì‹¤íˆ ì¢…ë£Œ
     }
 
     /// <summary>
-    /// ÀüÃ¼ ´ëÈ­¸¦ Á¾·áÇÑ´Ù. (ENTER¸¦ ´­·¶°Å³ª, ¸¶Áö¸· ´ë»ç¿¡¼­ SPACE¸¦ ´­·¶À» ¶§ È£ÃâµÊ)
+    /// ì „ì²´ ëŒ€í™”ë¥¼ ì¢…ë£Œí•œë‹¤. (ENTERë¥¼ ëˆŒë €ê±°ë‚˜, ë§ˆì§€ë§‰ ëŒ€ì‚¬ì—ì„œ SPACEë¥¼ ëˆŒë €ì„ ë•Œ í˜¸ì¶œë¨)
     /// </summary>
     private void EndDialogue()
     {
@@ -320,7 +353,7 @@ public class DialogueManager : MonoBehaviour
         if (characterImage != null)
             characterImage.sprite = null;
 
-        // Äİ¹éÀº »óÅÂ Á¤¸®°¡ ´Ù ³¡³­ µÚ ¸¶Áö¸·¿¡ È£Ãâ (Äİ¹é ¾È¿¡¼­ »õ ´ëÈ­¸¦ ´Ù½Ã ½ÃÀÛÇØµµ ¾ÈÀüÇÏµµ·Ï)
+        // ì½œë°±ì€ ìƒíƒœ ì •ë¦¬ê°€ ë‹¤ ëë‚œ ë’¤ ë§ˆì§€ë§‰ì— í˜¸ì¶œ (ì½œë°± ì•ˆì—ì„œ ìƒˆ ëŒ€í™”ë¥¼ ë‹¤ì‹œ ì‹œì‘í•´ë„ ì•ˆì „í•˜ë„ë¡)
         System.Action callback = onDialogueEndedCallback;
         onDialogueEndedCallback = null;
         callback?.Invoke();
