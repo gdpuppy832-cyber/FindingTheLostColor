@@ -64,7 +64,8 @@ public class DialogueManager : MonoBehaviour
 
     private bool isTyping = false;
     private bool isDialogueActive = false;
-    private bool keepMouthAnimating = false; // 타이핑이 끝나도 입 애니메이션을 계속 돌릴지 여부 (현재 대사의 옵션에 따라 설정됨)
+    private bool keepMouthAnimating = false;
+    private System.Action onDialogueEndedCallback; // 이 대화가 끝났을 때 호출할 콜백 (예: 보스 2페이즈 시작)
 
     void Awake()
     {
@@ -114,7 +115,7 @@ public class DialogueManager : MonoBehaviour
     /// 외부 스크립트에서 대화를 시작할 때 호출하는 함수.
     /// 예: DialogueManager.Instance.StartDialogue(dialogues);
     /// </summary>
-    public void StartDialogue(DialogueLine[] lines)
+    public void StartDialogue(DialogueLine[] lines, System.Action onComplete = null)
     {
         if (lines == null || lines.Length == 0) return;
 
@@ -124,6 +125,7 @@ public class DialogueManager : MonoBehaviour
         currentLines = lines;
         currentLineIndex = -1;
         isDialogueActive = true;
+        onDialogueEndedCallback = onComplete;
 
         if (dialogueBox != null)
             dialogueBox.SetActive(true);
@@ -317,5 +319,10 @@ public class DialogueManager : MonoBehaviour
 
         if (characterImage != null)
             characterImage.sprite = null;
+
+        // 콜백은 상태 정리가 다 끝난 뒤 마지막에 호출 (콜백 안에서 새 대화를 다시 시작해도 안전하도록)
+        System.Action callback = onDialogueEndedCallback;
+        onDialogueEndedCallback = null;
+        callback?.Invoke();
     }
 }
