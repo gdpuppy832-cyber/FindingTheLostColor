@@ -23585,7 +23585,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 4
-      m_TileSpriteIndex: 17
+      m_TileSpriteIndex: 19
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -25988,12 +25988,12 @@ Tilemap:
     m_Data: {fileID: -1121713513, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
   - m_RefCount: 59
     m_Data: {fileID: 1801230287, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -992455392, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
-  - m_RefCount: 5
-    m_Data: {fileID: -305656295, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 5
+    m_Data: {fileID: -305656295, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: -992455392, guid: efef23c6c331c784b8ac2d7d7805db0e, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 2182
     m_Data:
@@ -29844,54 +29844,57 @@ MonoBehaviour:
   sentenceLegacyText: {fileID: 0}
   spacePromptObj: {fileID: 0}
   autoAdvanceDelay: 2
+  targetTilemapCollider: {fileID: 0}
+  targetFloorObj: {fileID: 0}
+  fadeOutDurationOnEnd: 2
   inspectorDialogues:
   - speakerName: "\uCE58\uC988"
     sentence: "\uC5B4? \uC0C9\uCC44 \uAD6C\uC2AC\uC774\uB2E4!"
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 00_Player_Profile_IDLE_T_0000
-    idleAnimState: 00_Player_Profile_IDLE_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uCE58\uC988"
     sentence: "\uADF8\uB807\uB2E4\uB294 \uAC74\u2026 \uB124\uAC00 \uB124\uB85C\uAD6C\uB098."
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '00_Player_Profile_Anger_T_0000 '
-    idleAnimState: 00_Player_Profile_Anger_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uCE58\uC988"
     sentence: "\uB2F9\uC7A5 \uB3CC\uB824\uC918!"
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: 00_Player_Profile_Anger_T_0000
-    idleAnimState: 00_Player_Profile_Anger_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uB124\uB85C"
     sentence: "\uB3CC\uB824\uB2EC\uB77C\uACE0?"
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '09_Nero_Profile_Sneer_T_0000 '
-    idleAnimState: 09_Nero_Profile_Sneer_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uB124\uB85C"
     sentence: "\uC774\uAC74 \uC774\uC81C \uB0B4 \uAEBC\uC57C."
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '09_Nero_Profile_IDLE_T_0000 '
-    idleAnimState: 09_Nero_Profile_IDLE_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uB124\uB85C"
     sentence: "\uB204\uAD6C\uC5D0\uAC8C\uB3C4 \uB118\uAE38 \uC0DD\uAC01\uC740 \uC5C6\uC5B4."
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '09_Nero_Profile_Anger_T_0000 '
-    idleAnimState: 09_Nero_Profile_Anger_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uCE58\uC988"
     sentence: "\uBB50\uD558\uB294\u2026"
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '00_Player_Profile_IDLE_T_0000 '
-    idleAnimState: '00_Player_Profile_IDLE_M_0000 '
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   - speakerName: "\uB124\uB85C"
     sentence: "\uC544."
     speakerColor: {r: 0, g: 0, b: 0, a: 0}
-    talkingAnimState: '00_Player_Profile_Suprised_T_0000 '
-    idleAnimState: 00_Player_Profile_Suprised_M_0000
+    talkingAnimState: 
+    idleAnimState: 
     dialogueSprite: {fileID: 0}
   typingSpeed: 0.03
   openTriggerName: Open
