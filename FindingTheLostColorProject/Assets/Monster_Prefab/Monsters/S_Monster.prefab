@@ -374,8 +374,6 @@ MonoBehaviour:
   turnPauseDuration: 0.5
   groundCheckDistance: 1
   hpBar: {fileID: 6896728220507086969}
-  trailFadeStartTime: 3
-  trailFullyGoneTime: 4
 --- !u!114 &8028923761643352352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +424,7 @@ Transform:
   m_GameObject: {fileID: 3155161680955769485}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.78, z: 0}
+  m_LocalPosition: {x: 0, y: -0.78, z: -7}
   m_LocalScale: {x: 0.65, y: 0.65, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -658,7 +656,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 4507867717274252353, guid: 4a690f581c7a53147bf152d1e5f702c2, type: 3}
       propertyPath: m_LocalRotation.w

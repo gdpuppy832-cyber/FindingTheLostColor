@@ -789,15 +789,17 @@ public class EZ_BossAttack : MonoBehaviour
             elapsed += Time.deltaTime;
 
             if (Mathf.FloorToInt(elapsed / laserTelegraphBlinkInterval) !=
-                Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
+    Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
             {
                 visible = !visible;
 
                 if (marker != null)
                 {
-                    SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                        sr.enabled = visible;
+                    SpriteRenderer[] srs = marker.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach (var sr in srs)
+                    {
+                        if (sr != null) sr.enabled = visible;
+                    }
                 }
             }
 
@@ -1347,8 +1349,11 @@ public class EZ_BossAttack : MonoBehaviour
             foreach (var m in markers)
             {
                 if (m == null) continue;
-                SpriteRenderer sr = m.GetComponent<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                SpriteRenderer[] srs = m.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var sr in srs)
+                {
+                    if (sr != null) sr.enabled = visible;
+                }
             }
         }
 

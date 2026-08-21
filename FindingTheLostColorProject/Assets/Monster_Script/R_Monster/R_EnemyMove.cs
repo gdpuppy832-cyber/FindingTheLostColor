@@ -232,7 +232,8 @@ public class R_EnemyMove : MonoBehaviour
 
         if (wallHit.collider != null)
         {
-            bool isSettledOnGround = isGrounded && Mathf.Abs(rigid.linearVelocity.y) < 0.05f;
+            bool recentlyGrounded = isGrounded || (Time.time - lastGroundedTime <= groundedBufferDuration);
+            bool isSettledOnGround = recentlyGrounded && Mathf.Abs(rigid.linearVelocity.y) < 0.05f;
 
             if (isChasing && isSettledOnGround && CanClimbWall(desiredDir))
             {

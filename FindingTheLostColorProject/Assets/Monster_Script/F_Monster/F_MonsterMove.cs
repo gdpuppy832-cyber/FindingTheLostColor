@@ -18,7 +18,7 @@ public class F_EnemyMove : MonoBehaviour
     float stopTimer = 0f;
     float ignoreEdgeTimer = 0f;
     float moveDir = -1f;
-    [Tooltip("Àıº®¿¡¼­ ¸ØÃè´Ù°¡ ¹İ´ë ¹æÇâÀ¸·Î ÀüÈ¯ÇÑ Á÷ÈÄ, ±× ¹æÇâÀ¸·ÎÀÇ Àıº® Àç°¨Áö¸¦ ¹«½ÃÇÏ´Â ½Ã°£ (ÃÊ). ¹æÇâ ¹İÀü Á÷ÈÄ Á¦ÀÚ¸®¿¡¼­ Áøµ¿ÇÏ´Â °ÍÀ» ¹æÁö")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½İ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ç°¨ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã°ï¿½ (ï¿½ï¿½). ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public float edgeIgnoreDuration = 0.3f;
     public float chaseRange;
     public GameObject chaseStartPrefab;
@@ -33,30 +33,42 @@ public class F_EnemyMove : MonoBehaviour
     public bool IsStateDelay => isStateDelay;
     public float attackStopDistance = 1.5f;
 
-    [Tooltip("ÀÌ °Å¸® ¾È¿¡ ³·Àº ¶¥ÀÌ¶óµµ ÀÖÀ¸¸é ³¶¶°·¯Áö·Î ÆÇÁ¤ÇÏÁö ¾Ê°í ÀÌµ¿À» Çã¿ëÇÔ (°è´Ü/ÅÎ ³»·Á°¡±â Çã¿ë, ÃßÀû ¸ğµå¿¡¼­¸¸ Àû¿ë)")]
+    [Tooltip("ì´ ê±°ë¦¬ ì•ˆì— ë‚®ì€ ë•…ì´ë¼ë„ ìˆìœ¼ë©´ ë‚­ë– ëŸ¬ì§€ë¡œ íŒì •í•˜ì§€ ì•Šê³  ì´ë™ì„ í—ˆìš©í•¨ (ê³„ë‹¨/í„± ë‚´ë ¤ê°€ê¸° í—ˆìš©, ì¶”ì  ëª¨ë“œì—ì„œë§Œ ì ìš©)")]
     public float safeDropDistance = 3f;
 
-    [Tooltip("¹èÈ¸(¼øÂû) ¸ğµåÀÏ ¶§ Àıº®À» °¨ÁöÇÏ´Â ·¹ÀÌÄ³½ºÆ® °Å¸®")]
+    [Tooltip("ë°°íšŒ(ìˆœì°°) ëª¨ë“œì¼ ë•Œ ì ˆë²½ì„ ê°ì§€í•˜ëŠ” ë ˆì´ìºìŠ¤íŠ¸ ê±°ë¦¬")]
     public float wanderEdgeCheckDistance = 2f;
 
-    [Tooltip("½ÇÁ¦·Î ¹ßÀÌ ¹Ù´Ú¿¡ ºÙ¾îÀÖ´ÂÁö(ÁøÂ¥ Á¢Áö) ÆÇÁ¤ÇÏ´Â Àü¿ë ·¹ÀÌÄ³½ºÆ® °Å¸®. " +
-             "isGrounded(Àıº® °¨Áö¿ë)¿Í ´Ş¸® °ªÀ» ¾ÆÁÖ Âª°Ô Àâ¾Æ¼­, Á¡ÇÁ·Î °øÁß¿¡ ¶° ÀÖ´Â µ¿¾È¿¡´Â " +
-             "false°¡ µÇµµ·Ï ÇÔ (¿¹: B_EnemyAttackÀÌ °øÁß¿¡¼­ °ø°İÀ» Æ®¸®°ÅÇÏÁö ¾Ê°Ô ¸·´Â ¿ëµµ)")]
+    [Header("ë¹ ë¥¸ ì´ë™ ì ˆë²½ ì„ í–‰ ê°ì§€ ì„¤ì •")]
+    [Tooltip("ì´ë™ ë°©í–¥ ì•ìª½ìœ¼ë¡œ ì ˆë²½ì„ ë¯¸ë¦¬ ê²€ì‚¬í•  ê¸°ë³¸ ê±°ë¦¬. ê°’ì´ í´ìˆ˜ë¡ ë” ë©€ë¦¬ ì•ì„ ë‚´ë‹¤ë³´ê³  ë¯¸ë¦¬ ë©ˆì¶¤")]
+    public float edgeLookAheadDistance = 0.8f;
+    [Tooltip("ì•ìª½ ê²€ì‚¬ ì§€ì ì—ì„œ ì•„ë˜ë¡œ ë•…ì´ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” Raycast ê±°ë¦¬")]
+    public float edgeGroundCheckDistance = 3f;
+    [Tooltip("ì•ìª½ ì ˆë²½ ê²€ì‚¬ì— ì‚¬ìš©í•  ì§€ì  ê°œìˆ˜ (ë§ì„ìˆ˜ë¡ ì´˜ì´˜í•˜ì§€ë§Œ ë¹„ìš© ì¦ê°€)")]
+    public int edgeCheckPointCount = 3;
+
+    // ì´ë™ ë°©í–¥ ì•ìª½ ë‹¤ì¤‘ ì§€ì  ê²€ì‚¬ ê²°ê³¼ (groundedLeft/Rightì™€ ë³„ê°œë¡œ, edgeAhead íŒì • ì „ìš©ìœ¼ë¡œë§Œ ì‚¬ìš©)
+    bool edgeSafeLeft = true;
+    bool edgeSafeRight = true;
+
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù´Ú¿ï¿½ ï¿½Ù¾ï¿½ï¿½Ö´ï¿½ï¿½ï¿½(ï¿½ï¿½Â¥ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½Å¸ï¿½. " +
+             "isGrounded(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½Ş¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Âªï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ " +
+             "falseï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½ï¿½: B_EnemyAttackï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ëµµ)")]
     public float trueGroundCheckDistance = 0.12f;
     bool isTrueGrounded = false;
     public bool IsTrueGrounded => isTrueGrounded;
 
-    [Header("Á¡ÇÁ ¼³Á¤")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public float jumpForce = 5f;
     public float climbableWallHeight = 1.2f;
     Animator animator;
 
-    [Header("HP Bar (ÁÂ¿ì ¹İÀü ¹æÁö)")]
-    [Tooltip("¸ó½ºÅÍÀÇ ÀÚ½ÄÀ¸·Î Á¸ÀçÇÏ´Â World Space Canvas HP¹Ù. ºÎ¸ğÀÇ localScale.x ¹İÀü°ú ¹«°üÇÏ°Ô Ç×»ó Á¤¹æÇâÀ¸·Î À¯ÁöµÊ")]
+    [Header("HP Bar (ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ World Space Canvas HPï¿½ï¿½. ï¿½Î¸ï¿½ï¿½ï¿½ localScale.x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Transform hpBar;
 
-    Vector3 initialScale;           // ¸ó½ºÅÍ ÀÚ½ÅÀÇ ÃÊ±â localScale (¹æÇâ ±âÁØ°ª)
-    Vector3 hpBarInitialLocalScale; // HP¹ÙÀÇ ÃÊ±â localScale (º¸Á¤ ±âÁØ°ª)
+    Vector3 initialScale;           // ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ localScale (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½)
+    Vector3 hpBarInitialLocalScale; // HPï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ localScale (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½)
 
     void Start()
     {
@@ -107,7 +119,7 @@ public class F_EnemyMove : MonoBehaviour
             return;
         }
 
-        if (ignoreEdgeTimer > 0f) // ¹æÇâ ÀüÈ¯ Á÷ÈÄ º¸È£ ½Ã°£ (Àç°¨Áö·Î ÀÎÇÑ ÀçÁøµ¿ ¹æÁö)
+        if (ignoreEdgeTimer > 0f) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½Ã°ï¿½ (ï¿½ç°¨ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             ignoreEdgeTimer -= Time.deltaTime;
 
         if (!isChasing && distance <= range)
@@ -138,7 +150,7 @@ public class F_EnemyMove : MonoBehaviour
             return;
         }
 
-        if (isStopped) // Àıº® ³¡¿¡¼­ ¸ØÃá »óÅÂ
+        if (isStopped) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         {
             if (animator != null)
             {
@@ -151,7 +163,8 @@ public class F_EnemyMove : MonoBehaviour
                 if (Mathf.Abs(xDiff) > attackStopDistance)
                 {
                     float wantDir = Mathf.Sign(xDiff);
-                    bool wantDirIsEdge = (wantDir < 0f && !groundedLeft) || (wantDir > 0f && !groundedRight);
+                    // ì •ì§€ ìƒíƒœ í•´ì œ ì—¬ë¶€ë„ ë™ì¼í•˜ê²Œ ì•ìª½ ë‹¤ì¤‘ ì§€ì  ê²€ì‚¬ ê²°ê³¼ë¥¼ ê¸°ì¤€ìœ¼ë¡œ íŒë‹¨
+                    bool wantDirIsEdge = (wantDir < 0f && !edgeSafeLeft) || (wantDir > 0f && !edgeSafeRight);
                     if (!wantDirIsEdge)
                     {
                         isStopped = false;
@@ -176,13 +189,13 @@ public class F_EnemyMove : MonoBehaviour
         timer += Time.deltaTime;
 
         float desiredDir = 0f;
-        if (isChasing)//ÃßÀû ¸ğµå
+        if (isChasing)//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         {
             float xDiff = target.position.x - transform.position.x;
             if (Mathf.Abs(xDiff) > attackStopDistance)
                 desiredDir = Mathf.Sign(xDiff);
         }
-        else if (timer < 3f)//¹èÈ¸»óÅÂ
+        else if (timer < 3f)//ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½
         {
             desiredDir = -1f;
         }
@@ -207,7 +220,7 @@ public class F_EnemyMove : MonoBehaviour
             return;
         }
 
-        bool edgeAhead = (desiredDir < 0f && !groundedLeft) || (desiredDir > 0f && !groundedRight);
+        bool edgeAhead = (desiredDir < 0f && !edgeSafeLeft) || (desiredDir > 0f && !edgeSafeRight);
         bool suppressCheck = !isChasing && ignoreEdgeTimer > 0f && desiredDir == moveDir;
 
         if (edgeAhead && !suppressCheck)
@@ -243,7 +256,7 @@ public class F_EnemyMove : MonoBehaviour
                 Jump();
                 return;
             }
-            // ¹èÈ¸ ¸ğµå¿¡¼­¸¸ º® Ãæµ¹ ½Ã 0.5ÃÊ ¸ØÃè´Ù°¡ ¹İ´ë ¹æÇâÀ¸·Î ÀüÈ¯
+            // ï¿½ï¿½È¸ ï¿½ï¿½å¿¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½æµ¹ ï¿½ï¿½ 0.5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½İ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
             if (!isChasing)
             {
                 isStopped = true;
@@ -284,8 +297,8 @@ public class F_EnemyMove : MonoBehaviour
         if (lowHit.collider == null)
             return false;
 
-        // ¹ß¹Ø ±âÁØÀ¸·Î climbableWallHeight¸¸Å­ À§¿¡¼­µµ º®ÀÌ °è¼Ó ÀÌ¾îÁö´ÂÁö °Ë»ç.
-        // ±× ³ôÀÌ¿¡¼­ º®ÀÌ ¾ø´Ù¸é(=³·Àº º®ÀÌ¶ó¸é) ¿À¸¦ ¼ö ÀÖ´Ù°í ÆÇÁ¤
+        // ï¿½ß¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ climbableWallHeightï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½.
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½(=ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½ï¿½ï¿½ï¿½
         Vector2 upperPos = feetPos + Vector2.up * climbableWallHeight;
 
         RaycastHit2D upperHit = Physics2D.Raycast(
@@ -361,9 +374,47 @@ public class F_EnemyMove : MonoBehaviour
         groundedRight = rightHit.collider != null;
         isGrounded = groundedLeft || groundedRight;
 
+        // â˜… ì ˆë²½ ê°ì§€ ì „ìš©: ì´ë™ ë°©í–¥ ì•ìª½ì— ì—¬ëŸ¬ ì§€ì ì„ ë‘ê³  ê°ê° ì•„ë˜ë¡œ ê²€ì‚¬.
+        //   groundedLeft/Right(ì œìë¦¬ ì¢Œìš° ê²€ì‚¬)ì™€ëŠ” ë³„ê°œì´ë©°, ë²½ ê°ì§€(BoxCast)ì™€ë„ ì—­í• ì„ ë¶„ë¦¬í•¨.
+        //   "ì•ìª½ì— ë°”ë‹¥ì´ ìˆëŠ”ê°€?"ë§Œ í™•ì¸í•˜ëŠ” ìš©ë„.
+        edgeSafeLeft = CheckEdgeAheadSafe(-1f, oneThird);
+        edgeSafeRight = CheckEdgeAheadSafe(1f, oneThird);
+
         Vector2 feetCenter = new Vector2(col.bounds.center.x, col.bounds.min.y + 0.02f);
         RaycastHit2D trueGroundHit = RaycastIgnoreTrampoline(feetCenter, Vector2.down, trueGroundCheckDistance, LayerMask.GetMask("Platform"));
         isTrueGrounded = trueGroundHit.collider != null;
+    }
+
+    // dir ë°©í–¥(ì™¼ìª½ -1 / ì˜¤ë¥¸ìª½ +1)ìœ¼ë¡œ edgeCheckPointCountê°œì˜ ì§€ì ì„ ë‘ê³ ,
+    // ê° ì§€ì ì—ì„œ ì•„ë˜ë¡œ edgeGroundCheckDistanceë§Œí¼ ë•…ì´ ìˆëŠ”ì§€ í™•ì¸.
+    // í•œ ì§€ì ì´ë¼ë„ ë°”ë‹¥ì´ ì—†ìœ¼ë©´ ê·¸ ë°©í–¥ì€ "ì ˆë²½ ìœ„í—˜"ìœ¼ë¡œ íŒë‹¨í•´ false ë°˜í™˜.
+    bool CheckEdgeAheadSafe(float dir, float edgeOffsetX)
+    {
+        // í˜„ì¬ ì‹¤ì œ ì´ë™ ì†ë„(ì¶”ê²© ì‹œ 1.5ë°°)ë¥¼ ë°˜ì˜í•´, í•œ FixedUpdate ë™ì•ˆ ì‹¤ì œë¡œ ì´ë™í• 
+        // ê±°ë¦¬ë³´ë‹¤ ì¶©ë¶„íˆ ë” ì•ê¹Œì§€ ê²€ì‚¬ ë²”ìœ„ë¥¼ í™•ì¥í•¨ (ë¹ ë¥¸ ëª¬ìŠ¤í„°ê°€ ì ˆë²½ì„ ë›°ì–´ë„˜ëŠ” ê²ƒì„ ë°©ì§€)
+        float currentMoveSpeed = isChasing ? speed * 1.5f : speed;
+        float perFrameMoveDistance = currentMoveSpeed * Time.fixedDeltaTime;
+        float dynamicLookAhead = Mathf.Max(edgeLookAheadDistance, perFrameMoveDistance * 2f);
+
+        Vector2 basePos = (Vector2)rigid.position + Vector2.right * dir * edgeOffsetX;
+        int pointCount = Mathf.Max(1, edgeCheckPointCount);
+
+        for (int i = 1; i <= pointCount; i++)
+        {
+            float t = (float)i / pointCount;
+            float aheadX = dynamicLookAhead * t;
+            Vector2 checkPoint = basePos + Vector2.right * dir * aheadX;
+
+            Debug.DrawRay(checkPoint, Vector2.down * edgeGroundCheckDistance, Color.yellow);
+
+            RaycastHit2D hit = RaycastIgnoreTrampoline(checkPoint, Vector2.down, edgeGroundCheckDistance, LayerMask.GetMask("Platform"));
+            if (hit.collider == null)
+            {
+                return false; // ì´ ì§€ì  ì•„ë˜ì— ë°”ë‹¥ì´ ì—†ìŒ -> ì ˆë²½ ìœ„í—˜
+            }
+        }
+
+        return true;
     }
     private void FaceTarget()
     {
@@ -378,9 +429,9 @@ public class F_EnemyMove : MonoBehaviour
         }
     }
 
-    // ¸ó½ºÅÍÀÇ localScale.x¸¦ µÚÁı´Â ¸ğµç ÁöÁ¡¿¡¼­ ÀÌ ÇÔ¼ö¸¦ ÅëÇØ¼­¸¸ Ã³¸®.
-    // ¸ó½ºÅÍ°¡ µÚÁıÈ÷´Â ±× ¼ø°£, ÀÚ½ÄÀÎ HP¹ÙÀÇ localScale.xµµ ÇÔ²² ¹İ´ë·Î º¸Á¤ÇØ¼­
-    // ºÎ¸ğÀÇ ¹İÀüÀ» »ó¼â½ÃÅ´ (¸Å ÇÁ·¹ÀÓ º¸Á¤ÀÌ ¾Æ´Ï¶ó, ¹İÀüÀÌ ½ÇÁ¦·Î ¹ß»ıÇÏ´Â ½ÃÁ¡¿¡¸¸ 1È¸ Ã³¸®)
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ localScale.xï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½.
+    // ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ú½ï¿½ï¿½ï¿½ HPï¿½ï¿½ï¿½ï¿½ localScale.xï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½İ´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½
+    // ï¿½Î¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å´ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¶ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1È¸ Ã³ï¿½ï¿½)
     private void ApplyFacing(float sign)
     {
         Vector3 scale = transform.localScale;
@@ -389,16 +440,16 @@ public class F_EnemyMove : MonoBehaviour
 
         if (hpBar != null)
         {
-            // ºÎ¸ğ(this)ÀÇ XÃà ºÎÈ£°¡ ÃÊ±â°ª ´ëºñ µÚÁıÇû´ÂÁö¿¡ µû¶ó HP¹Ù ·ÎÄÃ ½ºÄÉÀÏÀÇ ºÎÈ£¸¦ ¹İ´ë·Î °É¾îÁÜ.
-            // °á°úÀûÀ¸·Î ºÎ¸ğ(¿ùµå) ½ºÄÉÀÏ * ÀÚ½Ä(·ÎÄÃ) ½ºÄÉÀÏÀÌ Ç×»ó ÃÊ±â ºÎÈ£(Á¤¹æÇâ)·Î À¯ÁöµÊ.
+            // ï¿½Î¸ï¿½(this)ï¿½ï¿½ Xï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ê±â°ª ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ HPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½İ´ï¿½ï¿½ ï¿½É¾ï¿½ï¿½ï¿½.
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î¸ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ * ï¿½Ú½ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×»ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½È£(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
             Vector3 hpScale = hpBarInitialLocalScale;
             hpScale.x = hpBarInitialLocalScale.x * Mathf.Sign(scale.x) * Mathf.Sign(initialScale.x);
             hpBar.localScale = hpScale;
         }
     }
-    // NormalMonster.Purify()°¡ ÀÌ ÄÄÆ÷³ÍÆ®¸¦ °­Á¦·Î ºñÈ°¼ºÈ­½ÃÅ³ ¶§ Unity°¡ ÀÚµ¿ È£Ãâ.
-    // ±× ½ÃÁ¡¿¡ Update() ·çÇÁ(isStateDelay Ã³¸®)°¡ ¸ØÃç¼­ currentAlert°¡ Á¤¸®µÇÁö ¸øÇÏ¹Ç·Î,
-    // ¿©±â¼­ È®½ÇÇÏ°Ô ÆÄ±«ÇÔ
+    // NormalMonster.Purify()ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½ï¿½Å³ ï¿½ï¿½ Unityï¿½ï¿½ ï¿½Úµï¿½ È£ï¿½ï¿½.
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Update() ï¿½ï¿½ï¿½ï¿½(isStateDelay Ã³ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ currentAlertï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¹Ç·ï¿½,
+    // ï¿½ï¿½ï¿½â¼­ È®ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½
     void OnDisable()
     {
         if (currentAlert != null)

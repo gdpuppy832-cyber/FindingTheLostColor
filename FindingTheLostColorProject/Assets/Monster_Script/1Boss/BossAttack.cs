@@ -48,6 +48,7 @@ public class BossAttack : MonoBehaviour
     public List<BlackFog> blackFogs = new List<BlackFog>(); // 씬에 미리 배치된 좌/우 안개 오브젝트들을 Inspector에서 연결
 
     bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
+    bool isFrozenForPhaseTransition = false; // 크리스탈 파괴 직후 ~ 대화 종료까지, 이동/공격을 완전히 막는 동결 상태
     public bool IsPhase2 => phase2Unlocked;
     int destroyedCrystalCount = 0;
     Collider2D[] bossOwnColliders; // 크리스탈 페이즈 동안 붓질(OverlapCircleAll) 감지를 막기 위해 비활성화할 보스 콜라이더
@@ -60,6 +61,9 @@ public class BossAttack : MonoBehaviour
     Vector3 initialPosition; // 보스가 처음 배치된 위치 (구역 공격 등 위치 고정이 필요한 공격의 기준점)
     BossMove flyMove; // 2페이즈 진입 시 무한대(∞) 이동으로 전환하기 위해 자동으로 찾아두는 참조
     NormalMonster bossHealth; // 크리스탈 파괴 시 체력 회복을 위해 자동으로 찾아두는 참조 (보스 자신의 NormalMonster)
+    Rigidbody2D bossRb; // 페이즈 전환 동결 중 중력으로 떨어지는 것을 막기 위해 캐싱
+    float cachedGravityScale;
+    RigidbodyType2D cachedBodyType;
 
     List<GameObject> activeTelegraphMarkers = new List<GameObject>();
     List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
@@ -304,6 +308,9 @@ public class BossAttack : MonoBehaviour
 
         bossHealth = GetComponent<NormalMonster>();
 
+        bossRb = GetComponent<Rigidbody2D>();
+        if (bossRb == null) bossRb = GetComponentInChildren<Rigidbody2D>();
+
         // 크리스탈들의 파괴 이벤트를 구독해서 전부 파괴되면 2페이즈로 전환
         foreach (var crystal in crystals)
         {
@@ -356,19 +363,7 @@ public class BossAttack : MonoBehaviour
 
         if (destroyedCrystalCount >= crystals.Count)
         {
-            phase2Unlocked = true;
-            OnPhase2Started?.Invoke(); // [신규] 2페이즈 진입 이벤트 발송!
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
-
-            // ★ 2페이즈 진입 확정 시 애니메이터의 "2P" bool 파라미터를 켬
-            if (animator != null)
-                animator.SetBool("2P", true);
-
-            // 2페이즈 BGM으로 전환
-            if (SoundManager.Instance != null && bossBGM2 != null)
-            {
-                SoundManager.Instance.PlayBGM(bossBGM2, true);
-            }
 
             if (activeWhirlpoolCoroutine != null)
             {
@@ -389,7 +384,7 @@ public class BossAttack : MonoBehaviour
                 activeCompanionCoroutine = null;
             }
 
-            // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
+            // 진행 중이던 1페이즈 공격을 강제로 중단시킴
             if (isAttacking && currentAttackCoroutine != null)
             {
                 StopCoroutine(currentAttackCoroutine);
@@ -430,36 +425,89 @@ public class BossAttack : MonoBehaviour
                 }
 
                 isAttacking = false;
-                nextAttackAllowedTime = Time.time + attackCooldown;
             }
 
-            SetBossColliderState(true);
+            // ★ 즉시 2페이즈를 발동하는 대신, 보스를 처음 위치에 고정하고 완전히 동결시킴.
+            // 실제 2페이즈 발동(ActivatePhase2)은 대화가 끝난 뒤 외부(대화 트리거)에서 호출함.
+            isFrozenForPhaseTransition = true;
+            if (flyMove != null) flyMove.enabled = false;
 
-            if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
-
-            // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복 및 2페이즈 피격 가드 해제 (IsPurified = false)
-            if (bossHealth != null)
+            // 이동 스크립트만 꺼도 Rigidbody2D가 Dynamic이면 중력으로 계속 떨어지므로,
+            // 동결 중엔 물리 자체를 Kinematic으로 바꾸고 중력/속도를 제거해서 완전히 고정함
+            if (bossRb != null)
             {
-                bossHealth.IsPurified = false; // 2페이즈 대미지/정화 피격 가드 해제!
-    
+                cachedGravityScale = bossRb.gravityScale;
+                cachedBodyType = bossRb.bodyType;
+
+                bossRb.linearVelocity = Vector2.zero;
+                bossRb.gravityScale = 0f;
+                bossRb.bodyType = RigidbodyType2D.Kinematic;
+                bossRb.position = initialPosition;
             }
 
-            // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
-            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.Heal(4f);
-            }
+            transform.position = initialPosition; // Rigidbody2D가 없는 경우를 대비한 안전장치
 
-            ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
-
-            foreach (var fog in blackFogs)
-            {
-                if (fog == null) continue;
-                fog.SetTarget(spawnedOrb);
-                fog.StartMoving();
-            }
+            OnPhase2Started?.Invoke(); // 대화 트리거 등 외부 리스너에게 "1페이즈가 끝났다"고 알림
         }
+    }
+
+    /// <summary>
+    /// 대화가 끝난 뒤 호출되어 실제로 2페이즈를 발동시킴 (동결 해제 + 이동/공격 재개).
+    /// 대화 시스템(BossPhase2DialogueTrigger 등)이 대화 종료 콜백에서 이 함수를 호출해야 함.
+    /// </summary>
+    public void ActivatePhase2()
+    {
+        if (phase2Unlocked) return; // 중복 호출 방지
+
+        phase2Unlocked = true;
+        isFrozenForPhaseTransition = false;
+
+        // 동결 중 바꿔뒀던 Rigidbody2D 물리 상태를 원래대로 복구
+        if (bossRb != null)
+        {
+            bossRb.bodyType = cachedBodyType;
+            bossRb.gravityScale = cachedGravityScale;
+        }
+
+        if (animator != null)
+            animator.SetBool("2P", true);
+
+        if (SoundManager.Instance != null && bossBGM2 != null)
+        {
+            SoundManager.Instance.PlayBGM(bossBGM2, true);
+        }
+
+        SetBossColliderState(true);
+
+        if (flyMove != null)
+        {
+            flyMove.enabled = true;
+            flyMove.SetInfinityMode(true); // 2페이즈 발동과 동시에 무한대(∞) 이동 패턴으로 전환
+        }
+
+        // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복 및 2페이즈 피격 가드 해제 (IsPurified = false)
+        if (bossHealth != null)
+        {
+            bossHealth.IsPurified = false;
+        }
+
+        // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(4f);
+        }
+
+        ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 발동과 동시에 보스 아래에 색채 구슬 소환
+
+        foreach (var fog in blackFogs)
+        {
+            if (fog == null) continue;
+            fog.SetTarget(spawnedOrb);
+            fog.StartMoving();
+        }
+
+        nextAttackAllowedTime = Time.time + attackCooldown; // 발동 직후 바로 공격하지 않고 약간의 텀을 둠
     }
 
 
@@ -493,7 +541,7 @@ public class BossAttack : MonoBehaviour
             contactHitbox.transform.position = transform.position + contactHitboxOffset;
         }
 
-        if (isAttacking || Time.time < nextAttackAllowedTime || target == null)
+        if (isAttacking || isFrozenForPhaseTransition || Time.time < nextAttackAllowedTime || target == null)
             return;
 
 
@@ -919,15 +967,18 @@ public class BossAttack : MonoBehaviour
             elapsed += Time.deltaTime;
 
             if (Mathf.FloorToInt(elapsed / laserTelegraphBlinkInterval) !=
-                Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
+     Mathf.FloorToInt((elapsed - Time.deltaTime) / laserTelegraphBlinkInterval))
             {
                 visible = !visible;
 
                 if (marker != null)
                 {
-                    SpriteRenderer sr = marker.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                        sr.enabled = visible;
+                    // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                    SpriteRenderer[] srs = marker.GetComponentsInChildren<SpriteRenderer>(true);
+                    foreach (var sr in srs)
+                    {
+                        if (sr != null) sr.enabled = visible;
+                    }
                 }
             }
 
@@ -1056,18 +1107,22 @@ public class BossAttack : MonoBehaviour
         }
 
         // 2. 2초 동안 0.5초 간격으로 깜빡임
-        float telegraphElapsed = 0f;
+        float elapsed = 0f;
         bool visible = true;
-        while (telegraphElapsed < frostTelegraphDuration)
+        while (elapsed < frostTelegraphDuration)
         {
             yield return new WaitForSeconds(frostTelegraphBlinkInterval);
-            telegraphElapsed += frostTelegraphBlinkInterval;
+            elapsed += frostTelegraphBlinkInterval;
             visible = !visible;
             foreach (var marker in frostTelegraphMarkers)
             {
                 if (marker == null) continue;
-                SpriteRenderer sr = marker.GetComponentInChildren<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                SpriteRenderer[] srs = marker.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var sr in srs)
+                {
+                    if (sr != null) sr.enabled = visible;
+                }
             }
         }
 
@@ -1477,8 +1532,12 @@ public class BossAttack : MonoBehaviour
             foreach (var m in markers)
             {
                 if (m == null) continue;
-                SpriteRenderer sr = m.GetComponent<SpriteRenderer>();
-                if (sr != null) sr.enabled = visible;
+                // 자식 오브젝트에 붙은 스프라이트까지 전부 함께 깜빡이도록 변경
+                SpriteRenderer[] srs = m.GetComponentsInChildren<SpriteRenderer>(true);
+                foreach (var sr in srs)
+                {
+                    if (sr != null) sr.enabled = visible;
+                }
             }
         }
 
