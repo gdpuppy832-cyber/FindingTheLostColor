@@ -25,6 +25,13 @@ public class DialogueLine
     [Tooltip("keepMouthAnimatingAfterTyping이 켜져 있을 때, 타이핑 완료 후~다음 대사 전까지 반복 재생할 전용 프레임들. 비워두면 characterMouthFrames를 그대로 재사용함")]
     public Sprite[] afterTypingMouthFrames;
 
+    [Header("오브젝트 표시/숨김")]
+    [Tooltip("이 대사가 시작되는 순간 활성화(보이게)할 오브젝트들")]
+    public GameObject[] objectsToShow;
+
+    [Tooltip("이 대사가 시작되는 순간 비활성화(숨기게)할 오브젝트들")]
+    public GameObject[] objectsToHide;
+
     [Header("대사")]
     [TextArea(2, 4)]
     public string text;
@@ -164,6 +171,9 @@ public class DialogueManager : MonoBehaviour
         }
         // (characterMouthOpenImage 참조는 더 이상 없음 - characterMouthFrames 배열 사용)
 
+        // 이 대사에 지정된 오브젝트 표시/숨김 적용
+        ApplyObjectVisibility(line);
+
         if (dialogueText != null)
             dialogueText.text = "";
 
@@ -172,6 +182,28 @@ public class DialogueManager : MonoBehaviour
 
         typingCoroutine = StartCoroutine(TypeLineRoutine(line));
         mouthCoroutine = StartCoroutine(MouthAnimationRoutine(line));
+    }
+
+    /// <summary>
+    /// 현재 대사에 등록된 오브젝트들을 켜거나 끈다.
+    /// </summary>
+    private void ApplyObjectVisibility(DialogueLine line)
+    {
+        if (line.objectsToShow != null)
+        {
+            foreach (var obj in line.objectsToShow)
+            {
+                if (obj != null) obj.SetActive(true);
+            }
+        }
+
+        if (line.objectsToHide != null)
+        {
+            foreach (var obj in line.objectsToHide)
+            {
+                if (obj != null) obj.SetActive(false);
+            }
+        }
     }
 
     /// <summary>

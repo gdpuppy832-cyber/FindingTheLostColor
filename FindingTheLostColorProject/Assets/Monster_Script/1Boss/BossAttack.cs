@@ -452,22 +452,17 @@ public class BossAttack : MonoBehaviour
     }
 
     /// <summary>
-    /// 대화가 끝난 뒤 호출되어 실제로 2페이즈를 발동시킴 (동결 해제 + 이동/공격 재개).
-    /// 대화 시스템(BossPhase2DialogueTrigger 등)이 대화 종료 콜백에서 이 함수를 호출해야 함.
+    /// 2페이즈 "상태"를 발동시킴 (보상, BGM, 콜라이더, 애니메이터 등).
+    /// 이동/공격 동결(isFrozenForPhaseTransition)은 그대로 유지되어, 보스는 여전히 제자리에 가만히 있고 공격하지 않음.
+    /// 실제로 움직이고 공격하게 하려면 ReleasePhase2MovementFreeze()를 별도로 호출해야 함.
     /// </summary>
+    ColorOrb pendingSpawnedOrb; // ActivatePhase2에서 소환한 구슬을, 안개가 실제로 움직이기 시작할 때(컷씬 종료 후) 연결하기 위해 임시 보관
+
     public void ActivatePhase2()
     {
         if (phase2Unlocked) return; // 중복 호출 방지
 
         phase2Unlocked = true;
-        isFrozenForPhaseTransition = false;
-
-        // 동결 중 바꿔뒀던 Rigidbody2D 물리 상태를 원래대로 복구
-        if (bossRb != null)
-        {
-            bossRb.bodyType = cachedBodyType;
-            bossRb.gravityScale = cachedGravityScale;
-        }
 
         if (animator != null)
             animator.SetBool("2P", true);
@@ -479,37 +474,63 @@ public class BossAttack : MonoBehaviour
 
         SetBossColliderState(true);
 
-        if (flyMove != null)
-        {
-            flyMove.enabled = true;
-            flyMove.SetInfinityMode(true); // 2페이즈 발동과 동시에 무한대(∞) 이동 패턴으로 전환
-        }
-
-        // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복 및 2페이즈 피격 가드 해제 (IsPurified = false)
         if (bossHealth != null)
         {
             bossHealth.IsPurified = false;
         }
 
-        // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
         PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.Heal(4f);
         }
 
-        ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 발동과 동시에 보스 아래에 색채 구슬 소환
+        // 구슬은 여기서 미리 소환해두되(비주얼상 컷씬 중에 등장하는 게 자연스러우므로),
+        // 안개가 실제로 움직이기 시작하는 건 컷씬(대화)이 완전히 끝난 뒤로 미룸 (StartBlackFogMovement 참고)
+        pendingSpawnedOrb = SpawnColorOrb();
+    }
 
+    /// <summary>
+    /// 컷씬(3차 대사까지)이 완전히 끝난 뒤 호출해서, 검은 안개가 그제서야 움직이기 시작하게 함.
+    /// ReleasePhase2MovementFreeze()와 같은 시점(대화 종료 후)에 호출하면 됨.
+    /// </summary>
+    public void StartBlackFogMovement()
+    {
         foreach (var fog in blackFogs)
         {
             if (fog == null) continue;
-            fog.SetTarget(spawnedOrb);
+            fog.SetTarget(pendingSpawnedOrb);
             fog.StartMoving();
         }
-
-        nextAttackAllowedTime = Time.time + attackCooldown; // 발동 직후 바로 공격하지 않고 약간의 텀을 둠
     }
 
+
+    /// <summary>
+    /// 이동/공격 동결을 해제해서 보스가 실제로 움직이고 공격하기 시작하게 함.
+    /// ActivatePhase2()가 이미 호출된 뒤(phase2Unlocked == true)에만 동작함.
+    /// </summary>
+    public void ReleasePhase2MovementFreeze()
+    {
+        if (!phase2Unlocked) return;      // 아직 2페이즈 상태 자체가 발동 안 됐으면 무시
+        if (!isFrozenForPhaseTransition) return; // 이미 풀려있으면 중복 실행 방지
+
+        isFrozenForPhaseTransition = false;
+
+        // 동결 중 바꿔뒀던 Rigidbody2D 물리 상태를 원래대로 복구
+        if (bossRb != null)
+        {
+            bossRb.bodyType = cachedBodyType;
+            bossRb.gravityScale = cachedGravityScale;
+        }
+
+        if (flyMove != null)
+        {
+            flyMove.enabled = true;
+            flyMove.SetInfinityMode(true); // 동결 해제와 동시에 무한대(∞) 이동 패턴으로 전환
+        }
+
+        nextAttackAllowedTime = Time.time + attackCooldown; // 해제 직후 바로 공격하지 않고 약간의 텀을 둠
+    }
 
     void TryContactDamage(Collider2D other)
     {
