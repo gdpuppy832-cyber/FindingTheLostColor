@@ -77,6 +77,11 @@ public class BossAttack : MonoBehaviour, IBossPhase2Controller
     [Tooltip("이지 모드(EZ Mode) 여부 (true 체크 시 2페이즈 블랙홀 패턴이 발동하지 않고 난이도가 낮아집니다. false 시 하드 모드로 2페이즈에서도 블랙홀이 발동됩니다)")]
     public bool isEasyMode = false;
 
+    [Header("씬 시작 대화 잠금")]
+    [Tooltip("true면 이동/공격/소환 등 보스의 모든 AI 행동과 관련 타이머가 완전히 정지됩니다. " +
+             "씬 시작 대화가 끝나면 SetBossBehaviorLocked(false)로 해제하세요.")]
+    public bool bossBehaviorLocked = true;
+
     // [신규] 이지 모드 시 스크립트 간 패턴 겹침을 방지하기 위한 공유 신호등 플래그
     public static bool isPatternActive = false;
 
@@ -534,6 +539,7 @@ public class BossAttack : MonoBehaviour, IBossPhase2Controller
 
     void TryContactDamage(Collider2D other)
     {
+        if (bossBehaviorLocked) return; // 대화 잠금 중엔 몸통 충돌 피해도 발생하지 않음
         if (bossHealth != null && bossHealth.IsPurified) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -542,6 +548,19 @@ public class BossAttack : MonoBehaviour, IBossPhase2Controller
         if (player != null)
         {
             player.TakeDamage(contactDamage);
+        }
+    }
+
+    /// <summary>
+    /// 씬 시작 대화(onComplete)에서 호출. 잠금 해제 시 nextAttackAllowedTime을
+    /// 현재 시각 기준으로 재설정해, 잠금 해제 즉시 공격이 튀어나오는 것을 방지함.
+    /// </summary>
+    public void SetBossBehaviorLocked(bool locked)
+    {
+        bossBehaviorLocked = locked;
+        if (!locked)
+        {
+            nextAttackAllowedTime = Time.time + attackCooldown;
         }
     }
 
@@ -561,6 +580,10 @@ public class BossAttack : MonoBehaviour, IBossPhase2Controller
         {
             contactHitbox.transform.position = transform.position + contactHitboxOffset;
         }
+
+        // 씬 시작 대화 잠금 중에는 공격 후보 선정/타이머 비교 자체를 하지 않음
+        // (Time.time과 비교되는 nextAttackAllowedTime이 그동안 "소모"되지 않으므로 타이머가 진행되지 않는 것과 동일한 효과)
+        if (bossBehaviorLocked) return;
 
         if (isAttacking || isFrozenForPhaseTransition || Time.time < nextAttackAllowedTime || target == null)
             return;
