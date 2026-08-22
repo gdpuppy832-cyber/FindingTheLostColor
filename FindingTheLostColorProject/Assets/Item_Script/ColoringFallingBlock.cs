@@ -215,15 +215,30 @@ public class ColoringFallingBlock : MonoBehaviour
 
     private void UpdateSprite()
     {
+        if (targetSpriteRenderer == null)
+        {
+            targetSpriteRenderer = GetComponent<SpriteRenderer>();
+            if (targetSpriteRenderer == null)
+            {
+                targetSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+        }
+
         if (targetSpriteRenderer == null) return;
 
-        if (isPurified && purifiedSprite != null)
+        if (isPurified)
         {
-            targetSpriteRenderer.sprite = purifiedSprite;
+            if (purifiedSprite != null)
+            {
+                targetSpriteRenderer.sprite = purifiedSprite;
+            }
         }
-        else if (!isPurified && defaultSprite != null)
+        else
         {
-            targetSpriteRenderer.sprite = defaultSprite;
+            if (defaultSprite != null)
+            {
+                targetSpriteRenderer.sprite = defaultSprite;
+            }
         }
     }
 

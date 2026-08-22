@@ -39,10 +39,14 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        // 씬 전환 시 파괴되지 않는 싱글톤 구현
+        // 씬 전환 시 파괴되지 않는 싱글톤 구현 (자식 오브젝트인 경우 Root로 이관하여 경고 방지)
         if (Instance == null)
         {
             Instance = this;
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
             DontDestroyOnLoad(gameObject);
             LoadVolumeSettings(); // 저장된 볼륨 값 불러오기
             PreloadSFX();         // 효과음 미리 로드

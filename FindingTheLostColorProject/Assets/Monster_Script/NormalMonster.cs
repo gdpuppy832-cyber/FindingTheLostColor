@@ -85,7 +85,7 @@ public class NormalMonster : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"[NormalMonster] Resources 폴더 내에 '{hitTextFontResourceName}' 이름의 폰트 에셋이 보이지 않습니다. 파일명을 확인해 주세요.");
+                // Resources 폴더에 해당 특정 에셋명이 없더라도 런타임에서 기본 레거시/TMP 폰트를 사용하도록 조용히 호환 처리합니다.
             }
         }
 
