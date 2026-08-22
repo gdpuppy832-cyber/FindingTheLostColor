@@ -637,6 +637,12 @@ MonoBehaviour:
   triggerOnlyOnce: 1
   freezePlayerDuringCutscene: 1
   fadeDurationOnEnd: 1.5
+  useTeleportOnFade: 1
+  teleportDestination: {fileID: 0}
+  customTeleportPosition: {x: 287, y: -40, z: 0}
+  targetTilemapObj: {fileID: 624875443}
+  targetTilemapCollider: {fileID: 624875447}
+  spawnerToActivate: {fileID: 0}
   onDialogueEnded:
     m_PersistentCalls:
       m_Calls:
@@ -26954,7 +26960,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -223, y: -8.7}
+  m_AnchoredPosition: {x: -167.8, y: -190.5}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &942817881
@@ -26986,8 +26992,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -28541,7 +28547,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -29355,7 +29361,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -219, y: 48.9}
+  m_AnchoredPosition: {x: -201, y: -137.9}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2093903463
@@ -29387,8 +29393,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
