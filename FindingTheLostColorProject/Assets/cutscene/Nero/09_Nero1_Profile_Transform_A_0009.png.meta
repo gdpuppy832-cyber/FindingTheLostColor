@@ -103,10 +103,10 @@ TextureImporter:
       name: 09_Nero1_Profile_Transform_A_0009_0
       rect:
         serializedVersion: 2
-        x: 51
-        y: 26
-        width: 1454
-        height: 482
+        x: 0
+        y: 0
+        width: 1505
+        height: 630
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 6864c90896666bc42857e30f6650f096
     internalID: 0
     vertices: []
     indices: 
@@ -133,7 +133,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":1505.0,"y":630.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       09_Nero1_Profile_Transform_A_0009_0: -2475507110671476042
   mipmapLimitGroupName: 

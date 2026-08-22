@@ -138,7 +138,12 @@ public class DialogueManager : MonoBehaviour
         onDialogueEndedCallback = onComplete;
 
         if (dialogueBox != null)
+        {
             dialogueBox.SetActive(true);
+            // 대화창이 막 켜진 직후엔 UI 크기 계산이 아직 안 끝났을 수 있어서,
+            // 여기서 강제로 화면 레이아웃을 다시 계산시켜 글자가 잘려 보이는 문제를 방지함
+            Canvas.ForceUpdateCanvases();
+        }
 
         AdvanceToNextLine();
     }
@@ -175,7 +180,12 @@ public class DialogueManager : MonoBehaviour
         ApplyObjectVisibility(line);
 
         if (dialogueText != null)
+        {
             dialogueText.text = "";
+            // 텍스트를 비운 직후, 이 텍스트 박스의 크기/줄바꿈 계산을 즉시 다시 맞춰서
+            // 타이핑이 시작될 때 잘못된(좁은) 크기로 고정되는 문제를 방지함
+            LayoutRebuilder.ForceRebuildLayoutImmediate(dialogueText.rectTransform);
+        }
 
         // 이전 대사에서 돌던 코루틴들을 확실히 끊고 새로 시작
         StopAllDialogueCoroutines();

@@ -168,6 +168,14 @@ public class SceneStartCutsceneTrigger : MonoBehaviour
     // ================= 전체 진행 순서 =================
     private IEnumerator RunCutscene()
     {
+        // 씬 로드 직후 몇 프레임은 Canvas/UI 레이아웃 계산이 아직 끝나지 않았을 수 있어서,
+        // 이 상태에서 바로 대화창 텍스트를 채우면 텍스트 박스 크기가 잘못 잡혀 글자가 잘려 보일 수 있음.
+        // 레이아웃이 완전히 자리 잡을 때까지 몇 프레임 기다린 뒤 컷씬을 시작함.
+        yield return null;
+        yield return null;
+        yield return new WaitForEndOfFrame();
+        Canvas.ForceUpdateCanvases();
+
         LockPlayerMovement();
 
         // 씬이 시작되는 순간, 화면이 검게 덮인 상태에서 2초 동안 서서히 밝아지며 시작함

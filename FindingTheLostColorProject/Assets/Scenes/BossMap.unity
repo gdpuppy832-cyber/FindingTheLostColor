@@ -16738,7 +16738,6 @@ MonoBehaviour:
     - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
-    - {fileID: 7959207368106016463, guid: ed5fcc801eeda6b4da048d82c8e052e5, type: 3}
     - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
     - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
     - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
@@ -16754,7 +16753,7 @@ MonoBehaviour:
     objectsToShow: []
     objectsToHide:
     - {fileID: 1332048857}
-    text: "\uB108\uB294 \uC774\uD574 \uBABB\uD574!"
+    text: "\uB124\uB85C, \uC7A0\uAE50!"
   fadeCanvasGroup: {fileID: 2109117557}
   cutsceneImage: {fileID: 1033575419}
   fadeDuration: 1
@@ -16859,7 +16858,8 @@ MonoBehaviour:
     objectsToShow: []
     objectsToHide: []
     text: "\uB0B4\uAC00 \uC9C1\uC811 \uB110 \uCAD2\uC544\uB0BC\uC11C\uC57C."
-  dialoguesAfterImageEnded:
+  dialoguesAfterImageEnded: []
+  dialoguesPart4:
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 6921348931107498275, guid: a0dbf8acf9ce21f4f87895d02f9d042f, type: 3}
     characterMouthClosedImage: {fileID: 0}
@@ -16901,7 +16901,6 @@ MonoBehaviour:
     - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
-    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
     - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
     - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
     - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
@@ -16913,44 +16912,11 @@ MonoBehaviour:
     - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
     - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
     objectsToShow: []
     objectsToHide: []
     text: "\uC9C0\uAE08\uC740 \uD798\uC774 \uB108\uBB34 \uAC15\uD574\uC11C \uC815\uD654\uAC00
-      \uD798\uB4E4 \uAC83 \uAC19\uC544."
-  - speakerName: "\uCE58\uC988"
-    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
-    characterMouthClosedImage: {fileID: 0}
-    characterMouthFrames:
-    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
-    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
-    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
-    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
-    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
-    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
-    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
-    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
-    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
-    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
-    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
-    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
-    keepMouthAnimatingAfterTyping: 1
-    afterTypingMouthFrames:
-    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
-    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
-    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
-    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
-    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
-    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
-    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
-    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
-    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
-    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
-    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
-    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
-    objectsToShow: []
-    objectsToHide: []
-    text: 
-  dialoguesPart4: []
+      \uD798\uB4E4 \uAC83 \uAC19\uC544"
   dialoguesPart5:
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
@@ -16988,6 +16954,8 @@ MonoBehaviour:
   timelineEvents:
   - timeline: {fileID: 956533513}
     timing: 0
+  - timeline: {fileID: 812123246}
+    timing: 10
   dialogueBox: {fileID: 0}
   dialogueBoxEvents: []
   cameraTransform: {fileID: 1309159732}
@@ -17342,6 +17310,57 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1337015630736443857, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
   m_PrefabInstance: {fileID: 10104184}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &812123245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 812123247}
+  - component: {fileID: 812123246}
+  m_Layer: 0
+  m_Name: Timeline2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &812123246
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812123245}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 54067a154618eb445a9c391881a8ff94, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 5419739265468559617, guid: 54067a154618eb445a9c391881a8ff94, type: 2}
+    value: {fileID: 1309159737}
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &812123247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812123245}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.46955, y: 2.27943, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &821562783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17556,11 +17575,11 @@ PrefabInstance:
       objectReference: {fileID: 1918004089}
     - target: {fileID: 4763204117961488267, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.07
+      value: 9.5
       objectReference: {fileID: 0}
     - target: {fileID: 4763204117961488267, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 1.821
       objectReference: {fileID: 0}
     - target: {fileID: 4763204117961488267, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17822,7 +17841,7 @@ GameObject:
   - component: {fileID: 956533514}
   - component: {fileID: 956533513}
   m_Layer: 0
-  m_Name: Timeline
+  m_Name: Timeline1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17847,6 +17866,8 @@ PlayableDirector:
     value: {fileID: 1918004093}
   - key: {fileID: 3290503662277859397, guid: 9061657403f082e4489f65eca257f682, type: 2}
     value: {fileID: 1918004093}
+  - key: {fileID: -2705171246791871555, guid: 9061657403f082e4489f65eca257f682, type: 2}
+    value: {fileID: 1309159737}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &956533514
@@ -18206,8 +18227,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -190.5}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: -163.53429}
+  m_SizeDelta: {x: 100, y: 122.4714}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1331782485
 CanvasRenderer:
@@ -19553,3 +19574,4 @@ SceneRoots:
   - {fileID: 821562783}
   - {fileID: 1490867612}
   - {fileID: 956533514}
+  - {fileID: 812123247}

@@ -106,10 +106,10 @@ TextureImporter:
       name: 00_Player_Profile_Suprised_T_0006_0
       rect:
         serializedVersion: 2
-        x: 51
-        y: 26
-        width: 1396
-        height: 483
+        x: 0
+        y: 0
+        width: 1505
+        height: 630
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,33 +124,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: 00_Player_Profile_Suprised_T_0006_1
-      rect:
-        serializedVersion: 2
-        x: 1101
-        y: 443
-        width: 80
-        height: 146
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fa1f9ab409b5f0a90800000000000000
-      internalID: -7345551791915142737
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c9561f410ebf72c42a91c4e8ed3b274a
     internalID: 0
     vertices: []
     indices: 
@@ -158,10 +136,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":1505.0,"y":630.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       00_Player_Profile_Suprised_T_0006_0: -5844276369593300606
-      00_Player_Profile_Suprised_T_0006_1: -7345551791915142737
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
