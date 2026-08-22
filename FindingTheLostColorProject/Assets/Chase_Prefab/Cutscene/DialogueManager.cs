@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -43,7 +43,19 @@ public class DialogueLine
 /// </summary>
 public class DialogueManager : MonoBehaviour
 {
-    public static DialogueManager Instance { get; private set; }
+    private static DialogueManager _instance;
+    public static DialogueManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<DialogueManager>();
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [Header("대화 UI")]
     [Tooltip("대화창 전체 오브젝트 (대화 시작 시 활성화, 종료 시 비활성화)")]
@@ -74,6 +86,7 @@ public class DialogueManager : MonoBehaviour
 
     private bool isTyping = false;
     private bool isDialogueActive = false;
+    public bool IsDialogueActive => isDialogueActive;
     private bool keepMouthAnimating = false;
     private System.Action onDialogueEndedCallback; // 이 대화가 끝났을 때 호출할 콜백 (예: 보스 2페이즈 시작)
 
@@ -84,12 +97,12 @@ public class DialogueManager : MonoBehaviour
     void Awake()
     {
         // 간단한 싱글톤. 이미 인스턴스가 있으면 새로 생긴 쪽을 정리한다.
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        _instance = this;
     }
 
     void Start()

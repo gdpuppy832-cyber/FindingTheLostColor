@@ -40,8 +40,8 @@ public class NeroInterferenceAttackManager : MonoBehaviour
     [Tooltip("방해 공격이 발생하는 시간 주기 (초 단위, 기본 5초)")]
     public float attackInterval = 5.0f;
 
-    [Tooltip("자동 공격 가동 여부")]
-    public bool isAttacking = true;
+    [Tooltip("자동 공격 가동 여부 (기본값: false - 컷씬 이후 스포너와 함께 가동)")]
+    public bool isAttacking = false;
 
     [Header("5. 발동 조건 설정 (X좌표 제한)")]
     [Tooltip("일정 X좌표 이상일 때만 방해 공격이 작동할지 여부")]
@@ -55,6 +55,17 @@ public class NeroInterferenceAttackManager : MonoBehaviour
     public Transform playerTransform;
 
     private Coroutine attackRoutine;
+
+    void Awake()
+    {
+        // 씬 시작 시 무조건 방해 공격 루프를 정지 및 비활성화 상태로 시작
+        isAttacking = false;
+        if (attackRoutine != null)
+        {
+            StopCoroutine(attackRoutine);
+            attackRoutine = null;
+        }
+    }
 
     void Start()
     {
@@ -72,8 +83,11 @@ public class NeroInterferenceAttackManager : MonoBehaviour
             warningIndicatorInstance.SetActive(false);
         }
 
-        // 5초 주기 공격 루프 가동
-        StartAttackLoop();
+        // isAttacking이 true일 때만 5초 주기 공격 루프 가동
+        if (isAttacking)
+        {
+            StartAttackLoop();
+        }
     }
 
     /// <summary>

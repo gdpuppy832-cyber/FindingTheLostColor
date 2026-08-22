@@ -5,7 +5,24 @@ using System.Collections;
 
 public class ScreenFader : MonoBehaviour
 {
-    public static ScreenFader Instance { get; private set; }
+    private static ScreenFader _instance;
+    public static ScreenFader Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<ScreenFader>();
+                if (_instance == null)
+                {
+                    GameObject faderObj = new GameObject("ScreenFader_Auto");
+                    _instance = faderObj.AddComponent<ScreenFader>();
+                }
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [Header("Fade Settings")]
     [Tooltip("기본 페이드 속도 (초 단위, 기본값: 1.0s)")]
@@ -24,9 +41,9 @@ public class ScreenFader : MonoBehaviour
     private void Awake()
     {
         // DontDestroyOnLoad 싱글톤 유지
-        if (Instance == null)
+        if (_instance == null || _instance == this)
         {
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
             
             // 씬 로드 이벤트 등록
