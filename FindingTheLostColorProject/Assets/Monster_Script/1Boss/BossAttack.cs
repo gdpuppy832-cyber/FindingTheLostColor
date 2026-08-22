@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-public class BossAttack : MonoBehaviour
+public class BossAttack : MonoBehaviour, IBossPhase2Controller
 {
     // ===== 공통 =====
     public Transform target;               // 비워두면 Player 태그로 자동 탐색
@@ -37,7 +37,7 @@ public class BossAttack : MonoBehaviour
 
 
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결
-    public System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
+    public event System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
 
     [Header("Color Orb")]
     public GameObject colorOrbPrefab;          // 색채 구슬 프리팹 (ColorOrb 컴포넌트 자동 부착됨, 비워두면 임시 생성)

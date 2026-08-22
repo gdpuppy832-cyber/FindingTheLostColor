@@ -345,8 +345,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -383,7 +383,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 25.120667}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -413,7 +413,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -107.056, y: -220.43304}
+  m_AnchoredPosition: {x: -107.056, y: -234}
   m_SizeDelta: {x: 328.554, y: 123.868}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &76368620
@@ -15697,6 +15697,9 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 4596104081258458501, guid: bf7f2a5db294d0d46bbd071a6d64a7d3, type: 3}
+    objectsToShow:
+    - {fileID: 1332048857}
+    objectsToHide: []
     text: "\uC73D..."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
@@ -15728,6 +15731,9 @@ MonoBehaviour:
     - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
     - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1332048857}
     text: "\uB124\uB85C, \uC774\uC81C \uADF8\uB9CC\uD574."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
@@ -15748,6 +15754,9 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow:
+    - {fileID: 1332048857}
+    objectsToHide: []
     text: "\uC2DC\uB044\uB7EC\uC6CC!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
@@ -15779,6 +15788,8 @@ MonoBehaviour:
     - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
     - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
     - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uACA8\uC6B0..."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
@@ -15810,6 +15821,8 @@ MonoBehaviour:
     - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
     - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
     - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uACA8\uC6B0 \uB098\uB3C4 \uC0C9\uC744 \uAC00\uC9C8 \uC218 \uC788\uC5C8\uB294\uB370..."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
@@ -15830,6 +15843,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uC65C \uC790\uAFB8 \uBC29\uD574\uD558\uB294\uAC70\uC57C!"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
@@ -15850,6 +15865,9 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1332048857}
     text: "\uADF8\uB798\uB3C4 \uBAA8\uB450\uC758 \uC0C9\uC744 \uBE7C\uC557\uC73C\uBA74
       \uC548 \uB3FC."
   - speakerName: "\uB124\uB85C"
@@ -15871,6 +15889,9 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    objectsToShow:
+    - {fileID: 1332048857}
+    objectsToHide: []
     text: "\uBAA8\uB450\uC758 \uC0C9..."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
@@ -15891,6 +15912,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 0
     afterTypingMouthFrames:
     - {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB610 \uBAA8\uB450, \uBAA8\uB450, \uBAA8\uB450!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
@@ -15911,6 +15934,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 0
     afterTypingMouthFrames:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uADF8\uB7FC \uB098\uB294?!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
@@ -15931,6 +15956,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 0
     afterTypingMouthFrames:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB098\uB294 \uC544\uBB34\uAC83\uB3C4 \uAC00\uC9C8 \uC218 \uC5C6\uB294
       \uAC70\uC57C?"
   - speakerName: "\uB124\uB85C"
@@ -15963,6 +15990,8 @@ MonoBehaviour:
     - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
     - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
     - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\u2026\uADF8\uB798"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
@@ -15994,6 +16023,8 @@ MonoBehaviour:
     - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
     - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
     - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB0B4\uAC00 \uAC00\uC9C8 \uC218 \uC5C6\uB2E4\uBA74\u2026"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6355437113329841331, guid: 5ab9b1c5541dff54996a133f06fe4eaa, type: 3}
@@ -16013,6 +16044,8 @@ MonoBehaviour:
     - {fileID: 6355437113329841331, guid: 5ab9b1c5541dff54996a133f06fe4eaa, type: 3}
     keepMouthAnimatingAfterTyping: 0
     afterTypingMouthFrames: []
+    objectsToShow: []
+    objectsToHide: []
     text: "\uCC28\uB77C\uB9AC \uC804\uBD80 \uC5C6\uC5B4\uC838 \uBC84\uB9AC\uBA74
       \uB3FC!!"
   fadeCanvasGroup: {fileID: 2109117557}
@@ -16049,6 +16082,8 @@ MonoBehaviour:
     - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
     - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB124\uB85C?"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 2038504938652493909, guid: dd615f4f82c0c5a469bbd43d19f6d7d3, type: 3}
@@ -16068,6 +16103,9 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 2038504938652493909, guid: dd615f4f82c0c5a469bbd43d19f6d7d3, type: 3}
+    objectsToShow:
+    - {fileID: 1332048857}
+    objectsToHide: []
     text: "\uC5ED\uC2DC \uB0B4 \uC6D0\uB798 \uD798\uC774 \uD3B8\uD558\uB2E4\uB2C8\uAE4C."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 9185303769181121645, guid: 7ee122721ccdfcd429749b53e658e92e, type: 3}
@@ -16088,6 +16126,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: 9185303769181121645, guid: 7ee122721ccdfcd429749b53e658e92e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uBC29\uD574\uD560\uAC70\uC57C? \uC5B4\uB514 \uD55C \uBC88 \uD574\uBD10."
   dialoguesAfterImageEnded:
   - speakerName: "\uCE58\uC988"
@@ -16120,6 +16160,9 @@ MonoBehaviour:
     - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
     - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1332048857}
     text: "\uC73D!"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
@@ -16151,6 +16194,8 @@ MonoBehaviour:
     - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
     - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB124\uB85C\uAC00 \uC0C9\uCC44 \uAD6C\uC2AC\uC744 \uD30C\uAD34\uD558\uB824\uB098\uBD10."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
@@ -16171,6 +16216,8 @@ MonoBehaviour:
     keepMouthAnimatingAfterTyping: 1
     afterTypingMouthFrames:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide: []
     text: "\uB9C9\uC544\uC57C \uD574!"
   bossAttack: {fileID: 0}
   triggerOnlyOnce: 1
@@ -16560,7 +16607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1099078783294696231, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -9.4001465
+      value: -9.4002075
       objectReference: {fileID: 0}
     - target: {fileID: 1099078783294696231, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -17263,7 +17310,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1332048858
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17919,7 +17966,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -207.7, y: -142.50006}
+  m_AnchoredPosition: {x: -207.7, y: -145.5}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1850858517
@@ -17977,8 +18024,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -18374,6 +18421,10 @@ PrefabInstance:
     - target: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: m_Name
       value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2369340244454583480, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
       propertyPath: attackCooldown

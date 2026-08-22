@@ -31,8 +31,10 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
     public DialogueLine[] dialoguesAfterImageEnded;
 
     [Header("연결")]
-    [Tooltip("비워두면 같은 오브젝트 또는 부모에서 자동으로 찾음")]
-    public BossAttack bossAttack;
+    [Tooltip("2페이즈 연출을 담당할 보스 스크립트. BossAttack, EZ_BossAttack 등 IBossPhase2Controller를 구현한 스크립트라면 무엇이든 넣을 수 있음. 비워두면 같은 오브젝트 또는 부모에서 자동으로 찾음")]
+    public MonoBehaviour bossAttack;
+
+    private IBossPhase2Controller bossController; // bossAttack을 인터페이스로 캐스팅한 실제 사용 참조
 
     [Header("설정")]
     [Tooltip("한 번 2페이즈 대화가 나온 뒤, 혹시 다시 호출되어도 중복 재생을 막을지 여부")]
@@ -49,8 +51,19 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
     private void Awake()
     {
-        if (bossAttack == null) bossAttack = GetComponent<BossAttack>();
-        if (bossAttack == null) bossAttack = GetComponentInParent<BossAttack>();
+        // 인스펙터에 연결된 스크립트가 인터페이스를 구현하는지 확인
+        if (bossAttack != null)
+        {
+            bossController = bossAttack as IBossPhase2Controller;
+            if (bossController == null)
+            {
+                Debug.LogWarning($"[BossPhase2DialogueTrigger] 연결된 스크립트 '{bossAttack.GetType().Name}'는 IBossPhase2Controller를 구현하지 않습니다.");
+            }
+        }
+
+        // 못 찾았으면 같은 오브젝트 -> 부모 순으로 자동 탐색 (BossAttack이든 EZ_BossAttack이든 상관없이 잡힘)
+        if (bossController == null) bossController = GetComponent<IBossPhase2Controller>();
+        if (bossController == null) bossController = GetComponentInParent<IBossPhase2Controller>();
 
         // 컷씬 관련 오브젝트들을 초기 숨김 상태로 초기화 (평소 게임 화면에 영향 없도록)
         if (fadeCanvasGroup != null)
@@ -64,21 +77,25 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             SetImageAlpha(cutsceneImage, 0f);
             cutsceneImage.gameObject.SetActive(false);
         }
+
+        // 대사별로 표시/숨김이 제어되는 오브젝트들은 씬 시작 시점부터 확실히 꺼둠.
+        // (Inspector에서 실수로 활성화 상태로 남아있으면 대화가 시작되기도 전에 보여버리는 문제를 방지)
+        HideAllDialogueControlledObjects();
     }
 
     private void OnEnable()
     {
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.OnPhase2Started += HandlePhase2Started;
+            bossController.OnPhase2Started += HandlePhase2Started;
         }
     }
 
     private void OnDisable()
     {
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.OnPhase2Started -= HandlePhase2Started;
+            bossController.OnPhase2Started -= HandlePhase2Started;
         }
     }
 
@@ -136,9 +153,9 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         // ★ 이미지가 화면에 뜬 채로 2차 대사가 나오는 이 시점에 2페이즈 "상태"를 발동시킴
         // (보스는 여전히 isFrozenForPhaseTransition == true라서 제자리에 가만히 있고 공격도 안 함 -
         //  실제 이동/공격은 3차 대사가 끝난 뒤 ReleasePhase2MovementFreeze()가 호출돼야 시작됨)
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.ActivatePhase2();
+            bossController.ActivatePhase2();
         }
 
         // 3. 이미지가 보이는 상태에서 2차 대사 재생 (2차 대사가 끝나면 바로 컷씬 종료)
@@ -256,16 +273,16 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         phase2Activated = true;
         sequenceRunning = false;
 
-        if (bossAttack != null)
+        if (bossController != null)
         {
             // 2차 대사 시점에 이미 상태가 발동됐다면 ActivatePhase2()는 내부 가드로 인해 아무 일도 안 하고,
             // 여기서는 실질적으로 동결만 해제됨. (대화 없이 통째로 스킵된 경우엔 상태 발동+동결 해제가 한 번에 처리됨)
-            bossAttack.ActivatePhase2();
-            bossAttack.ReleasePhase2MovementFreeze();
+            bossController.ActivatePhase2();
+            bossController.ReleasePhase2MovementFreeze();
 
             // 모든 컷씬/대화가 끝난 이 시점에서야 검은 안개가 움직이기 시작함
             // (이전엔 2차 대사 도중에 이미 움직이기 시작해서, 대화가 끝나기도 전에 안개가 전진하는 문제가 있었음)
-            bossAttack.StartBlackFogMovement();
+            bossController.StartBlackFogMovement();
         }
     }
     private IEnumerator EndCutsceneRoutine()
