@@ -126,7 +126,9 @@ public class BossChaseAttack : MonoBehaviour
     // 0보다 크면 "장막이 게임 안에 존재하는 상태" -> LaserLoop가 레이저 발동을 보류함.
     // 장막 생성 시 증가, 장막이 Destroy되면(TrackCurtainLifetime 코루틴이 감지) 감소.
     private int activeCurtainCount = 0;
-
+    [Header("씬 시작 컷씬 잠금")]
+    [Tooltip("true면 탄환/장막/레이저 등 모든 공격 루프가 완전히 정지됩니다. 컷씬이 끝나면 SetAttackBehaviorLocked(false)로 해제하세요.")]
+    public bool attackBehaviorLocked = true;
     void Start()
     {
         fireLoopCoroutine = StartCoroutine(FireLoop());
@@ -140,8 +142,13 @@ public class BossChaseAttack : MonoBehaviour
     {
         while (true)
         {
-            // 1. 탄환 카운트가 이미 차서 "장막 차례"로 확정된 경우 (이번 프레임에 새로 확정되든,
-            //    이전 사이클부터 대기 중이었든 상관없이 동일하게 처리)
+            if (attackBehaviorLocked)
+            {
+                yield return null;
+                continue;
+            }
+
+            // 1. 탄환 카운트가 이미 차서 "장막 차례"로 확정된 경우 (...)
             if (bulletFireCount >= bulletsBeforeInkCurtain || curtainPending)
             {
                 // 장막 차례는 확정됐지만, 아직 발사 시도를 한 적이 없다면 대기 상태로 진입
@@ -343,6 +350,15 @@ public class BossChaseAttack : MonoBehaviour
 
         return validPoints[Random.Range(0, validPoints.Count)];
     }
+    public void SetAttackBehaviorLocked(bool locked)
+    {
+        attackBehaviorLocked = locked;
+        if (!locked)
+        {
+            // 잠금이 풀리는 순간부터 레이저 언락 타이머(laserUnlockTime)를 새로 계산하도록 기준 시각 리셋
+            attackStartTime = Time.time;
+        }
+    }
 
     void PlaySFX(AudioClip clip)
     {
@@ -352,6 +368,9 @@ public class BossChaseAttack : MonoBehaviour
     // ������ ��� ���� ����(laserUnlockTime)�� ��ٸ� ��, ������ -> ��Ÿ���� �ݺ��ϴ� ����
     private IEnumerator LaserLoop()
     {
+        // 잠금이 풀릴 때까지는 언락 타이머 자체를 시작하지 않음
+        while (attackBehaviorLocked) yield return null;
+
         float elapsedSinceStart = Time.time - attackStartTime;
         if (elapsedSinceStart < laserUnlockTime)
         {
@@ -360,16 +379,17 @@ public class BossChaseAttack : MonoBehaviour
 
         while (true)
         {
-            // ★ 레이저 발동 조건(언락/쿨타임)은 이미 충족된 상태. 이 상태를 그대로 유지한 채
-            //   장막이 사라질 때까지만 대기함 (요구사항 4, 9: 대기 시간을 처음부터 다시 계산하지 않음).
+            while (attackBehaviorLocked) yield return null;
+
             while (activeCurtainCount > 0)
             {
                 yield return null;
             }
 
+            while (attackBehaviorLocked) yield return null;
+
             yield return StartCoroutine(FireLaser());
 
-            // 레이저 종료 후부터 쿨타임 계산
             yield return new WaitForSeconds(laserCooldown);
         }
     }

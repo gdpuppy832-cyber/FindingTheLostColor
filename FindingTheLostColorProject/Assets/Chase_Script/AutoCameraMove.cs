@@ -3,28 +3,37 @@ using UnityEngine;
 public class AutoCameraMove : MonoBehaviour
 {
     [Header("Move Settings")]
-    [Tooltip("ÀÚµ¿À¸·Î ¿À¸¥ÂÊ(XÃà +)À¸·Î ÀÌµ¿ÇÏ´Â ¼Óµµ")]
+    [Tooltip("ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Xï¿½ï¿½ +)ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½Óµï¿½")]
     public float moveSpeed = 5f;
 
     [Header("Start Position")]
-    [Tooltip("°ÔÀÓ ½ÃÀÛ ½Ã Ä«¸Ş¶ó°¡ ÀÌµ¿ÇÒ ½ÃÀÛ À§Ä¡")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä«ï¿½Ş¶ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
     public Vector3 startPosition = Vector3.zero;
 
     private float fixedY;
     private float fixedZ;
+    [Header("ì”¬ ì‹œì‘ ì»·ì”¬ ì ê¸ˆ")]
+    [Tooltip("trueë©´ ì¹´ë©”ë¼ ìë™ ì´ë™ì´ ì™„ì „íˆ ì •ì§€ë©ë‹ˆë‹¤.")]
+    public bool movementLocked = true;
 
+    public void SetMovementLocked(bool locked)
+    {
+        movementLocked = locked;
+    }
     void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ ½Ã ÁöÁ¤µÈ ½ÃÀÛ À§Ä¡·Î Áï½Ã ÀÌµ¿
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         transform.position = startPosition;
 
-        // ÀÌÈÄ ÀÚµ¿ ÀÌµ¿ Áß¿¡µµ Y, Z´Â ½ÃÀÛ À§Ä¡ °ªÀ» ±×´ë·Î À¯Áö
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½Ìµï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ Y, Zï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         fixedY = startPosition.y;
         fixedZ = startPosition.z;
     }
 
     void Update()
     {
+        if (movementLocked) return;
+
         float newX = transform.position.x + moveSpeed * Time.deltaTime;
         transform.position = new Vector3(newX, fixedY, fixedZ);
     }

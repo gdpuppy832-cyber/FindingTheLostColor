@@ -3,33 +3,35 @@ using UnityEngine;
 public class BossChaseMove : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("½ºÅ×ÀÌÁö¸¦ ÀÚµ¿ ½ºÅ©·Ñ½ÃÅ°´Â ¸ŞÀÎ Ä«¸Ş¶ó")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½Å©ï¿½Ñ½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Ş¶ï¿½")]
     public Transform cameraTransform;
-    [Tooltip("ÇÃ·¹ÀÌ¾î Transform (°Å¸® °è»ê ±âÁØ)")]
+    [Tooltip("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ Transform (ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
     public Transform player;
 
-    [Tooltip("cameraTransformÀÌ ºñ¾îÀÖÀ» ¶§¸¸ »ç¿ëµÇ´Â ´ëÃ¼ ÀüÁø ¼Óµµ (ÇÊ¿äÇÏ¸é)")]
+    [Tooltip("cameraTransformï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ (ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½)")]
     public float cameraMoveSpeed = 5f;
 
-    [Header("Base Position Sway (ÁÂ¿ì Èçµé¸²)")]
-    [Tooltip("Base Position ±âÁØ ÁÂ¿ì·Î Èçµé¸®´Â Æø(ÁøÆø)")]
+    [Header("Base Position Sway (ï¿½Â¿ï¿½ ï¿½ï¿½é¸²)")]
+    [Tooltip("Base Position ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ï¿½ ï¿½ï¿½é¸®ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)")]
     public float swayAmplitude = 2f;
-    [Tooltip("ÁÂ¿ì·Î Èçµé¸®´Â ¼Óµµ(ÁÖÆÄ¼ö)")]
+    [Tooltip("ï¿½Â¿ï¿½ï¿½ ï¿½ï¿½é¸®ï¿½ï¿½ ï¿½Óµï¿½(ï¿½ï¿½ï¿½Ä¼ï¿½)")]
     public float swayFrequency = 1f;
 
-    [Header("Vertical Bob (YÃà Èçµé¸²)")]
+    [Header("Vertical Bob (Yï¿½ï¿½ ï¿½ï¿½é¸²)")]
     public bool enableVerticalBob = true;
-    [Tooltip("À§¾Æ·¡·Î Èçµé¸®´Â Æø(ÁøÆø)")]
+    [Tooltip("ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½é¸®ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)")]
     public float verticalBobHeight = 0.5f;
-    [Tooltip("À§¾Æ·¡·Î Èçµé¸®´Â ¼Óµµ")]
+    [Tooltip("ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½é¸®ï¿½ï¿½ ï¿½Óµï¿½")]
     public float verticalBobSpeed = 1f;
 
     private float lastCameraX;
     private float cycleTimer = 0f;
     private float bobTimer = 0f;
-    private float baseY;      // Y Èçµé¸²ÀÇ ±âÁØÀÌ µÇ´Â ½ÃÀÛ ³ôÀÌ
-    private float basePosX;   // °è¼Ó ¾ÕÀ¸·Î ÀÌµ¿ÇÏ´Â ±âÁØÁ¡ (Base Position)
-
+    private float baseY;      // Y ï¿½ï¿½é¸²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    private float basePosX;   // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Base Position)
+    [Header("ì”¬ ì‹œì‘ ì»·ì”¬ ì ê¸ˆ")]
+    [Tooltip("trueë©´ ì´ ë³´ìŠ¤ì˜ ì¢Œìš°/ìƒí•˜ í”ë“¤ë¦¼ ì´ë™ì´ ì™„ì „íˆ ì •ì§€ë©ë‹ˆë‹¤.")]
+    public bool movementLocked = true;
     void Start()
     {
         if (cameraTransform != null)
@@ -40,12 +42,23 @@ public class BossChaseMove : MonoBehaviour
         baseY = transform.position.y;
         basePosX = transform.position.x;
     }
+    public void SetMovementLocked(bool locked)
+    {
+        movementLocked = locked;
 
+        // ì ê¸ˆ í•´ì œ ì‹œ, ì ê²¨ìˆë˜ ë™ì•ˆ ì¹´ë©”ë¼ê°€ ì´ë™í•œ ê±°ë¦¬ë§Œí¼ í•œêº¼ë²ˆì— í›… íŠ€ëŠ” ê²ƒì„ ë°©ì§€í•˜ê¸° ìœ„í•´
+        // ì¹´ë©”ë¼ ê¸°ì¤€ì ì„ í˜„ì¬ ìœ„ì¹˜ë¡œ ë‹¤ì‹œ ë§ì¶°ì¤Œ
+        if (!locked && cameraTransform != null)
+        {
+            lastCameraX = cameraTransform.position.x;
+        }
+    }
     void Update()
     {
+        if (movementLocked) return;
         if (player == null) return;
 
-        // 1. Ä«¸Ş¶ó ÀÌµ¿·®¸¸Å­ ±×´ë·Î ÀüÁø (Ç×»ó Ä«¸Ş¶ó¿Í Á¤È®È÷ °°Àº ¼Óµµ·Î ÀÌµ¿, ´õ ºü¸£°Å³ª ´À·ÁÁöÁö ¾ÊÀ½)
+        // 1. Ä«ï¿½Ş¶ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½×»ï¿½ Ä«ï¿½Ş¶ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½Ìµï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         float camDeltaX;
         if (cameraTransform != null)
         {
@@ -54,19 +67,19 @@ public class BossChaseMove : MonoBehaviour
         }
         else
         {
-            // cameraTransformÀÌ ¿¬°áµÇÁö ¾ÊÀº °æ¿ì¸¦ ´ëºñÇÑ ´ëÃ¼ ¼Óµµ
+            // cameraTransformï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½Óµï¿½
             camDeltaX = cameraMoveSpeed * Time.deltaTime;
         }
 
-        // Base Positionµµ Ä«¸Ş¶ó¿Í µ¿ÀÏÇÑ ¼Óµµ·Î °è¼Ó ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
+        // Base Positionï¿½ï¿½ Ä«ï¿½Ş¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         basePosX += camDeltaX;
 
-        // 2. Base PositionÀ» Áß½ÉÀ¸·Î »çÀÎÆÄ ÇüÅÂ·Î ÁÂ¿ì Èçµé¸²
+        // 2. Base Positionï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½Â¿ï¿½ ï¿½ï¿½é¸²
         cycleTimer += Time.deltaTime;
         float angle = cycleTimer * (2f * Mathf.PI * swayFrequency);
         float offsetX = Mathf.Sin(angle) * swayAmplitude;
 
-        // 3. YÃà Èçµé¸² (¿É¼Ç)
+        // 3. Yï¿½ï¿½ ï¿½ï¿½é¸² (ï¿½É¼ï¿½)
         float targetY = baseY;
         if (enableVerticalBob)
         {

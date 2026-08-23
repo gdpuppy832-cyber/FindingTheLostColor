@@ -3,34 +3,58 @@ using System.Collections;
 
 public class BossChaseSceneTransition : MonoBehaviour
 {
-    [Tooltip("Ãß°İ ½ÃÀÛ ÈÄ ¾À ÀüÈ¯ÀÌ ¹ßµ¿µÇ±â±îÁöÀÇ ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ßµï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float transitionDelay = 90f;
 
-    [Tooltip("ÀüÈ¯ÇÒ ´ÙÀ½ ¾ÀÀÇ ÀÌ¸§")]
+    [Tooltip("ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½")]
     public string nextSceneName;
 
-    [Tooltip("¾À ÀüÈ¯ ½Ã ÆäÀÌµå ¾Æ¿ô/ÀÎ ¿¬Ãâ ½Ã°£(ÃÊ)")]
+    [Tooltip("ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Æ¿ï¿½/ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float fadeDuration = 1f;
+
+    [Header("ì”¬ ì‹œì‘ ëŒ€í™” ì ê¸ˆ")]
+    [Tooltip("trueë©´ ë‹¤ìŒ ì”¬ ì „í™˜ ì¹´ìš´íŠ¸ë‹¤ìš´ì´ ì§„í–‰ë˜ì§€ ì•Šê³  ê·¸ëŒ€ë¡œ ë©ˆì¶°ìˆìŒ")]
+    public bool transitionLocked = true;
+
+    private float elapsedTime = 0f; // ì ê¸ˆ ì¤‘ì—ëŠ” ëˆ„ì ë˜ì§€ ì•ŠëŠ” ê²½ê³¼ ì‹œê°„ (WaitForSeconds ëŒ€ì‹  ì§ì ‘ ëˆ„ì í•´ì„œ ì¼ì‹œì •ì§€ ê°€ëŠ¥í•˜ê²Œ í•¨)
 
     void Start()
     {
         StartCoroutine(TransitionRoutine());
     }
 
+    /// <summary>
+    /// ì»·ì”¬ ì»¨íŠ¸ë¡¤ëŸ¬(S2_SceneStartCutsceneController ë“±)ì—ì„œ í˜¸ì¶œ.
+    /// trueë©´ ì”¬ ì „í™˜ ì¹´ìš´íŠ¸ë‹¤ìš´ì´ ë©ˆì¶”ê³ , falseë©´ ê·¸ ì‹œì ë¶€í„° ë‹¤ì‹œ ì´ì–´ì„œ ì§„í–‰ë¨.
+    /// </summary>
+    public void SetTransitionLocked(bool locked)
+    {
+        transitionLocked = locked;
+    }
+
     private IEnumerator TransitionRoutine()
     {
-        // Time.timeScale ¿µÇâ ¾øÀÌ Á¤È®È÷ 90ÃÊ(±âº»°ª) ´ë±â
-        yield return new WaitForSeconds(transitionDelay);
+        // WaitForSeconds ëŒ€ì‹  ì§ì ‘ ì‹œê°„ì„ ëˆ„ì í•˜ëŠ” ë°©ì‹ìœ¼ë¡œ ë°”ê¿”ì„œ,
+        // transitionLockedê°€ trueì¸ ë™ì•ˆì—ëŠ” ê²½ê³¼ ì‹œê°„ì´ ì „í˜€ ìŒ“ì´ì§€ ì•Šë„ë¡ í•¨
+        // (ëŒ€í™” ì¤‘ì—ëŠ” ì¹´ìš´íŠ¸ë‹¤ìš´ì´ ë©ˆì¶°ìˆë‹¤ê°€, ì ê¸ˆì´ í’€ë¦¬ëŠ” ìˆœê°„ë¶€í„° ì´ì–´ì„œ ì§„í–‰ë¨)
+        while (elapsedTime < transitionDelay)
+        {
+            if (!transitionLocked)
+            {
+                elapsedTime += Time.deltaTime;
+            }
+            yield return null;
+        }
 
         if (ScreenFader.Instance != null)
         {
-            // ÇÁ·ÎÁ§Æ®¿¡ ÀÌ¹Ì ÀÖ´Â ÆäÀÌµå/¾ÀÀüÈ¯ ÅëÇÕ ½Ã½ºÅÛÀ» ±×´ë·Î »ç¿ë
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ìµï¿½/ï¿½ï¿½ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½
             ScreenFader.Instance.FadeToScene(nextSceneName, fadeDuration);
         }
         else
         {
-            Debug.LogWarning("[BossChaseSceneTransition] ScreenFader.Instance°¡ ¾ø½À´Ï´Ù. " +
-                "¾À¿¡ ScreenFader°¡ ¹èÄ¡µÇ¾î ÀÖ´ÂÁö È®ÀÎÇØÁÖ¼¼¿ä.");
+            Debug.LogWarning("[BossChaseSceneTransition] ScreenFader.Instanceï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. " +
+                "ï¿½ï¿½ï¿½ï¿½ ScreenFaderï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
         }
     }
 }

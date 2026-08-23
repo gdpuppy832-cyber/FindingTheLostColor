@@ -1102,6 +1102,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1793816884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1793816886}
+  - component: {fileID: 1793816885}
+  m_Layer: 0
+  m_Name: CutScene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1793816885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793816884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a582cfd1180e9c43b8c57465e714923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialoguesBeforeCutscene:
+  - speakerName: 1
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames: []
+    keepMouthAnimatingAfterTyping: 0
+    afterTypingMouthFrames: []
+    objectsToShow: []
+    objectsToHide: []
+    text: 1
+  fadeCanvasGroup: {fileID: 0}
+  fadeDuration: 0
+  timelines: []
+  cutsceneImage: {fileID: 0}
+  imageFadeInDuration: 1
+  imageStayDuration: 3
+  imageFadeOutDuration: 1
+  dialoguesDuringImage: []
+  targetCamera: {fileID: 0}
+  shakeDuration: 0.3
+  shakeStrength: 0.2
+  dialoguesAfterCutscene: []
+  playerMovementScript: {fileID: 1225379489}
+  playOnlyOnce: 1
+--- !u!4 &1793816886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793816884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.69615, y: -3.75035, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6551705739215880776
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1192,3 +1260,4 @@ SceneRoots:
   - {fileID: 1635130481}
   - {fileID: 1317707287}
   - {fileID: 1747841524}
+  - {fileID: 1793816886}
