@@ -16990,7 +16990,7 @@ MonoBehaviour:
   nameText: {fileID: 150901327}
   dialogueText: {fileID: 1349346256}
   typeSpeed: 0.1
-  mouthChangeInterval: 0.05
+  mouthChangeInterval: 0.125
 --- !u!4 &927044504
 Transform:
   m_ObjectHideFlags: 0

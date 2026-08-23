@@ -153,7 +153,7 @@ MonoBehaviour:
   nameText: {fileID: 2023130441}
   dialogueText: {fileID: 197754026}
   typeSpeed: 0.1
-  mouthChangeInterval: 0.05
+  mouthChangeInterval: 0.125
 --- !u!4 &14912631
 Transform:
   m_ObjectHideFlags: 0
