@@ -67,9 +67,14 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
     [Tooltip("컷씬 이미지가 보이는 상태에서 출력할 대사 목록. 비어있으면 이미지만 유지되다가 바로 사라짐")]
     public DialogueLine[] dialoguesDuringImage;
 
+    [Header("컷씬 전용 카메라")]
+    [Tooltip("컷씬이 진행되는 동안에만 나타났다가, 컷씬이 끝나면 다시 사라지는 카메라(오브젝트)")]
+    public CutsceneOnlyCamera cutsceneOnlyCamera;
+
     [Header("카메라 흔들림")]
     [Tooltip("흔들릴 카메라. 비워두면 흔들림 관련 함수 호출을 무시함")]
     public Camera targetCamera;
+
     [Tooltip("흔들림 지속 시간(초)")]
     public float shakeDuration = 0.3f;
     [Tooltip("흔들림 강도 (최대 이동 거리)")]
@@ -127,6 +132,13 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
             cameraOriginalLocalPosition = targetCamera.transform.localPosition;
             hasCameraOriginalPosition = true;
         }
+
+        // 씬이 처음 시작될 때는 자동 이동 카메라 오브젝트 자체를 꺼둠.
+        // 컷씬이 완전히 끝난 뒤(EndCutscene)에 다시 켜짐.
+        if (autoCameraMove != null)
+        {
+            autoCameraMove.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
@@ -141,6 +153,12 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
     private IEnumerator RunCutscene()
     {
         LockAllSystems();
+
+        // 컷씬이 시작되는 시점에 컷씬 전용 카메라를 켬
+        if (cutsceneOnlyCamera != null)
+        {
+            cutsceneOnlyCamera.ShowForCutscene();
+        }
 
         // 컷씬 도중 예외가 발생하더라도 플레이어가 영구히 잠긴 채로 남지 않도록,
         // 진행 전체를 try/finally로 감싸서 마지막에 반드시 잠금 해제 및 정리가 실행되게 함
@@ -173,6 +191,20 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
 
     private void EndCutscene()
     {
+        // 컷씬이 끝난 시점에 자동 이동 카메라 오브젝트를 켬.
+        // UnlockAllSystems()보다 먼저 켜야, 켜지는 순간 AutoCameraMove.Start()가 실행되며
+        // 위치를 초기화한 뒤에 movementLocked가 false로 풀리는 순서가 보장됨
+        if (autoCameraMove != null)
+        {
+            autoCameraMove.gameObject.SetActive(true);
+        }
+
+        // 컷씬이 완전히 끝났으므로, 컷씬 전용 카메라는 다시 숨김
+        if (cutsceneOnlyCamera != null)
+        {
+            cutsceneOnlyCamera.HideAfterCutscene();
+        }
+
         UnlockAllSystems();
 
         // 카메라가 흔들리는 중이었다면 강제로 멈추고 원래 위치로 복구
