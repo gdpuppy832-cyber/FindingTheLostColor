@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-public class EZ_BossAttack : MonoBehaviour
+public class EZ_BossAttack : MonoBehaviour, IBossPhase2Controller
 {
     // ===== 공통 =====
     public Transform target;               // 비워두면 Player 태그로 자동 탐색
@@ -37,7 +37,7 @@ public class EZ_BossAttack : MonoBehaviour
 
 
     public List<BossCrystal> crystals = new List<BossCrystal>(); // 씬에 미리 배치된 크리스탈들을 Inspector에서 연결
-    public System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
+    public event System.Action OnPhase2Started; // [신규] 2페이즈 전환 시 소환 스포너 등에 알림을 줄 이벤트 델리게이트 (BossCrystal은 NormalMonster를 상속하므로 CursorController가 그대로 붓질 감지함)
 
     [Header("Color Orb")]
     public GameObject colorOrbPrefab;          // 색채 구슬 프리팹 (ColorOrb 컴포넌트 자동 부착됨, 비워두면 임시 생성)
@@ -48,6 +48,7 @@ public class EZ_BossAttack : MonoBehaviour
     public List<BlackFog> blackFogs = new List<BlackFog>(); // 씬에 미리 배치된 좌/우 안개 오브젝트들을 Inspector에서 연결
 
     bool phase2Unlocked = false; // false면 크리스탈 페이즈, true면 2페이즈(공격 가능)
+    bool isFrozenForPhaseTransition = false; // 크리스탈 파괴 직후 ~ 대화 종료까지, 이동/공격을 완전히 막는 동결 상태
     public bool IsPhase2 => phase2Unlocked;
     int destroyedCrystalCount = 0;
     Collider2D[] bossOwnColliders; // 크리스탈 페이즈 동안 붓질(OverlapCircleAll) 감지를 막기 위해 비활성화할 보스 콜라이더
@@ -60,6 +61,9 @@ public class EZ_BossAttack : MonoBehaviour
     Vector3 initialPosition; // 보스가 처음 배치된 위치 (구역 공격 등 위치 고정이 필요한 공격의 기준점)
     BossMove flyMove; // 2페이즈 진입 시 무한대(∞) 이동으로 전환하기 위해 자동으로 찾아두는 참조
     NormalMonster bossHealth; // 크리스탈 파괴 시 체력 회복을 위해 자동으로 찾아두는 참조 (보스 자신의 NormalMonster)
+    Rigidbody2D bossRb; // 페이즈 전환 동결 중 중력으로 떨어지는 것을 막기 위해 캐싱
+    float cachedGravityScale;
+    RigidbodyType2D cachedBodyType;
 
     List<GameObject> activeTelegraphMarkers = new List<GameObject>();
     List<GameObject> activeLaserObjects = new List<GameObject>(); // 발동 중인 레이저 본체도 강제 중단 시 정리 대상에 포함
@@ -71,6 +75,11 @@ public class EZ_BossAttack : MonoBehaviour
 
     [Header("Difficulty Settings")]
     public bool isEasyMode = true; // EZ_BossAttack은 기본적으로 이지 모드
+
+    [Header("씬 시작 대화 잠금")]
+    [Tooltip("true면 이동/공격/소환 등 보스의 모든 AI 행동과 관련 타이머가 완전히 정지됩니다. " +
+             "씬 시작 대화가 끝나면 SetBossBehaviorLocked(false)로 해제하세요.")]
+    public bool bossBehaviorLocked = true;
 
     // [신규] 스크립트 간 패턴 겹침 방지용 신호등 플래그
     public static bool isPatternActive = false;
@@ -300,6 +309,9 @@ public class EZ_BossAttack : MonoBehaviour
 
         bossHealth = GetComponent<NormalMonster>();
 
+        bossRb = GetComponent<Rigidbody2D>();
+        if (bossRb == null) bossRb = GetComponentInChildren<Rigidbody2D>();
+
         // 크리스탈들의 파괴 이벤트를 구독해서 전부 파괴되면 2페이즈로 전환
         foreach (var crystal in crystals)
         {
@@ -352,19 +364,7 @@ public class EZ_BossAttack : MonoBehaviour
 
         if (destroyedCrystalCount >= crystals.Count)
         {
-            phase2Unlocked = true;
-            OnPhase2Started?.Invoke(); // [신규] 2페이즈 진입 이벤트 발송!
             nonWhirlpoolAttackCount = 0; // 페이즈 전환 시 소용돌이 발동 카운트 리셋
-
-            // ★ 2페이즈 진입 확정 시 애니메이터의 "2P" bool 파라미터를 켬
-            if (animator != null)
-                animator.SetBool("2P", true);
-
-            // 2페이즈 BGM으로 전환
-            if (SoundManager.Instance != null && bossBGM2 != null)
-            {
-                SoundManager.Instance.PlayBGM(bossBGM2, true);
-            }
 
             if (activeWhirlpoolCoroutine != null)
             {
@@ -385,7 +385,7 @@ public class EZ_BossAttack : MonoBehaviour
                 activeCompanionCoroutine = null;
             }
 
-            // 2페이즈로 넘어가는 순간, 진행 중이던 1페이즈 공격을 강제로 중단시킴
+            // 진행 중이던 1페이즈 공격을 강제로 중단시킴
             if (isAttacking && currentAttackCoroutine != null)
             {
                 StopCoroutine(currentAttackCoroutine);
@@ -426,40 +426,116 @@ public class EZ_BossAttack : MonoBehaviour
                 }
 
                 isAttacking = false;
-                nextAttackAllowedTime = Time.time + attackCooldown;
             }
 
-            SetBossColliderState(true);
+            // ★ 즉시 2페이즈를 발동하는 대신, 보스를 처음 위치에 고정하고 완전히 동결시킴.
+            // 실제 2페이즈 발동(ActivatePhase2)은 대화가 끝난 뒤 외부(대화 트리거)에서 호출함.
+            isFrozenForPhaseTransition = true;
+            if (flyMove != null) flyMove.enabled = false;
 
-            if (flyMove != null) flyMove.SetInfinityMode(true); // 2페이즈 진입과 동시에 무한대(∞) 이동 패턴으로 전환
-
-            // 크리스탈 4개 파괴 보상: 보스 체력을 최대 체력의 절반만큼 회복 및 2페이즈 피격 가드 해제 (IsPurified = false)
-            if (bossHealth != null)
+            // 이동 스크립트만 꺼도 Rigidbody2D가 Dynamic이면 중력으로 계속 떨어지므로,
+            // 동결 중엔 물리 자체를 Kinematic으로 바꾸고 중력/속도를 제거해서 완전히 고정함
+            if (bossRb != null)
             {
-                bossHealth.IsPurified = false; // 2페이즈 대미지/정화 피격 가드 해제!
+                cachedGravityScale = bossRb.gravityScale;
+                cachedBodyType = bossRb.bodyType;
+
+                bossRb.linearVelocity = Vector2.zero;
+                bossRb.gravityScale = 0f;
+                bossRb.bodyType = RigidbodyType2D.Kinematic;
+                bossRb.position = initialPosition;
             }
 
-            // 2페이즈 돌입 보상: 플레이어 체력도 4만큼 회복
-            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.Heal(4f);
-            }
+            transform.position = initialPosition; // Rigidbody2D가 없는 경우를 대비한 안전장치
 
-            ColorOrb spawnedOrb = SpawnColorOrb(); // 2페이즈 진입과 동시에 보스 아래에 색채 구슬 소환
-
-            foreach (var fog in blackFogs)
-            {
-                if (fog == null) continue;
-                fog.SetTarget(spawnedOrb);
-                fog.StartMoving();
-            }
+            OnPhase2Started?.Invoke(); // 대화 트리거 등 외부 리스너에게 "1페이즈가 끝났다"고 알림
         }
+    }
+
+    /// <summary>
+    /// 2페이즈 "상태"를 발동시킴 (보상, BGM, 콜라이더, 애니메이터 등).
+    /// 이동/공격 동결(isFrozenForPhaseTransition)은 그대로 유지되어, 보스는 여전히 제자리에 가만히 있고 공격하지 않음.
+    /// 실제로 움직이고 공격하게 하려면 ReleasePhase2MovementFreeze()를 별도로 호출해야 함.
+    /// </summary>
+    ColorOrb pendingSpawnedOrb; // ActivatePhase2에서 소환한 구슬을, 안개가 실제로 움직이기 시작할 때(컷씬 종료 후) 연결하기 위해 임시 보관
+
+    public void ActivatePhase2()
+    {
+        if (phase2Unlocked) return; // 중복 호출 방지
+
+        phase2Unlocked = true;
+
+        if (animator != null)
+            animator.SetBool("2P", true);
+
+        if (SoundManager.Instance != null && bossBGM2 != null)
+        {
+            SoundManager.Instance.PlayBGM(bossBGM2, true);
+        }
+
+        SetBossColliderState(true);
+
+        if (bossHealth != null)
+        {
+            bossHealth.IsPurified = false;
+        }
+
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(4f);
+        }
+
+        // 구슬은 여기서 미리 소환해두되(비주얼상 컷씬 중에 등장하는 게 자연스러우므로),
+        // 안개가 실제로 움직이기 시작하는 건 컷씬(대화)이 완전히 끝난 뒤로 미룸 (StartBlackFogMovement 참고)
+        pendingSpawnedOrb = SpawnColorOrb();
+    }
+
+    /// <summary>
+    /// 컷씬(대화)이 완전히 끝난 뒤 호출해서, 검은 안개가 그제서야 움직이기 시작하게 함.
+    /// ReleasePhase2MovementFreeze()와 같은 시점(대화 종료 후)에 호출하면 됨.
+    /// </summary>
+    public void StartBlackFogMovement()
+    {
+        foreach (var fog in blackFogs)
+        {
+            if (fog == null) continue;
+            fog.SetTarget(pendingSpawnedOrb);
+            fog.StartMoving();
+        }
+    }
+
+    /// <summary>
+    /// 이동/공격 동결을 해제해서 보스가 실제로 움직이고 공격하기 시작하게 함.
+    /// ActivatePhase2()가 이미 호출된 뒤(phase2Unlocked == true)에만 동작함.
+    /// </summary>
+    public void ReleasePhase2MovementFreeze()
+    {
+        if (!phase2Unlocked) return;      // 아직 2페이즈 상태 자체가 발동 안 됐으면 무시
+        if (!isFrozenForPhaseTransition) return; // 이미 풀려있으면 중복 실행 방지
+
+        isFrozenForPhaseTransition = false;
+
+        // 동결 중 바꿔뒀던 Rigidbody2D 물리 상태를 원래대로 복구
+        if (bossRb != null)
+        {
+            bossRb.bodyType = cachedBodyType;
+            bossRb.gravityScale = cachedGravityScale;
+        }
+
+        if (flyMove != null)
+        {
+            flyMove.enabled = true;
+            flyMove.SetInfinityMode(true); // 동결 해제와 동시에 무한대(∞) 이동 패턴으로 전환
+        }
+
+        nextAttackAllowedTime = Time.time + attackCooldown; // 해제 직후 바로 공격하지 않고 약간의 텀을 둠
     }
 
 
     void TryContactDamage(Collider2D other)
     {
+        if (bossBehaviorLocked) return; // 대화 잠금 중엔 몸통 충돌 피해도 발생하지 않음
         if (bossHealth != null && bossHealth.IsPurified) return;
 
         PlayerHealth player = other.GetComponent<PlayerHealth>();
@@ -468,6 +544,19 @@ public class EZ_BossAttack : MonoBehaviour
         if (player != null)
         {
             player.TakeDamage(contactDamage);
+        }
+    }
+
+    /// <summary>
+    /// 씬 시작 대화(onComplete)에서 호출. 잠금 해제 시 nextAttackAllowedTime을
+    /// 현재 시각 기준으로 재설정해, 잠금 해제 즉시 공격이 튀어나오는 것을 방지함.
+    /// </summary>
+    public void SetBossBehaviorLocked(bool locked)
+    {
+        bossBehaviorLocked = locked;
+        if (!locked)
+        {
+            nextAttackAllowedTime = Time.time + attackCooldown;
         }
     }
 
@@ -488,7 +577,11 @@ public class EZ_BossAttack : MonoBehaviour
             contactHitbox.transform.position = transform.position + contactHitboxOffset;
         }
 
-        if (isAttacking || Time.time < nextAttackAllowedTime || target == null)
+        // 씬 시작 대화 잠금 중에는 공격 후보 선정/타이머 비교 자체를 하지 않음
+        // (Time.time과 비교되는 nextAttackAllowedTime이 그동안 "소모"되지 않으므로 타이머가 진행되지 않는 것과 동일한 효과)
+        if (bossBehaviorLocked) return;
+
+        if (isAttacking || isFrozenForPhaseTransition || Time.time < nextAttackAllowedTime || target == null)
             return;
 
 
