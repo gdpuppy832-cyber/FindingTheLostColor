@@ -56,6 +56,13 @@ public class CaveEntrance : InteractableObject
     [Tooltip("임시 경고창 및 선택지 팝업 자동 생성 시 사용할 폰트 에셋")]
     public Font customFont;
 
+    [Header("동굴 닫힘 비주얼 설정 (선택사항)")]
+    [Tooltip("닫혀있는 동굴 겉면 자식 게임오브젝트")]
+    public GameObject closedCaveChildObj;
+
+    [Tooltip("닫혀있는 동굴 겉면 SpriteRenderer")]
+    public SpriteRenderer closedCaveSpriteRenderer;
+
     private GameObject activeSelectionUI;
     private Coroutine warningCoroutine;
     private bool isTransitioning = false;
