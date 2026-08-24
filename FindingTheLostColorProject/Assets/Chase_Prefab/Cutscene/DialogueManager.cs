@@ -32,6 +32,14 @@ public class DialogueLine
     [Tooltip("이 대사가 시작되는 순간 비활성화(숨기게)할 오브젝트들")]
     public GameObject[] objectsToHide;
 
+    [Header("대사 사운드")]
+    [Tooltip("이 대사의 글자가 출력되는 동안 반복 재생할 사운드")]
+    public AudioClip typingSound;
+
+    [Tooltip("글자 출력 사운드 볼륨")]
+    [Range(0f, 1f)]
+    public float typingSoundVolume = 0.5f;
+
     [Header("대사")]
     [TextArea(2, 4)]
     public string text;
@@ -43,6 +51,8 @@ public class DialogueLine
 /// </summary>
 public class DialogueManager : MonoBehaviour
 {
+    private AudioSource typingAudioSource;
+
     private static DialogueManager _instance;
     public static DialogueManager Instance
     {
@@ -109,6 +119,10 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialogueBox != null)
             dialogueBox.SetActive(false);
+
+        typingAudioSource = gameObject.AddComponent<AudioSource>();
+        typingAudioSource.playOnAwake = false;
+        typingAudioSource.loop = true;
     }
 
     void Update()
@@ -249,6 +263,8 @@ public class DialogueManager : MonoBehaviour
     {
         isTyping = true;
 
+        StartTypingSound(line);
+
         if (dialogueText != null)
         {
             // 타이핑을 시작하기 전에, 이번 대사에 쓰일 모든 글자를 폰트 아틀라스에 미리 등록시킴.
@@ -271,6 +287,32 @@ public class DialogueManager : MonoBehaviour
         FinishTyping();
     }
 
+    private void StartTypingSound(DialogueLine line)
+    {
+        StopTypingSound();
+
+        if (typingAudioSource == null)
+            return;
+
+        if (line == null || line.typingSound == null)
+            return;
+
+        typingAudioSource.clip = line.typingSound;
+        typingAudioSource.volume = line.typingSoundVolume;
+        typingAudioSource.loop = true;
+        typingAudioSource.Play();
+    }
+
+    private void StopTypingSound()
+    {
+        if (typingAudioSource == null)
+            return;
+
+        if (typingAudioSource.isPlaying)
+            typingAudioSource.Stop();
+
+        typingAudioSource.clip = null;
+    }
     /// <summary>
     /// 타이핑 중 입 모양을 닫힘/열림으로 반복 전환하는 코루틴.
     /// 타이핑이 끝나면(또는 스킵되면) 반드시 함께 멈춰야 한다.
@@ -364,6 +406,8 @@ public class DialogueManager : MonoBehaviour
     {
         isTyping = false;
 
+        StopTypingSound();
+
         DialogueLine line = (currentLines != null && currentLineIndex >= 0 && currentLineIndex < currentLines.Length)
             ? currentLines[currentLineIndex]
             : null;
@@ -396,6 +440,8 @@ public class DialogueManager : MonoBehaviour
 
     private void StopAllDialogueCoroutines()
     {
+        StopTypingSound();
+
         if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);

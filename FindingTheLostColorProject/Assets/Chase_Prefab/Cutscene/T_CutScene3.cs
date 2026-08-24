@@ -28,6 +28,8 @@ public class T_CutScene3 : MonoBehaviour
     public bool playOnlyOnce = true;
     private bool hasTriggered = false;
 
+    public bool IsCutsceneRunning { get; private set; }
+
     // 플레이어 이동 잠금 (Rigidbody2D 자체는 비활성화하지 않고, 이동 스크립트만 끄고 속도를 0으로 유지)
     private Rigidbody2D playerRigidbody;
     private MonoBehaviour playerMovementScript;
@@ -44,6 +46,8 @@ public class T_CutScene3 : MonoBehaviour
 
     private IEnumerator RunCutscene()
     {
+        IsCutsceneRunning = true;
+
         LockPlayerMovement();
 
         // 1부 대화 전 Timeline
@@ -65,6 +69,8 @@ public class T_CutScene3 : MonoBehaviour
         yield return PlayDialogueAndWait(dialoguesPart2);
 
         UnlockPlayerMovement();
+
+        IsCutsceneRunning = false;
     }
 
     // ================= 대화 재생 대기 =================
