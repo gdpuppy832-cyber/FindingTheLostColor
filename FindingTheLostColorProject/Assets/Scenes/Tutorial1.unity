@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -37.487385, y: -26.81}
+  m_AnchoredPosition: {x: -37.6, y: -28.3}
   m_SizeDelta: {x: 33.5701, y: 7.0076}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &28949061
@@ -399,7 +399,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -18.9237, y: -35.65}
+  m_AnchoredPosition: {x: -19.7, y: -35.8}
   m_SizeDelta: {x: 61.9226, y: 7.0076}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &109418699
@@ -487,7 +487,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0.61676025, w: -0.21762848}
+  m_margin: {x: 0, y: 0, z: -3.901907, w: -15.750568}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -142154,13 +142154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeInDuration: 2
   fadeOutDuration: 2
-  nextSceneName: 
+  nextSceneName: Tutorial2
   siamObject: {fileID: 1725547996}
   siamSpriteRenderer: {fileID: 0}
-  siamAnimator: {fileID: 0}
-  siamIdleStateName: Idle
-  siamWalkStateName: Walk
-  siamWalkingBoolParam: isWalking
   siamIdleSprite: {fileID: 0}
   siamWalkSprite: {fileID: 0}
   siamIdleFrames:
@@ -142186,10 +142182,8 @@ MonoBehaviour:
   siamStopTargetTransform: {fileID: 0}
   cheesePlayerObj: {fileID: 0}
   cheeseSpriteRenderer: {fileID: 0}
-  cheeseAnimator: {fileID: 0}
   cheeseSleepingSprite: {fileID: 2551267168009590046, guid: 7e125f40505b76944a82f8cb3760efb5, type: 3}
   bedWithSleepingCheeseObj: {fileID: 0}
-  cheeseAwakeStateName: Idle
   cheeseAwakeIdleFrames: []
   cheeseAnimFPS: 8
   emptyBedObj: {fileID: 0}
@@ -142208,6 +142202,8 @@ MonoBehaviour:
     - {fileID: 5891512529665986552, guid: 21bceac3d839c3b4ebcb748987d20b31, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uCFE8\uCFE8\u2026"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -142219,6 +142215,8 @@ MonoBehaviour:
     - {fileID: 5891512529665986552, guid: 21bceac3d839c3b4ebcb748987d20b31, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC74C\uB0D0\uC74C\uB0D0\u2026"
   dialogues3:
   - speakerName: "\uC0F4"
@@ -142242,6 +142240,8 @@ MonoBehaviour:
     - {fileID: 8209404532681417698, guid: e402f65e3a2c8c347a9936a9c6c865e0, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "...\uC544\uC9C1\uB3C4 \uC790?"
   dialogues4:
   - speakerName: "\uCE58\uC988"
@@ -142254,6 +142254,8 @@ MonoBehaviour:
     - {fileID: 5891512529665986552, guid: 21bceac3d839c3b4ebcb748987d20b31, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uCFE8\uCFE8\u2026"
   dialogues5:
   - speakerName: "\uC0F4"
@@ -142277,6 +142279,8 @@ MonoBehaviour:
     - {fileID: 4594064972538193985, guid: f6932723b854c14488741a1dde99af81, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC77C\uC5B4\uB098!"
   dialogues6:
   - speakerName: "\uCE58\uC988"
@@ -142300,6 +142304,8 @@ MonoBehaviour:
     - {fileID: 2168919108311830837, guid: 23c618355b9ef314a9c046ac19f23dc0, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC73C\uC545!"
   dialogues7_8:
   - speakerName: "\uCE58\uC988"
@@ -142334,6 +142340,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC774\uB978 \uC544\uCE68\uBD80\uD130 \uBB34\uC2A8 \uC77C\uC774\uC57C?"
   - speakerName: "\uC0F4"
     characterImage: {fileID: 0}
@@ -142356,6 +142364,8 @@ MonoBehaviour:
     - {fileID: 4594064972538193985, guid: f6932723b854c14488741a1dde99af81, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC624\uB298 \uC6B0\uB9AC\uAC00 \uC0C9\uCC44 \uAD6C\uC2AC \uC9C0\uD0A4\uB294
       \uB0A0\uC774\uC796\uC544."
   dialogues9_10:
@@ -142380,6 +142390,8 @@ MonoBehaviour:
     - {fileID: 2168919108311830837, guid: 23c618355b9ef314a9c046ac19f23dc0, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC544!"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -142413,6 +142425,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uADF8\uB7EC\uB124. \uC644\uC804\uD788 \uAE4C\uBA39\uACE0 \uC788\uC5C8\uC5B4!"
   dialogues11_12:
   - speakerName: "\uC0F4"
@@ -142436,6 +142450,8 @@ MonoBehaviour:
     - {fileID: 1537017657648461661, guid: 906f6cf8d09f70b47a5c33c8983979f5, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uD558\uC544... \uADF8\uB7F4 \uC904 \uC54C\uC558\uC5B4,"
   - speakerName: "\uC0F4"
     characterImage: {fileID: 0}
@@ -142458,6 +142474,8 @@ MonoBehaviour:
     - {fileID: 4594064972538193985, guid: f6932723b854c14488741a1dde99af81, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC544\uBB34\uD2BC \uB2E4\uB4E4 \uAE30\uB2E4\uB9AC\uACE0 \uC788\uC73C\uB2C8\uAE4C
       \uC900\uBE44\uB418\uBA74 \uB098\uC640."
   dialogues13_14:
@@ -142482,6 +142500,8 @@ MonoBehaviour:
     - {fileID: 6921348931107498275, guid: a0dbf8acf9ce21f4f87895d02f9d042f, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC544\uB2C8, \uC5B4\uB5BB\uAC8C \uC774\uAC78 \uAE4C\uBA39\uC5C8\uC9C0."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -142515,6 +142535,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uBD93\uC774\uB791 \uB9DD\uD1A0\uAE4C\uC9C0 \uB2E4 \uCC59\uACBC\uC73C\uB2C8
       \uC774\uC81C \uB098\uAC00\uBCFC\uAE4C?"
   onCutsceneEnded:
@@ -142554,8 +142576,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -32}
-  m_SizeDelta: {x: 141.0049, y: 54.8296}
+  m_AnchoredPosition: {x: 0, y: -33.259975}
+  m_SizeDelta: {x: 141.0049, y: 56.7097}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1482763986
 MonoBehaviour:
@@ -142623,7 +142645,7 @@ Animator:
   m_GameObject: {fileID: 1725547996}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f3ccc3f199d071a4caf734f07acb4337, type: 2}
+  m_Controller: {fileID: 9100000, guid: d3cadc932fced814b98711499af872a6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
