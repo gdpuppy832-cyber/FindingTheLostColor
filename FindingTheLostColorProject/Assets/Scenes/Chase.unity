@@ -1102,39 +1102,12 @@ Animator:
   m_CorrespondingSourceObject: {fileID: -8305801689409952958, guid: d49ca4a12c449e24ab4c698c29ecb470, type: 3}
   m_PrefabInstance: {fileID: 212821740}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &633865662 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 946412894994910540, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-  m_PrefabInstance: {fileID: 1058784212}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &633865670
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633865662}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 17b6f75cba36e004ebf46180d58994cc, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &633865671 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
   m_PrefabInstance: {fileID: 1058784212}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633865662}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0a1cc6950179ca4a93bfcd5fbdeaf16, type: 3}
@@ -1145,7 +1118,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
   m_PrefabInstance: {fileID: 1058784212}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633865662}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8264b986247992743b49d4e456e545a9, type: 3}
@@ -1156,7 +1129,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -5889155966984538356, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
   m_PrefabInstance: {fileID: 1058784212}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 633865662}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29e955afe94d0e743b3fb25a84dda962, type: 3}
@@ -1320,18 +1293,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss_Chase
       objectReference: {fileID: 0}
-    - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: fadeDuration
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2205639967118484951, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: transitionDelay
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 3110220901936660074, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5525985110957521975, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.69
@@ -1385,34 +1346,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: bulletSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: fireInterval
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: laserFireSFX
-      value: 
-      objectReference: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: laserCooldown
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: bulletLifetime
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: curveFirePoint
-      value: 
-      objectReference: {fileID: 411191068}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: curveStartTime
-      value: 1.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: laserFirePoint
       value: 
       objectReference: {fileID: 1244530048}
@@ -1425,64 +1358,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 583435371}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: inkCurtainSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: laserUnlockTime
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: curveTargetPoint
-      value: 
-      objectReference: {fileID: 583435371}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: curveBulletPrefab
-      value: 
-      objectReference: {fileID: 5909081372243577439, guid: a62916e4cfa0ac9479c95ff7a0d81103, type: 3}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: inkCurtainLifetime
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: inkCurtainSpawnPoint
       value: 
-      objectReference: {fileID: 946022903}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: potionProjectilePrefab
-      value: 
-      objectReference: {fileID: 8911848656146449713, guid: 13f9e8cb577006c4080fef5e4ecf512e, type: 3}
+      objectReference: {fileID: 411191068}
     - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
       propertyPath: bulletsBeforeInkCurtain
       value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: requiredPaintOverlapTime
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6814805997823367217, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: inkCurtainRequiredPaintOverlapTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: m_Color.a
-      value: 0.33333334
-      objectReference: {fileID: 0}
-    - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: m_SortingLayer
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7351908867557539331, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      propertyPath: m_SortingLayerID
-      value: -485289909
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 946412894994910540, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 633865670}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee8687261310c8a44b64fb26907fd944, type: 3}
 --- !u!95 &1068378898 stripped
 Animator:

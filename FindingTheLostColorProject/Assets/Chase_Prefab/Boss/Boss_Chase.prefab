@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -5889155966984538356}
   - component: {fileID: 6814805997823367217}
   - component: {fileID: 2205639967118484951}
+  - component: {fileID: 8230932801120948100}
   m_Layer: 8
   m_Name: Boss_Chase
   m_TagString: Boss
@@ -186,6 +187,7 @@ MonoBehaviour:
   enableVerticalBob: 1
   verticalBobHeight: 0.75
   verticalBobSpeed: 0.4
+  movementLocked: 1
 --- !u!114 &6814805997823367217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,21 +206,29 @@ MonoBehaviour:
   firePoint3: {fileID: 0}
   bulletSpeed: 1
   fireInterval: 0.5
-  bulletLifetime: 5
+  bulletLifetime: 8
   requiredPaintOverlapTime: 0.5
-  curveBulletPrefab: {fileID: 0}
+  curveBulletPrefab: {fileID: 5909081372243577439, guid: a62916e4cfa0ac9479c95ff7a0d81103, type: 3}
   curveFirePoint1: {fileID: 0}
   curveFirePoint2: {fileID: 0}
-  curveStartTime: 0.8
+  curveStartTime: 1.75
   curveMoveSpeed: 6
   bulletsBeforeCurveBullet: 15
+  potionProjectilePrefab: {fileID: 8911848656146449713, guid: 13f9e8cb577006c4080fef5e4ecf512e, type: 3}
+  bulletsBeforePotion: 10
+  bulletSFX: {fileID: 0}
+  curveBulletSFX: {fileID: 0}
+  potionSFX: {fileID: 0}
+  inkCurtainSFX: {fileID: 0}
+  laserTelegraphSFX: {fileID: 0}
+  laserFireSFX: {fileID: 8300000, guid: 04b216832a1dd2a49bdd00f214de09ae, type: 3}
   attackDamage: 1
   inkCurtainPrefab: {fileID: 7828294059909771260, guid: 9a2be343e7d23804894043b90f522605, type: 3}
   inkCurtainSpawnPoint: {fileID: 0}
-  inkCurtainSpeed: 0.25
-  inkCurtainLifetime: 13
+  inkCurtainSpeed: 1
+  inkCurtainLifetime: 7
   bulletsBeforeInkCurtain: 10
-  inkCurtainRequiredPaintOverlapTime: 2
+  inkCurtainRequiredPaintOverlapTime: 1
   laserTelegraphPrefab: {fileID: 1014840232707358376, guid: d42dfd4c3fda2da4d845f5427524483e, type: 3}
   laserPrefab: {fileID: 1946862533391767322, guid: 17a8817652c68bb42a408daee43fe676, type: 3}
   laserFirePoint: {fileID: 0}
@@ -227,6 +237,7 @@ MonoBehaviour:
   laserTelegraphDuration: 1.5
   laserBlinkInterval: 0.5
   laserDuration: 0.5
+  attackBehaviorLocked: 1
 --- !u!114 &2205639967118484951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,9 +250,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0a1cc6950179ca4a93bfcd5fbdeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionDelay: 90
+  transitionDelay: 60
   nextSceneName: Map_c
-  fadeDuration: 1
+  fadeDuration: 0
+  transitionLocked: 1
+--- !u!95 &8230932801120948100
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946412894994910540}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 17b6f75cba36e004ebf46180d58994cc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &3848036189668441168
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -296,7 +330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6008297436639347283, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_Color.a
-      value: 0.36862746
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 6008297436639347283, guid: 242810be12c375c479f39c5e579c5c43, type: 3}
       propertyPath: m_SortingLayer
