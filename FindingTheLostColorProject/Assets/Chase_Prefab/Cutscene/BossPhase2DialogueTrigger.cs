@@ -46,6 +46,7 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
     // 대화 중 플레이어 이동 잠금
     private Rigidbody2D playerRigidbody;
     private Vector2 originalPlayerVelocity;
+    private RigidbodyConstraints2D originalPlayerConstraints;
     private bool playerMovementLocked = false;
     private MonoBehaviour playerMovementScript;
 
@@ -244,6 +245,12 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         // 이동 속도를 0으로
         playerRigidbody.linearVelocity = Vector2.zero;
 
+        // 위치(X, Y) 자체를 물리적으로 고정 -> 중력/외력이 있어도 컷씬 동안 절대 움직이지 않음
+        originalPlayerConstraints = playerRigidbody.constraints;
+        playerRigidbody.constraints = originalPlayerConstraints
+            | RigidbodyConstraints2D.FreezePositionX
+            | RigidbodyConstraints2D.FreezePositionY;
+
         playerMovementLocked = true;
     }
 
@@ -253,6 +260,8 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
         if (playerRigidbody != null)
         {
+            // 고정했던 위치 제약을 원래대로 복구
+            playerRigidbody.constraints = originalPlayerConstraints;
             playerRigidbody.linearVelocity = Vector2.zero;
         }
 

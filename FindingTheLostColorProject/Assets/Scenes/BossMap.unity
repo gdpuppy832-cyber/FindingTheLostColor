@@ -500,6 +500,108 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1264128483669048875, guid: 41c3aac4091152b4698a78dc77fd0110, type: 3}
   m_PrefabInstance: {fileID: 1852964236}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &208328461
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 208328462}
+  - component: {fileID: 208328464}
+  - component: {fileID: 208328463}
+  m_Layer: 5
+  m_Name: End_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &208328462
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208328461}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &208328463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208328461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -5022372371567134620, guid: 2a333414ba4e57a478dc35cec2b54c66, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &208328464
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208328461}
+  m_CullTransparentMesh: 1
+--- !u!1 &245970573 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6315910768548722202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+  m_PrefabInstance: {fileID: 821562783}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &245970575
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245970573}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &274064533
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15514,7 +15616,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2915333899100964050, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
   m_PrefabInstance: {fileID: 8830008015625943918}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 8830008015625943919}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68e2fccbcb71d9e43b3ee0684e60978f, type: 3}
@@ -15917,6 +16019,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1099078783294696231, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -9.4001465
+      objectReference: {fileID: 0}
+    - target: {fileID: 1099078783294696231, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -13.533325
       objectReference: {fileID: 0}
@@ -16213,7 +16319,46 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       insertIndex: -1
       addedObject: {fileID: 995406463}
-    m_AddedComponents: []
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1324525125}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2062839680}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1981048437}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 850758396}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1586805071}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 956593072}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 208328462}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1130751251}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1088746092}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2053764690}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1448221847}
+    - targetCorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1853744892}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6315910768548722202, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 245970575}
   m_SourcePrefab: {fileID: 100100000, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
 --- !u!1001 &827158808
 PrefabInstance:
@@ -16280,6 +16425,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aea864c7486b3214eb13f1da24b8dcdb, type: 3}
+--- !u!1 &850758395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 850758396}
+  - component: {fileID: 850758398}
+  - component: {fileID: 850758397}
+  m_Layer: 5
+  m_Name: End_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &850758396
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850758395}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &850758397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850758395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 4739625588140958323, guid: 4ef897bf1312d544ca4f1f11ef520e28, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &850758398
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850758395}
+  m_CullTransparentMesh: 1
 --- !u!4 &867256896 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3690797216815920063, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
@@ -16307,11 +16527,591 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b5dbc8706b416448a047e52e415cb50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &956593071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 956593072}
+  - component: {fileID: 956593074}
+  - component: {fileID: 956593073}
+  m_Layer: 5
+  m_Name: End_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &956593072
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956593071}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &956593073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956593071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 7259966333843953111, guid: ddd85a352fd67b14d9dfb21dd15e999f, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &956593074
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956593071}
+  m_CullTransparentMesh: 1
+--- !u!1 &959554384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 959554385}
+  - component: {fileID: 959554386}
+  - component: {fileID: 959554387}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &959554385
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959554384}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 7.77, y: 2.4, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1448221847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -165.42181}
+  m_SizeDelta: {x: 100, y: 128.2388}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &959554386
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959554384}
+  m_CullTransparentMesh: 1
+--- !u!114 &959554387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959554384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2038504938652493909, guid: dd615f4f82c0c5a469bbd43d19f6d7d3, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!224 &995406463 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4507867717274252353, guid: ea8edbfece20fe04fb0bfd6934ae6885, type: 3}
   m_PrefabInstance: {fileID: 76368620}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1041901361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1041901364}
+  - component: {fileID: 1041901363}
+  - component: {fileID: 1041901362}
+  m_Layer: 0
+  m_Name: EndCutScene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1041901362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041901361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f181dd429b840a4ca9276498c7c5961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossHealth: {fileID: 455138161}
+  cutsceneTrigger: {fileID: 1041901363}
+--- !u!114 &1041901363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041901361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6383b002442e35e4b9848029a619e096, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  steps:
+  - image: {fileID: 850758397}
+    dialogues:
+    - speakerName: "\uB124\uB85C"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+      - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+      - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+      - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+      - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+      - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+      - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+      - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+      - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+      - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+      - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+      - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+      - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+      - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+      - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+      - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+      - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+      - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+      - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+      - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+      - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+      - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+      - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\u2026\u2026\uACB0\uAD6D \uB09C \uB2E4\uC2DC \uC544\uBB34\uAC83\uB3C4
+        \uC5C6\uB294 \uAC80\uC740\uC0C9\uC774\uB124."
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+      - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+      - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+      - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+      - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+      - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+      - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+      - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+      - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+      - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+      - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+      - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+      - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+      - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+      - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+      - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+      - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+      - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+      - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+      - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+      - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+      - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+      - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uADF8\uB798\uB3C4 \uADF8\uB807\uAC8C \uC2E0\uACBD \uC4F0\uC774\uBA74\u2026"
+  - image: {fileID: 1586805072}
+    dialogues:
+    - speakerName: "\uB124\uB85C"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+      - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+      - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+      - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+      - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+      - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+      - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+      - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+      - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+      - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+      - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+      - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+      - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+      - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+      - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+      - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+      - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+      - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+      - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+      - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+      - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+      - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+      - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\u2026\u2026\uBB50\uC57C?"
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+      - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+      - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+      - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+      - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+      - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+      - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+      - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+      - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+      - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+      - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+      - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+      - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+      - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+      - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+      - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+      - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+      - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+      - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+      - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+      - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+      - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+      - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uAC00\uC838."
+    - speakerName: "\uB124\uB85C"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+      - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+      - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+      - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+      - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+      - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+      - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+      - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+      - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+      - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+      - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+      - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+      - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+      - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+      - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+      - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+      - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+      - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+      - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+      - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+      - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+      - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+      - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uC774\uAC78... \uB098\uD55C\uD14C?"
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+      - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+      - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+      - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+      - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+      - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+      - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+      - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+      - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+      - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+      - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+      - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+      - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+      - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+      - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+      - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+      - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+      - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+      - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+      - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+      - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+      - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+      - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uC751. \uC120\uBB3C\uC774\uC57C!"
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+      - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+      - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+      - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+      - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+      - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+      - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+      - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+      - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+      - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+      - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+      - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+      - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+      - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+      - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+      - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+      - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+      - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+      - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+      - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+      - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+      - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+      - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uC774\uB7EC\uBA74 \uB108\uB3C4 \uC0C9\uC774 \uC788\uC9C0?"
+  - image: {fileID: 956593073}
+    dialogues: []
+  - image: {fileID: 208328463}
+    dialogues:
+    - speakerName: "\uB124\uB85C"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+      - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+      - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+      - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+      - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+      - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+      - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+      - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+      - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+      - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+      - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+      - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+      - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+      - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+      - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+      - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+      - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+      - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+      - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+      - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+      - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+      - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+      - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "...\uC608\uC05C \uC0C9\uAE54."
+  - image: {fileID: 1130751252}
+    dialogues:
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 33407317196408015, guid: 00931f38be4190042864c88284769434, type: 3}
+      - {fileID: -6651321052341179163, guid: 7367532dd74ee7145951c52ea0bdf33c, type: 3}
+      - {fileID: -1244197631959219584, guid: baa3afc9392b64145ad5491a1a355684, type: 3}
+      - {fileID: -3292559909521985462, guid: fb9c3e7602e21fc45aaab5433b4a1eba, type: 3}
+      - {fileID: -776666101858889898, guid: 9715354337353a249a24659519d49c2b, type: 3}
+      - {fileID: 2087792547582135055, guid: df1f243984d2d634e976910c72b867be, type: 3}
+      - {fileID: 644629402653596400, guid: 9ca50ba56e83652458f12eb3e8c4018c, type: 3}
+      - {fileID: 1735391655336989687, guid: 5972b80e85d6c5a458f30a150af98748, type: 3}
+      - {fileID: -271220279309242996, guid: cf194dcb97368c4428795b2cb5b1f557, type: 3}
+      - {fileID: -8639726406649890965, guid: 92fe44cab731e6e4b9ed5d4181855d32, type: 3}
+      - {fileID: 3307360614964666255, guid: a2f75722b68268148a8e59eee032ca19, type: 3}
+      - {fileID: -7265498322776184832, guid: efeef3f018e72c34f88d2e9fcdc21785, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1084550012185151442, guid: fdd29f9eb4296a543930b993c48e438a, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\uC798 \uC5B4\uC6B8\uB9AC\uB124!"
+  - image: {fileID: 1088746093}
+    dialogues:
+    - speakerName: "\uCE58\uC988"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+      - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+      - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+      - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+      - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+      - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+      - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+      - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+      - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+      - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+      - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+      - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+      - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+      - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+      - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+      - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+      - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+      - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+      - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+      - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+      - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+      - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+      - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "\r\uC774\uC81C \uB2E4\uB978 \uACE0\uC591\uC774\uB4E4\uD55C\uD14C \uC0AC\uACFC\uD558\uACE0
+        \uB9DB\uC788\uB294 \uAC70 \uBA39\uC73C\uB7EC \uAC00\uC790!"
+    - speakerName: "\uB124\uB85C"
+      characterImage: {fileID: 0}
+      characterMouthClosedImage: {fileID: 0}
+      characterMouthFrames:
+      - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+      - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+      - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+      - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+      - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+      - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+      - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+      - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+      - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+      - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+      - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+      - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+      keepMouthAnimatingAfterTyping: 1
+      afterTypingMouthFrames:
+      - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+      - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+      - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+      - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+      - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+      - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+      - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+      - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+      - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+      - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+      - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+      - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+      objectsToShow: []
+      objectsToHide: []
+      text: "...\uADF8\uB7EC\uB358\uC9C0."
+  - image: {fileID: 2053764691}
+    dialogues: []
+  nextSceneName: Title
+  delayBeforeDialogue: 2
+--- !u!4 &1041901364
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041901361}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.38579, y: -1.86127, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1077446560 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3690797216815920063, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
@@ -16328,11 +17128,161 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72fbba66a6286e642955a0d311a4fe1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1088746091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1088746092}
+  - component: {fileID: 1088746094}
+  - component: {fileID: 1088746093}
+  m_Layer: 5
+  m_Name: End_6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1088746092
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088746091}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1088746093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088746091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -8335145080645864508, guid: 0cc31266c5d10a544828e1429f093fc7, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1088746094
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088746091}
+  m_CullTransparentMesh: 1
 --- !u!4 &1110436452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 810952442153784876, guid: e0d2ae57bcc24c74b9da4591e0bf9fbe, type: 3}
   m_PrefabInstance: {fileID: 646748052}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1130751250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1130751251}
+  - component: {fileID: 1130751253}
+  - component: {fileID: 1130751252}
+  m_Layer: 5
+  m_Name: End_5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1130751251
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130751250}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1130751252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130751250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -6946875756371675997, guid: 69c0d574d00e4e948a6f7c6eae211456, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1130751253
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130751250}
+  m_CullTransparentMesh: 1
 --- !u!1 &1184861206 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3671281979859366550, guid: 6111f65c5650fd94d8585dbd33fc2ba0, type: 3}
@@ -16430,6 +17380,281 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1337015630736443857, guid: a369113afb5692b4e953c7665bbeec74, type: 3}
   m_PrefabInstance: {fileID: 703718769}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1269397016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1269397018}
+  - component: {fileID: 1269397017}
+  m_Layer: 0
+  m_Name: Timeline2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &1269397017
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269397016}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 54067a154618eb445a9c391881a8ff94, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 5419739265468559617, guid: 54067a154618eb445a9c391881a8ff94, type: 2}
+    value: {fileID: 245970575}
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &1269397018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269397016}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.46955, y: 2.27943, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1308266697
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1308266698}
+  - component: {fileID: 1308266699}
+  - component: {fileID: 1308266700}
+  m_Layer: 5
+  m_Name: name
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1308266698
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308266697}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1448221847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -207.7, y: -145.5}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1308266699
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308266697}
+  m_CullTransparentMesh: 1
+--- !u!114 &1308266700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308266697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
+  m_sharedMaterial: {fileID: -6940125027695843322, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 26
+  m_fontSizeBase: 26
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1324525124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1324525125}
+  - component: {fileID: 1324525128}
+  - component: {fileID: 1324525127}
+  - component: {fileID: 1324525126}
+  m_Layer: 5
+  m_Name: black
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1324525125
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324525124}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0014343262, y: 0.00036621094}
+  m_SizeDelta: {x: 1067.3, y: 599.64}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1324525126
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324525124}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1324525127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324525124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1324525128
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324525124}
+  m_CullTransparentMesh: 1
 --- !u!1 &1382742980
 GameObject:
   m_ObjectHideFlags: 0
@@ -16467,6 +17692,61 @@ Transform:
   - {fileID: 692561039}
   - {fileID: 192764088}
   - {fileID: 420594907}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1389157244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1389157246}
+  - component: {fileID: 1389157245}
+  m_Layer: 0
+  m_Name: Timeline1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &1389157245
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389157244}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 9061657403f082e4489f65eca257f682, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 2347857157363644209, guid: 9061657403f082e4489f65eca257f682, type: 2}
+    value: {fileID: 1918004093}
+  - key: {fileID: 3290503662277859397, guid: 9061657403f082e4489f65eca257f682, type: 2}
+    value: {fileID: 1918004093}
+  - key: {fileID: -2705171246791871555, guid: 9061657403f082e4489f65eca257f682, type: 2}
+    value: {fileID: 245970575}
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &1389157246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389157244}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.03531, y: 0.13524, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1431318754
@@ -16546,6 +17826,84 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
+--- !u!1 &1448221846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1448221847}
+  - component: {fileID: 1448221849}
+  - component: {fileID: 1448221848}
+  m_Layer: 5
+  m_Name: Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1448221847
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448221846}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 959554385}
+  - {fileID: 1308266698}
+  - {fileID: 2049821222}
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1448221848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448221846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1448221849
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448221846}
+  m_CullTransparentMesh: 1
 --- !u!4 &1491504775 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2747423992399475623, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
@@ -16562,6 +17920,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b5dbc8706b416448a047e52e415cb50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1586805070
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1586805071}
+  - component: {fileID: 1586805073}
+  - component: {fileID: 1586805072}
+  m_Layer: 5
+  m_Name: End_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1586805071
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586805070}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1586805072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586805070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 4691522768971480995, guid: d068eb9e1cfa183469737e249f5093f7, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1586805073
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586805070}
+  m_CullTransparentMesh: 1
 --- !u!1 &1655828687
 GameObject:
   m_ObjectHideFlags: 0
@@ -16995,6 +18428,96 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41c3aac4091152b4698a78dc77fd0110, type: 3}
+--- !u!1 &1853744891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1853744892}
+  - component: {fileID: 1853744895}
+  - component: {fileID: 1853744894}
+  - component: {fileID: 1853744893}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1853744892
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853744891}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.53599787, y: 0.53599787, z: 0.53599787}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 316.8, y: -163.79999}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1853744893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853744891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23893ef727e7d6a478af58017883bf35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  height: 13
+  speed: 1.5
+--- !u!114 &1853744894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853744891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -2464108534997709557, guid: 255bec121dfd30b48a7c29f8cb7b811f, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1853744895
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853744891}
+  m_CullTransparentMesh: 1
 --- !u!4 &1891646588 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3690797216815920063, guid: 699065012dcb46a49a0cfe8588fa7102, type: 3}
@@ -17011,6 +18534,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72fbba66a6286e642955a0d311a4fe1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1916808218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1916808220}
+  - component: {fileID: 1916808219}
+  m_Layer: 0
+  m_Name: DialogueManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1916808219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916808218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ef27ac8de07b34c9255484bce20a58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueBox: {fileID: 1448221846}
+  characterImage: {fileID: 959554387}
+  nameText: {fileID: 1308266700}
+  dialogueText: {fileID: 2049821220}
+  typeSpeed: 0.1
+  mouthChangeInterval: 0.125
+--- !u!4 &1916808220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916808218}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 13.882695, y: -13.145844, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1918004089 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5626675105805483269, guid: 8d6fa720df2a2154193ad5ae4344e04f, type: 3}
@@ -17025,6 +18598,11 @@ MonoBehaviour:
 --- !u!4 &1918004092 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6350377537342072783, guid: 8d6fa720df2a2154193ad5ae4344e04f, type: 3}
+  m_PrefabInstance: {fileID: 1740326668}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1918004093 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: -8305801689409952958, guid: 8d6fa720df2a2154193ad5ae4344e04f, type: 3}
   m_PrefabInstance: {fileID: 1740326668}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1958315337
@@ -17062,6 +18640,367 @@ Transform:
   - {fileID: 169193120}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1981048436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1981048437}
+  - component: {fileID: 1981048439}
+  - component: {fileID: 1981048438}
+  m_Layer: 5
+  m_Name: 2P_Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1981048437
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981048436}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0014343262, y: 0.00036621094}
+  m_SizeDelta: {x: 1067.3, y: 600}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1981048438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981048436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 5204477739171077454, guid: 20a725c53edf38f488aed75ad124a90d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1981048439
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981048436}
+  m_CullTransparentMesh: 1
+--- !u!1 &2049821219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2049821222}
+  - component: {fileID: 2049821221}
+  - component: {fileID: 2049821220}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2049821220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049821219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
+  m_sharedMaterial: {fileID: -6940125027695843322, guid: 0440d75e79add5a47979323aca677f1d, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 26
+  m_fontSizeBase: 26
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 25.120667}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &2049821221
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049821219}
+  m_CullTransparentMesh: 1
+--- !u!224 &2049821222
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049821219}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1448221847}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -107.056, y: -234}
+  m_SizeDelta: {x: 328.554, y: 123.868}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2053764689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2053764690}
+  - component: {fileID: 2053764692}
+  - component: {fileID: 2053764691}
+  m_Layer: 5
+  m_Name: End_7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2053764690
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053764689}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.0033, y: -0.0117}
+  m_SizeDelta: {x: 1066.5442, y: 600.0334}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2053764691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053764689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -466759451506346825, guid: 8e70ff06223a86741aac07bfc571175e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2053764692
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053764689}
+  m_CullTransparentMesh: 1
+--- !u!1 &2062839679
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2062839680}
+  - component: {fileID: 2062839682}
+  - component: {fileID: 2062839681}
+  m_Layer: 5
+  m_Name: 1P_Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2062839680
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062839679}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1660738872}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.000061035156, y: -0.000015258789}
+  m_SizeDelta: {x: 1067.3, y: 600}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2062839681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062839679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 2396176846792019847, guid: af39c3cd48862394e9c9968333a3f62e, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2062839682
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062839679}
+  m_CullTransparentMesh: 1
 --- !u!1 &2104382499
 GameObject:
   m_ObjectHideFlags: 0
@@ -17335,8 +19274,1320 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8830008015625943920}
+    - targetCorrespondingSourceObject: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8830008015625943921}
   m_SourcePrefab: {fileID: 100100000, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+--- !u!1 &8830008015625943919 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 946412894994910540, guid: f43a7369f16fb874a8ae9e41acb18b62, type: 3}
+  m_PrefabInstance: {fileID: 8830008015625943918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8830008015625943920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8830008015625943919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8994ca36170288f418c52419c166edb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogues:
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 4596104081258458501, guid: bf7f2a5db294d0d46bbd071a6d64a7d3, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -6426117531481097761, guid: 8ef3e24772d77da42ae070496f3e49af, type: 3}
+    - {fileID: 4747810979122604657, guid: 9b4afa56fc40f4c4b9e5aaf3c51a2e7d, type: 3}
+    - {fileID: -5655424471829513027, guid: 351f2cb6c2562fa408ea51292f16a7ca, type: 3}
+    - {fileID: 7985276002882766294, guid: 2c6a73acd7a284e4dae5b06d0754e384, type: 3}
+    - {fileID: 7888885678142964230, guid: dc8befe11722d23488e12db7d33bb735, type: 3}
+    - {fileID: 4434323802241085513, guid: 8b066926a517fb44c99d9fd3ac4e8f6a, type: 3}
+    - {fileID: -7997435563880020406, guid: 3c955ba3f19e8fe4fb5910e04326568f, type: 3}
+    - {fileID: -766250244881851585, guid: 7af40e9557653814ab58de3532937153, type: 3}
+    - {fileID: -37883788360785679, guid: 799ae14edbdf55d4289ce5fe333da725, type: 3}
+    - {fileID: 1096183833873099727, guid: c27f9e56049c8c846b467dab15044538, type: 3}
+    - {fileID: 4025745881500613675, guid: 992730a841db1784ebc1a891249d2af6, type: 3}
+    - {fileID: 8088900377846862970, guid: 5ded633d8fe469b4bbeeff0244556218, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 4596104081258458501, guid: bf7f2a5db294d0d46bbd071a6d64a7d3, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uC73D..."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uB124\uB85C, \uC774\uC81C \uADF8\uB9CC\uD574."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uC2DC\uB044\uB7EC\uC6CC!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uACA8\uC6B0..."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uACA8\uC6B0 \uB098\uB3C4 \uC0C9\uC744 \uAC00\uC9C8 \uC218 \uC788\uC5C8\uB294\uB370..."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 3903326892026692084, guid: ba450e90f6381a945be808ff06e4caa4, type: 3}
+    - {fileID: 2497354055717964343, guid: ba062ff94a2c7064cb4ebdccc6e9aa2d, type: 3}
+    - {fileID: 4050098716452587331, guid: 600466322315c274abb8a2ecab2be326, type: 3}
+    - {fileID: 7850659477126025195, guid: cddaaf2bd2edcc64595f7c583e43a8da, type: 3}
+    - {fileID: 8313591606752941456, guid: ea5db120884925c4f8aa879fc36197c4, type: 3}
+    - {fileID: 8350848372584424240, guid: 452e7bc8613db4f49acb5376655040ab, type: 3}
+    - {fileID: 8030298076364055726, guid: 3c661da0a33fe51499de5ec24d81cdd4, type: 3}
+    - {fileID: -6659842002920324861, guid: d5cf7ce44e4232242adc65fb3805bb54, type: 3}
+    - {fileID: 2961098631250031983, guid: 23a2c18da33d7bc4490102579fbf9c37, type: 3}
+    - {fileID: 1790106908615775851, guid: 96a53f2a4fb325949934c91ec19e9f5b, type: 3}
+    - {fileID: -2388200667588279466, guid: bef4d4865afae024c96cd41addc23883, type: 3}
+    - {fileID: 5378551805672937126, guid: 9f450a9d24b5608459292c860ef4986c, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uC65C \uC790\uAFB8 \uBC29\uD574\uD558\uB294\uAC70\uC57C!"
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uADF8\uB798\uB3C4 \uBAA8\uB450\uC758 \uC0C9\uC744 \uBE7C\uC557\uC73C\uBA74
+      \uC548 \uB3FC."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 6728608051442990292, guid: 93a02c32b52817f47a7296a9a722f913, type: 3}
+    - {fileID: -1473792860349258381, guid: e796cf4e974f9b94d92f4c7ee80b7e03, type: 3}
+    - {fileID: 465689876785166616, guid: 0b0985283fdcfe745bed67ae673a013a, type: 3}
+    - {fileID: 6831873775216009993, guid: a6d8eebf643ab3b4bbe90846568b3104, type: 3}
+    - {fileID: -6244158674266640043, guid: b4ce148864507d44784c61341602cc88, type: 3}
+    - {fileID: 5101929957156484894, guid: 03b62f04bc7a84849aebdd864f0af863, type: 3}
+    - {fileID: -4017422075554577276, guid: 1769d1822eae64544956f88065229447, type: 3}
+    - {fileID: 7190372861478922836, guid: 5a7d907e42bef4045a023980b79a716d, type: 3}
+    - {fileID: 6889248940486376637, guid: c75cbb16ebccf154393232fc9ba818bd, type: 3}
+    - {fileID: 4498515023224636211, guid: 8655c40d59be73d4894f44b6761ae0b4, type: 3}
+    - {fileID: -5031428073276139755, guid: 520ab456610c42f4a9e786d2cb3eedee, type: 3}
+    - {fileID: -565477609394802846, guid: 3165592cb7d1bcc4a88a220fadd1da23, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uBAA8\uB450\uC758 \uC0C9..."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 3903326892026692084, guid: ba450e90f6381a945be808ff06e4caa4, type: 3}
+    - {fileID: 2497354055717964343, guid: ba062ff94a2c7064cb4ebdccc6e9aa2d, type: 3}
+    - {fileID: 4050098716452587331, guid: 600466322315c274abb8a2ecab2be326, type: 3}
+    - {fileID: 7850659477126025195, guid: cddaaf2bd2edcc64595f7c583e43a8da, type: 3}
+    - {fileID: 8313591606752941456, guid: ea5db120884925c4f8aa879fc36197c4, type: 3}
+    - {fileID: 8350848372584424240, guid: 452e7bc8613db4f49acb5376655040ab, type: 3}
+    - {fileID: 8030298076364055726, guid: 3c661da0a33fe51499de5ec24d81cdd4, type: 3}
+    - {fileID: -6659842002920324861, guid: d5cf7ce44e4232242adc65fb3805bb54, type: 3}
+    - {fileID: 2961098631250031983, guid: 23a2c18da33d7bc4490102579fbf9c37, type: 3}
+    - {fileID: 1790106908615775851, guid: 96a53f2a4fb325949934c91ec19e9f5b, type: 3}
+    - {fileID: -2388200667588279466, guid: bef4d4865afae024c96cd41addc23883, type: 3}
+    - {fileID: 5378551805672937126, guid: 9f450a9d24b5608459292c860ef4986c, type: 3}
+    keepMouthAnimatingAfterTyping: 0
+    afterTypingMouthFrames:
+    - {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB610 \uBAA8\uB450, \uBAA8\uB450, \uBAA8\uB450!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 0
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uADF8\uB7FC \uB098\uB294?!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 0
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB098\uB294 \uC544\uBB34\uAC83\uB3C4 \uAC00\uC9C8 \uC218 \uC5C6\uB294
+      \uAC70\uC57C?"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\u2026\uADF8\uB798"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB0B4\uAC00 \uAC00\uC9C8 \uC218 \uC5C6\uB2E4\uBA74\u2026"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6355437113329841331, guid: 5ab9b1c5541dff54996a133f06fe4eaa, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7443862546020190624, guid: 22b51244aa91ccf44b65501ec060d651, type: 3}
+    - {fileID: -2452779252482436581, guid: 57c4e3f1c82dd124290d92c93853ece3, type: 3}
+    - {fileID: 5656516202631594327, guid: cf6774f8c4d49a34284422666db2ecf3, type: 3}
+    - {fileID: -3245243723225673073, guid: 89ac8605c55f5f5459a771b19e1d2369, type: 3}
+    - {fileID: -4203464394729723664, guid: 58abef5ceaa5fcf44ab56e74b46cb5d3, type: 3}
+    - {fileID: -5964607131545618970, guid: b3f0cfc1d7d94474cb3fd079da5d45fc, type: 3}
+    - {fileID: 4260495404250917223, guid: 86c83b7b899d86946ba0aec493e91baa, type: 3}
+    - {fileID: 7384439285446506986, guid: 7af3a961b346368499db55b24c4fd44f, type: 3}
+    - {fileID: 6168250705212947087, guid: f371ccd97bf9186439ba5665bdd06269, type: 3}
+    - {fileID: -2475507110671476042, guid: fbb3ab56a54205245bb1583fd88229ab, type: 3}
+    - {fileID: -8983514699510104118, guid: 476626ec56335aa4585f9fbe6014576b, type: 3}
+    - {fileID: 6355437113329841331, guid: 5ab9b1c5541dff54996a133f06fe4eaa, type: 3}
+    keepMouthAnimatingAfterTyping: 0
+    afterTypingMouthFrames: []
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uCC28\uB77C\uB9AC \uC804\uBD80 \uC5C6\uC5B4\uC838 \uBC84\uB9AC\uBA74
+      \uB3FC!!"
+  fadeCanvasGroup: {fileID: 1324525126}
+  cutsceneImage: {fileID: 1981048438}
+  fadeDuration: 1
+  dialoguesAfterImage:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB124\uB85C?"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 2038504938652493909, guid: dd615f4f82c0c5a469bbd43d19f6d7d3, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 6020722213434045819, guid: 901b823c0587d224882d8aff99533aff, type: 3}
+    - {fileID: 2912061891048804004, guid: cc1bb7df6106d8446947179a5d79f3a4, type: 3}
+    - {fileID: -1082767987690367045, guid: 1d876d82ec53f5e41b2719a92d3ada51, type: 3}
+    - {fileID: 3879725133557147505, guid: f7a0ce7c2dd9ab54ebd21caaf86e01ac, type: 3}
+    - {fileID: 2748899176820985560, guid: 8777e1ac2edb98a4ea998e2486b6a301, type: 3}
+    - {fileID: 6257281513240656986, guid: fa1d0ce429fb77e4f982ace5063b66aa, type: 3}
+    - {fileID: -7151495910835760110, guid: 7a44c93c5734ccb4db8f9134a04ef2a7, type: 3}
+    - {fileID: -5861011646246651780, guid: a2948168f4f77184f899795952c67771, type: 3}
+    - {fileID: -4535620824498661866, guid: 93ad364bf44e39d4b9db092fe46feb3c, type: 3}
+    - {fileID: -8398667543224725203, guid: 690e9d093f98fc84a816f7e58f19319f, type: 3}
+    - {fileID: -6283743196145503649, guid: bcc6433b3f7d0d644a961800a9bc9635, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 2038504938652493909, guid: dd615f4f82c0c5a469bbd43d19f6d7d3, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uC5ED\uC2DC \uB0B4 \uC6D0\uB798 \uD798\uC774 \uD3B8\uD558\uB2E4\uB2C8\uAE4C."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 9185303769181121645, guid: 7ee122721ccdfcd429749b53e658e92e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 2782487984973261873, guid: 35b2823e5764b0e4892f95b8b6b31750, type: 3}
+    - {fileID: -7015066375425783779, guid: 683e2655c6d5b0543bf11b7f984fc32a, type: 3}
+    - {fileID: -5023388626960716043, guid: 0f6300209ab4491439d6029a807faafe, type: 3}
+    - {fileID: 113013110195256528, guid: cd2ef4ac508a9ac47a2199e0a8e0700b, type: 3}
+    - {fileID: 9190058440336531225, guid: ca345caf0f87cc04198524381eb88c40, type: 3}
+    - {fileID: -4207070222854590551, guid: 4b87925eda7775548969c3aa4bb97a18, type: 3}
+    - {fileID: 7530727660513782467, guid: d8fc03b5277c10a45b12ba54cf3db425, type: 3}
+    - {fileID: 5154141462951454253, guid: 12407847db49a54489ea8d61b8b066e7, type: 3}
+    - {fileID: -3324043265138065657, guid: cbe7ee097af68c04891669ee861e6694, type: 3}
+    - {fileID: -1540508304980266905, guid: 775fd891bbce49c43bc87ab9a0db1015, type: 3}
+    - {fileID: 8451648049472891887, guid: 36ff5c738e7daba4da619c0070c3d4ed, type: 3}
+    - {fileID: -2796239181370335480, guid: e0ef882f051ba894999be0754a840772, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 9185303769181121645, guid: 7ee122721ccdfcd429749b53e658e92e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uBC29\uD574\uD560\uAC70\uC57C? \uC5B4\uB514 \uD55C \uBC88 \uD574\uBD10."
+  dialoguesAfterImageEnded:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uC73D!"
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB124\uB85C\uAC00 \uC0C9\uCC44 \uAD6C\uC2AC\uC744 \uD30C\uAD34\uD558\uB824\uB098\uBD10."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB9C9\uC544\uC57C \uD574!"
+  bossAttack: {fileID: 0}
+  triggerOnlyOnce: 1
+--- !u!114 &8830008015625943921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8830008015625943919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be81a21e738e01d41aa3bf1e4c8cb991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogues:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uCC3E\uC558\uB2E4!"
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uC774\uC81C \uB354\uB294 \uB3C4\uB9DD\uAC08 \uACF3\uB3C4 \uC5C6\uC5B4."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: ......
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB048\uC9C8\uAE30\uAE34."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uC0C9\uCC44 \uAD6C\uC2AC\uC744 \uB3CC\uB824\uC918!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 6728608051442990292, guid: 93a02c32b52817f47a7296a9a722f913, type: 3}
+    - {fileID: -1473792860349258381, guid: e796cf4e974f9b94d92f4c7ee80b7e03, type: 3}
+    - {fileID: 465689876785166616, guid: 0b0985283fdcfe745bed67ae673a013a, type: 3}
+    - {fileID: 6831873775216009993, guid: a6d8eebf643ab3b4bbe90846568b3104, type: 3}
+    - {fileID: -6244158674266640043, guid: b4ce148864507d44784c61341602cc88, type: 3}
+    - {fileID: 5101929957156484894, guid: 03b62f04bc7a84849aebdd864f0af863, type: 3}
+    - {fileID: -4017422075554577276, guid: 1769d1822eae64544956f88065229447, type: 3}
+    - {fileID: 7190372861478922836, guid: 5a7d907e42bef4045a023980b79a716d, type: 3}
+    - {fileID: 6889248940486376637, guid: c75cbb16ebccf154393232fc9ba818bd, type: 3}
+    - {fileID: 4498515023224636211, guid: 8655c40d59be73d4894f44b6761ae0b4, type: 3}
+    - {fileID: -5031428073276139755, guid: 520ab456610c42f4a9e786d2cb3eedee, type: 3}
+    - {fileID: -565477609394802846, guid: 3165592cb7d1bcc4a88a220fadd1da23, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uC2EB\uC5B4."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uADF8\uAC74 \uB124 \uAC83\uC774 \uC544\uB2C8\uC796\uC544!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uC54C\uC544."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uD558\uC9C0\uB9CC \uB3CC\uB824\uC8FC\uBA74..."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB09C \uC544\uBB34\uAC83\uB3C4 \uC5C6\uB294 \uAC80\uC740\uC0C9\uC73C\uB85C
+      \uB3CC\uC544\uAC00\uC796\uC544."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uAC80\uC740\uC0C9\uB3C4 \uC0C9\uC774\uC796\uC544."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uB108\uB2C8\uAE4C \uADF8\uB807\uAC8C \uB9D0\uD560 \uC218 \uC788\uB294\uAC70\uC57C!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 6728608051442990292, guid: 93a02c32b52817f47a7296a9a722f913, type: 3}
+    - {fileID: -1473792860349258381, guid: e796cf4e974f9b94d92f4c7ee80b7e03, type: 3}
+    - {fileID: 465689876785166616, guid: 0b0985283fdcfe745bed67ae673a013a, type: 3}
+    - {fileID: 6831873775216009993, guid: a6d8eebf643ab3b4bbe90846568b3104, type: 3}
+    - {fileID: -6244158674266640043, guid: b4ce148864507d44784c61341602cc88, type: 3}
+    - {fileID: 5101929957156484894, guid: 03b62f04bc7a84849aebdd864f0af863, type: 3}
+    - {fileID: -4017422075554577276, guid: 1769d1822eae64544956f88065229447, type: 3}
+    - {fileID: 7190372861478922836, guid: 5a7d907e42bef4045a023980b79a716d, type: 3}
+    - {fileID: 6889248940486376637, guid: c75cbb16ebccf154393232fc9ba818bd, type: 3}
+    - {fileID: 4498515023224636211, guid: 8655c40d59be73d4894f44b6761ae0b4, type: 3}
+    - {fileID: -5031428073276139755, guid: 520ab456610c42f4a9e786d2cb3eedee, type: 3}
+    - {fileID: -565477609394802846, guid: 3165592cb7d1bcc4a88a220fadd1da23, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB10C \uCC98\uC74C\uBD80\uD130 \uC5EC\uB7EC \uC0C9\uC744 \uAC00\uC9C0\uACE0
+      \uC788\uC5C8\uC73C\uB2C8\uAE4C!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 0}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB098\uB294 \uD56D\uC0C1 \uB2E4\uB978 \uC560\uB4E4\uC774 \uBD80\uB7EC\uC6E0\uC5B4."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -4262784542813515383, guid: 138a86f1cbff6df4eb64873fdcd2e9a8, type: 3}
+    - {fileID: 205615744334348070, guid: 6800194b7a958d3438cc917392daf4d0, type: 3}
+    - {fileID: 7806925686904383825, guid: 8966488ce577ab546b2c5eb63969bbca, type: 3}
+    - {fileID: 1956504552131028931, guid: d0908015072d715438c5959b99aa26f7, type: 3}
+    - {fileID: 8238189235784985684, guid: c628e18ed0f231a4e981b35789ab610f, type: 3}
+    - {fileID: 7622820319443779818, guid: 695a06b82882e4041affeebe7c5e0310, type: 3}
+    - {fileID: -1844010504972667853, guid: 52cce8a3093c24043b91014537ba5be9, type: 3}
+    - {fileID: -8979396565929109772, guid: c330838c96da72d488a60ea74061ab61, type: 3}
+    - {fileID: -3629243674081223553, guid: 3e14272ce82480f48a9b6c92d7257215, type: 3}
+    - {fileID: 6567114548587635189, guid: e829175c9b726624fafd6f18c171b44d, type: 3}
+    - {fileID: -78647465503330812, guid: 51f6fa483fbc5f848a3885791eb2dcd0, type: 3}
+    - {fileID: 4260920775986103784, guid: 3de514f76c2c1d94e91c13dde830741a, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -1223841591381708188, guid: 134303e5fe38d2848ade56771693437d, type: 3}
+    - {fileID: 2682713205128224837, guid: a04494f5e9413034892f2618d163e3ee, type: 3}
+    - {fileID: 5015075221424857554, guid: 9c4cafdf7d8657246b0beeaac67719cd, type: 3}
+    - {fileID: 7895959835785024409, guid: 9ce21e7fe8df198499ff69a3605173b5, type: 3}
+    - {fileID: -1745484124084963735, guid: ffd249a885b6381429068a3ecbcf6991, type: 3}
+    - {fileID: -4326954776100635724, guid: 195c35a1bd504ee45bf15c9d1a335b8c, type: 3}
+    - {fileID: -2602999296876051422, guid: 5aea591ee1479414692256ce01ff20ad, type: 3}
+    - {fileID: -8647913745200052654, guid: 127a2873aa8c8db4e8e18b20752fa8d8, type: 3}
+    - {fileID: 3860391390256263323, guid: 836218f6039b279469a580c0f01bded8, type: 3}
+    - {fileID: -765638472358933296, guid: 47f326a9b53041949b704bd091671233, type: 3}
+    - {fileID: -2602584157842251637, guid: 749e9d7cf52146e4e8858bc917405fef, type: 3}
+    - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB098\uB3C4 \uC800\uB807\uAC8C \uBC1D\uACE0 \uC608\uC05C \uC0C9\uC744
+      \uAC00\uC9C0\uACE0 \uC2F6\uC5C8\uC5B4."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -7767426296941003834, guid: b009c6cbc9f68f247a42c357fcfa70d1, type: 3}
+    - {fileID: 8029317885181747456, guid: c72abbfd4e6e0754595d1d6049b19d3a, type: 3}
+    - {fileID: -8800759344400681367, guid: 78f3f7f889a2c854486a40fd88eea5a7, type: 3}
+    - {fileID: -3125671174710734570, guid: 837c33dc183f56a49b8fdbef1908480c, type: 3}
+    - {fileID: 5394207084686914897, guid: 92bbeb6c817f2bd408db853290dc5072, type: 3}
+    - {fileID: 6182821192969034448, guid: 2f83bb49c24168149a93902452472fd9, type: 3}
+    - {fileID: -1886450388005997280, guid: f941674fbf3f7bb47b85b0bbf6b15f6d, type: 3}
+    - {fileID: 2699653772858730855, guid: 5f89044028421534aa3fc2b14662eff4, type: 3}
+    - {fileID: -7583534285378148153, guid: 0422270721b83aa42b0d7fb561bce725, type: 3}
+    - {fileID: 8219147420164395206, guid: 6057c4ee5317bcf4986b0dc7205bd6de, type: 3}
+    - {fileID: -8161633815653157364, guid: f6995aef8c6401148a064920e573fde5, type: 3}
+    - {fileID: 5164727838944993722, guid: bcd502fcb3b337d438a478bcca962f4c, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uADF8\uB798\uB3C4 \uB2E4\uB978 \uCE5C\uAD6C\uB4E4\uC758 \uC0C9\uC744
+      \uBE7C\uC557\uC73C\uBA74 \uC548\uB3FC!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 3903326892026692084, guid: ba450e90f6381a945be808ff06e4caa4, type: 3}
+    - {fileID: 2497354055717964343, guid: ba062ff94a2c7064cb4ebdccc6e9aa2d, type: 3}
+    - {fileID: 4050098716452587331, guid: 600466322315c274abb8a2ecab2be326, type: 3}
+    - {fileID: 7850659477126025195, guid: cddaaf2bd2edcc64595f7c583e43a8da, type: 3}
+    - {fileID: 8313591606752941456, guid: ea5db120884925c4f8aa879fc36197c4, type: 3}
+    - {fileID: 8350848372584424240, guid: 452e7bc8613db4f49acb5376655040ab, type: 3}
+    - {fileID: 8030298076364055726, guid: 3c661da0a33fe51499de5ec24d81cdd4, type: 3}
+    - {fileID: -6659842002920324861, guid: d5cf7ce44e4232242adc65fb3805bb54, type: 3}
+    - {fileID: 2961098631250031983, guid: 23a2c18da33d7bc4490102579fbf9c37, type: 3}
+    - {fileID: 1790106908615775851, guid: 96a53f2a4fb325949934c91ec19e9f5b, type: 3}
+    - {fileID: -2388200667588279466, guid: bef4d4865afae024c96cd41addc23883, type: 3}
+    - {fileID: 5378551805672937126, guid: 9f450a9d24b5608459292c860ef4986c, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 5694238411456281103, guid: e52a1bec8bb13464292d8132e13ea991, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: "\uB108\uB294 \uC774\uD574 \uBABB\uD574!"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: -2199883794306187814, guid: 36e625d87994a804a89413ff566c4d5f, type: 3}
+    - {fileID: -4027246152146577843, guid: e297391ed7561d74199c13cab56ea172, type: 3}
+    - {fileID: -857754324033506862, guid: 1eca24b64246d214b88ea2145dee3141, type: 3}
+    - {fileID: -4625849862459225016, guid: 6833c97c485b04a41872ede5b579ad41, type: 3}
+    - {fileID: 7234276476128188677, guid: e946dbee964f2d34dbb12acc11d72f55, type: 3}
+    - {fileID: 4750883388101713485, guid: 050c7e9d4d56bbb48b621ee02454ecfb, type: 3}
+    - {fileID: 26900598522049341, guid: 3e9b26a794458c64c85ee2b71ba49037, type: 3}
+    - {fileID: 6950400707213012716, guid: 752b8d5819031794faebd22be7af73cd, type: 3}
+    - {fileID: -139513104467585753, guid: dbae931f13c12ee4ca1ed9c1afab7cd6, type: 3}
+    - {fileID: -2063680260367558933, guid: 5c8bf4e94a656474395d2ef95330ed0e, type: 3}
+    - {fileID: 93160398113674263, guid: 1cd888525f853034a9e38c0b48ab9608, type: 3}
+    - {fileID: 4962282894331754833, guid: c666be12d9f817140ae14cca462e8407, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB098\uB3C4 \uC0C9\uC744 \uAC00\uC9C0\uACE0 \uC2F6\uC5C8\uB2E4\uACE0!"
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uB124\uB85C, \uC7A0\uAE50!"
+  fadeCanvasGroup: {fileID: 1324525126}
+  cutsceneImage: {fileID: 2062839681}
+  fadeDuration: 1
+  dialoguesAfterImage:
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -2633322583037406532, guid: 39e0e16a792fe9f4f88882611e837111, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 1260463728811079046, guid: 66f550ec9d11a7246aa9515913faa23b, type: 3}
+    - {fileID: -6536872155599805110, guid: f31d096e2d3f3b545bdd11c0bb7db8dc, type: 3}
+    - {fileID: -4940578647068745701, guid: 39e691a8a32788243bbadf89f6a6419b, type: 3}
+    - {fileID: 4265446654200836058, guid: 7217741be048b3d4eb736bde9a86836b, type: 3}
+    - {fileID: -5524049704766003218, guid: 7f46d855d51958147a2b3c585782e2d4, type: 3}
+    - {fileID: -5679688948750889566, guid: 6d700921815408542a836e898d05faec, type: 3}
+    - {fileID: 5010773990457672060, guid: f1de7fb6a9fc8ca40b86a2d7cc5d59ad, type: 3}
+    - {fileID: 6113521793029931002, guid: de169381ad8a08d4ea62d5e72025840b, type: 3}
+    - {fileID: -3292530715959995522, guid: baa38ad4a290eca48b7b95fdf4f5b728, type: 3}
+    - {fileID: 8980843787620021832, guid: f790e0b1daec3f944a5a231f416bc584, type: 3}
+    - {fileID: 6056667947432569847, guid: 86adc3a0414ca294d93d1a1f27e82238, type: 3}
+    - {fileID: -2585627292174219998, guid: 9ad1d6b60a8168140a037159256bdba4, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -2633322583037406532, guid: 39e0e16a792fe9f4f88882611e837111, type: 3}
+    objectsToShow:
+    - {fileID: 1853744891}
+    objectsToHide: []
+    text: ...!
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: -2633322583037406532, guid: 39e0e16a792fe9f4f88882611e837111, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 1260463728811079046, guid: 66f550ec9d11a7246aa9515913faa23b, type: 3}
+    - {fileID: -6536872155599805110, guid: f31d096e2d3f3b545bdd11c0bb7db8dc, type: 3}
+    - {fileID: -4940578647068745701, guid: 39e691a8a32788243bbadf89f6a6419b, type: 3}
+    - {fileID: 4265446654200836058, guid: 7217741be048b3d4eb736bde9a86836b, type: 3}
+    - {fileID: -5524049704766003218, guid: 7f46d855d51958147a2b3c585782e2d4, type: 3}
+    - {fileID: -5679688948750889566, guid: 6d700921815408542a836e898d05faec, type: 3}
+    - {fileID: 5010773990457672060, guid: f1de7fb6a9fc8ca40b86a2d7cc5d59ad, type: 3}
+    - {fileID: 6113521793029931002, guid: de169381ad8a08d4ea62d5e72025840b, type: 3}
+    - {fileID: -3292530715959995522, guid: baa38ad4a290eca48b7b95fdf4f5b728, type: 3}
+    - {fileID: 8980843787620021832, guid: f790e0b1daec3f944a5a231f416bc584, type: 3}
+    - {fileID: 6056667947432569847, guid: 86adc3a0414ca294d93d1a1f27e82238, type: 3}
+    - {fileID: -2585627292174219998, guid: 9ad1d6b60a8168140a037159256bdba4, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: -2633322583037406532, guid: 39e0e16a792fe9f4f88882611e837111, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uC774\uAC8C... \uC0C9\uCC44 \uAD6C\uC2AC\uC758 \uD798...?"
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 1890283115506805017, guid: afc0627f5c63c6a42bef1ec4a7f42ce1, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 4967707135554676077, guid: b4ce6847d354e834d868ae2dc0c68f89, type: 3}
+    - {fileID: 6928435478026769564, guid: 73310dfa4e6bbca4e8e316b414c62c58, type: 3}
+    - {fileID: 6008249167908684629, guid: 02b6e54ceb17891499e6314dd8d91ad5, type: 3}
+    - {fileID: -6194308994796593038, guid: a7f7545ebf85e19468c6bb083a061a1e, type: 3}
+    - {fileID: 603147754961008347, guid: d793e3be6b1e4494a86eb98e4bef0617, type: 3}
+    - {fileID: -5525955272542942652, guid: d4fa4de5e0124d64e8ad74e9083c4f55, type: 3}
+    - {fileID: -7185378609377941087, guid: 8c18702f07e37924ca137ffdb416fe80, type: 3}
+    - {fileID: 9042371733890634378, guid: 50dc58d9626850c44ac044523fde2bb3, type: 3}
+    - {fileID: 1842809192351832025, guid: d049151c533ab7349ad22af6a086aee2, type: 3}
+    - {fileID: -8940798478757819163, guid: 7df86a43130d8164dab4c34471ae9d22, type: 3}
+    - {fileID: 5980152702875994633, guid: 029ff41f46426fb4fb98ad91a0d5c9c3, type: 3}
+    - {fileID: -2432201447318886023, guid: bc0dab76dbd6794429087beac6c2f953, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 1890283115506805017, guid: afc0627f5c63c6a42bef1ec4a7f42ce1, type: 3}
+    - {fileID: 5596454007004338512, guid: adeb324ebc7d809439da510b881218a9, type: 3}
+    - {fileID: -7415026501779465800, guid: 9a025db5aed732c45b534389b8b5174d, type: 3}
+    - {fileID: 7140298874268376984, guid: 33e2bc23d057b0e49a4242363523a731, type: 3}
+    - {fileID: -4406972917083824191, guid: 93b021cac0cab554cab349530e99e653, type: 3}
+    - {fileID: -8910615199856746180, guid: c51a874846acd4d4bb79295e9bfcd783, type: 3}
+    - {fileID: 272455964477295354, guid: e69a1cdec9003c4418db9bc017330f1c, type: 3}
+    - {fileID: 4795749223007451464, guid: 997650cebc6e32f42a4f82b812c602a7, type: 3}
+    - {fileID: 5453808851477519379, guid: 5ec101ab574633e459ba7ad4c7d6a1c3, type: 3}
+    - {fileID: -29372395312696325, guid: 7d9246bd0024d6341a64f648d9cdf3de, type: 3}
+    - {fileID: -2035665018339484490, guid: 7003761768998d6449a2af24f55e4f34, type: 3}
+    - {fileID: 8796767034298296645, guid: 9c671c433ea582048a193c6615cf5639, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB108\uAC00 \uB0A0 \uBC29\uD574\uD560 \uC0DD\uAC01\uC774\uB77C\uBA74..."
+  - speakerName: "\uB124\uB85C"
+    characterImage: {fileID: 6007913060312177236, guid: 7ced5f799166b834aa994fb5b3ced0ac, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 497893902230909774, guid: b39bbc5f220d36b429cec9fcb9c62b11, type: 3}
+    - {fileID: -1592938248150136446, guid: 4a9fae449c312624cb7e66ad9abfb274, type: 3}
+    - {fileID: -3619981758006298312, guid: 9a567742422217a43a26d2aba3067dc0, type: 3}
+    - {fileID: 6564831559772532703, guid: b036d3c6d13f1804790613b89dda6048, type: 3}
+    - {fileID: 6519533400223006658, guid: f4de438d19c77bd4e92e1a3c863292ae, type: 3}
+    - {fileID: -5845696399378602217, guid: 50831fba68414394cbed9548291e3b0c, type: 3}
+    - {fileID: 1480778432072930027, guid: e8755448df68ec4439010f0582d35d7b, type: 3}
+    - {fileID: -6558022598736599239, guid: 6582b3f8d33b165438042f2cc13588f5, type: 3}
+    - {fileID: -3742328575723510253, guid: 5176214ffa5960140afb20d5e18d543f, type: 3}
+    - {fileID: 7913187217597070320, guid: 1942322efeb74234e92b6e8da7c6925b, type: 3}
+    - {fileID: 1550038939766014566, guid: 971339fec048a834f8f70510e446bb10, type: 3}
+    - {fileID: -6058972875568025413, guid: 22e1d418377d6804fa177218e213330c, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6007913060312177236, guid: 7ced5f799166b834aa994fb5b3ced0ac, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uB0B4\uAC00 \uC9C1\uC811 \uB110 \uCC98\uB9AC\uD560\uAC70\uC57C."
+  dialoguesAfterImageEnded:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 6921348931107498275, guid: a0dbf8acf9ce21f4f87895d02f9d042f, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 2485183392640415032, guid: 74df4c99992e0d04bbb5666ac0cc059b, type: 3}
+    - {fileID: 1464604714166212629, guid: bb7d19ecd55e51d4982cb62621119320, type: 3}
+    - {fileID: -2024989151504410538, guid: 795a97f3154b12740835f7c3c2409da6, type: 3}
+    - {fileID: 3155880168978646169, guid: 112fe4760e6dc774581e245f547dcef3, type: 3}
+    - {fileID: 3078702547678526334, guid: 89b5e4dfd3bc360489026ec80f3058e7, type: 3}
+    - {fileID: -6660102049205341640, guid: 68b7e8fd91639f54cbc2611a53340d72, type: 3}
+    - {fileID: 9017837301773225616, guid: 7f941b3e8561ef948a55c64c80abc375, type: 3}
+    - {fileID: 4455867564457051159, guid: 295de0a11f794e941b520467ef0ad688, type: 3}
+    - {fileID: 8775544748549961763, guid: da1adf1c29bbea14ea4530439cb0531f, type: 3}
+    - {fileID: 7162624305514300189, guid: e20353c0ed209cc43b5be64db8a8a5a8, type: 3}
+    - {fileID: -587867442724452978, guid: e430f754581518d439a3f1290b1de801, type: 3}
+    - {fileID: 639349683795553890, guid: d4bd8d2673238fe458d54153ed2c30ae, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 6921348931107498275, guid: a0dbf8acf9ce21f4f87895d02f9d042f, type: 3}
+    objectsToShow: []
+    objectsToHide:
+    - {fileID: 1853744891}
+    text: "\uC774\uB7F0... \uC804\uD22C\uB97C \uD53C\uD560 \uC218\uB294 \uC5C6\uACA0\uB124."
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uC9C0\uAE08\uC740 \uD798\uC774 \uB108\uBB34 \uAC15\uD574\uC11C \uC815\uD654\uAC00
+      \uD798\uB4E4 \uAC83 \uAC19\uC544"
+  dialoguesPart4: []
+  dialoguesPart5:
+  - speakerName: "\uCE58\uC988"
+    characterImage: {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    characterMouthClosedImage: {fileID: 0}
+    characterMouthFrames:
+    - {fileID: 7558648552536059813, guid: a7ee08b5b92733344907b398e70437a0, type: 3}
+    - {fileID: 4579882583788496136, guid: 5e368ae6194fd6241ae9c0e2014c85f6, type: 3}
+    - {fileID: -8155356588641992835, guid: f74011b20c8a93e4687447f61c75b717, type: 3}
+    - {fileID: -3077612430683626623, guid: 40eabb7d69ffb8643a1ce8c105183e90, type: 3}
+    - {fileID: -3910666062546854622, guid: d0f0f036468e55644b5606539837a4b6, type: 3}
+    - {fileID: 3952426971767191329, guid: 7dc30509ff2786344a016166d2244b2d, type: 3}
+    - {fileID: -6024190940889501318, guid: 895920a4ad31eb543aa6d32626c52aa1, type: 3}
+    - {fileID: 8342976737641432166, guid: df51352135ffe3948ae13fb9fc3b6ab1, type: 3}
+    - {fileID: 5415364518930504640, guid: 6af460ed27636194788d0f99f545602f, type: 3}
+    - {fileID: 4823572872800142744, guid: 57c542c621fed2a498f1f914b4c174f9, type: 3}
+    - {fileID: -6290735014756093902, guid: 8e7472cb34a2a6246a0fc533c2e6b859, type: 3}
+    - {fileID: 4981845452392462454, guid: f14214f88027cbf4585177ec80c105c1, type: 3}
+    keepMouthAnimatingAfterTyping: 1
+    afterTypingMouthFrames:
+    - {fileID: 7959207368106016463, guid: 35593d52bfb099745a2361fbd69e244e, type: 3}
+    - {fileID: 4946329844451360424, guid: 04852016bb462994aa52f3083f1415fc, type: 3}
+    - {fileID: -6329758278429717497, guid: 40c9c42382730a04ea0d2be5ef259ef7, type: 3}
+    - {fileID: 6658811462816906959, guid: 279a2b33ff8fab84db4d61f94e087143, type: 3}
+    - {fileID: -6943816859241962721, guid: 16a3d7ebf790d6b408a0312268d1a64e, type: 3}
+    - {fileID: 6193489653827623081, guid: 223f03d7562439243add877b30868c83, type: 3}
+    - {fileID: -1988183701117808731, guid: 2cb8fb827850a3e45ad9049f3500fed7, type: 3}
+    - {fileID: 2298058286862451141, guid: d3776ef57ff101946bcdeaa5e9976c59, type: 3}
+    - {fileID: -2826691003548078114, guid: f45080aec2b6edd40ac86fe228359b9c, type: 3}
+    - {fileID: -2823076088672055448, guid: eb6ae1429534cae4c9577164b3231a21, type: 3}
+    - {fileID: -8837500703589257146, guid: d00440c1fd561d94e9230bda4e914daf, type: 3}
+    - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
+    objectsToShow: []
+    objectsToHide: []
+    text: "\uC5ED\uC2DC... \uC800 \uC218\uC815\uB4E4\uC774 \uD798\uC758 \uC6D0\uCC9C\uC774\uB824\uB098?"
+  timelineEvents:
+  - timeline: {fileID: 1389157245}
+    timing: 0
+  - timeline: {fileID: 1269397017}
+    timing: 10
+  dialogueBox: {fileID: 0}
+  dialogueBoxEvents: []
+  cameraTransform: {fileID: 0}
+  shakeDuration: 2
+  shakeStrength: 0.2
+  playOnlyOnce: 1
+  bossAttack: {fileID: 0}
+  bossMove: {fileID: 0}
+  bossPortalSpawner: {fileID: 0}
+  sceneStartFadeInDuration: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -17352,3 +20603,7 @@ SceneRoots:
   - {fileID: 274064533}
   - {fileID: 821562783}
   - {fileID: 463250336}
+  - {fileID: 1389157246}
+  - {fileID: 1269397018}
+  - {fileID: 1916808220}
+  - {fileID: 1041901364}

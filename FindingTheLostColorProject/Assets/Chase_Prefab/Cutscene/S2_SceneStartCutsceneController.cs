@@ -67,9 +67,18 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
     [Tooltip("컷씬 이미지가 보이는 상태에서 출력할 대사 목록. 비어있으면 이미지만 유지되다가 바로 사라짐")]
     public DialogueLine[] dialoguesDuringImage;
 
+    [Header("컷씬 전용 카메라")]
+    [Tooltip("컷씬이 진행되는 동안에만 나타났다가, 컷씬이 끝나면 다시 사라지는 카메라(오브젝트)")]
+    public CutsceneOnlyCamera cutsceneOnlyCamera;
+
+    [Header("컷씬 종료 시 사라지는 오브젝트")]
+    [Tooltip("컷씬이 끝나는 순간 자동으로 비활성화될 오브젝트 목록. 여러 개 등록 가능")]
+    public HideAfterCutscene[] objectsToHideAfterCutscene;
+
     [Header("카메라 흔들림")]
     [Tooltip("흔들릴 카메라. 비워두면 흔들림 관련 함수 호출을 무시함")]
     public Camera targetCamera;
+
     [Tooltip("흔들림 지속 시간(초)")]
     public float shakeDuration = 0.3f;
     [Tooltip("흔들림 강도 (최대 이동 거리)")]
@@ -127,6 +136,13 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
             cameraOriginalLocalPosition = targetCamera.transform.localPosition;
             hasCameraOriginalPosition = true;
         }
+
+        // 씬이 처음 시작될 때는 자동 이동 카메라 오브젝트 자체를 꺼둠.
+        // 컷씬이 완전히 끝난 뒤(EndCutscene)에 다시 켜짐.
+        if (autoCameraMove != null)
+        {
+            autoCameraMove.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
@@ -141,6 +157,12 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
     private IEnumerator RunCutscene()
     {
         LockAllSystems();
+
+        // 컷씬이 시작되는 시점에 컷씬 전용 카메라를 켬
+        if (cutsceneOnlyCamera != null)
+        {
+            cutsceneOnlyCamera.ShowForCutscene();
+        }
 
         // 컷씬 도중 예외가 발생하더라도 플레이어가 영구히 잠긴 채로 남지 않도록,
         // 진행 전체를 try/finally로 감싸서 마지막에 반드시 잠금 해제 및 정리가 실행되게 함
@@ -173,6 +195,29 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
 
     private void EndCutscene()
     {
+        // 컷씬이 끝난 시점에 자동 이동 카메라 오브젝트를 켬.
+        // UnlockAllSystems()보다 먼저 켜야, 켜지는 순간 AutoCameraMove.Start()가 실행되며
+        // 위치를 초기화한 뒤에 movementLocked가 false로 풀리는 순서가 보장됨
+        if (autoCameraMove != null)
+        {
+            autoCameraMove.gameObject.SetActive(true);
+        }
+
+        // 컷씬이 완전히 끝났으므로, 컷씬 전용 카메라는 다시 숨김
+        if (cutsceneOnlyCamera != null)
+        {
+            cutsceneOnlyCamera.HideAfterCutscene();
+        }
+
+        // 컷씬 동안만 보여야 했던 오브젝트들도 이 시점에 함께 숨김
+        if (objectsToHideAfterCutscene != null)
+        {
+            foreach (var obj in objectsToHideAfterCutscene)
+            {
+                if (obj != null) obj.HideNow();
+            }
+        }
+
         UnlockAllSystems();
 
         // 카메라가 흔들리는 중이었다면 강제로 멈추고 원래 위치로 복구
@@ -262,48 +307,55 @@ public class S2_SceneStartCutsceneController : MonoBehaviour
     // ================= 컷씬 이미지 + 이미지 위 대화 =================
     private IEnumerator PlayCutsceneImageSequence()
     {
-        // 이미지 자체가 비어있으면 이미지 단계 전체를 건너뜀 (그 안의 대화도 재생하지 않음)
-        if (cutsceneImage == null) yield break;
+        // 이미지가 비어있으면 화면 암전/이미지 연출만 건너뛰고,
+        // 2번 대화(dialoguesDuringImage)와 그 앞뒤 타임라인 시점은 그대로 재생함
+        bool hasImage = cutsceneImage != null;
 
-        // 1. 화면이 검게 덮임 (fadeCanvasGroup이 있을 때만)
-        if (fadeCanvasGroup != null)
+        if (hasImage)
         {
-            fadeCanvasGroup.gameObject.SetActive(true);
-            fadeCanvasGroup.blocksRaycasts = true;
-            yield return FadeCanvasGroup(fadeCanvasGroup, 0f, 1f, fadeDuration);
-        }
+            // 1. 화면이 검게 덮임 (fadeCanvasGroup이 있을 때만)
+            if (fadeCanvasGroup != null)
+            {
+                fadeCanvasGroup.gameObject.SetActive(true);
+                fadeCanvasGroup.blocksRaycasts = true;
+                yield return FadeCanvasGroup(fadeCanvasGroup, 0f, 1f, fadeDuration);
+            }
 
-        // 2. 이미지 Fade In
-        cutsceneImage.gameObject.SetActive(true);
-        SetImageAlpha(cutsceneImage, 0f);
-        yield return FadeImage(cutsceneImage, 0f, 1f, imageFadeInDuration);
+            // 2. 이미지 Fade In
+            cutsceneImage.gameObject.SetActive(true);
+            SetImageAlpha(cutsceneImage, 0f);
+            yield return FadeImage(cutsceneImage, 0f, 1f, imageFadeInDuration);
 
-        // 3. 이미지 유지
-        if (imageStayDuration > 0f)
-        {
-            yield return new WaitForSeconds(imageStayDuration);
+            // 3. 이미지 유지
+            if (imageStayDuration > 0f)
+            {
+                yield return new WaitForSeconds(imageStayDuration);
+            }
         }
 
         // 2번 대화 이전
         yield return PlayTimelinesForTiming(S2TimelinePlayTiming.BeforeSecondDialogue);
 
-        // 4. 이미지가 보이는 상태에서 대화 (대화창이 이미지 위에 표시됨)
+        // 4. 이미지가 보이는 상태에서 대화 (이미지가 없으면 그냥 현재 화면 위에서 재생)
         yield return PlayDialogueAndWait(dialoguesDuringImage);
 
         // 2번 대화 이후
         yield return PlayTimelinesForTiming(S2TimelinePlayTiming.AfterSecondDialogue);
 
-        // 5. 이미지 Fade Out
-        yield return FadeImage(cutsceneImage, 1f, 0f, imageFadeOutDuration);
-        cutsceneImage.gameObject.SetActive(false);
-
-        // 6. 검은 화면 걷힘 -> 원래 게임 화면 복귀
-        if (fadeCanvasGroup != null)
+        if (hasImage)
         {
-            yield return FadeCanvasGroup(fadeCanvasGroup, 1f, 0f, fadeDuration);
-            fadeCanvasGroup.alpha = 0f;
-            fadeCanvasGroup.blocksRaycasts = false;
-            fadeCanvasGroup.gameObject.SetActive(false);
+            // 5. 이미지 Fade Out
+            yield return FadeImage(cutsceneImage, 1f, 0f, imageFadeOutDuration);
+            cutsceneImage.gameObject.SetActive(false);
+
+            // 6. 검은 화면 걷힘 -> 원래 게임 화면 복귀
+            if (fadeCanvasGroup != null)
+            {
+                yield return FadeCanvasGroup(fadeCanvasGroup, 1f, 0f, fadeDuration);
+                fadeCanvasGroup.alpha = 0f;
+                fadeCanvasGroup.blocksRaycasts = false;
+                fadeCanvasGroup.gameObject.SetActive(false);
+            }
         }
     }
 
