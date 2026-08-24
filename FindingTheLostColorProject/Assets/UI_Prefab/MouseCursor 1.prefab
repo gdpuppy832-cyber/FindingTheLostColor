@@ -64,20 +64,20 @@ MonoBehaviour:
   hotSpot: {x: 16, y: 16}
   mediumDistance: 3.8
   intenseDistance: 6.7
-  trailWidth: 0.15
+  trailWidth: 0.17
   cursorWiggleAngle: 25
   cursorWiggleSpeed: 11
   paintRadius: 0.5
-  closeHealRate: 1.8
-  mediumHealRate: 1.4
-  farHealRate: 1
+  closeHealRate: 2.5
+  mediumHealRate: 1.8
+  farHealRate: 0.5
   attackMode: 1
   chargeDuration: 1
   chargeAttackRadius: 0.7
-  chargeCloseHealAmount: 3.5
+  chargeCloseHealAmount: 4
   chargeMediumHealAmount: 2.5
   chargeFarHealAmount: 1.5
-  chargeAttackHealAmount: 2.5
+  chargeAttackHealAmount: 3
   chargePaintCost: 0.18
   chargeDepletionMultiplier: 0.25
   chargeHoldDepletionMultiplier: 0.25

@@ -5,28 +5,31 @@ using UnityEngine.InputSystem;
 
 public class BossInkCurtain : MonoBehaviour
 {
-    [Header("ÀüÅõ ¼³Á¤")]
-    [Tooltip("ÀÌ ¸Ô¹° Àå¸·ÀÌ ÇÃ·¹ÀÌ¾î¿¡°Ô ÁÖ´Â ÇÇÇØ·® (BossChaseAttack¿¡¼­ Àü´Ş¹ŞÀ½, attackDamage Àç»ç¿ë)")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ ï¿½Ô¹ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ø·ï¿½ (BossChaseAttackï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ş¹ï¿½ï¿½ï¿½, attackDamage ï¿½ï¿½ï¿½ï¿½)")]
     public int attackDamage = 1;
 
-    [Header("¼ö¸í ¼³Á¤")]
-    [Tooltip("»ı¼º ÈÄ ÀÚµ¿À¸·Î »ç¶óÁö±â±îÁöÀÇ ½Ã°£(ÃÊ)")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½)")]
     public float lifetime = 8f;
 
-    [Header("º×Áú ÆÄ±« ¼³Á¤")]
-    [Tooltip("º×(1¹ø ¸ğµå)ÀÌ ÀÌ Àå¸·°ú °ãÃÄ ÀÖ¾î¾ß ÇÏ´Â ´©Àû ½Ã°£(ÃÊ). ÀÌ ½Ã°£À» Ã¤¿ì¸é Àå¸·ÀÌ ÆÄ±«µÊ (requiredPaintOverlapTime Àç»ç¿ë)")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½Ä±ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½(1ï¿½ï¿½ ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½). ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿½ ï¿½å¸·ï¿½ï¿½ ï¿½Ä±ï¿½ï¿½ï¿½ (requiredPaintOverlapTime ï¿½ï¿½ï¿½ï¿½)")]
     
     public float requiredPaintOverlapTime = 1f;
     private float currentPaintOverlapTime = 0f;
     private CursorController cursorController;
     private Collider2D myCollider;
 
-    [Header("º×Áú ÀÌÅ» À¯¿¹ ¼³Á¤")]
-    [Tooltip("º×Áú °ãÄ§ Á¶°ÇÀÌ ±úÁ³À» ¶§, ÀÌ ½Ã°£(ÃÊ) ¾È¿¡ ´Ù½Ã °ãÄ¡¸é ´©Àû ½Ã°£À» ¸®¼ÂÇÏÁö ¾Ê°í ÀÌ¾î°¨. " +
-             "Àå¸·ÀÌ °è¼Ó ÀÌµ¿ÇÏ´Â Ç¥ÀûÀÌ¶ó ¸¶¿ì½º°¡ ¾ÆÁÖ Àá±ñ ¹ş¾î³ªµµ ÁøÇàµµ°¡ ÀüºÎ ³¯¾Æ°¡Áö ¾Êµµ·Ï ÇÏ´Â À¯¿¹ ½Ã°£")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä§ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ ï¿½Ã°ï¿½(ï¿½ï¿½) ï¿½È¿ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½Ì¾. " +
+                 "ï¿½å¸·ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï´ï¿½ Ç¥ï¿½ï¿½ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½àµµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½")]
     public float overlapBreakGraceTime = 0.15f;
-    private float breakTimer = 0f; // Á¶°ÇÀÌ ±úÁø Ã¤·Î °æ°úÇÑ ½Ã°£ (À¯¿¹ ½Ã°£°ú ºñ±³)
+    private float breakTimer = 0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½)
 
+    [Header("Hit Sound")]
+    [Tooltip("ì´ ë¨¹ë¬¼ ì¥ë§‰ì´ í”Œë ˆì´ì–´ì—ê²Œ ë‹¿ì•˜ì„ ë•Œ ì¬ìƒí•  íš¨ê³¼ìŒ")]
+    public AudioClip hitSFX;
     public void Initialize(int damage, float life, float requiredOverlap)
     {
         attackDamage = damage;
@@ -65,7 +68,7 @@ public class BossInkCurtain : MonoBehaviour
 
         if (isOverlapping)
         {
-            // °ãÄ¡°í ÀÖ´Â µ¿¾ÈÀº ÀÌÅ» Å¸ÀÌ¸Ó¸¦ ¸®¼ÂÇÏ°í ´©Àû ½Ã°£À» °è¼Ó ½×À½
+            // ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å» Å¸ï¿½Ì¸Ó¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             breakTimer = 0f;
             currentPaintOverlapTime += Time.deltaTime;
 
@@ -92,6 +95,10 @@ public class BossInkCurtain : MonoBehaviour
         if (player != null)
         {
             player.TakeDamage(attackDamage);
+
+            if (hitSFX != null && SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFXWithOffset(hitSFX, 0f);
+
             Destroy(gameObject);
         }
     }

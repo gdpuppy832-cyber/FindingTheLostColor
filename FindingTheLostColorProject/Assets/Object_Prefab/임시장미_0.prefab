@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.7, y: -3, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 354283401
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6664334922089819559, guid: 6809395f4059dff40b04ac61b134b2a4, type: 3}
+  m_Sprite: {fileID: -2050425019854661113, guid: 2e8b64b10fe03ff44a30d51dd671e339, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -123,17 +123,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.037196994, y: -0.14017022}
+  m_Offset: {x: 0.028902054, y: -0.022601992}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 7.38, y: 3.96}
+    oldSize: {x: 3.1, y: 1.17}
     newSize: {x: 7.38, y: 3.96}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 6.6280355, y: 2.8979423}
+  m_Size: {x: 3.0298576, y: 0.92622966}
   m_EdgeRadius: 0
 --- !u!114 &3488044736397527866
 MonoBehaviour:
@@ -153,5 +153,9 @@ MonoBehaviour:
   attackCooldown: 1
   startColor: {r: 0, g: 0, b: 0, a: 1}
   targetColor: {r: 1, g: 1, b: 1, a: 1}
+  unpurifiedSprite: {fileID: -2050425019854661113, guid: 2e8b64b10fe03ff44a30d51dd671e339, type: 3}
+  purifiedSprite: {fileID: 7389022919334076164, guid: 5d7d6a40e45f27642adf67de87195bf6, type: 3}
+  unpurifiedVisualObj: {fileID: 0}
+  purifiedVisualObj: {fileID: 0}
   hitTextFont: {fileID: 0}
   hitTextFontResourceName: Hakgyoansim Nadeuri TTF L SDF

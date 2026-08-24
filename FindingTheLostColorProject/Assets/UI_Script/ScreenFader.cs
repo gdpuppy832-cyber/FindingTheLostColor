@@ -5,7 +5,24 @@ using System.Collections;
 
 public class ScreenFader : MonoBehaviour
 {
-    public static ScreenFader Instance { get; private set; }
+    private static ScreenFader _instance;
+    public static ScreenFader Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<ScreenFader>();
+                if (_instance == null)
+                {
+                    GameObject faderObj = new GameObject("ScreenFader_Auto");
+                    _instance = faderObj.AddComponent<ScreenFader>();
+                }
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [Header("Fade Settings")]
     [Tooltip("기본 페이드 속도 (초 단위, 기본값: 1.0s)")]
@@ -24,9 +41,9 @@ public class ScreenFader : MonoBehaviour
     private void Awake()
     {
         // DontDestroyOnLoad 싱글톤 유지
-        if (Instance == null)
+        if (_instance == null || _instance == this)
         {
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
             
             // 씬 로드 이벤트 등록
@@ -195,5 +212,65 @@ public class ScreenFader : MonoBehaviour
         }
 
         isFading = false;
+    }
+
+    /// <summary>
+    /// 외부 전용 API: 씬 이동 없이 순수 화면 페이드아웃 코루틴
+    /// </summary>
+    public IEnumerator FadeOutOnly(float duration = 1.0f)
+    {
+        InitializeUI();
+        if (fadeImage != null)
+        {
+            fadeImage.gameObject.SetActive(true);
+            fadeImage.raycastTarget = true;
+
+            float elapsed = 0f;
+            Color baseColor = fadeImage.color;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float alpha = Mathf.Clamp01(elapsed / duration);
+                fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
+                yield return null;
+            }
+            fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
+        }
+        else
+        {
+            yield return new WaitForSecondsRealtime(duration);
+        }
+    }
+
+    /// <summary>
+    /// 외부 전용 API: 씬 이동 없이 순수 화면 페이드인 코루틴
+    /// </summary>
+    public IEnumerator FadeInOnly(float duration = 1.0f)
+    {
+        InitializeUI();
+        if (fadeImage != null)
+        {
+            fadeImage.gameObject.SetActive(true);
+            fadeImage.raycastTarget = true;
+
+            float elapsed = 0f;
+            Color baseColor = fadeImage.color;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float alpha = Mathf.Clamp01(1f - (elapsed / duration));
+                fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, alpha);
+                yield return null;
+            }
+            fadeImage.color = new Color(baseColor.r, baseColor.g, baseColor.b, 0f);
+            fadeImage.raycastTarget = false;
+            fadeImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            yield return new WaitForSecondsRealtime(duration);
+        }
     }
 }

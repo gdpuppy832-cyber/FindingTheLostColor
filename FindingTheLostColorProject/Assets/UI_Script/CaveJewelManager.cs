@@ -67,6 +67,16 @@ public class CaveJewelManager : MonoBehaviour
     [Tooltip("타이틀이 표시되는 패널/오브젝트 (비워두면 텍스트 오브젝트 자체를 켜고 끔)")]
     public GameObject titlePanelObj;
 
+    [Header("동굴 개방 비주얼 연출 (Cave Opening Visual)")]
+    [Tooltip("닫혀있는 동굴 겉면 자식 게임오브젝트 (인스펙터에서 연결)")]
+    public GameObject closedCaveChildObj;
+
+    [Tooltip("닫혀있는 동굴 겉면의 SpriteRenderer (비워두면 closedCaveChildObj에서 자동 검색)")]
+    public SpriteRenderer closedCaveSpriteRenderer;
+
+    [Tooltip("동굴이 열리는(닫힌 이미지가 서서히 투명해지는) 페이드 시간 (초 단위, 기본값: 2.0s)")]
+    public float caveOpenFadeDuration = 2.0f;
+
     private int[] thresholds = new int[6];
     private int totalMonsters = 0;
     private bool isInitialized = false;
@@ -237,9 +247,13 @@ public class CaveJewelManager : MonoBehaviour
         }
         Camera.main.transform.position = targetCamPos;
 
-        // [Phase 3] O초간 목표지점을 보고있기 (그사이에 타이틀 텍스트를 출력 및 해제)
+        // [Phase 3] O초간 목표지점을 보고있기 (그사이에 타이틀 텍스트 출력 & 닫힌 동굴 자식 오브젝트 서서히 투명화)
         SetTitleText("모든 고양이를\n정화했다!");
         SetTitleActive(true);
+
+        // 닫힌 동굴 자식 오브젝트를 서서히 투명화시켜 동굴이 열리는 연출 실행
+        StartCoroutine(FadeOutClosedCaveRoutine(caveOpenFadeDuration));
+
         yield return new WaitForSeconds(oSeconds);
         SetTitleActive(false);
 
@@ -299,5 +313,117 @@ public class CaveJewelManager : MonoBehaviour
             if (titleTmp3DText != null) titleTmp3DText.gameObject.SetActive(active);
             if (titleLegacyTextMesh != null) titleLegacyTextMesh.gameObject.SetActive(active);
         }
+    }
+
+    /// <summary>
+    /// 닫혀있는 동굴 자식 오브젝트(SpriteRenderer / Image / CanvasGroup)를 서서히 투명화(Fade Out)시켜 동굴이 열리는 연출을 만듭니다.
+    /// </summary>
+    private IEnumerator FadeOutClosedCaveRoutine(float duration)
+    {
+        // 1. 대상 오브젝트 유효성 검사 및 자동 검색 백업
+        if (closedCaveChildObj == null && closedCaveSpriteRenderer != null)
+        {
+            closedCaveChildObj = closedCaveSpriteRenderer.gameObject;
+        }
+
+        if (closedCaveChildObj == null && cameraTarget != null)
+        {
+            // cameraTarget 또는 하위에서 닫힌 동굴 관련 자식 탐색
+            CaveEntrance entrance = cameraTarget.GetComponent<CaveEntrance>() ?? FindFirstObjectByType<CaveEntrance>();
+            if (entrance != null && entrance.closedCaveChildObj != null)
+            {
+                closedCaveChildObj = entrance.closedCaveChildObj;
+            }
+            else
+            {
+                Transform foundChild = cameraTarget.Find("closed") ?? cameraTarget.Find("Closed") ??
+                                      cameraTarget.Find("닫힘") ?? cameraTarget.Find("닫힌동굴") ??
+                                      cameraTarget.Find("Door") ?? cameraTarget.Find("door");
+                if (foundChild != null)
+                {
+                    closedCaveChildObj = foundChild.gameObject;
+                }
+            }
+        }
+
+        if (closedCaveChildObj == null)
+        {
+            Debug.LogWarning("[CaveJewelManager] 닫힌 동굴 자식 오브젝트(closedCaveChildObj)를 찾을 수 없어 투명화 연출을 건너뜁니다. 인스펙터에서 연결해주세요.");
+            yield break;
+        }
+
+        // 2. 투명도를 제어할 컴포넌트 목록 수집
+        SpriteRenderer[] srs = closedCaveChildObj.GetComponentsInChildren<SpriteRenderer>(true);
+        Image[] imgs = closedCaveChildObj.GetComponentsInChildren<Image>(true);
+        CanvasGroup cg = closedCaveChildObj.GetComponent<CanvasGroup>();
+
+        // 초기 알파값 저장
+        float[] initialSrAlphas = new float[srs.Length];
+        for (int i = 0; i < srs.Length; i++)
+        {
+            initialSrAlphas[i] = srs[i] != null ? srs[i].color.a : 1f;
+        }
+
+        float[] initialImgAlphas = new float[imgs.Length];
+        for (int i = 0; i < imgs.Length; i++)
+        {
+            initialImgAlphas[i] = imgs[i] != null ? imgs[i].color.a : 1f;
+        }
+
+        float initialCgAlpha = cg != null ? cg.alpha : 1f;
+
+        // 3. 점진적 알파 감소 (Smooth Fade Out)
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            t = Mathf.SmoothStep(0f, 1f, t); // 부드러운 가감속 보간
+
+            // SpriteRenderer 페이드
+            for (int i = 0; i < srs.Length; i++)
+            {
+                if (srs[i] != null)
+                {
+                    Color c = srs[i].color;
+                    c.a = Mathf.Lerp(initialSrAlphas[i], 0f, t);
+                    srs[i].color = c;
+                }
+            }
+
+            // Image 페이드
+            for (int i = 0; i < imgs.Length; i++)
+            {
+                if (imgs[i] != null)
+                {
+                    Color c = imgs[i].color;
+                    c.a = Mathf.Lerp(initialImgAlphas[i], 0f, t);
+                    imgs[i].color = c;
+                }
+            }
+
+            // CanvasGroup 페이드
+            if (cg != null)
+            {
+                cg.alpha = Mathf.Lerp(initialCgAlpha, 0f, t);
+            }
+
+            yield return null;
+        }
+
+        // 4. 완전히 투명해진 후 완전 비활성화
+        for (int i = 0; i < srs.Length; i++)
+        {
+            if (srs[i] != null)
+            {
+                Color c = srs[i].color;
+                c.a = 0f;
+                srs[i].color = c;
+            }
+        }
+        if (cg != null) cg.alpha = 0f;
+
+        closedCaveChildObj.SetActive(false);
+        Debug.Log("[CaveJewelManager] 닫힌 동굴 자식 오브젝트 투명화 완료 및 비활성화됨 (동굴 열림).");
     }
 }

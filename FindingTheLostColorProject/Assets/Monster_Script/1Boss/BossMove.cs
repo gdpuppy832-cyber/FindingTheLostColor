@@ -2,17 +2,17 @@ using UnityEngine;
 public class BossMove : MonoBehaviour
 {
     // After
-    [Header("YÃà Áøµ¿ ¼³Á¤ (±âº» ¸ðµå)")]
+    [Header("Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½âº» ï¿½ï¿½ï¿½)")]
     public float amplitude = 1f;
     public float speed = 1f;
     public float directionChangePauseDuration = 1f; 
-    [Header("¹«ÇÑ´ë(¡Ä) ÀÌµ¿ ¼³Á¤ (Ã¼·Â Àý¹Ý ÀÌ»ó ½Ã)")]
+    [Header("ï¿½ï¿½ï¿½Ñ´ï¿½(ï¿½ï¿½) ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ (Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½ï¿½)")]
     public float infinityWidthX = 1.5f;
     public float infinityHeightY = 1f;
-    public float infinitySpeed = 1.5f; // ÇöÀç ¹Ì»ç¿ë(È£È¯¿ëÀ¸·Î ³²°ÜµÒ)
-    public float blueArcDuration = 1f;  // ±³Â÷Á¡ -> ³ë¶õ ÁöÁ¡(ºü¸¥ ±¸°£) ¼Ò¿ä ½Ã°£
-    public float redArcDuration = 2f;   // ³ë¶õ ÁöÁ¡ -> ±³Â÷Á¡(´À¸° ±¸°£) ¼Ò¿ä ½Ã°£
-    public float tipPauseDuration = 1f; // ³ë¶õ ÁöÁ¡(¹Ù±ùÂÊ ³¡) µµ´Þ ½Ã Á¤Áö ½Ã°£
+    public float infinitySpeed = 1.5f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½(È£È¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Üµï¿½)
+    public float blueArcDuration = 1f;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½Ò¿ï¿½ ï¿½Ã°ï¿½
+    public float redArcDuration = 2f;   // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½Ò¿ï¿½ ï¿½Ã°ï¿½
+    public float tipPauseDuration = 1f; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ù±ï¿½ï¿½ï¿½ ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
     
     Vector3 basePos;
     float timeOffset;
@@ -29,9 +29,18 @@ public class BossMove : MonoBehaviour
     float infPauseTimer = 0f;
     Rigidbody2D rb;
 
-    // ²°´Ù ÄÑÁú ¶§(°ø°Ý Á¤Áö, Å©¸®½ºÅ» ÆÄ±«·Î ÀÎÇÑ °­Á¦ ºñÈ°¼ºÈ­ µî) ½Ã°£ Ãà±îÁö °°ÀÌ ¸®¼ÂÇÏ±â À§ÇÑ ±âÁØ ½Ã°¢.
-    // ÀÌ°Ô ¾øÀ¸¸é ²¨Á®ÀÖ´Â µ¿¾È¿¡µµ Time.timeÀº °è¼Ó Èê·¯¼­, ´Ù½Ã ÄÑÁö´Â ¼ø°£
-    // sin(t) °ªÀÌ ÀÌÀü°ú µ¿¶³¾îÁø °ªÀ¸·Î Æ¢¸ç À§Ä¡°¡ ¼ø°£ÀÌµ¿ÇÏ´Â ¹®Á¦°¡ ÀÖ¾úÀ½
+    [Header("ì”¬ ì‹œìž‘ ëŒ€í™” ìž ê¸ˆ")]
+    public bool movementLocked = true;
+
+    // ìž ê¸ˆ ì¤‘ ì¤‘ë ¥ìœ¼ë¡œ ë–¨ì–´ì§€ëŠ” ê²ƒì„ ë§‰ê¸° ìœ„í•´ ìºì‹± (Rigidbody2D.enabledëŠ” ì ˆëŒ€ ê±´ë“œë¦¬ì§€ ì•ŠìŒ)
+    float cachedGravityScale;
+    RigidbodyType2D cachedBodyType;
+    bool hasCachedRbState = false;
+    Vector3 lockedPosition;
+
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, Å©ï¿½ï¿½ï¿½ï¿½Å» ï¿½Ä±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½) ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½.
+    // ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½È¿ï¿½ï¿½ï¿½ Time.timeï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ê·¯ï¿½ï¿½, ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // sin(t) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ¢ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½
     float motionClockStart;
 
     void Start()
@@ -45,10 +54,17 @@ public class BossMove : MonoBehaviour
         prevCos = Mathf.Cos(timeOffset);
         yBobPaused = false;
         yBobPauseTimer = 0f;
+
+        // movementLockedê°€ Inspectorì—ì„œ ê¸°ë³¸ trueì¸ ìƒíƒœë¡œ ì”¬ì´ ì‹œìž‘ë˜ë¯€ë¡œ,
+        // ì‹œìž‘ ì‹œì ì— ê³§ë°”ë¡œ ì¤‘ë ¥ì„ ì°¨ë‹¨í•´ ëŒ€í™” ì¤‘ ë‚™í•˜ë¥¼ ë°©ì§€
+        if (movementLocked)
+        {
+            SetMovementLocked(true);
+        }
     }
     void OnEnable()
     {
-        // ±âÁØ À§Ä¡¿Í ½Ã°£ ÃàÀ» ÇÔ²² ¸®¼Â -> Àç°³ ½Ã offsetÀÌ 0 ±ÙÃ³¿¡¼­ ´Ù½Ã ½ÃÀÛµÇ¾î ¾È Æ¦
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ç°³ ï¿½ï¿½ offsetï¿½ï¿½ 0 ï¿½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ÛµÇ¾ï¿½ ï¿½ï¿½ Æ¦
         basePos = transform.position;
         motionClockStart = Time.time;
 
@@ -62,6 +78,51 @@ public class BossMove : MonoBehaviour
         infPaused = false;
         infPauseTimer = 0f;
     }
+    public void SetMovementLocked(bool locked)
+    {
+        movementLocked = locked;
+
+        if (rb == null) return;
+
+        if (locked)
+        {
+            // ìž ê·¸ëŠ” ìˆœê°„ì˜ ìœ„ì¹˜ë¥¼ ê³ ì • ê¸°ì¤€ì ìœ¼ë¡œ ì €ìž¥
+            lockedPosition = transform.position;
+
+            if (!hasCachedRbState)
+            {
+                cachedGravityScale = rb.gravityScale;
+                cachedBodyType = rb.bodyType;
+                hasCachedRbState = true;
+            }
+
+            // Rigidbody2D.enabledëŠ” ê·¸ëŒ€ë¡œ true ìœ ì§€. ì¤‘ë ¥ë§Œ 0ìœ¼ë¡œ êº¼ì„œ ìžìœ ë‚™í•˜ ë°©ì§€
+            rb.gravityScale = 0f;
+            rb.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            // ìž ê¸ˆ í•´ì œ ì‹œ ì›ëž˜ ë¬¼ë¦¬ ìƒíƒœë¡œ ë³µêµ¬
+            if (hasCachedRbState)
+            {
+                rb.gravityScale = cachedGravityScale;
+                rb.bodyType = cachedBodyType;
+            }
+
+            // í•´ì œ ì¦‰ì‹œ basePos/íƒ€ì´ë¨¸ë¥¼ í˜„ìž¬ ìœ„ì¹˜ ê¸°ì¤€ìœ¼ë¡œ ìž¬ì‹œìž‘í•´ì„œ ìˆœê°„ì´ë™/ê¸‰ê°€ì† ë°©ì§€
+            basePos = transform.position;
+            motionClockStart = Time.time;
+            yBobPhase = 0f;
+            prevCos = Mathf.Cos(timeOffset);
+            yBobPaused = false;
+            yBobPauseTimer = 0f;
+            infSegmentIndex = 0;
+            infSegmentTimer = 0f;
+            infPaused = false;
+            infPauseTimer = 0f;
+        }
+    }
+
     public void SetInfinityMode(bool enable)
     {
         if (infinityMode == enable) return;
@@ -76,6 +137,18 @@ public class BossMove : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (movementLocked)
+        {
+            // Rigidbody2DëŠ” ì ˆëŒ€ ë„ì§€ ì•Šë˜, ì¤‘ë ¥ìœ¼ë¡œ ì•„ëž˜ë¡œ ë–¨ì–´ì§€ì§€ ì•Šë„ë¡
+            // ìž ê¸´ ìˆœê°„ì˜ ìœ„ì¹˜ì— ë§¤ í”„ë ˆìž„ ê³ ì •ì‹œì¼œ ë‘ 
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.MovePosition(lockedPosition);
+            }
+            return;
+        }
+
         if (infinityMode)
             MoveInfinity();
         else
@@ -83,7 +156,7 @@ public class BossMove : MonoBehaviour
     }
     void MoveYBob()
     {
-        // ¹æÇâ ÀüÈ¯À¸·Î ÀÎÇØ ¸ØÃçÀÖ´Â µ¿¾È: À§»óÀ» ±×´ë·Î µÎ°í ÇöÀç À§Ä¡¸¸ À¯Áö
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½Î°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (yBobPaused)
         {
             yBobPauseTimer += Time.fixedDeltaTime;
@@ -102,7 +175,7 @@ public class BossMove : MonoBehaviour
         float angle = yBobPhase + timeOffset;
         float offsetY = Mathf.Sin(angle) * amplitude;
 
-        // cos ºÎÈ£°¡ ¹Ù²î´Â ¼ø°£ = sinÀÇ ±Ø°ª(¹æÇâ ÀüÈ¯ ÁöÁ¡) -> ÀÏ½ÃÁ¤Áö ½ÃÀÛ
+        // cos ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ = sinï¿½ï¿½ ï¿½Ø°ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½) -> ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         float currentCos = Mathf.Cos(angle);
         if (currentCos * prevCos < 0f)
         {
@@ -118,11 +191,11 @@ public class BossMove : MonoBehaviour
     {
         GetInfinitySegment(infSegmentIndex, out float tStart, out float tEnd, out float baseDuration, out bool pauseAfter);
 
-        // infinitySpeed´Â ÀüÃ¼ ÀÌµ¿ ¼Óµµ ¹èÀ²·Î »ç¿ë: °ªÀÌ Å¬¼ö·Ï ±¸°£ ¼Ò¿ä ½Ã°£ÀÌ Âª¾ÆÁ® ´õ »¡¸® ¿òÁ÷ÀÓ
+        // infinitySpeedï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½Ìµï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¿ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ Âªï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         float safeSpeed = Mathf.Max(0.01f, infinitySpeed);
         float duration = baseDuration / safeSpeed;
 
-        // ³ë¶õ ÁöÁ¡(±¸°£ ³¡)¿¡¼­ Á¤Áö Áß
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         if (infPaused)
         {
             infPauseTimer += Time.fixedDeltaTime;
@@ -139,12 +212,12 @@ public class BossMove : MonoBehaviour
         }
 
  
-        // ±¸°£ ÁøÇà (ÆÄ¶û=ºü¸§/»¡°­=´À¸²Àº duration Â÷ÀÌ·Î Ç¥ÇöµÊ)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ä¶ï¿½=ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ duration ï¿½ï¿½ï¿½Ì·ï¿½ Ç¥ï¿½ï¿½ï¿½ï¿½)
         infSegmentTimer += Time.fixedDeltaTime;
         float frac = Mathf.Clamp01(infSegmentTimer / duration);
 
-        // pauseAfter == true (ÆÄ¶û ±¸°£: ±³Â÷Á¡->³ë¶õÁ¡) -> ³¡(³ë¶õÁ¡)¿¡¼­¸¸ ease-out
-        // pauseAfter == false (»¡°­ ±¸°£: ³ë¶õÁ¡->±³Â÷Á¡) -> ½ÃÀÛ(³ë¶õÁ¡)¿¡¼­¸¸ ease-in
+        // pauseAfter == true (ï¿½Ä¶ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½ï¿½ï¿½ï¿½) -> ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ease-out
+        // pauseAfter == false (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½) -> ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ease-in
         float easedFrac = pauseAfter ? EaseOutEnd(frac) : EaseInStart(frac);
         float t = Mathf.Lerp(tStart, tEnd, easedFrac);
         ApplyInfinityPosition(t);
@@ -154,53 +227,53 @@ public class BossMove : MonoBehaviour
             infSegmentTimer = 0f;
             if (pauseAfter)
             {
-                // ³ë¶õ ÁöÁ¡ µµ´Þ -> Á¤Áö ½ÃÀÛ
+                // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 infPaused = true;
                 infPauseTimer = 0f;
             }
             else
             {
-                // ±³Â÷Á¡ Åë°ú -> ¹Ù·Î ´ÙÀ½ ±¸°£(¹Ý´ëÂÊ ·çÇÁ)À¸·Î ¼øÈ¯
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -> ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ý´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
                 infSegmentIndex = (infSegmentIndex + 1) % 4;
             }
         }
     }
-    // ³¡ºÎºÐ(1 ±ÙÃ³)¿¡¼­¸¸ °¨¼Ó: ½ÃÀÛÀº µî¼Ó, ³¡¿¡¼­ ¼­¼­È÷ 0À¸·Î -> ³ë¶õ ÁöÁ¡ ÁøÀÔ¿ë
+    // ï¿½ï¿½ï¿½Îºï¿½(1 ï¿½ï¿½Ã³)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô¿ï¿½
     float EaseOutEnd(float x)
     {
         return 1f - (1f - x) * (1f - x);
     }
 
-    // ½ÃÀÛºÎºÐ(0 ±ÙÃ³)¿¡¼­¸¸ °¡¼Ó: ½ÃÀÛÀº 0¿¡¼­ ¼­¼­È÷, ³¡Àº µî¼ÓÀ¸·Î µµ´Þ -> ³ë¶õ ÁöÁ¡ ÀÌÅ»¿ë
+    // ï¿½ï¿½ï¿½ÛºÎºï¿½(0 ï¿½ï¿½Ã³)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å»ï¿½ï¿½
     float EaseInStart(float x)
     {
         return x * x;
     }
-    // segmentIndex(0~3)¿¡ µû¸¥ °¢µµ ±¸°£/¼Ò¿ä½Ã°£/Á¤Áö¿©ºÎ Á¤ÀÇ
+    // segmentIndex(0~3)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½Ò¿ï¿½Ã°ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void GetInfinitySegment(int index, out float tStart, out float tEnd, out float duration, out bool pauseAfter)
     {
         switch (index % 4)
         {
-            case 0: // ±³Â÷Á¡ -> ¿À¸¥ÂÊ ³ë¶õ ÁöÁ¡ (ÆÄ¶û, ºü¸§)
+            case 0: // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ä¶ï¿½, ï¿½ï¿½ï¿½ï¿½)
                 tStart = 0f; tEnd = Mathf.PI * 0.5f;
                 duration = blueArcDuration; pauseAfter = true;
                 break;
-            case 1: // ¿À¸¥ÂÊ ³ë¶õ ÁöÁ¡ -> ±³Â÷Á¡ (»¡°­, ´À¸²)
+            case 1: // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½)
                 tStart = Mathf.PI * 0.5f; tEnd = Mathf.PI;
                 duration = redArcDuration; pauseAfter = false;
                 break;
-            case 2: // ±³Â÷Á¡ -> ¿ÞÂÊ ³ë¶õ ÁöÁ¡ (ÆÄ¶û, ºü¸§)
+            case 2: // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ä¶ï¿½, ï¿½ï¿½ï¿½ï¿½)
                 tStart = Mathf.PI; tEnd = Mathf.PI * 1.5f;
                 duration = blueArcDuration; pauseAfter = true;
                 break;
-            default: // ¿ÞÂÊ ³ë¶õ ÁöÁ¡ -> ±³Â÷Á¡ (»¡°­, ´À¸²)
+            default: // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½)
                 tStart = Mathf.PI * 1.5f; tEnd = Mathf.PI * 2f;
                 duration = redArcDuration; pauseAfter = false;
                 break;
         }
     }
 
-    // »çÀÎÇÔ¼ö ±â¹Ý ¡ÄÀÚ À§Ä¡ °è»ê (±âÁ¸ °ø½Ä Àç»ç¿ë)
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     void ApplyInfinityPosition(float t)
     {
         float offsetX = Mathf.Sin(t) * infinityWidthX;
