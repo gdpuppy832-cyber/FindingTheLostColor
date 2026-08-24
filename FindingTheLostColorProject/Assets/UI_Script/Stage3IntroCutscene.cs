@@ -81,8 +81,8 @@ public class Stage3IntroCutscene : MonoBehaviour
     [Tooltip("네로가 B 지점에 도착한 뒤 사라지기 전 잠깐 멈추는 시간 (초 단위)")]
     public float delayBeforeNeroFade = 0.05f;
 
-    [Tooltip("카메라가 플레이어로 돌아오는 시간 (초 단위, 기본값: 1.0s)")]
-    public float cameraPanBackDuration = 1.0f;
+    [Tooltip("카메라가 플레이어에게 돌아오는 시간 (초 단위, 기본값: 3.0s - 천천히 돌아오도록 보정)")]
+    public float cameraPanBackDuration = 3.0f;
 
     [Tooltip("카메라 복귀 완료 후 두 번째 대사가 출력되기까지의 대기 시간 (초)")]
     public float delayBeforeSecondDialogue = 0.3f;
@@ -157,8 +157,10 @@ public class Stage3IntroCutscene : MonoBehaviour
     private IEnumerator PlayStage3CutsceneSequence()
     {
         // -------------------------------------------------------------
-        // [0단계] 시작 프레임 안전 대기 및 위치 초기화
+        // [0단계] 시작 딜레이 또는 카메라 위치 초기화
         // -------------------------------------------------------------
+        // 배경을 카메라에 1:1로 고정하여 컷씬 고속 이동 중 배경 밀림/가려짐 방지
+        ParallaxBackground.lockToCamera = true;
         yield return null;
 
         // -------------------------------------------------------------
@@ -389,6 +391,9 @@ public class Stage3IntroCutscene : MonoBehaviour
 
     private void RestoreCutsceneState()
     {
+        // 컷씬이 끝났으므로 배경 1:1 고정 해제 및 원래 패럴랙스 지연 Lerp 복구
+        ParallaxBackground.lockToCamera = false;
+
         if (cachedCameraFollow != null)
         {
             cachedCameraFollow.enabled = true;

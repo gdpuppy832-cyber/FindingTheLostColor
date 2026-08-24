@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class ParallaxBackground : MonoBehaviour
 {
-    [Tooltip("Áö¿¬À² (0ÀÏ¼ö·Ï Ä«¸Ş¶ó¿Í µ¿ÀÏ, ³ôÀ»¼ö·Ï ´õ ´Ê°Ô µû¶ó¿È)")]
+    [Tooltip("ì§€ì—°ìœ¨ (0ì¼ìˆ˜ë¡ ì¹´ë©”ë¼ì™€ ë™ì¼, ë†’ì„ìˆ˜ë¡ ë” ëŠ¦ê²Œ ë”°ë¼ì˜´)")]
     [Range(0f, 0.95f)]
     public float smoothFactor = 0.5f;
+
+    public static bool lockToCamera = false; // ì»·ì”¬ ë“± ê³ ì† ì¹´ë©”ë¼ ì´ë™ ì‹œ 1:1 ë™ê¸°í™”ìš© í”Œë˜ê·¸
 
     private Transform cameraTransform;
 
@@ -15,12 +17,20 @@ public class ParallaxBackground : MonoBehaviour
 
     void LateUpdate()
     {
-        // 1. Ä«¸Ş¶óÀÇ ¸ñÇ¥ À§Ä¡(ZÃà 0 °íÁ¤)
+        // 1. ì¹´ë©”ë¼ì˜ ëª©í‘œ ìœ„ì¹˜(Zì¶• 0 ê³ ì •)
         Vector3 targetPos = new Vector3(cameraTransform.position.x, cameraTransform.position.y, 0);
 
-        // 2. ÇöÀç ¹è°æ À§Ä¡¿Í Ä«¸Ş¶ó À§Ä¡ »çÀÌ¸¦ ºÎµå·´°Ô º¸°£ (Lerp)
-        // 1 - smoothFactor¸¦ Àû¿ëÇÏ¿© smoothFactor°¡ ³ôÀ»¼ö·Ï(Áö¿¬À²ÀÌ ³ôÀ»¼ö·Ï) 
-        // Ä«¸Ş¶ó À§Ä¡¿¡ µµ´ŞÇÏ´Â ¼Óµµ°¡ ´À·ÁÁı´Ï´Ù.
-        transform.position = Vector3.Lerp(transform.position, targetPos, 1f - smoothFactor);
+        if (lockToCamera)
+        {
+            // ì»·ì”¬ ì‘ë™ ì‹œì—ëŠ” Lerp ì—°ì‚° ì—†ì´ ì¹´ë©”ë¼ë¥¼ 1:1ë¡œ ì¦‰ì‹œ ë°€ì°© ì¶”ì 
+            transform.position = targetPos;
+        }
+        else
+        {
+            // 2. í˜„ì¬ ë°°ê²½ ìœ„ì¹˜ì™€ ì¹´ë©”ë¼ ìœ„ì¹˜ ì‚¬ì´ë¥¼ ë¶€ë“œëŸ½ê²Œ ë³´ê°„ (Lerp)
+            // 1 - smoothFactorë¥¼ ì ìš©í•˜ì—¬ smoothFactorê°€ ë†’ì„ìˆ˜ë¡(ì§€ì—°ìœ¨ì´ ë†’ì„ìˆ˜ë¡) 
+            // ì¹´ë©”ë¼ ìœ„ì¹˜ì— ë„ë‹¬í•˜ëŠ” ì†ë„ê°€ ëŠë ¤ì§‘ë‹ˆë‹¤.
+            transform.position = Vector3.Lerp(transform.position, targetPos, 1f - smoothFactor);
+        }
     }
 }
