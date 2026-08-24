@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -25,6 +25,13 @@ public class DialogueLine
     [Tooltip("keepMouthAnimatingAfterTyping이 켜져 있을 때, 타이핑 완료 후~다음 대사 전까지 반복 재생할 전용 프레임들. 비워두면 characterMouthFrames를 그대로 재사용함")]
     public Sprite[] afterTypingMouthFrames;
 
+    [Header("오브젝트 표시/숨김")]
+    [Tooltip("이 대사가 시작되는 순간 활성화(보이게)할 오브젝트들")]
+    public GameObject[] objectsToShow;
+
+    [Tooltip("이 대사가 시작되는 순간 비활성화(숨기게)할 오브젝트들")]
+    public GameObject[] objectsToHide;
+
     [Header("대사")]
     [TextArea(2, 4)]
     public string text;
@@ -36,7 +43,19 @@ public class DialogueLine
 /// </summary>
 public class DialogueManager : MonoBehaviour
 {
-    public static DialogueManager Instance { get; private set; }
+    private static DialogueManager _instance;
+    public static DialogueManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<DialogueManager>();
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
 
     [Header("대화 UI")]
     [Tooltip("대화창 전체 오브젝트 (대화 시작 시 활성화, 종료 시 비활성화)")]
@@ -67,18 +86,23 @@ public class DialogueManager : MonoBehaviour
 
     private bool isTyping = false;
     private bool isDialogueActive = false;
+    public bool IsDialogueActive => isDialogueActive;
     private bool keepMouthAnimating = false;
     private System.Action onDialogueEndedCallback; // 이 대화가 끝났을 때 호출할 콜백 (예: 보스 2페이즈 시작)
+
+    // 이번 StartDialogue~EndDialogue 세션 동안 objectsToShow로 켠 오브젝트들을 추적.
+    // 이 목록에 남아있는 오브젝트는 대화가 끝날 때(EndDialogue) 자동으로 다시 꺼짐.
+    private System.Collections.Generic.List<GameObject> shownObjectsThisSession = new System.Collections.Generic.List<GameObject>();
 
     void Awake()
     {
         // 간단한 싱글톤. 이미 인스턴스가 있으면 새로 생긴 쪽을 정리한다.
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        Instance = this;
+        _instance = this;
     }
 
     void Start()
@@ -130,8 +154,16 @@ public class DialogueManager : MonoBehaviour
         isDialogueActive = true;
         onDialogueEndedCallback = onComplete;
 
+        // 새 대화 세션이 시작되므로, 이번 세션에서 켤 오브젝트를 새로 추적하기 시작함
+        shownObjectsThisSession.Clear();
+
         if (dialogueBox != null)
+        {
             dialogueBox.SetActive(true);
+            // 대화창이 막 켜진 직후엔 UI 크기 계산이 아직 안 끝났을 수 있어서,
+            // 여기서 강제로 화면 레이아웃을 다시 계산시켜 글자가 잘려 보이는 문제를 방지함
+            Canvas.ForceUpdateCanvases();
+        }
 
         AdvanceToNextLine();
     }
@@ -164,8 +196,16 @@ public class DialogueManager : MonoBehaviour
         }
         // (characterMouthOpenImage 참조는 더 이상 없음 - characterMouthFrames 배열 사용)
 
+        // 이 대사에 지정된 오브젝트 표시/숨김 적용
+        ApplyObjectVisibility(line);
+
         if (dialogueText != null)
+        {
             dialogueText.text = "";
+            // 텍스트를 비운 직후, 이 텍스트 박스의 크기/줄바꿈 계산을 즉시 다시 맞춰서
+            // 타이핑이 시작될 때 잘못된(좁은) 크기로 고정되는 문제를 방지함
+            LayoutRebuilder.ForceRebuildLayoutImmediate(dialogueText.rectTransform);
+        }
 
         // 이전 대사에서 돌던 코루틴들을 확실히 끊고 새로 시작
         StopAllDialogueCoroutines();
@@ -175,14 +215,50 @@ public class DialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 한 글자씩 대사를 출력하는 타자기 효과 코루틴.
+    /// 현재 대사에 등록된 오브젝트들을 켜거나 끈다.
     /// </summary>
+    private void ApplyObjectVisibility(DialogueLine line)
+    {
+        if (line.objectsToShow != null)
+        {
+            foreach (var obj in line.objectsToShow)
+            {
+                if (obj == null) continue;
+                obj.SetActive(true);
+
+                // 이번 세션에서 켠 오브젝트로 등록해서, 대화가 끝날 때 자동으로 꺼지도록 함
+                if (!shownObjectsThisSession.Contains(obj))
+                    shownObjectsThisSession.Add(obj);
+            }
+        }
+
+        if (line.objectsToHide != null)
+        {
+            foreach (var obj in line.objectsToHide)
+            {
+                if (obj == null) continue;
+                obj.SetActive(false);
+
+                // 명시적으로 꺼졌으므로, 대화 종료 시 다시 끄지 않도록 추적 목록에서 제거
+                shownObjectsThisSession.Remove(obj);
+            }
+        }
+    }
+
     private IEnumerator TypeLineRoutine(DialogueLine line)
     {
         isTyping = true;
 
         if (dialogueText != null)
         {
+            // 타이핑을 시작하기 전에, 이번 대사에 쓰일 모든 글자를 폰트 아틀라스에 미리 등록시킴.
+            // (안 하면 한 글자씩 빠르게 새 글자가 요청되면서 일부 글자가 아틀라스에 못 들어가
+            //  화면에서 빈 칸으로 사라지는 문제가 생길 수 있음)
+            if (dialogueText.font != null)
+            {
+                dialogueText.font.TryAddCharacters(line.text);
+            }
+
             dialogueText.text = "";
 
             foreach (char c in line.text)
@@ -268,7 +344,13 @@ public class DialogueManager : MonoBehaviour
         {
             DialogueLine line = currentLines[currentLineIndex];
             if (dialogueText != null)
+            {
+                if (dialogueText.font != null)
+                {
+                    dialogueText.font.TryAddCharacters(line.text);
+                }
                 dialogueText.text = line.text;
+            }
         }
 
         FinishTyping();
@@ -336,6 +418,14 @@ public class DialogueManager : MonoBehaviour
     private void EndDialogue()
     {
         StopAllDialogueCoroutines();
+
+        // 이번 대화 세션 동안 objectsToShow로 켰지만 명시적으로 꺼지지 않은 오브젝트들을
+        // 대화가 완전히 끝나는 시점에 자동으로 정리함 (다음 블록 시작까지 남아있는 문제 방지)
+        foreach (var obj in shownObjectsThisSession)
+        {
+            if (obj != null) obj.SetActive(false);
+        }
+        shownObjectsThisSession.Clear();
 
         isDialogueActive = false;
         currentLines = null;

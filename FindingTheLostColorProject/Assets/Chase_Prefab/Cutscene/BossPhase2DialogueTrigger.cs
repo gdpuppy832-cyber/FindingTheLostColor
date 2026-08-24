@@ -3,45 +3,47 @@ using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
-/// º¸½º ¿ÀºêÁ§Æ®¿¡ ºÙÀÌ´Â ´ëÈ­ Æ®¸®°Å.
-/// BossAttackÀÇ OnPhase2Started ÀÌº¥Æ®(Å©¸®½ºÅ»ÀÌ ¸ğµÎ ÆÄ±«µÇ¾î 2ÆäÀÌÁî·Î ÀüÈ¯µÇ´Â ½ÃÁ¡)¸¦ ±¸µ¶ÇØ¼­
-/// ±× ¼ø°£ ÀÚµ¿À¸·Î ´ëÈ­ -> È­¸é ¾ÏÀü -> ÄÆ¾À ÀÌ¹ÌÁö µîÀå -> ´ëÈ­ -> ´Ù½Ã ¾ÏÀü -> ¿ø·¡ È­¸é ¼ø¼­·Î ¿¬ÃâÀ» Àç»ıÇÑ´Ù.
-/// DialogueManager.cs´Â ÀüÇô ¼öÁ¤ÇÏÁö ¾Ê°í, ÀÌ ½ºÅ©¸³Æ®¿¡¼­ ÆäÀÌµå ¿¬Ãâ¸¸ µ¶¸³ÀûÀ¸·Î Ã³¸®ÇÑ´Ù.
+/// ë³´ìŠ¤ ì˜¤ë¸Œì íŠ¸ì— ë¶™ì´ëŠ” ëŒ€í™” íŠ¸ë¦¬ê±°.
+/// BossAttackì˜ OnPhase2Started ì´ë²¤íŠ¸(í¬ë¦¬ìŠ¤íƒˆì´ ëª¨ë‘ íŒŒê´´ë˜ì–´ 2í˜ì´ì¦ˆë¡œ ì „í™˜ë˜ëŠ” ì‹œì )ë¥¼ êµ¬ë…í•´ì„œ
+/// ê·¸ ìˆœê°„ ìë™ìœ¼ë¡œ ëŒ€í™” -> í™”ë©´ ì „í™˜ -> ì»·ì”¬ ì´ë¯¸ì§€ ë…¸ì¶œ -> ëŒ€í™” -> ë‹¤ì‹œ ì›ë˜ -> ì‹¤ì œ 2í˜ì´ì¦ˆ ë°œë™ê¹Œì§€ ìˆœì„œëŒ€ë¡œ ì§„í–‰í•œë‹¤.
+/// DialogueManager.csëŠ” ì „í˜€ ê±´ë“œë¦¬ì§€ ì•Šê³ , ì´ ìŠ¤í¬ë¦½íŠ¸ì—ì„œ ìˆœì„œë§Œ ì œì–´í•œë‹¤.
 /// </summary>
 public class BossPhase2DialogueTrigger : MonoBehaviour
 {
-    [Header("´ëÈ­ ³»¿ë (1ºÎ: ÄÆ¾À ÀÌ¹ÌÁö°¡ ³ª¿À±â Àü)")]
-    [Tooltip("2ÆäÀÌÁî ÁøÀÔ ½Ã °¡Àå ¸ÕÀú ¼ø¼­´ë·Î ¸»ÇÒ ´ë»ç ¸ñ·Ï")]
+    [Header("ëŒ€í™” ë‚´ìš© (1ì°¨: ì»·ì”¬ ì´ë¯¸ì§€ê°€ ë‚˜ì˜¤ê¸° ì „)")]
+    [Tooltip("2í˜ì´ì¦ˆ ì§„ì… ì‹œ ê°€ì¥ ë¨¼ì € ìˆœì„œëŒ€ë¡œ ë‚˜ì˜¬ ëŒ€ì‚¬ ëª©ë¡")]
     public DialogueLine[] dialogues;
 
-    [Header("ÄÆ¾À ¿¬Ãâ")]
-    [Tooltip("È­¸é ÀüÃ¼¸¦ µ¤´Â °ËÀº ÀÌ¹ÌÁö°¡ ºÙ¾îÀÖ´Â CanvasGroup (¾ËÆÄ 0¿¡¼­ ½ÃÀÛ, Ç×»ó È­¸é ÃÖ»ó´Ü¿¡ ¹èÄ¡µÇ¾î ÀÖ¾î¾ß ÇÔ)")]
+    [Header("ì»·ì”¬ ì—°ì¶œ")]
+    [Tooltip("í™”ë©´ ì „ì²´ë¥¼ ë®ëŠ” ê²€ì€ ì´ë¯¸ì§€ê°€ ë¶™ì–´ìˆëŠ” CanvasGroup (ì•ŒíŒŒ 0ì—ì„œ ì‹œì‘, í•­ìƒ í™”ë©´ ìµœìƒë‹¨ì— ë°°ì¹˜ë˜ì–´ ìˆì–´ì•¼ í•¨)")]
     public CanvasGroup fadeCanvasGroup;
-    [Tooltip("¾ÏÀü »óÅÂ¿¡¼­ ¼­¼­È÷ ³ªÅ¸³¯ ÄÆ¾À ÀÌ¹ÌÁö (fadeCanvasGroupº¸´Ù À§¿¡ ¹èÄ¡µÇ¾î¾ß ÇÔ)")]
+    [Tooltip("ê²€ì€ ìƒíƒœì—ì„œ ë‚˜íƒ€ë‚  ì»·ì”¬ ì´ë¯¸ì§€ (fadeCanvasGroupë³´ë‹¤ ìœ„ì— ë°°ì¹˜ë˜ì–´ì•¼ í•¨)")]
     public Image cutsceneImage;
-    [Tooltip("È­¸éÀÌ °Ë°Ô º¯ÇÏ°Å³ª, ÀÌ¹ÌÁö°¡ ³ªÅ¸³ª°í »ç¶óÁö´Â µ¥ °É¸®´Â ½Ã°£(ÃÊ)")]
+    [Tooltip("í™”ë©´ì´ ê²€ê²Œ ë®ì´ê±°ë‚˜, ì´ë¯¸ì§€ê°€ ë‚˜íƒ€ë‚˜ê³  ì‚¬ë¼ì§€ëŠ” ë° ê±¸ë¦¬ëŠ” ì‹œê°„(ì´ˆ)")]
     public float fadeDuration = 1f;
 
-    [Header("´ëÈ­ ³»¿ë (2ºÎ: ÄÆ¾À ÀÌ¹ÌÁö°¡ ³ª¿Â µÚ)")]
-    [Tooltip("ÄÆ¾À ÀÌ¹ÌÁö°¡ ¿ÏÀüÈ÷ ³ªÅ¸³­ µÚ ÀÌ¾î¼­ ¸»ÇÒ ´ë»ç ¸ñ·Ï")]
+    [Header("ëŒ€í™” ë‚´ìš© (2ì°¨: ì»·ì”¬ ì´ë¯¸ì§€ê°€ ë‚˜ì˜¨ ë’¤)")]
+    [Tooltip("ì»·ì”¬ ì´ë¯¸ì§€ê°€ ë‚˜ì˜¤ê³  ë‚˜ì„œ ì´ì–´ì„œ ë‚˜ì˜¬ ëŒ€ì‚¬ ëª©ë¡")]
     public DialogueLine[] dialoguesAfterImage;
 
-    [Header("´ëÈ­ ³»¿ë (3ºÎ: ¿ø·¡ °ÔÀÓ È­¸éÀ¸·Î µ¹¾Æ¿Â ÈÄ)")]
-    [Tooltip("ÄÆ¾ÀÀÌ ¿ÏÀüÈ÷ ³¡³ª°í ¿ø·¡ °ÔÀÓ È­¸éÀ¸·Î µ¹¾Æ¿Â ÈÄ Ãâ·ÂµÇ´Â ´ë»ç")]
+    [Header("ëŒ€í™” ë‚´ìš© (3ì°¨: ë‹¤ì‹œ ì›ë˜ í™”ë©´ìœ¼ë¡œ ëŒì•„ì˜¨ ë’¤)")]
+    [Tooltip("ì»·ì”¬ì´ ëë‚˜ê³  ë‹¤ì‹œ ì›ë˜ ê²Œì„ í™”ë©´ìœ¼ë¡œ ëŒì•„ì˜¨ ë’¤ ì¶œë ¥ë˜ëŠ” ëŒ€ì‚¬ ëª©ë¡")]
     public DialogueLine[] dialoguesAfterImageEnded;
 
-    [Header("¿¬°á")]
-    [Tooltip("ºñ¿öµÎ¸é °°Àº ¿ÀºêÁ§Æ® ¶Ç´Â ºÎ¸ğ¿¡¼­ ÀÚµ¿À¸·Î Ã£À½")]
-    public BossAttack bossAttack;
+    [Header("ì—°ê²°")]
+    [Tooltip("2í˜ì´ì¦ˆ ì—°ì¶œì„ ë‹´ë‹¹í•  ë³´ìŠ¤ ìŠ¤í¬ë¦½íŠ¸. BossAttack, EZ_BossAttack ë“± IBossPhase2Controllerë¥¼ êµ¬í˜„í•œ ìŠ¤í¬ë¦½íŠ¸ë¼ë©´ ë¬´ì—‡ì´ë“  ë„£ì„ ìˆ˜ ìˆìŒ. ë¹„ì›Œë‘ë©´ ê°™ì€ ì˜¤ë¸Œì íŠ¸ ë˜ëŠ” ë¶€ëª¨ì—ì„œ ìë™ìœ¼ë¡œ ì°¾ìŒ")]
+    public MonoBehaviour bossAttack;
 
-    [Header("¼³Á¤")]
-    [Tooltip("ÇÑ ¹ø 2ÆäÀÌÁî ´ëÈ­°¡ ³ª¿Â µÚ, È¤½Ã ´Ù½Ã È£ÃâµÇ¾îµµ Áßº¹ Àç»ıÀ» ¸·À»Áö ¿©ºÎ")]
+    private IBossPhase2Controller bossController; // bossAttackì„ ì¸í„°í˜ì´ìŠ¤ë¡œ ìºìŠ¤íŒ…í•œ ì‹¤ì œ ì‚¬ìš© ì°¸ì¡°
+
+    [Header("ì„¤ì •")]
+    [Tooltip("í•œ ë²ˆ 2í˜ì´ì¦ˆ ëŒ€í™”ê°€ ë‚˜ì˜¨ ë’¤, í˜¹ì‹œ ë‹¤ì‹œ í˜¸ì¶œë˜ì–´ë„ ì¤‘ë³µ ì¬ìƒì„ ë§‰ì„ì§€ ì—¬ë¶€")]
     public bool triggerOnlyOnce = true;
     private bool hasTriggered = false;
     private bool sequenceRunning = false;
     private bool phase2Activated = false;
 
-    // ´ëÈ­ Áß ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ
+    // ëŒ€í™” ì¤‘ í”Œë ˆì´ì–´ ì´ë™ ì ê¸ˆ
     private Rigidbody2D playerRigidbody;
     private Vector2 originalPlayerVelocity;
     private bool playerMovementLocked = false;
@@ -49,10 +51,21 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
     private void Awake()
     {
-        if (bossAttack == null) bossAttack = GetComponent<BossAttack>();
-        if (bossAttack == null) bossAttack = GetComponentInParent<BossAttack>();
+        // ì¸ìŠ¤í™í„°ì— ì—°ê²°ëœ ìŠ¤í¬ë¦½íŠ¸ê°€ ì¸í„°í˜ì´ìŠ¤ë¥¼ êµ¬í˜„í•˜ëŠ”ì§€ í™•ì¸
+        if (bossAttack != null)
+        {
+            bossController = bossAttack as IBossPhase2Controller;
+            if (bossController == null)
+            {
+                Debug.LogWarning($"[BossPhase2DialogueTrigger] ì—°ê²°ëœ ìŠ¤í¬ë¦½íŠ¸ '{bossAttack.GetType().Name}'ëŠ” IBossPhase2Controllerë¥¼ êµ¬í˜„í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+            }
+        }
 
-        // ½ÃÀÛ ½ÃÁ¡¿£ ¿ÏÀüÈ÷ Åõ¸í/ºñÈ°¼º »óÅÂ·Î ÃÊ±âÈ­ (Æò¼Ò °ÔÀÓ È­¸éÀ» °¡¸®Áö ¾Êµµ·Ï)
+        // ëª» ì°¾ì•˜ìœ¼ë©´ ê°™ì€ ì˜¤ë¸Œì íŠ¸ -> ë¶€ëª¨ ìˆœìœ¼ë¡œ ìë™ íƒìƒ‰ (BossAttackì´ë“  EZ_BossAttackì´ë“  ìƒê´€ì—†ì´ ì¡í˜)
+        if (bossController == null) bossController = GetComponent<IBossPhase2Controller>();
+        if (bossController == null) bossController = GetComponentInParent<IBossPhase2Controller>();
+
+        // ì»·ì”¬ ê´€ë ¨ ì˜¤ë¸Œì íŠ¸ë“¤ì„ ì´ˆê¸° ìˆ¨ê¹€ ìƒíƒœë¡œ ì´ˆê¸°í™” (í‰ì†Œ ê²Œì„ í™”ë©´ì— ì˜í–¥ ì—†ë„ë¡)
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.alpha = 0f;
@@ -64,21 +77,25 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             SetImageAlpha(cutsceneImage, 0f);
             cutsceneImage.gameObject.SetActive(false);
         }
+
+        // ëŒ€ì‚¬ë³„ë¡œ í‘œì‹œ/ìˆ¨ê¹€ì´ ì œì–´ë˜ëŠ” ì˜¤ë¸Œì íŠ¸ë“¤ì€ ì”¬ ì‹œì‘ ì‹œì ë¶€í„° í™•ì‹¤íˆ êº¼ë‘ .
+        // (Inspectorì—ì„œ ì‹¤ìˆ˜ë¡œ í™œì„±í™” ìƒíƒœë¡œ ë‚¨ì•„ìˆìœ¼ë©´ ëŒ€í™”ê°€ ì‹œì‘ë˜ê¸°ë„ ì „ì— ë³´ì—¬ë²„ë¦¬ëŠ” ë¬¸ì œë¥¼ ë°©ì§€)
+        HideAllDialogueControlledObjects();
     }
 
     private void OnEnable()
     {
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.OnPhase2Started += HandlePhase2Started;
+            bossController.OnPhase2Started += HandlePhase2Started;
         }
     }
 
     private void OnDisable()
     {
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.OnPhase2Started -= HandlePhase2Started;
+            bossController.OnPhase2Started -= HandlePhase2Started;
         }
     }
 
@@ -87,14 +104,14 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         if (sequenceRunning || phase2Activated) return;
         if (triggerOnlyOnce && hasTriggered) return;
 
-        // ´ëÈ­ ¿¬ÃâÀÌ ½ÃÀÛµÇ¾ú´Ù´Â Ç¥½Ã
+        // ëŒ€í™” ì—°ì¶œì´ ì‹œì‘ë˜ì—ˆë‹¤ëŠ” í‘œì‹œ
         sequenceRunning = true;
         hasTriggered = true;
 
-        // 1ºÎ ´ëÈ­°¡ ½ÃÀÛµÇ´Â ¼ø°£ºÎÅÍ ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ
+        // 1ì°¨ ëŒ€í™”ê°€ ì‹œì‘ë˜ëŠ” ì‹œì ë¶€í„° í”Œë ˆì´ì–´ ì´ë™ ì ê¸ˆ
         LockPlayerMovement();
 
-        // ´ëÈ­°¡ ¾ø°Å³ª DialogueManager°¡ ¾øÀ¸¸é ¾ÈÀüÇÏ°Ô ¹Ù·Î 2ÆäÀÌÁî ½ÃÀÛ
+        // ëŒ€í™”ê°€ ì—†ê±°ë‚˜ DialogueManagerê°€ ì—†ìœ¼ë©´ ì—°ì¶œì„ ìƒëµí•˜ê³  ë°”ë¡œ 2í˜ì´ì¦ˆ ë°œë™
         if (dialogues == null || dialogues.Length == 0 || DialogueManager.Instance == null)
         {
             UnlockPlayerMovement();
@@ -105,7 +122,7 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         DialogueManager.Instance.StartDialogue(dialogues, HandleFirstDialogueEnded);
     }
 
-    // 1ºÎ ´ë»ç°¡ ³¡³­ Á÷ÈÄ: ÄÆ¾À ¿¬Ãâ(¾ÏÀü -> ÀÌ¹ÌÁö µîÀå) ½ÃÀÛ
+    // 1ì°¨ ëŒ€ì‚¬ê°€ ì „ë¶€ ëë‚¨: ì»·ì”¬ ì—°ì¶œ(í˜ì´ë“œ -> ì´ë¯¸ì§€ ë…¸ì¶œ) ì‹œì‘
     private void HandleFirstDialogueEnded()
     {
         StartCoroutine(PlayCutsceneImageThenSecondDialogue());
@@ -113,7 +130,11 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
     private IEnumerator PlayCutsceneImageThenSecondDialogue()
     {
-        // 1. È­¸éÀÌ ¼­¼­È÷ °Ë°Ô º¯ÇÔ
+        // â˜… 1ì°¨ ëŒ€ì‚¬ì™€ 2ì°¨ ëŒ€ì‚¬ ì‚¬ì´(í™”ë©´ ì „í™˜ êµ¬ê°„)ì—ëŠ” ëŒ€ì‚¬ë¡œ ì¼œì¡Œë˜ ì˜¤ë¸Œì íŠ¸ê°€ ë‚¨ì•„ìˆìœ¼ë©´ ì•ˆ ë˜ë¯€ë¡œ,
+        // ì „í™˜ì´ ì‹œì‘ë˜ê¸° ì „ì— 1ì°¨/2ì°¨ ëŒ€ì‚¬ì— ë“±ë¡ëœ ì˜¤ë¸Œì íŠ¸ë¥¼ ì „ë¶€ ê°•ì œë¡œ êº¼ë²„ë¦¼
+        HideAllDialogueControlledObjects();
+
+        // 1. í™”ë©´ì´ ê²€ê²Œ ë®ì´ë©° ì–´ë‘ì›Œì§
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.gameObject.SetActive(true);
@@ -121,7 +142,7 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             yield return FadeCanvasGroup(fadeCanvasGroup, 0f, 1f, fadeDuration);
         }
 
-        // 2. ¾ÏÀüµÈ È­¸é À§·Î ÄÆ¾À ÀÌ¹ÌÁö°¡ ¼­¼­È÷ ³ªÅ¸³²
+        // 2. ê²€ê²Œ ë®ì¸ í™”ë©´ ìœ„ë¡œ ì»·ì”¬ ì´ë¯¸ì§€ê°€ ì„œì„œíˆ ë‚˜íƒ€ë‚¨
         if (cutsceneImage != null)
         {
             cutsceneImage.gameObject.SetActive(true);
@@ -129,7 +150,15 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             yield return FadeImage(cutsceneImage, 0f, 1f, fadeDuration);
         }
 
-        // 3. ÀÌ¹ÌÁö°¡ º¸ÀÌ´Â »óÅÂ¿¡¼­ 2ºÎ ´ë»ç ÁøÇà (2ºÎ ´ë»ç°¡ ¾øÀ¸¸é ¹Ù·Î ÄÆ¾À Á¾·á)
+        // â˜… ì´ë¯¸ì§€ê°€ í™”ë©´ì— ëœ¬ ì±„ë¡œ 2ì°¨ ëŒ€ì‚¬ê°€ ë‚˜ì˜¤ëŠ” ì´ ì‹œì ì— 2í˜ì´ì¦ˆ "ìƒíƒœ"ë¥¼ ë°œë™ì‹œí‚´
+        // (ë³´ìŠ¤ëŠ” ì—¬ì „íˆ isFrozenForPhaseTransition == trueë¼ì„œ ì œìë¦¬ì— ê°€ë§Œíˆ ìˆê³  ê³µê²©ë„ ì•ˆ í•¨ -
+        //  ì‹¤ì œ ì´ë™/ê³µê²©ì€ 3ì°¨ ëŒ€ì‚¬ê°€ ëë‚œ ë’¤ ReleasePhase2MovementFreeze()ê°€ í˜¸ì¶œë¼ì•¼ ì‹œì‘ë¨)
+        if (bossController != null)
+        {
+            bossController.ActivatePhase2();
+        }
+
+        // 3. ì´ë¯¸ì§€ê°€ ë³´ì´ëŠ” ìƒíƒœì—ì„œ 2ì°¨ ëŒ€ì‚¬ ì¬ìƒ (2ì°¨ ëŒ€ì‚¬ê°€ ëë‚˜ë©´ ë°”ë¡œ ì»·ì”¬ ì¢…ë£Œ)
         if (dialoguesAfterImage != null && dialoguesAfterImage.Length > 0 && DialogueManager.Instance != null)
         {
             DialogueManager.Instance.StartDialogue(dialoguesAfterImage, HandleSecondDialogueEnded);
@@ -140,19 +169,47 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         }
     }
 
-    // 2ºÎ ´ë»ç°¡ ³¡³­ Á÷ÈÄ: ÀÌ¹ÌÁö -> °ËÀº È­¸é -> ¿ø·¡ È­¸é ¼ø¼­·Î µÇµ¹¸®°í 2ÆäÀÌÁî ¹ßµ¿
+    // 2ì°¨ ëŒ€ì‚¬ê°€ ì „ë¶€ ëë‚¨: ì´ë¯¸ì§€ -> ì›ë˜ í™”ë©´ -> ì›ë˜ í™”ë©´ ë³µê·€ ë’¤ 3ì°¨ ëŒ€ì‚¬ë¥¼ ìˆœì„œëŒ€ë¡œ ë°œë™
     private void HandleSecondDialogueEnded()
     {
         StartCoroutine(EndCutsceneRoutine());
     }
     private void HandleThirdDialogueEnded()
     {
-        // 3ºÎ ´ëÈ­°¡ ³¡³­ µÚ ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ ÇØÁ¦
+        // 3ì°¨ ëŒ€í™”ê°€ ëë‚œ ë’¤ í”Œë ˆì´ì–´ ì´ë™ ì ê¸ˆ í•´ì œ
         UnlockPlayerMovement();
 
-        // 3ºÎ ´ëÈ­°¡ ³¡³­ µÚ ÃÖÁ¾ÀûÀ¸·Î 2ÆäÀÌÁî ½ÃÀÛ
+        // 3ì°¨ ëŒ€í™”ê°€ ëë‚œ ë’¤ ìµœì¢…ì ìœ¼ë¡œ 2í˜ì´ì¦ˆ ë°œë™
         ActivatePhase2Once();
     }
+
+    /// <summary>
+    /// dialogues / dialoguesAfterImage / dialoguesAfterImageEndedì— ë“±ë¡ëœ
+    /// objectsToShow ì˜¤ë¸Œì íŠ¸ë“¤ì„ ì „ë¶€ ê°•ì œë¡œ ë¹„í™œì„±í™”í•œë‹¤. (ëŒ€í™” ê·¸ë£¹ ì‚¬ì´ ì „í™˜ êµ¬ê°„ì— ì‚¬ìš©)
+    /// </summary>
+    private void HideAllDialogueControlledObjects()
+    {
+        HideObjectsFromLines(dialogues);
+        HideObjectsFromLines(dialoguesAfterImage);
+        HideObjectsFromLines(dialoguesAfterImageEnded);
+    }
+
+    private void HideObjectsFromLines(DialogueLine[] lines)
+    {
+        if (lines == null) return;
+
+        foreach (var line in lines)
+        {
+            if (line == null) continue;
+            if (line.objectsToShow == null) continue;
+
+            foreach (var obj in line.objectsToShow)
+            {
+                if (obj != null) obj.SetActive(false);
+            }
+        }
+    }
+
     private void LockPlayerMovement()
     {
         if (playerMovementLocked) return;
@@ -161,7 +218,7 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogWarning("[BossPhase2DialogueTrigger] Player ÅÂ±×¸¦ °¡Áø ¿ÀºêÁ§Æ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossPhase2DialogueTrigger] Player íƒœê·¸ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -169,11 +226,11 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
 
         if (playerRigidbody == null)
         {
-            Debug.LogWarning("[BossPhase2DialogueTrigger] Player¿¡°Ô Rigidbody2D°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[BossPhase2DialogueTrigger] Playerì—ê²Œ Rigidbody2Dê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ÇÃ·¹ÀÌ¾î ÀÌµ¿ ½ºÅ©¸³Æ® °¡Á®¿À±â
+        // í”Œë ˆì´ì–´ ì´ë™ ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡° ê°€ì ¸ì˜¤ê¸°
         playerMovementScript = player.GetComponent<PlayerMove>();
 
         if (playerMovementScript != null)
@@ -181,10 +238,10 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             playerMovementScript.enabled = false;
         }
 
-        // ±âÁ¸ ¼Óµµ¸¸ ÀúÀå
+        // ì›ë˜ ì†ë„ë¥¼ ì €ì¥
         originalPlayerVelocity = playerRigidbody.linearVelocity;
 
-        // ÀÌµ¿ ½ºÅ©¸³Æ®¸¸ ºñÈ°¼ºÈ­
+        // ì´ë™ ì†ë„ë¥¼ 0ìœ¼ë¡œ
         playerRigidbody.linearVelocity = Vector2.zero;
 
         playerMovementLocked = true;
@@ -199,7 +256,7 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
             playerRigidbody.linearVelocity = Vector2.zero;
         }
 
-        // ÇÃ·¹ÀÌ¾î ÀÌµ¿ ½ºÅ©¸³Æ® ´Ù½Ã È°¼ºÈ­
+        // í”Œë ˆì´ì–´ ì´ë™ ìŠ¤í¬ë¦½íŠ¸ ë‹¤ì‹œ í™œì„±í™”
         if (playerMovementScript != null)
         {
             playerMovementScript.enabled = true;
@@ -216,33 +273,43 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         phase2Activated = true;
         sequenceRunning = false;
 
-        if (bossAttack != null)
+        if (bossController != null)
         {
-            bossAttack.ActivatePhase2();
+            // 2ì°¨ ëŒ€ì‚¬ ì‹œì ì— ì´ë¯¸ ìƒíƒœê°€ ë°œë™ëë‹¤ë©´ ActivatePhase2()ëŠ” ë‚´ë¶€ ê°€ë“œë¡œ ì¸í•´ ì•„ë¬´ ì¼ë„ ì•ˆ í•˜ê³ ,
+            // ì—¬ê¸°ì„œëŠ” ì‹¤ì§ˆì ìœ¼ë¡œ ë™ê²°ë§Œ í•´ì œë¨. (ëŒ€í™” ì—†ì´ í†µì§¸ë¡œ ìŠ¤í‚µëœ ê²½ìš°ì—” ìƒíƒœ ë°œë™+ë™ê²° í•´ì œê°€ í•œ ë²ˆì— ì²˜ë¦¬ë¨)
+            bossController.ActivatePhase2();
+            bossController.ReleasePhase2MovementFreeze();
+
+            // ëª¨ë“  ì»·ì”¬/ëŒ€í™”ê°€ ëë‚œ ì´ ì‹œì ì—ì„œì•¼ ê²€ì€ ì•ˆê°œê°€ ì›€ì§ì´ê¸° ì‹œì‘í•¨
+            // (ì´ì „ì—” 2ì°¨ ëŒ€ì‚¬ ë„ì¤‘ì— ì´ë¯¸ ì›€ì§ì´ê¸° ì‹œì‘í•´ì„œ, ëŒ€í™”ê°€ ëë‚˜ê¸°ë„ ì „ì— ì•ˆê°œê°€ ì „ì§„í•˜ëŠ” ë¬¸ì œê°€ ìˆì—ˆìŒ)
+            bossController.StartBlackFogMovement();
         }
     }
     private IEnumerator EndCutsceneRoutine()
     {
-        // 1. ÄÆ¾À ÀÌ¹ÌÁö°¡ ¼­¼­È÷ »ç¶óÁü
+        // â˜… 2ì°¨ ëŒ€ì‚¬ì™€ 3ì°¨ ëŒ€ì‚¬ ì‚¬ì´(í™”ë©´ ì „í™˜ êµ¬ê°„)ì—ë„ ë§ˆì°¬ê°€ì§€ë¡œ,
+        // ì „í™˜ì´ ì‹œì‘ë˜ê¸° ì „ì— ë“±ë¡ëœ ì˜¤ë¸Œì íŠ¸ë¥¼ ì „ë¶€ ê°•ì œë¡œ êº¼ë²„ë¦¼
+        HideAllDialogueControlledObjects();
+
+        // 1. ì»·ì”¬ ì´ë¯¸ì§€ê°€ ì„œì„œíˆ ì‚¬ë¼ì§
         if (cutsceneImage != null)
         {
             yield return FadeImage(cutsceneImage, 1f, 0f, fadeDuration);
             cutsceneImage.gameObject.SetActive(false);
         }
 
-        // 2. °ËÀº È­¸éÀÌ ¼­¼­È÷ °ÈÈ÷¸ç ¿ø·¡ °ÔÀÓ È­¸éÀ¸·Î º¹±Í
+        // 2. ê²€ì€ í™”ë©´ì´ ì„œì„œíˆ ê±·íˆë©° ì›ë˜ ê²Œì„ í™”ë©´ìœ¼ë¡œ ë³µê·€
         if (fadeCanvasGroup != null)
         {
             yield return FadeCanvasGroup(fadeCanvasGroup, 1f, 0f, fadeDuration);
 
-            // È­¸éÀÌ ¿ÏÀüÈ÷ ¹à¾ÆÁø µÚ¿¡¸¸ ºñÈ°¼ºÈ­
+            // í™”ë©´ì´ ì™„ì „íˆ ê±·íŒ ë’¤ì—ëŠ” ë¹„í™œì„±í™”
             fadeCanvasGroup.alpha = 0f;
             fadeCanvasGroup.blocksRaycasts = false;
             fadeCanvasGroup.gameObject.SetActive(false);
         }
 
-        // 3. ¿©±â±îÁö ¿À¸é ¿ø·¡ °ÔÀÓ È­¸éÀÌ ¿ÏÀüÈ÷ º¹±¸µÈ »óÅÂ
-        //    ÀÌÁ¦ 3ºÎ ´ëÈ­¸¦ ½ÃÀÛÇÑ´Ù.
+        // 3. ì›ë˜ëŒ€ë¡œ ëŒì•„ì˜¨ ê²Œì„ í™”ë©´ ìœ„ì—ì„œ 3ì°¨ ëŒ€ì‚¬ë¥¼ ì¬ìƒ
         if (dialoguesAfterImageEnded != null &&
             dialoguesAfterImageEnded.Length > 0 &&
             DialogueManager.Instance != null)
@@ -254,10 +321,10 @@ public class BossPhase2DialogueTrigger : MonoBehaviour
         }
         else
         {
-            // 3ºÎ ´ëÈ­°¡ ¾øÀ¸¸é ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ ÇØÁ¦
+            // 3ì°¨ ëŒ€í™”ê°€ ì—†ìœ¼ë©´ ë°”ë¡œ í”Œë ˆì´ì–´ ì´ë™ ì ê¸ˆ í•´ì œ í›„ 2í˜ì´ì¦ˆ ë°œë™
             UnlockPlayerMovement();
 
-            // ¹Ù·Î 2ÆäÀÌÁî ½ÃÀÛ
+            // ë°”ë¡œ 2í˜ì´ì¦ˆ ë°œë™
             ActivatePhase2Once();
         }
     }

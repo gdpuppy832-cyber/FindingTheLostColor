@@ -41,6 +41,9 @@ public class BossPortalSpawner : MonoBehaviour
     public bool isBossBattleStarted = true;
 
     private float lastSpawnTime = 0f;
+
+    [Header("씬 시작 대화 잠금")]
+    public bool spawnLocked = true;
     private int spawnGroupIndex = 0; // 0: 1차 소환 프리팹, 1: 2차 소환 프리팹
 
     void Start()
@@ -102,6 +105,8 @@ public class BossPortalSpawner : MonoBehaviour
 
     void Update()
     {
+        if (spawnLocked) return; // 대화 잠금 중에는 소환 타이머 진행/소환 시도 자체를 완전히 정지
+
         if (!isBossBattleStarted) return;
 
         // [신규] 보스가 2페이즈에 진입했는지 실시간 체크 ➔ 진입 시 소환 완전 중단 및 포탈 닫기
@@ -243,6 +248,15 @@ public class BossPortalSpawner : MonoBehaviour
     /// <summary>
     /// 외부(예: 보스 트리거 스크립트)에서 보스전 시작을 수동으로 통지할 수 있게 해 주는 메소드
     /// </summary>
+    public void SetSpawnLocked(bool locked)
+    {
+        spawnLocked = locked;
+        if (!locked)
+        {
+            lastSpawnTime = Time.time; // 대화 중 흐른 시간을 무시하고 해제 시점부터 다시 카운트
+        }
+    }
+
     public void StartBossSpawnScheduler()
     {
         isBossBattleStarted = true;

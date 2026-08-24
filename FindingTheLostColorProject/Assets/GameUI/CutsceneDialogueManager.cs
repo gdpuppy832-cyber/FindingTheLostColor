@@ -135,20 +135,20 @@ public class CutsceneDialogueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 제시받은 1번~8번 대사 및 애니메이션 State 기본 내장 프리셋
+    /// 제시받은 1번~8번 대사 및 애니메이션 State 약자 명칭 축약 프리셋 (PPIT, PPAM, NPST 등)
     /// </summary>
     private void InitDefaultDialogues()
     {
         inspectorDialogues = new List<DialogueData>()
         {
-            new DialogueData { speakerName = "치즈", sentence = "어?색채 구슬이다!", talkingAnimState = "00_Player_Profile_IDLE_T_0000", idleAnimState = "00_Player_Profile_IDLE_M_0000" },
-            new DialogueData { speakerName = "치즈", sentence = "그렇다는 건... 네가 네로구나!", talkingAnimState = "00_Player_Profile_Anger_T_0000", idleAnimState = "00_Player_Profile_Anger_M_0000" },
-            new DialogueData { speakerName = "치즈", sentence = "당장 돌려줘!", talkingAnimState = "00_Player_Profile_Anger_T_0000", idleAnimState = "00_Player_Profile_Anger_M_0000" },
-            new DialogueData { speakerName = "네로", sentence = "돌려달라고?", talkingAnimState = "09_Nero_Profile_Sneer_T_0000", idleAnimState = "09_Nero_Profile_Sneer_M_0000" },
-            new DialogueData { speakerName = "네로", sentence = "이건 이제 내 꺼야.", talkingAnimState = "09_Nero_Profile_IDLE_T_0000", idleAnimState = "09_Nero_Profile_IDLE_M_0000" },
-            new DialogueData { speakerName = "네로", sentence = "누구에게도 넘길 생각은 없어.", talkingAnimState = "09_Nero_Profile_Anger_T_0000", idleAnimState = "09_Nero_Profile_Anger_M_0000" },
-            new DialogueData { speakerName = "치즈", sentence = "뭐하는...", talkingAnimState = "00_Player_Profile_IDLE_T_0000", idleAnimState = "00_Player_Profile_IDLE_M_0000" },
-            new DialogueData { speakerName = "치즈", sentence = "아.", talkingAnimState = "00_Player_Profile_Suprised_T_0000", idleAnimState = "00_Player_Profile_Suprised_M_0000" }
+            new DialogueData { speakerName = "치즈", sentence = "어?색채 구슬이다!", talkingAnimState = "PPIT", idleAnimState = "PPIM" },
+            new DialogueData { speakerName = "치즈", sentence = "그렇다는 건... 네가 네로구나!", talkingAnimState = "PPAT", idleAnimState = "PPAM" },
+            new DialogueData { speakerName = "치즈", sentence = "당장 돌려줘!", talkingAnimState = "PPAT", idleAnimState = "PPAM" },
+            new DialogueData { speakerName = "네로", sentence = "돌려달라고?", talkingAnimState = "NPST", idleAnimState = "NPSM" },
+            new DialogueData { speakerName = "네로", sentence = "이건 이제 내 꺼야.", talkingAnimState = "NPIT", idleAnimState = "NPIM" },
+            new DialogueData { speakerName = "네로", sentence = "누구에게도 넘길 생각은 없어.", talkingAnimState = "NPAT", idleAnimState = "NPAM" },
+            new DialogueData { speakerName = "치즈", sentence = "뭐하는...", talkingAnimState = "PPIT", idleAnimState = "PPIM" },
+            new DialogueData { speakerName = "치즈", sentence = "아.", talkingAnimState = "PPST", idleAnimState = "PPSM" }
         };
     }
 
@@ -278,6 +278,12 @@ public class CutsceneDialogueManager : MonoBehaviour
 
         DialogueData data = currentDialogueList[currentIndex];
 
+        // 사용자가 인스펙터에 대사는 써두고 애니메이션 칸을 빈칸으로 비워둔 경우 ➔ 1~8번 순서별 애니메이션 약자 자동 세팅!
+        if (string.IsNullOrEmpty(data.talkingAnimState) || string.IsNullOrEmpty(data.idleAnimState))
+        {
+            AutoFillAnimStateByIndex(data, currentIndex);
+        }
+
         // 3번 기능: 8번 대사 ("아." 대사) 출력 시 특정 타일맵 콜라이더 충돌 판정 제거!
         if (data.sentence.Contains("아.") || currentIndex == 7)
         {
@@ -342,6 +348,45 @@ public class CutsceneDialogueManager : MonoBehaviour
         {
             Collider2D col = floor.GetComponent<Collider2D>();
             if (col != null) col.enabled = false;
+        }
+    }
+
+    /// <summary>
+    /// 사용자가 인스펙터에 애니메이션 이름(PPIT, PPIM 등)을 안 적고 빈칸으로 남겨둔 경우 1~8번 대서 순서(0~7)에 맞게 자동 세팅!
+    /// </summary>
+    private void AutoFillAnimStateByIndex(DialogueData data, int index)
+    {
+        switch (index)
+        {
+            case 0: // 1번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "PPIT";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "PPIM";
+                break;
+            case 1: // 2번 대사
+            case 2: // 3번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "PPAT";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "PPAM";
+                break;
+            case 3: // 4번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "NPST";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "NPSM";
+                break;
+            case 4: // 5번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "NPIT";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "NPIM";
+                break;
+            case 5: // 6번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "NPAT";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "NPAM";
+                break;
+            case 6: // 7번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "PPIT";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "PPIM";
+                break;
+            case 7: // 8번 대사
+                if (string.IsNullOrEmpty(data.talkingAnimState)) data.talkingAnimState = "PPST";
+                if (string.IsNullOrEmpty(data.idleAnimState)) data.idleAnimState = "PPSM";
+                break;
         }
     }
 

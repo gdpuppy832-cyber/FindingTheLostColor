@@ -103,10 +103,10 @@ TextureImporter:
       name: 00_Player_Profile_Anger_M_0000_0
       rect:
         serializedVersion: 2
-        x: 51
-        y: 26
-        width: 1396
-        height: 483
+        x: 0
+        y: 0
+        width: 1505
+        height: 630
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9b4f1ca2d71de7044aff832984c39931
     internalID: 0
     vertices: []
     indices: 
@@ -133,7 +133,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":1505.0,"y":630.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       00_Player_Profile_Anger_M_0000_0: -4286393242125321517
   mipmapLimitGroupName: 

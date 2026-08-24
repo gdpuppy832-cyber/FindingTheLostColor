@@ -186,7 +186,15 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        moveDirection = new Vector2(moveInput, 0).normalized;
+        if (!canControl)
+        {
+            moveInput = 0f;
+            moveDirection = Vector2.zero;
+        }
+        else
+        {
+            moveDirection = new Vector2(moveInput, 0).normalized;
+        }
     }
 
     void FixedUpdate()
@@ -204,6 +212,23 @@ public class PlayerMove : MonoBehaviour
                 activeSpeed = moveSpeed * focusChargeSpeedMultiplier;
             }
             rb.linearVelocity = new Vector2(moveDirection.x * activeSpeed, rb.linearVelocity.y);
+            if (animator != null)
+            {
+                animator.SetFloat("VelocityX", moveDirection.x * moveSpeed);
+            }
+        }
+        else
+        {
+            // 조작 불가 상태(컷씬 등)일 때 매 프레임 X축 속도를 0으로 강제 고정 및 애니메이션 정지
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            if (animator != null)
+            {
+                animator.SetFloat("VelocityX", 0f);
+                animator.SetBool("IsWalking", false);
+            }
         }
 
         // 땅을 벗어난 뒤 0.1초(코요테 타임) 동안은 공중 강제 판정(jumpCount=1)을 유예하여 기본점프를 보장
@@ -214,8 +239,6 @@ public class PlayerMove : MonoBehaviour
                 jumpCount = 1;
             }
         }
-
-        animator.SetFloat("VelocityX", moveDirection.x * moveSpeed);
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -251,6 +274,7 @@ public class PlayerMove : MonoBehaviour
         if (!canControl)
         {
             moveDirection = Vector2.zero;
+            isDashing = false; // 컷씬 진입 시 진행 중이던 대쉬 즉시 중단
 
             // [컷씬 진입 시 속도 고정 버그 방탄 처리]
             // 키를 누르고 있던 와중에 조작을 잃을 경우, 기존 X축 속도가 고정되는 현상을 즉각 차단
@@ -261,6 +285,7 @@ public class PlayerMove : MonoBehaviour
             if (animator != null)
             {
                 animator.SetFloat("VelocityX", 0f);
+                animator.SetBool("IsWalking", false);
             }
         }
     }
