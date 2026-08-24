@@ -20850,6 +20850,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC5B4? \uC5B4\uB514\uAC14\uC9C0?"
   caveCameraTarget: {fileID: 611754797}
   neroObject: {fileID: 419892115}
@@ -20900,6 +20902,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uBC8C\uC368 \uC800\uAE30\uAE4C\uC9C0!?"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -20922,6 +20926,8 @@ MonoBehaviour:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uB3D9\uAD74 \uC548\uC73C\uB85C \uB4E4\uC5B4\uAC14\uB124. \uBE68\uB9AC
       \uCAD2\uC544\uAC00\uC57C\uACA0\uC5B4!"
   onCutsceneEnded:
@@ -26166,7 +26172,7 @@ MonoBehaviour:
   nameText: {fileID: 1014903115}
   dialogueText: {fileID: 1541706777}
   typeSpeed: 0.1
-  mouthChangeInterval: 0.05
+  mouthChangeInterval: 0.125
 --- !u!1001 &1919221388
 PrefabInstance:
   m_ObjectHideFlags: 0

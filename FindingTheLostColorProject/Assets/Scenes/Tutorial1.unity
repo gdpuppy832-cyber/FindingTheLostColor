@@ -141914,7 +141914,7 @@ MonoBehaviour:
   nameText: {fileID: 1786794735}
   dialogueText: {fileID: 1849715243}
   typeSpeed: 0.1
-  mouthChangeInterval: 0.05
+  mouthChangeInterval: 0.125
 --- !u!223 &1447953119 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 2031590128877946999, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}

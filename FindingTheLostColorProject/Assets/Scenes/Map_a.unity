@@ -164409,6 +164409,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC5B4? \uC0C9\uCC44 \uAD6C\uC2AC\uC774\uB2E4!"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -164431,6 +164433,8 @@ MonoBehaviour:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uADF8\uB807\uB2E4\uB294 \uAC74\u2026 \uB124\uAC00 \uB124\uB85C\uAD6C\uB098."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -164453,6 +164457,8 @@ MonoBehaviour:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uB2F9\uC7A5 \uB3CC\uB824\uC918!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 0}
@@ -164475,6 +164481,8 @@ MonoBehaviour:
     - {fileID: 1501531907598645417, guid: 5e5c00cdba0e9244aaa124043dcf95d4, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uB3CC\uB824\uB2EC\uB77C\uACE0?"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 0}
@@ -164508,6 +164516,8 @@ MonoBehaviour:
     - {fileID: -1083234284051087929, guid: 5b9dcf4b1a6906f46bb55ba23567e48e, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC774\uAC74 \uC774\uC81C \uB0B4\uAEBC\uC57C."
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 0}
@@ -164530,6 +164540,8 @@ MonoBehaviour:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uB204\uAD6C\uC5D0\uAC8C\uB3C4 \uB118\uAE38 \uC0DD\uAC01\uC740 \uC5C6\uC5B4."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -164563,6 +164575,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uBB50\uD558\uB294.."
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -164585,6 +164599,8 @@ MonoBehaviour:
     - {fileID: 2168919108311830837, guid: 23c618355b9ef314a9c046ac19f23dc0, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC544"
   playerTag: Player
   triggerOnlyOnce: 1
@@ -167227,7 +167243,7 @@ MonoBehaviour:
   nameText: {fileID: 270736863}
   dialogueText: {fileID: 1797009432}
   typeSpeed: 0.1
-  mouthChangeInterval: 0.05
+  mouthChangeInterval: 0.125
 --- !u!224 &2282264305597275984 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8576025284388401697, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
