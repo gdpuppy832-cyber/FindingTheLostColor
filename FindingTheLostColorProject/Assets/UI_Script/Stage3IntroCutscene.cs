@@ -78,6 +78,9 @@ public class Stage3IntroCutscene : MonoBehaviour
     [Tooltip("B 지점에 다다르며 네로가 서서히 투명해지는 시간 (초 단위, 기본값: 0.8s)")]
     public float neroFadeDuration = 0.8f;
 
+    [Tooltip("네로가 B 지점에 도착한 뒤 사라지기 전 잠깐 멈추는 시간 (초 단위)")]
+    public float delayBeforeNeroFade = 0.05f;
+
     [Tooltip("카메라가 플레이어로 돌아오는 시간 (초 단위, 기본값: 1.0s)")]
     public float cameraPanBackDuration = 1.0f;
 
@@ -192,9 +195,21 @@ public class Stage3IntroCutscene : MonoBehaviour
         // [3단계] 동굴 및 네로 A ➔ B 도망 연출
         // -------------------------------------------------------------
         // 1. 카메라 시작점 계산
+        if (Camera.main == null)
+        {
+            Debug.LogWarning("[Stage3IntroCutscene] MainCamera가 없어 컷씬 카메라 연출을 건너뜁니다.");
+            RestoreCutsceneState();
+            yield break;
+        }
+
         Vector3 playerPos = cachedPlayerMove != null ? cachedPlayerMove.transform.position : Camera.main.transform.position;
         float yOff = cachedCameraFollow != null ? cachedCameraFollow.yOffset : 2.0f;
-        Vector3 startCamPos = new Vector3(playerPos.x, playerPos.y + yOff, Camera.main.transform.position.z);
+        Vector3 fallbackCamPos = new Vector3(playerPos.x, playerPos.y + yOff, Camera.main.transform.position.z);
+        Vector3 startCamPos = Camera.main.transform.position;
+        if (float.IsNaN(startCamPos.x) || float.IsNaN(startCamPos.y))
+        {
+            startCamPos = fallbackCamPos;
+        }
 
         // 2. 네로 A좌표 (출발점) 및 B좌표 (도착점) 확정
         Vector3 startPosA = Vector3.zero;
@@ -265,17 +280,19 @@ public class Stage3IntroCutscene : MonoBehaviour
         }
         Camera.main.transform.position = targetCamPos;
 
-        // 5. 네로가 A ➔ B 좌표로 2.0초 동안 둥둥 뜨며 이동 + 서서히 투명화
+        // 5. 네로가 A ➔ B 좌표로 이동한 뒤 빠르게 투명화
         if (neroObject != null)
         {
             SpriteRenderer[] neroRenderers = neroObject.GetComponentsInChildren<SpriteRenderer>(true);
             Image[] neroImages = neroObject.GetComponentsInChildren<Image>(true);
+            CanvasGroup neroCanvasGroup = neroObject.GetComponent<CanvasGroup>();
 
+            float moveDuration = Mathf.Max(0.01f, neroMoveDuration);
             float elapsedNero = 0f;
-            while (elapsedNero < neroMoveDuration)
+            while (elapsedNero < moveDuration)
             {
                 elapsedNero += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsedNero / neroMoveDuration);
+                float t = Mathf.Clamp01(elapsedNero / moveDuration);
 
                 // A -> B 부드러운 위치 이동
                 Vector3 currentBasePos = Vector3.Lerp(startPosA, endPosB, t);
@@ -284,32 +301,47 @@ public class Stage3IntroCutscene : MonoBehaviour
                 float floatY = Mathf.Sin(Time.time * neroFloatFrequency) * neroFloatAmplitude;
                 neroObject.transform.position = new Vector3(currentBasePos.x, currentBasePos.y + floatY, currentBasePos.z);
 
-                // 도착 지점에 다다를 때 서서히 투명화 (Fade Out)
-                float fadeStartTime = Mathf.Max(0f, neroMoveDuration - neroFadeDuration);
-                if (elapsedNero >= fadeStartTime && neroFadeDuration > 0f)
+                yield return null;
+            }
+
+            neroObject.transform.position = endPosB;
+
+            if (delayBeforeNeroFade > 0f)
+            {
+                yield return new WaitForSeconds(delayBeforeNeroFade);
+            }
+
+            float fadeDuration = Mathf.Max(0.01f, neroFadeDuration);
+            float elapsedFade = 0f;
+            while (elapsedFade < fadeDuration)
+            {
+                elapsedFade += Time.deltaTime;
+                float fadeT = Mathf.Clamp01(elapsedFade / fadeDuration);
+                float currentAlpha = Mathf.Lerp(1f, 0f, fadeT);
+
+                for (int i = 0; i < neroRenderers.Length; i++)
                 {
-                    float fadeT = Mathf.Clamp01((elapsedNero - fadeStartTime) / neroFadeDuration);
-                    float currentAlpha = Mathf.Lerp(1f, 0f, fadeT);
-
-                    for (int i = 0; i < neroRenderers.Length; i++)
+                    if (neroRenderers[i] != null)
                     {
-                        if (neroRenderers[i] != null)
-                        {
-                            Color c = neroRenderers[i].color;
-                            c.a = currentAlpha;
-                            neroRenderers[i].color = c;
-                        }
+                        Color c = neroRenderers[i].color;
+                        c.a = currentAlpha;
+                        neroRenderers[i].color = c;
                     }
+                }
 
-                    for (int i = 0; i < neroImages.Length; i++)
+                for (int i = 0; i < neroImages.Length; i++)
+                {
+                    if (neroImages[i] != null)
                     {
-                        if (neroImages[i] != null)
-                        {
-                            Color c = neroImages[i].color;
-                            c.a = currentAlpha;
-                            neroImages[i].color = c;
-                        }
+                        Color c = neroImages[i].color;
+                        c.a = currentAlpha;
+                        neroImages[i].color = c;
                     }
+                }
+
+                if (neroCanvasGroup != null)
+                {
+                    neroCanvasGroup.alpha = currentAlpha;
                 }
 
                 yield return null;
@@ -320,7 +352,7 @@ public class Stage3IntroCutscene : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(neroMoveDuration);
+            yield return new WaitForSeconds(Mathf.Max(0f, neroMoveDuration));
         }
 
         yield return new WaitForSeconds(0.4f);
@@ -350,6 +382,13 @@ public class Stage3IntroCutscene : MonoBehaviour
         // -------------------------------------------------------------
         // [5단계] 조작 복구 및 카메라 팔로우 복원 (게임 시작)
         // -------------------------------------------------------------
+        RestoreCutsceneState();
+
+        Debug.Log("[Stage3IntroCutscene] 스테이지 3 인트로 컷씬 완료! 게임 플레이를 시작합니다.");
+    }
+
+    private void RestoreCutsceneState()
+    {
         if (cachedCameraFollow != null)
         {
             cachedCameraFollow.enabled = true;
@@ -369,7 +408,5 @@ public class Stage3IntroCutscene : MonoBehaviour
         {
             onCutsceneEnded.Invoke();
         }
-
-        Debug.Log("[Stage3IntroCutscene] 스테이지 3 인트로 컷씬 완료! 게임 플레이를 시작합니다.");
     }
 }
