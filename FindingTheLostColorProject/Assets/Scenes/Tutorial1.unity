@@ -142172,7 +142172,6 @@ MonoBehaviour:
   - {fileID: 4130640169021434097, guid: 8de54352fe25eb94593b191212bbe44d, type: 3}
   - {fileID: 3465286685962602723, guid: 33f3f2b31a3cfca488ca7dbfb03fea1e, type: 3}
   - {fileID: 7028616704906629411, guid: c6a15d6f7645c184fbc5751e6e4a21e3, type: 3}
-  - {fileID: 8288426215254106694, guid: 3cd979f9ad46b064784e4dd78f0bb5b7, type: 3}
   siamWalkFrames:
   - {fileID: 4113829005332862926, guid: cb78d34f7777eec42a1d44cdbf726904, type: 3}
   - {fileID: -5099292496197868168, guid: 723596b3e2114ee43bf55685ec60166b, type: 3}
@@ -142700,7 +142699,7 @@ Transform:
   m_GameObject: {fileID: 1725547996}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.89, y: -1.65, z: 0}
+  m_LocalPosition: {x: 9.94, y: -1.69, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
