@@ -19,11 +19,25 @@ public class RoseBush : MonoBehaviour
     public float attackCooldown = 1.0f;
 
     [Header("색상 변경 연출 설정")]
-    [Tooltip("시작 시 (색이 빠진 상태)의 색상")]
+    [Tooltip("시작 시 (색이 빠져 어두운 상태)의 색상")]
     public Color startColor = new Color(0.35f, 0.35f, 0.35f, 1f);
 
-    [Tooltip("정화 완료 시 (원래 색상)의 색상")]
+    [Tooltip("정화 완료 시 (원래 채도와 밝기가 가득 찬)의 색상")]
     public Color targetColor = Color.white;
+
+    [Header("정화 완료 스프라이트 교체 설정")]
+    [Tooltip("정화 전 기본 스프라이트 (비워둘 시 씬 시작 시점의 스프라이트 자동 저장)")]
+    public Sprite unpurifiedSprite;
+
+    [Tooltip("정화 완료 시 변경할 다른 스프라이트 (이미지)")]
+    public Sprite purifiedSprite;
+
+    [Header("정화 완료 오브젝트 전환 설정 (선택사항)")]
+    [Tooltip("정화 전 표시할 가시덤불 오브젝트 (정화 완료 시 꺼짐)")]
+    public GameObject unpurifiedVisualObj;
+
+    [Tooltip("정화 완료 후 표시할 정화된 꽃/덤불 오브젝트 (정화 완료 시 켜짐)")]
+    public GameObject purifiedVisualObj;
 
     [Header("HIT! 텍스트 폰트 (TextMeshPro 전용)")]
     [Tooltip("회복할 때 팝업되는 HIT! 텍스트의 TMPro 폰트 에셋 (드래그 앤 드롭 가능)")]
@@ -32,6 +46,7 @@ public class RoseBush : MonoBehaviour
     [Tooltip("Resources 폴더 내부의 TMPro 폰트 에셋 파일명 (메타 파일 충돌 방지 백업용)")]
     public string hitTextFontResourceName = "Hakgyoansim Nadeuri TTF L SDF";
 
+    private SpriteRenderer mainSpriteRenderer;
     private SpriteRenderer[] allSpriteRenderers;
     private bool isPurified = false;
     private float lastAttackTime = 0f;
@@ -55,9 +70,27 @@ public class RoseBush : MonoBehaviour
         }
 
         // 본체 및 자식의 모든 SpriteRenderer 검색
+        mainSpriteRenderer = GetComponent<SpriteRenderer>();
         allSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
 
-        // 첫 시작 시 색상 초기화
+        // 기본 스프라이트 캐싱
+        if (unpurifiedSprite == null && mainSpriteRenderer != null)
+        {
+            unpurifiedSprite = mainSpriteRenderer.sprite;
+        }
+
+        // 초기 비주얼 오브젝트 상태 세팅
+        if (!isPurified)
+        {
+            if (unpurifiedVisualObj != null) unpurifiedVisualObj.SetActive(true);
+            if (purifiedVisualObj != null) purifiedVisualObj.SetActive(false);
+            if (unpurifiedSprite != null && mainSpriteRenderer != null)
+            {
+                mainSpriteRenderer.sprite = unpurifiedSprite;
+            }
+        }
+
+        // 첫 시작 시 색상(채도/밝기) 초기화
         UpdateVisualColor();
 
         // 덤불은 통과가 되어야 하므로, 부착된 Collider2D를 IsTrigger로 강제 설정
@@ -89,7 +122,7 @@ public class RoseBush : MonoBehaviour
             }
         }
 
-        // 현재 체력 비중에 맞춰 색상 변경
+        // 현재 정화도(체력 비중)에 맞춰 채도 및 밝기(색상) 갱신
         UpdateVisualColor();
 
         // 정화 완료 판정
@@ -100,11 +133,11 @@ public class RoseBush : MonoBehaviour
     }
 
     /// <summary>
-    /// 체력 비중에 맞춰 덤불의 전체 색상을 Lerp 갱신
+    /// 정화도(체력 비중)에 맞춰 덤불의 채도와 밝기를 점진적으로 Lerp 갱신
     /// </summary>
     private void UpdateVisualColor()
     {
-        float ratio = currentHealth / maxHealth;
+        float ratio = Mathf.Clamp01(currentHealth / maxHealth);
         Color currentColor = Color.Lerp(startColor, targetColor, ratio);
 
         if (allSpriteRenderers != null)
@@ -120,21 +153,47 @@ public class RoseBush : MonoBehaviour
     }
 
     /// <summary>
-    /// 정화 완료 시의 처리 (완벽한 색 회복 및 데미지 기능 영구 차단)
+    /// 정화 완료 시의 처리 (정화 스프라이트/오브젝트 교체, 완벽한 채도/색상 회복, 데미지 기능 영구 차단)
     /// </summary>
     private void Purify()
     {
         isPurified = true;
         currentHealth = maxHealth;
 
-        // 정화 완료 효과음 재생 (3D 입체 음향)
+        // 1. 스프라이트 교체 (정화된 다른 이미지로 변경)
+        if (purifiedSprite != null)
+        {
+            if (mainSpriteRenderer != null)
+            {
+                mainSpriteRenderer.sprite = purifiedSprite;
+            }
+
+            if (allSpriteRenderers != null)
+            {
+                foreach (var sr in allSpriteRenderers)
+                {
+                    if (sr != null)
+                    {
+                        sr.sprite = purifiedSprite;
+                    }
+                }
+            }
+        }
+
+        // 2. 오브젝트 전환 (정화된 오브젝트 활성화 및 기존 가시덤불 비활성화)
+        if (unpurifiedVisualObj != null) unpurifiedVisualObj.SetActive(false);
+        if (purifiedVisualObj != null) purifiedVisualObj.SetActive(true);
+
+        // 3. 색상 완전 복구 (100% 채도/밝기)
+        UpdateVisualColor();
+
+        // 4. 정화 완료 효과음 재생 (3D 입체 음향)
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlaySFXAtPoint(SoundManager.SFXType.EnemyRecover, transform.position, 0.95f);
         }
 
-        UpdateVisualColor();
-        Debug.Log($"[RoseBush] {gameObject.name} 장미덤불 정화 완료! 이제 피해를 주지 않습니다.");
+        Debug.Log($"[RoseBush] {gameObject.name} 가시덤불 정화 완료! 다른 이미지로 교체되었으며 피해를 주지 않습니다.");
     }
 
     /// <summary>
