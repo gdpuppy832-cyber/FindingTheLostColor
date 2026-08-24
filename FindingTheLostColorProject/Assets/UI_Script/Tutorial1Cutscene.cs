@@ -167,6 +167,20 @@ public class Tutorial1Cutscene : MonoBehaviour
     [Header("9. 컷씬 종료 이벤트")]
     public UnityEvent onCutsceneEnded;
 
+    // =========================================================================
+    // [추가된 영역] 대사 6 연출 이벤트 및 대상 오브젝트
+    // =========================================================================
+    [Header("10. 대사 6 (으악!) 연출 이벤트 및 오브젝트")]
+    [Tooltip("대사 6 실행 시 신호를 보낼 이벤트")]
+    public UnityEvent onDialogue6Triggered;
+
+    [Tooltip("대사 6 실행 시 즉시 불투명화(보이게) 할 플레이어 오브젝트")]
+    public GameObject eventPlayerObj;
+
+    [Tooltip("대사 6 실행 시 즉시 안 보이게 할 그림 오브젝트")]
+    public GameObject eventPictureObj;
+    // =========================================================================
+
     private PlayerMove cachedPlayerMove;
     private CursorController cachedCursorController;
     private CameraFollow cachedCameraFollow;
@@ -326,6 +340,27 @@ public class Tutorial1Cutscene : MonoBehaviour
         yield return StartCoroutine(RunDialogueAndWait(dialogues3));
         yield return StartCoroutine(RunDialogueAndWait(dialogues4));
         yield return StartCoroutine(RunDialogueAndWait(dialogues5));
+
+        // =========================================================================
+        // [추가된 영역] 대사 6 ("으악!") 실행 직전 신호 전송 및 즉시 전환 연출
+        // =========================================================================
+        if (onDialogue6Triggered != null)
+        {
+            onDialogue6Triggered.Invoke(); // 신호 전송
+        }
+
+        if (eventPlayerObj != null)
+        {
+            eventPlayerObj.SetActive(true); // 활성화 후
+            SetSpriteAlpha(eventPlayerObj, 1f); // 그라데이션 없이 즉시 불투명(따닥!)
+        }
+
+        if (eventPictureObj != null)
+        {
+            eventPictureObj.SetActive(false); // 그라데이션 없이 즉시 비활성화(따닥!)
+        }
+        // =========================================================================
+
         yield return StartCoroutine(RunDialogueAndWait(dialogues6));
 
         yield return new WaitForSeconds(0.2f);
