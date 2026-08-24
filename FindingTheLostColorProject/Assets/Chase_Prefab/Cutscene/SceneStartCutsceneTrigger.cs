@@ -126,6 +126,7 @@ public class SceneStartCutsceneTrigger : MonoBehaviour
     // 플레이어 이동 잠금 (Rigidbody2D 자체는 비활성화하지 않고, 이동 스크립트만 끄고 속도를 0으로 유지)
     private Rigidbody2D playerRigidbody;
     private MonoBehaviour playerMovementScript;
+    private RigidbodyConstraints2D originalPlayerConstraints;
     private bool playerMovementLocked = false;
 
     private Coroutine shakeCoroutine;
@@ -441,6 +442,12 @@ public class SceneStartCutsceneTrigger : MonoBehaviour
         // Rigidbody2D 자체는 끄지 않고 속도만 0으로 고정
         playerRigidbody.linearVelocity = Vector2.zero;
 
+        // 위치(X, Y) 자체를 물리적으로 고정 -> 중력/외력이 있어도 컷씬 동안 절대 움직이지 않음
+        originalPlayerConstraints = playerRigidbody.constraints;
+        playerRigidbody.constraints = originalPlayerConstraints
+            | RigidbodyConstraints2D.FreezePositionX
+            | RigidbodyConstraints2D.FreezePositionY;
+
         playerMovementLocked = true;
     }
 
@@ -450,6 +457,8 @@ public class SceneStartCutsceneTrigger : MonoBehaviour
 
         if (playerRigidbody != null)
         {
+            // 고정했던 위치 제약을 원래대로 복구
+            playerRigidbody.constraints = originalPlayerConstraints;
             playerRigidbody.linearVelocity = Vector2.zero;
         }
 
