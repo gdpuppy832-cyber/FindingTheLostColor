@@ -1623,7 +1623,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 136949802834516866, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -3.7460785
+      value: -3.7460632
+      objectReference: {fileID: 0}
+    - target: {fileID: 852675624812558106, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 969019871352650803, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1660,6 +1664,14 @@ PrefabInstance:
     - target: {fileID: 2089271323609584094, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: tmpText
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2383531102282780633, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2426238464879059639, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2485025523567754234, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1797,6 +1809,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4491585378891644578, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4541909796981899640, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: playerHealth
       value: 
@@ -1847,6 +1863,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5540492297323759555, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5852942999831039694, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5896033332040249068, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
@@ -1923,6 +1943,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8417295612897116753, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8978437499008531071, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9176046101489560051, guid: c8859919fe7766f4486b96a3ce386e81, type: 3}
@@ -2225,6 +2249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefabs:
   - {fileID: 8074891915994420155, guid: d7a7e69c5e2485948b9c93e0df5b47bc, type: 3}
+  - {fileID: 8074891915994420155, guid: 00a1b64584448244392d5bd47a9c01a4, type: 3}
   chunkLength: 20
   player: {fileID: 1225379488}
   chunksAheadCount: 4
@@ -2395,6 +2420,8 @@ MonoBehaviour:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uB124\uB85C, \uAC70\uAE30\uC11C!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
@@ -2416,6 +2443,8 @@ MonoBehaviour:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC65C \uC790\uAFB8 \uB530\uB77C\uC624\uB294\uAC70\uC57C!"
   - speakerName: "\uB124\uB85C"
     characterImage: {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
@@ -2437,6 +2466,8 @@ MonoBehaviour:
     - {fileID: 6007048689035558685, guid: 190900af250e603479f75fb6dd61fea1, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC5D0\uC787! \uC774\uAC70\uB098 \uBA39\uC5B4\uB77C!"
   fadeCanvasGroup: {fileID: 0}
   fadeDuration: 0
@@ -2476,6 +2507,8 @@ MonoBehaviour:
     - {fileID: 2168919108311830837, guid: 23c618355b9ef314a9c046ac19f23dc0, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC73C\uC545!"
   - speakerName: "\uCE58\uC988"
     characterImage: {fileID: 0}
@@ -2509,6 +2542,8 @@ MonoBehaviour:
     - {fileID: -1994456669030110594, guid: 21a9c6775073a6e409ec06ef31b9eeca, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uC774\uAC70 \uD53C\uD558\uBA74\uC11C \uAC00\uC57C\uACA0\uB294\uAC78."
   cutsceneOnlyCamera: {fileID: 542079087}
   objectsToHideAfterCutscene:
@@ -2538,6 +2573,8 @@ MonoBehaviour:
     - {fileID: -4286393242125321517, guid: 40899e07c1ef5414e8b880f448890b94, type: 3}
     objectsToShow: []
     objectsToHide: []
+    typingSound: {fileID: 0}
+    typingSoundVolume: 0.5
     text: "\uAC70\uAE30\uC11C!!"
   bossChaseAttack: {fileID: 633865672}
   bossChaseMove: {fileID: 633865673}

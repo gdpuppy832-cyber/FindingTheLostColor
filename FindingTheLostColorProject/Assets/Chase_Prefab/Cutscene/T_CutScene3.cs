@@ -3,34 +3,37 @@ using UnityEngine.Playables;
 using System.Collections;
 
 /// <summary>
-/// ´ëÈ­ 2°³(1ºÎ, 2ºÎ)¸¸ ÁøÇàÇÏ´Â ÄÆ¾À Æ®¸®°Å.
-/// 1ºÎ ´ëÈ­ Àü, 2ºÎ ´ëÈ­ Àü¿¡ °¢°¢ TimelineÀ» Àç»ıÇÒ ¼ö ÀÖ´Ù.
-/// SceneStartCutsceneTrigger¸¦ Âü°íÇßÀ¸³ª, Ä«¸Ş¶ó Èçµé¸²/´ëÈ­Ã¢ ¼û±è/ÀÌ¹ÌÁö ¿¬Ãâ µîÀº Æ÷ÇÔÇÏÁö ¾Ê´Â´Ù.
-/// DialogueManager.cs´Â ¼öÁ¤ÇÏÁö ¾Ê´Â´Ù.
+/// ï¿½ï¿½È­ 2ï¿½ï¿½(1ï¿½ï¿½, 2ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Æ¾ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½.
+/// 1ï¿½ï¿½ ï¿½ï¿½È­ ï¿½ï¿½, 2ï¿½ï¿½ ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Timelineï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½.
+/// SceneStartCutsceneTriggerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½é¸²/ï¿½ï¿½È­Ã¢ ï¿½ï¿½ï¿½ï¿½/ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+/// DialogueManager.csï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 /// </summary>
 public class T_CutScene3 : MonoBehaviour
 {
-    [Header("´ëÈ­ ³»¿ë (1ºÎ)")]
+    [Header("ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ (1ï¿½ï¿½)")]
     public DialogueLine[] dialogues;
 
-    [Header("´ëÈ­ ³»¿ë (2ºÎ)")]
+    [Header("ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ (2ï¿½ï¿½)")]
     public DialogueLine[] dialoguesPart2;
 
-    [Header("Timeline ¿¬Ãâ")]
-    [Tooltip("1ºÎ ´ëÈ­°¡ ½ÃÀÛµÇ±â Àü¿¡ Àç»ıÇÒ Timeline (ºñ¿öµÎ¸é Àç»ıÇÏÁö ¾ÊÀ½)")]
+    [Header("Timeline ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("1ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Timeline (ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")]
     public PlayableDirector timelineBeforeFirstDialogue;
 
-    [Tooltip("2ºÎ ´ëÈ­°¡ ½ÃÀÛµÇ±â Àü¿¡ Àç»ıÇÒ Timeline (ºñ¿öµÎ¸é Àç»ıÇÏÁö ¾ÊÀ½)")]
+    [Tooltip("2ì°¨ ëŒ€í™”ê°€ ì‹œì‘ë˜ê¸° ì „ì— ì¬ìƒí•  Timeline (ë¹„ì›Œë‘ë©´ ì¬ìƒí•˜ì§€ ì•ŠìŒ)")]
     public PlayableDirector timelineBeforeSecondDialogue;
 
-    [Header("¼³Á¤")]
-    [Tooltip("ÇÑ ¹ø ½ÇÇàµÈ µÚ ´Ù½Ã Æ®¸®°ÅµÇÁö ¾Ê°Ô ÇÒÁö ¿©ºÎ")]
+    [Tooltip("2ì°¨ ëŒ€í™”ê°€ ëë‚œ í›„ì— ì¬ìƒí•  Timeline (ë¹„ì›Œë‘ë©´ ì¬ìƒí•˜ì§€ ì•ŠìŒ)")]
+    public PlayableDirector timelineAfterSecondDialogue;
+
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ Æ®ï¿½ï¿½ï¿½Åµï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public bool playOnlyOnce = true;
     private bool hasTriggered = false;
 
     public bool IsCutsceneRunning { get; private set; }
 
-    // ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ (Rigidbody2D ÀÚÃ¼´Â ºñÈ°¼ºÈ­ÇÏÁö ¾Ê°í, ÀÌµ¿ ½ºÅ©¸³Æ®¸¸ ²ô°í ¼Óµµ¸¦ 0À¸·Î À¯Áö)
+    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ (Rigidbody2D ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½, ï¿½Ìµï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     private Rigidbody2D playerRigidbody;
     private MonoBehaviour playerMovementScript;
     private RigidbodyConstraints2D originalPlayerConstraints;
@@ -50,30 +53,36 @@ public class T_CutScene3 : MonoBehaviour
 
         LockPlayerMovement();
 
-        // 1ºÎ ´ëÈ­ Àü Timeline
+        // 1ï¿½ï¿½ ï¿½ï¿½È­ ï¿½ï¿½ Timeline
         if (timelineBeforeFirstDialogue != null)
         {
             yield return PlaySingleTimeline(timelineBeforeFirstDialogue);
         }
 
-        // 1ºÎ ´ëÈ­
+        // 1ï¿½ï¿½ ï¿½ï¿½È­
         yield return PlayDialogueAndWait(dialogues);
 
-        // 2ºÎ ´ëÈ­ Àü Timeline
+        // 2ì°¨ ëŒ€í™” ì „ Timeline
         if (timelineBeforeSecondDialogue != null)
         {
             yield return PlaySingleTimeline(timelineBeforeSecondDialogue);
         }
 
-        // 2ºÎ ´ëÈ­
+        // 2ì°¨ ëŒ€í™”
         yield return PlayDialogueAndWait(dialoguesPart2);
+
+        // 2ì°¨ ëŒ€í™” í›„ Timeline
+        if (timelineAfterSecondDialogue != null)
+        {
+            yield return PlaySingleTimeline(timelineAfterSecondDialogue);
+        }
 
         UnlockPlayerMovement();
 
         IsCutsceneRunning = false;
     }
 
-    // ================= ´ëÈ­ Àç»ı ´ë±â =================
+    // ================= ï¿½ï¿½È­ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ =================
     private IEnumerator PlayDialogueAndWait(DialogueLine[] lines)
     {
         if (lines == null || lines.Length == 0) yield break;
@@ -88,7 +97,7 @@ public class T_CutScene3 : MonoBehaviour
         }
     }
 
-    // ================= Timeline Àç»ı =================
+    // ================= Timeline ï¿½ï¿½ï¿½ =================
     private IEnumerator PlaySingleTimeline(PlayableDirector director)
     {
         bool finished = false;
@@ -105,7 +114,7 @@ public class T_CutScene3 : MonoBehaviour
         director.stopped -= OnStopped;
     }
 
-    // ================= ÇÃ·¹ÀÌ¾î ÀÌµ¿ Àá±İ =================
+    // ================= ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ =================
     private void LockPlayerMovement()
     {
         if (playerMovementLocked) return;
@@ -113,14 +122,14 @@ public class T_CutScene3 : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("[SimpleTimelineCutsceneTrigger] Player ÅÂ±×¸¦ °¡Áø ¿ÀºêÁ§Æ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[SimpleTimelineCutsceneTrigger] Player ï¿½Â±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
         playerRigidbody = player.GetComponent<Rigidbody2D>();
         if (playerRigidbody == null)
         {
-            Debug.LogWarning("[SimpleTimelineCutsceneTrigger] Player¿¡°Ô Rigidbody2D°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("[SimpleTimelineCutsceneTrigger] Playerï¿½ï¿½ï¿½ï¿½ Rigidbody2Dï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return;
         }
 
